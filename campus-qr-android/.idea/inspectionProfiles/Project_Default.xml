@@ -1,0 +1,11 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <replaceConfiguration name="Use MbProgressBar to acknowedge current color theme" text="&lt;ProgressBar $attrs$/&gt;" recursive="false" caseInsensitive="true" type="XML" reformatAccordingToStyle="true" shortenFQN="true" useStaticImport="true" replacement="&lt;com.moshbit.studo.util.mb.themeable.MbProgressBar $attrs$/&gt;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attrs" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
+    </inspection_tool>
+  </profile>
+</component>

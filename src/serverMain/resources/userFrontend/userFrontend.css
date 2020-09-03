@@ -1,0 +1,233 @@
+* {
+  font-family: Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  color: #5d5d5d;
+}
+
+#overlay {
+  display: flex;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  color: #2f2f2f;
+  background-color: #f7f7f7;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+#overlay > img {
+  height: 24px;
+  margin-right: 16px;
+  opacity: 0.5;
+}
+
+.header {
+  height: 64px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /*border-bottom: 2px solid #e5e5e5;*/
+  width: 100%;
+}
+
+.header > img {
+  height: 24px;
+  margin-right: 16px;
+}
+
+.header > h2 {
+  font-size: 20px;
+  color: #424242;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  align-items: stretch;
+  padding: 48px 16px 0;
+  margin-bottom: 172px;
+}
+
+.location-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 48px;
+}
+
+.location {
+  font-size: 24px;
+  color: #2196F3;
+}
+
+#form {
+  display: flex;
+  flex-direction: column;
+  /*padding: 12px;*/
+  /*border: 2 px solid rgba(0, 0, 0, 0.2);*/
+  border-radius: 4px;
+}
+
+#form > span {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.form-email {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.form-email.highlighted > input {
+  border: 2px solid #f77979;
+}
+
+.form-email > input {
+  width: 100%;
+  padding: 0 16px;
+  font-size: 16px;
+  height: 48px;
+  border: 1px solid #CED4DA;
+  border-radius: 4px;
+  outline: none;
+}
+
+.form-email > input::placeholder {
+  font-size: 16px;
+  font-style: italic;
+  color: #959EA6;
+}
+
+.form-acceptTos {
+  display: flex;
+  align-items: baseline;
+}
+
+.form-acceptTos > div > label {
+  font-size: 14px;
+  color: #959EA6;
+  line-height: 120%;
+}
+
+.form-acceptTos > input {
+  margin-right: 8px;
+  top: 1px;
+  position: relative;
+}
+
+.form-acceptTos.highlighted {
+  border: 2px solid #f77979;
+  border-radius: 4px;
+  padding: 6px;
+}
+
+button#submit-button {
+  height: 48px;
+  font-size: 16px;
+  background-color: #2196F3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: box-shadow 0.1s;
+}
+
+button#submit-button:hover {
+  background-color: #1a77c2;
+}
+
+button#submit-button:focus,
+button#submit-button:active {
+  box-shadow: 0 0 0 3px #0d60a1 inset;
+  transform: translateY(1px);
+}
+
+.result {
+  font-size: 22px;
+  font-weight: bold;
+  align-self: center;
+}
+
+#result-ok {
+  height: calc(100vh - 64px - 172px - 96px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8BC34A;
+}
+
+div.icon-wrap {
+  height: 64px;
+  width: 64px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  object-fit: contain;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.icon-wrap > img {
+  height: 90%;
+  width: 90%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 96px;
+  justify-content: space-between;
+  bottom: 0;
+  width: 100%;
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+a, a:visited {
+  color: #2196F3;
+  text-decoration: none;
+}
+
+#lang-select {
+  border: none;
+  background: none;
+  color: #2196F3;
+  margin-top: auto;
+  margin-bottom: 16px;
+}
+
+
+/* Keep this at the end to prevent flashing unstyled content */
+html {
+  visibility: visible;
+}

@@ -1,0 +1,71 @@
+/* Bootstrap container css */
+
+body {
+  margin: 0;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.genericContainer {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  width: calc(100% - 30px);
+}
+
+@media (min-width: 1028px) {
+  .genericContainer {
+    width: 750px;
+  }
+}
+
+@media (min-width: 1240px) {
+  .genericContainer {
+    width: 970px;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+  flex-flow: row wrap
+}
+
+.flexEnd {
+  margin-left: auto;
+}
+
+a {
+  color: #FF5252
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(.75)
+  }
+
+  20% {
+    transform: scale(1)
+  }
+
+  40% {
+    transform: scale(.75)
+  }
+
+  60% {
+    transform: scale(1)
+  }
+
+  80% {
+    transform: scale(.75)
+  }
+
+  100% {
+    transform: scale(.75)
+  }
+}

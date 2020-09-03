@@ -1,0 +1,111 @@
+* {
+  font-family: Tahoma, sans-serif;
+  box-sizing: border-box;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+html, body {
+  width: 210mm;
+}
+
+header {
+  text-align: center;
+  border: 1px solid #b5b5b5;
+  padding: 24px;
+  margin: 24px;
+}
+
+header > h2 {
+  font-size: 32px;
+}
+
+.page {
+  height: 297mm;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  border-top: 1px solid black;
+}
+
+div.break {
+  page-break-after: always;
+}
+
+.page > .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 64px;
+  margin-bottom: 64px;
+}
+
+.page > .header > img {
+  height: 32px;
+  margin-bottom: 12px;
+}
+
+.page > .header > p {
+  font-size: 48px;
+  font-weight: normal;
+  margin: 12px 64px 0;
+  overflow: hidden;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  text-align: center;
+}
+
+.page > .header > p > span {
+  font-weight: bold;
+}
+
+.page > .header > span.subheader {
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.page > .footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 32px;
+  font-size: 18px;
+  line-height: 130%;
+}
+
+.page > .footer > p {
+  color: #262626;
+}
+
+.qrcode {
+  margin: 48px;
+  height: 40%;
+}
+
+.qrcode > img {
+  height: 100%;
+}
+
+@media print {
+  .noprint {
+    display: none;
+  }
+
+  .page {
+    border-top: none;
+  }
+}
+
+/* Keep at the bottom to prevent flashing unstyled content */
+html {
+  visibility: visible;
+}
