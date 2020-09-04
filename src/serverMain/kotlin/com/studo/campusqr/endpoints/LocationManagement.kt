@@ -70,6 +70,18 @@ suspend fun ApplicationCall.visitLocation() {
       ?: throw IllegalArgumentException("No locationId was provided")
 
   val email = params["email"]?.trim() ?: throw IllegalArgumentException("No email was provided")
+  val now = Date()
+
+  // Clients can send a custom visit date
+  // This is useful for offline dispatching, we want to save the date of the visit and not when the
+  // request arrives on the server.
+  val visitDate = params["date"]?.let { Date(it.toLong()) }
+
+  // Don't allow dates older than 7 days
+  if (visitDate != null && visitDate > now.addDays(days = -7)) {
+    respondOk()
+    return
+  }
 
   if (!email.matches(emailRegex) || email.count() > 100) {
     respondError("email_not_valid") // At least do a very basic email validation to catch common errors
@@ -79,7 +91,7 @@ suspend fun ApplicationCall.visitLocation() {
   val checkIn = CheckIn().apply {
     this._id = randomId()
     this.locationId = location._id
-    this.date = Date()
+    this.date = visitDate ?: now
     this.email = email
     this.userAgent = request.headers[HttpHeaders.UserAgent] ?: ""
   }
