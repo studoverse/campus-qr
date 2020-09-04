@@ -1,12 +1,12 @@
 let locationId = new URLSearchParams(window.location.search).get("l")
 
 function onLoad() {
-  if (window.location.search.includes("s=1")) {
+  if (window.location.search.includes("s=1")) { // If "just scanned"
+    // Remove "just scanned" parameter from url and replace state so the user cannot check in again by just reloading or going back
     let url = window.location.href.split(window.location.search)[0];
-    window.history.replaceState(null, null, url + "?l=locationName");
+    window.history.replaceState(null, null, url + "?l=" + locationId);
   } else {
     let overlay = document.getElementById("overlay");
-    //overlay.innerText = "Please scan the qr code again"
     overlay.className = overlay.className.replace("hidden", "");
   }
 
@@ -22,6 +22,7 @@ function onLoad() {
     let resultOk = document.getElementById("result-ok");
     let resultFail = document.getElementById("result-fail");
 
+    // Reload stored data
     let email = window.localStorage.getItem("email");
     if (email) {
       emailInput.value = email;
@@ -30,13 +31,14 @@ function onLoad() {
 
     function onSubmit() {
       let emailWrapper = emailInput.parentElement;
-      let email = emailInput.value.replace(" ", "")
-      if (email.length < 5 || !email.includes("@") || !email.includes(".")) {
+      let email = emailInput.value.trim()
+      if (email.length < 5 || !email.includes("@") || !email.includes(".")) { // basic email validation
         emailWrapper.className = emailWrapper.className.replace("highlighted", "") + " highlighted";
         return;
       } else {
         emailWrapper.className = emailWrapper.className.replace("highlighted", "");
       }
+
       let acceptTosCheckboxWrapper = acceptTosCheckbox.parentElement;
       if (acceptTosCheckbox.checked !== true) {
         acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "") + " highlighted";
@@ -49,6 +51,7 @@ function onLoad() {
       resultOk.className = resultOk.className.replace("hidden", "") + " hidden";
       resultFail.className = resultFail.className.replace("hidden", "") + " hidden";
 
+      // Post check-in to api
       let xhttp = new XMLHttpRequest();
       let done = false;
       xhttp.onreadystatechange = function () {
@@ -68,6 +71,8 @@ function onLoad() {
       }
       xhttp.open("POST", "/location/" + locationId + "/visit");
       xhttp.send(JSON.stringify({email: email}));
+
+      // If it takes longer then 150ms, show "..." as indicator
       setTimeout(() => {
         if (!done) {
           submitButton.innerText += "..."
@@ -85,10 +90,10 @@ if (document.readyState === "loading") {
   onLoad();
 }
 
-function changeLanguageTo() {
+function toggleLanguage() {
   let lang = document.getElementById("lang-select").value;
   document.cookie = "MbLang=" + lang
-  window.location.href = window.location.href.replace("&s=1", "") + "&s=1"
+  window.location.href = window.location.href.replace("&s=1", "") + "&s=1" // Add "just scanned" parameter to url
 }
 
-document.getElementById("lang-select").onclick = changeLanguageTo;
+document.getElementById("lang-select").onclick = toggleLanguage;
