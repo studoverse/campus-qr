@@ -9,13 +9,13 @@ The web app is available as stand-alone application.
 The [Studo app](https://studo.com) integrates the provided Android and iOS reference implementation to allow offline dispatching of check-in events.
 
 ## Features
-* **Simple**: Both check-in and administration has a clean and easy to use user interface.
+* **Simple**: Both check-in and administration have a clean and easy to use user interface.
 * **Secure**: State-of-the-art security measurements, role-based user management with only hashed password saving and encryption.
 * **Accessible**: Mobile optimized and responsive check in and management UI on all major devices and browsers without installation.
 * **Open source**: 100% of the code is open source and is without further modification production ready.
 * **Self-hostable**: The whole application can be hosted by the university itself. [Studo](https://studo.com) provides support in hosting the application.
 * **Managed hosting**: Secure and GDPR-compliant hosting in the EU with encrypted-at-rest databases by [Studo](https://studo.com) to go into production within days.
-* **Multiple languages**: All elements of the app are localized to English and German to be inclusive for all students, employees and guests of a university.
+* **Multiple languages**: All elements of the app are localized to English and German to be inclusive of all students, employees and guests of a university.
 * **Fully configurable**: Names, logos, links, privacy policy and text content is configurable in production without changing the source code.
 * **Exportable**: Check-ins at specific locations and check-ins from specific people can be downloaded as csv file to open them in Excel.
 * **Infection tracing**: Fast and reliable tracing of infection chains. 
@@ -36,8 +36,8 @@ Employees of a university can login, create locations, report infections to noti
 # Setup
 The following environment variables need to be configured:
 * `PORT` (default: `8070`): Port where the web application will listen to
-* `HOST` (default: `0.0.0.0`): Per default the web application is accessible from every host. Set it to `127.0.0.1` if the web application should be accessible only from localhost.
-* `MONGO_URI` (default: `mongodb://localhost:27017/campus-qr)`: Database URI to store further configuration, locations, check-ins ad moderation users. Make sure that the database is either not accessible from another host or provide authentication parameters in the URI.
+* `HOST` (default: `0.0.0.0`): By default the web application is accessible from every host. Set it to `127.0.0.1` if the web application should be only accessible from localhost.
+* `MONGO_URI` (default: `mongodb://localhost:27017/campus-qr)`: Database URI to store further configuration, locations, check-ins and moderation users. Make sure that the database is either not accessible from another host or provide authentication parameters in the URI.
 
 Start the application by `./gradlew run` or build the application with `.gradlew stage` to run it with `java -jar build/libs/Server.jar`.
 The default admin email address is `admin@exmpe.org` with password `admin`. Please change it immediately after your first login to the moderation frontend.
