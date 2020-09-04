@@ -4,6 +4,11 @@ When entering a lecture hall or seminar room, students and teachers can scan a Q
 Campus QR allows creation and management of those QR codes.
 An optimal implementation in terms of data protection and security are goals of this project.
 
+Campus QR can additionally be used as access management system: Access to locations like department buildings is only granted by explicit invite.
+Users scan the QR code attached to the entrance.
+If access is granted, a unique animation with access information is shown at the users mobile device to allow entrance by a doorman or web-hook based door unlocking systems.
+Access control or successful check-ins can also be verified by an employee during a lecutre in bulk, so lecturers can validate within seconds if hundreds of students have successfully checked in.
+
 The system is open source and can be hosted by the university itself.
 The web app is available as stand-alone application.
 The [Studo app](https://studo.com) integrates the provided Android and iOS reference implementation to allow offline dispatching of check-in events.
@@ -20,6 +25,9 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **Exportable**: Check-ins at specific locations and check-ins from specific people can be downloaded as csv file to open them in Excel.
 * **Infection tracing**: Fast and reliable tracing of infection chains. 
 * **Automatic data deletion**: After a configurable time (default: 1 month) the check-in data will be automatically deleted to comply with the GDPR.
+* **Multirole administration**: The moderation frontend of Campus QR can be used by thousands of employees of a university.
+* **Access management**: Creation of specific access for students or guests within selected time frame to allow a controlled reopening of university buildings.
+* **Scalable access verification**: Access control can be verified by one doorman or lecturer in parallel to avoid crowds around entries.
 
 # Screenshots
 ## User Frontend
