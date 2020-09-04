@@ -83,7 +83,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
         studoUserData = props.config.userData!!,
         mode = LoginMode.EMAIL
       )
-      Url.BLANK -> window.history.replaceState(null, "Campus QR Locations", "/admin/locations")
+      Url.BLANK -> Unit
       null -> pathNotFoundView()
       else -> throw IllegalStateException("Path not found: ${url.path}")
     }

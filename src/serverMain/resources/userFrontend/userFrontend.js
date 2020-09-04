@@ -6,7 +6,6 @@ function onLoad() {
     window.history.replaceState(null, null, url + "?l=locationName");
   } else {
     let overlay = document.getElementById("overlay");
-    //overlay.innerText = "Please scan the qr code again"
     overlay.className = overlay.className.replace("hidden", "");
   }
 

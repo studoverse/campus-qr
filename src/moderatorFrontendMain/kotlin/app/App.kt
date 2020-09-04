@@ -172,7 +172,7 @@ class App : RComponent<AppProps, AppState>() {
           // The user is not logged in so push him to login page
           pushAppRoute(Url.KOTLIN_LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }
-        window.location.pathname == "/admin/" -> pushAppRoute(Url.LIST_LOCATIONS.toRoute()!!)
+        window.location.pathname.removeSuffix("/") == "/admin" -> pushAppRoute(Url.LIST_LOCATIONS.toRoute()!!)
         else -> {
           // User linked directly to a sub-page
           handleHistoryChange()
