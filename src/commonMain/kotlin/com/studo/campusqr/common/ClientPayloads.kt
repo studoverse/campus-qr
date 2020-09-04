@@ -4,14 +4,14 @@ package com.studo.campusqr.common
 interface ClientPayload
 
 class ClientLocation(
-    val id: String,
-    val name: String,
-    val checkInCount: Int
+  val id: String,
+  val name: String,
+  val checkInCount: Int
 ) : ClientPayload
 
 class UserData : ClientPayload {
   lateinit var appName: String
-    var clientUser: ClientUser? = null // Null when unauthenticated
+  var clientUser: ClientUser? = null // Null when unauthenticated
 }
 
 val UserData.isAuthenticated get() = clientUser != null
@@ -31,14 +31,21 @@ class ReportData(
 }
 
 class LocationVisitData(
-    val csvData: String,
-    val csvFileName: String
+  val csvData: String,
+  val csvFileName: String
 ) : ClientPayload
 
 class ClientUser(
-    val id: String,
-    val email: String,
-    val name: String,
-    val type: String,
-    val firstLoginDate: String
+  val id: String,
+  val email: String,
+  val name: String,
+  val type: String,
+  val firstLoginDate: String
+) : ClientPayload
+
+class ClientAccessManagement(
+  val id: String,
+  val location: ClientLocation,
+  val allowedEmails: List<String>,
+  val note: String
 ) : ClientPayload

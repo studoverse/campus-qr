@@ -10,6 +10,9 @@ import react.dom.div
 import util.AppRoute
 import util.Strings
 import util.get
+import views.accessManagement.AccessManagementDetailsProps
+import views.accessManagement.accessManagementList.renderAccessManagementList
+import views.accessManagement.renderAccessManagementDetails
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
 import views.listLocations.renderListLocations
@@ -47,9 +50,11 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
   override fun RBuilder.render() {
     val url = props.config.currentAppRoute?.url
     val windowPath = window.location.href.substringAfter("$pathBase/")
-
+    console.log(url)
     when (url) {
-      Url.LIST_LOCATIONS -> renderListLocations()
+      Url.ACCESS_MANAGEMENT_DETAILS -> renderAccessManagementDetails(AccessManagementDetailsProps.Config.Details(props.config.currentAppRoute!!.pathParams["id"]!!))
+      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList()
+      Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
       Url.USERS -> renderUsers(currentUser = props.config.userData!!.clientUser!!)
       Url.ACCOUNT_SETTINGS -> div(classes = props.classes.container) {
@@ -79,7 +84,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
         )
       }
       Url.ADMIN_INFO -> renderAdminInfo()
-      Url.KOTLIN_LOGIN_EMAIL -> renderLoginView(
+      Url.LOGIN_EMAIL -> renderLoginView(
         studoUserData = props.config.userData!!,
         mode = LoginMode.EMAIL
       )

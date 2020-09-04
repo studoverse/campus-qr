@@ -53,17 +53,17 @@ class App : RComponent<AppProps, AppState>() {
 
   private val accessManagerSideDrawerItems = listOf(
     SideDrawerItem(
-      label = Url.LIST_LOCATIONS.title, // TODO change 2x to access management
+      label = Url.ACCESS_MANAGEMENT_LIST.title, // TODO change 2x to access management
       icon = listIcon,
-      url = Url.LIST_LOCATIONS
+      url = Url.ACCESS_MANAGEMENT_LIST
     ),
   )
 
   private val moderatorSideDrawerItems = listOf(
     SideDrawerItem(
-      label = Url.LIST_LOCATIONS.title,
+      label = Url.LOCATIONS_LIST.title,
       icon = listIcon,
-      url = Url.LIST_LOCATIONS
+      url = Url.LOCATIONS_LIST
     ),
     SideDrawerItem(
       label = Url.REPORT.title,
@@ -170,9 +170,9 @@ class App : RComponent<AppProps, AppState>() {
       when {
         !state.userData!!.isAuthenticated && currentRoute?.url?.requiresAuth != false -> {
           // The user is not logged in so push him to login page
-          pushAppRoute(Url.KOTLIN_LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
+          pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }
-        window.location.pathname.removeSuffix("/") == "/admin" -> pushAppRoute(Url.LIST_LOCATIONS.toRoute()!!)
+        window.location.pathname.removeSuffix("/") == "/admin" -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
         else -> {
           // User linked directly to a sub-page
           handleHistoryChange()
@@ -299,8 +299,8 @@ private val styles = { theme: dynamic ->
 
 object ColorPalette {
   const val default = "#FFFFFF" // White
-  const val primaryColor = "#FF5252"
-  const val secondaryColor = "#009789"
+  const val primaryColor = "#5994F0"
+  const val secondaryColor = "#5994F0"
   const val gray = "#9D9D9D"
   const val textDefault = "#000000"
 }

@@ -79,7 +79,7 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
         } else {
           materialMenu(
             menuItems = listOf(
-              MenuItem(text = Strings.locations_element_edit.get(), icon = editIcon, onClick = {
+              MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
                 setState {
                   showEditLocationDialog = true
                 }

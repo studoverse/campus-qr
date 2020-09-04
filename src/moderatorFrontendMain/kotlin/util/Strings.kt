@@ -5,9 +5,19 @@ import com.studo.campusqr.common.utils.LocalizedString
 
 object Strings {
 
-  val locations_element_edit = LocalizedString(
+  val edit = LocalizedString(
     "Edit",
     "Bearbeiten"
+  )
+
+  val delete = LocalizedString(
+    "Delete",
+    "Löschen"
+  )
+
+  val copy = LocalizedString(
+    "Copy",
+    "Kopieren"
   )
 
   val locations_element_download_qr_code = LocalizedString(
@@ -378,14 +388,39 @@ object Strings {
     "Moderation"
   )
 
-  val user_type_access_manager = LocalizedString(
+  val access_control = LocalizedString(
+    "Access control",
+    "Zugangskontrolle"
+  )
+
+  val access_control_manager = LocalizedString(
     "Access manager",
     "Zugangsverwalter"
   )
 
-  val user_type_access_manager_action = LocalizedString(
-    "Access control",
-    "Zugangskontrolle"
+  val access_control_create = LocalizedString(
+    "Create access control",
+    "Zugriffskontrolle erstellen"
+  )
+
+  val access_control_not_configured_yet = LocalizedString(
+    "Access control not configured yet.",
+    "Die Zugangskontrolle ist noch nicht konfiguriert."
+  )
+
+  val access_control_not_configured_yet_subtitle = LocalizedString(
+    "Click on \"create access control\" button in the top right corner to create access control.",
+    "Klicken Sie rechts oben auf \"Zugriffskontrolle erstellen\" um die Zugriffskontrolle zu erstellen."
+  )
+
+  val access_control_permitted_people = LocalizedString(
+    "Permitted people",
+    "Zugelassene Personen"
+  )
+
+  val access_control_note = LocalizedString(
+    "Note",
+    "Notiz"
   )
 
   val user_sso_info = LocalizedString(
@@ -445,12 +480,12 @@ val UserType.localizedString: LocalizedString
   get() = when (this) {
     UserType.ADMIN -> Strings.user_type_admin
     UserType.MODERATOR -> Strings.user_type_moderator
-    UserType.ACCESS_MANAGER -> Strings.user_type_access_manager
+    UserType.ACCESS_MANAGER -> Strings.access_control_manager
   }
 
 val UserType.localizedStringAction: LocalizedString
   get() = when (this) {
     UserType.ADMIN -> Strings.user_type_admin_action
     UserType.MODERATOR -> Strings.user_type_moderator_action
-    UserType.ACCESS_MANAGER -> Strings.user_type_access_manager_action
+    UserType.ACCESS_MANAGER -> Strings.access_control
   }

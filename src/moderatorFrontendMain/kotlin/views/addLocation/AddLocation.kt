@@ -7,6 +7,7 @@ import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*
+import react.dom.br
 import react.dom.div
 import util.Strings
 import util.get
@@ -15,9 +16,7 @@ import views.common.spacer
 import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
-import webcore.materialUI.muiButton
-import webcore.materialUI.textField
-import webcore.materialUI.withStyles
+import webcore.materialUI.*
 import kotlin.js.json
 
 interface AddLocationProps : RProps {
@@ -34,6 +33,7 @@ interface AddLocationState : RState {
   var locationCreationInProgress: Boolean
   var locationTextFieldValue: String
   var locationTextFieldError: String
+  var accessControlEnabled: Boolean
 }
 
 class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
@@ -42,13 +42,14 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     locationCreationInProgress = false
     locationTextFieldError = ""
     locationTextFieldValue = (props.config as? Config.Edit)?.location?.name ?: ""
+    accessControlEnabled = false
   }
 
   private fun createNewLocation() = launch {
     setState { locationCreationInProgress = true }
     val response = NetworkManager.post<String>(
-        url = "$apiBase/location/create",
-        params = json("name" to state.locationTextFieldValue)
+      url = "$apiBase/location/create",
+      params = json("name" to state.locationTextFieldValue)
     )
     setState {
       locationCreationInProgress = false
@@ -60,8 +61,8 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     setState { locationCreationInProgress = true }
     val locationId = (props.config as Config.Edit).location.id
     val response = NetworkManager.post<String>(
-        url = "$apiBase/location/$locationId/edit",
-        params = json("name" to state.locationTextFieldValue)
+      url = "$apiBase/location/$locationId/edit",
+      params = json("name" to state.locationTextFieldValue)
     )
     setState {
       locationCreationInProgress = false
