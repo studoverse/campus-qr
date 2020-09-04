@@ -66,6 +66,7 @@ local.properties
 .idea/modules/
 .idea/shelf/
 .idea/artifacts/
+.idea/libraries/
 
 # Compiled class file
 *.class
