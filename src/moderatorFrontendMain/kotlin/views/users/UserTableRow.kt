@@ -8,6 +8,7 @@ import materialMenu
 import react.*
 import util.Strings
 import util.get
+import util.localizedString
 import webcore.MbSnackbarProps
 import webcore.NetworkManager
 import webcore.extensions.launch
@@ -89,10 +90,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
         +props.config.user.email
       }
       mTableCell {
-        +when (UserType.valueOf(props.config.user.type)) {
-          UserType.ADMIN -> Strings.user_type_admin.get()
-          UserType.MODERATOR -> Strings.user_type_moderator.get()
-        }
+        +UserType.valueOf(props.config.user.type).localizedString.get()
       }
       mTableCell {
         +props.config.user.firstLoginDate

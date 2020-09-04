@@ -13,15 +13,13 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
+import util.localizedString
 import views.common.spacer
 import views.users.AddUserProps.Config
 import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
-import webcore.materialUI.muiButton
-import webcore.materialUI.switch
-import webcore.materialUI.textField
-import webcore.materialUI.withStyles
+import webcore.materialUI.*
 import kotlin.js.json
 
 interface AddUserProps : RProps {
@@ -64,7 +62,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userType = (props.config as? Config.Edit)?.user?.type?.let { UserType.valueOf(it) } ?: UserType.MODERATOR
+    userType = (props.config as? Config.Edit)?.user?.type?.let { UserType.valueOf(it) } ?: UserType.ACCESS_MANAGER
   }
 
   private fun createNewUser() = launch {
@@ -223,17 +221,33 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     if (UserType.valueOf(props.currentUser.type) == UserType.ADMIN) {
       div(classes = props.classes.userTypeSwitch) {
-        +Strings.user_type_moderator.get()
-        switch {
-          attrs.checked = state.userType == UserType.ADMIN
-          attrs.color = "default"
-          attrs.onChange = { _, checked ->
-            setState { userType = if (checked) UserType.ADMIN else UserType.MODERATOR }
+        formControl {
+          attrs.fullWidth = true
+          inputLabel {
+            +Strings.user_permission.get()
           }
-          // Don't allow setting own user to moderator for better UX
-          attrs.disabled = (props.config as? Config.Edit)?.user?.id == props.currentUser.id
+          attrs.variant = "outlined"
+          muiSelect {
+            attrs.value = state.userType.toString()
+            attrs.onChange = { event ->
+              val value = event.target.value as String
+              setState {
+                userType = UserType.valueOf(value)
+              }
+            }
+            attrs.variant = "outlined"
+            attrs.label = Strings.user_permission.get()
+
+            UserType.values().forEach { userType ->
+              menuItem {
+                attrs.value = userType.toString()
+                attrs.disabled = userType != UserType.ADMIN &&
+                    (props.config as? Config.Edit)?.user?.id == props.currentUser.id
+                +userType.localizedString.get()
+              }
+            }
+          }
         }
-        +Strings.user_type_admin.get()
       }
     }
 

@@ -169,6 +169,8 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       +Strings.user_administration_hint1.get()
       br { }
       +Strings.user_administration_hint2.get()
+      br { }
+      +Strings.user_administration_hint3.get()
     }
 
     div(props.classes.progressHolder) {

@@ -1,5 +1,6 @@
 package util
 
+import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.utils.LocalizedString
 
 object Strings {
@@ -134,7 +135,7 @@ object Strings {
 
   val report = LocalizedString(
     "Report Infection",
-    "Infektion Melden"
+    "Infektion melden"
   )
 
   val report_email = LocalizedString(
@@ -294,15 +295,20 @@ object Strings {
 
   val user_management = LocalizedString(
     "User Management",
-    "User Verwaltung"
+    "Userverwaltung"
   )
 
   val user_administration_hint1 = LocalizedString(
-    "Moderators can list and edit locations, download check-in data and report infections.",
-    "Moderatoren können Orte auflisten und bearbeiten, Check-In-Daten herunterladen und Infektionen melden."
+    "Access managers can view, assign and edit access permissions to existing locations to enable a university access control system.",
+    "Zugangsverwalter können Zugangsberechtigungen zu bestehenden Orten einsehen, vergeben und bearbeiten, um eine Zugangskontrolle an der Hochschule zu ermöglichen."
   )
 
   val user_administration_hint2 = LocalizedString(
+    "Moderators can additionally list and edit locations, download check-in data and report infections.",
+    "Moderatoren können zusätzlich Orte auflisten und bearbeiten, Check-In-Daten herunterladen und Infektionen melden."
+  )
+
+  val user_administration_hint3 = LocalizedString(
     "Administrators can additionally create, delete and edit users (moderators and other administrators).",
     "Administratoren können zusätzlich Benutzer (Moderatoren und weitere Administratoren) anlegen, löschen und bearbeiten."
   )
@@ -343,23 +349,43 @@ object Strings {
   )
 
   val user_created = LocalizedString(
-      "User successfully created",
-      "User erfolgreich erstellt"
+    "User successfully created",
+    "User erfolgreich erstellt"
   )
 
   val user_already_exists = LocalizedString(
-      "User with this email already exists.",
-      "Ein User mit dieser E-Mail Addresse existiert bereits."
+    "User with this email already exists.",
+    "Ein User mit dieser E-Mail Addresse existiert bereits."
   )
 
   val user_type_admin = LocalizedString(
-      "Administrator",
-      "Administrator"
+    "Administrator",
+    "Administrator"
+  )
+
+  val user_type_admin_action = LocalizedString(
+    "Administration",
+    "Administration"
   )
 
   val user_type_moderator = LocalizedString(
-      "Moderator",
-      "Moderator"
+    "Moderator",
+    "Moderator"
+  )
+
+  val user_type_moderator_action = LocalizedString(
+    "Moderation",
+    "Moderation"
+  )
+
+  val user_type_access_manager = LocalizedString(
+    "Access manager",
+    "Zugangsverwalter"
+  )
+
+  val user_type_access_manager_action = LocalizedString(
+    "Access control",
+    "Zugangskontrolle"
   )
 
   val user_sso_info = LocalizedString(
@@ -390,7 +416,7 @@ object Strings {
 
   val admin_info = LocalizedString(
     "App Configuration",
-    "App Konfiguration"
+    "App-Konfiguration"
   )
 
   val admin_info_configuration = LocalizedString(
@@ -413,5 +439,18 @@ object Strings {
         "Bitte kontaktieren Sie das Studo Team für weitere Unterstützung oder falls Sie weitere " +
         "Konfigurationsparameter wünschen."
   )
-
 }
+
+val UserType.localizedString: LocalizedString
+  get() = when (this) {
+    UserType.ADMIN -> Strings.user_type_admin
+    UserType.MODERATOR -> Strings.user_type_moderator
+    UserType.ACCESS_MANAGER -> Strings.user_type_access_manager
+  }
+
+val UserType.localizedStringAction: LocalizedString
+  get() = when (this) {
+    UserType.ADMIN -> Strings.user_type_admin_action
+    UserType.MODERATOR -> Strings.user_type_moderator_action
+    UserType.ACCESS_MANAGER -> Strings.user_type_access_manager_action
+  }

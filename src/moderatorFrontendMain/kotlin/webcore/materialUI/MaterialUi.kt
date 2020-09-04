@@ -1309,6 +1309,7 @@ interface SelectProps : RProps {
   var defaultValue: String
   var value: String
   var variant: String
+  var label: String
 }
 
 val muiSelect: RClass<SelectProps> = importedSelect.default

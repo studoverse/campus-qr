@@ -51,6 +51,14 @@ interface AppState : RState {
 
 class App : RComponent<AppProps, AppState>() {
 
+  private val accessManagerSideDrawerItems = listOf(
+    SideDrawerItem(
+      label = Url.LIST_LOCATIONS.title, // TODO change 2x to access management
+      icon = listIcon,
+      url = Url.LIST_LOCATIONS
+    ),
+  )
+
   private val moderatorSideDrawerItems = listOf(
     SideDrawerItem(
       label = Url.LIST_LOCATIONS.title,
@@ -257,6 +265,7 @@ class App : RComponent<AppProps, AppState>() {
                   renderAppDrawerItems(AppDrawerItemsProps.Config(
                     userData = state.userData,
                     currentAppRoute = state.currentAppRoute,
+                    accessManagerSideDrawerItems = if (state.loadingUserData) emptyList() else accessManagerSideDrawerItems,
                     moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
                     adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
                     loading = false,
