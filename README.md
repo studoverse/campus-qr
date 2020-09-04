@@ -36,7 +36,7 @@ Employees of a university can login, create locations, report infections to noti
 # Setup
 The following environment variables need to be configured:
 * `PORT` (default: `8070`): Port where the web application will listen to
-* `HOST` (default: `0.0.0.0`): By default the web application is accessible from every host. Set it to `127.0.0.1` if the web application should be accessible only locally.
+* `HOST` (default: `0.0.0.0`): By default the web application is accessible from every host. Set it to `127.0.0.1` if the web application should be accessible from every host.
 * `MONGO_URI` (default: `mongodb://localhost:27017/campus-qr)`: Database URI to store further configuration, locations, check-ins and moderation users. Make sure that the database is either not accessible from another host or provide authentication parameters in the URI.
 
 Start the application by `./gradlew run` or build the application with `.gradlew stage` to run it with `java -jar build/libs/Server.jar`.
