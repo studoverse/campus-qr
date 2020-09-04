@@ -75,8 +75,7 @@ suspend fun ApplicationCall.visitLocation() {
   // Clients can send a custom visit date
   // This is useful for offline dispatching, we want to save the date of the visit and not when the
   // request arrives on the server.
-  val visitDate = params["date"]
-    ?.let { Date(it.toLong()) }
+  val visitDate = params["date"]?.let { Date(it.toLong()) }
 
   // Don't allow dates older than 7 days
   if (visitDate != null && visitDate > now.addDays(days = -7)) {
