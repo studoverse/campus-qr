@@ -423,6 +423,11 @@ object Strings {
     "Notiz"
   )
 
+  val access_control_reason = LocalizedString(
+      "Reason",
+      "Grund"
+  )
+
   val user_sso_info = LocalizedString(
     "Single Sign On",
     "Single Sign On"

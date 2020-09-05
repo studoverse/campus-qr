@@ -20,7 +20,7 @@ suspend fun getAccess(id: String): BackendAccess? = runOnDb {
 private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAccessManagement(
     id = _id,
     locationName = location.name,
-    allowedEmails = allowedEmails,
+    allowedEmails = allowedEmails.toTypedArray(),
     note = note
 )
 
@@ -37,9 +37,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
     respondForbidden(); return
   }
 
-  val params = receiveJsonMap()
-
-  val locationId = params["locationId"]
+  val locationId = parameters["locationId"]
 
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
@@ -82,7 +80,8 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
     _id = randomId()
     createdBy = user._id
     createdDate = Date()
-    allowedEmails = newAccessPayload.allowedEmails
+    locationId = newAccessPayload.locationId
+    allowedEmails = newAccessPayload.allowedEmails.toList()
     dateRanges = newAccessPayload.dateRanges.map { DateRange(it) }
     note = newAccessPayload.note
     reason = newAccessPayload.reason
@@ -155,7 +154,7 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
           BackendAccess::locationId setTo locationId
         }
         if (allowedEmails != null) {
-          BackendAccess::allowedEmails setTo allowedEmails
+          BackendAccess::allowedEmails setTo allowedEmails.toList()
         }
         if (dateRanges != null) {
           BackendAccess::dateRanges setTo dateRanges.map { DateRange(it) }

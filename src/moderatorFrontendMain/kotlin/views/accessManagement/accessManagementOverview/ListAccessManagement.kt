@@ -1,5 +1,6 @@
 package views.accessManagement.accessManagementOverview
 
+import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.ClientAccessManagement
 import kotlinext.js.js
@@ -12,6 +13,7 @@ import views.accessManagement.renderAccessManagementDetails
 import views.common.genericErrorView
 import views.common.networkErrorView
 import webcore.MbSnackbarProps
+import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.materialUI.*
 import webcore.mbMaterialDialog
@@ -41,26 +43,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 
   private fun fetchAccessManagementList() = launch {
     setState { loadingAccessManagementList = true }
-    //val response = NetworkManager.get<Array<ClientAccessManagement>>("$apiBase/accessManagement/list")
-    val response: List<ClientAccessManagement> = listOf(
-      ClientAccessManagement(
-        id = "kdsfksdf",
-        locationName = "Room 1",
-        allowedEmails = listOf("ziga.veho@gmail.com", "janez.novak@outlook.si"),
-        note = "PE Class"
-      ),
-      ClientAccessManagement(
-        id = "kdsfksdgwef",
-        locationName = "Room 2",
-        allowedEmails = listOf(
-          "ziga.veho@gmail.com",
-          "janez.novak@outlook.si",
-          "ziga.veho@gmail.com",
-          "janez.novak@outlook.si"
-        ),
-        note = "Biology for Students II"
-      )
-    )
+    val response = NetworkManager.get<Array<ClientAccessManagement>>("$apiBase/access/list")
     setState {
       accessManagementList = response?.toList()
       loadingAccessManagementList = false

@@ -13,12 +13,15 @@ import react.dom.form
 import util.Strings
 import util.get
 import views.accessManagement.AccessManagementDetailsProps.Config
+import views.common.renderLinearProgress
 import views.common.spacer
 import webcore.*
-import webcore.extensions.*
+import webcore.extensions.addHours
+import webcore.extensions.inputValue
+import webcore.extensions.launch
+import webcore.extensions.with
 import webcore.materialUI.*
 import kotlin.js.Date
-import kotlin.js.Json
 
 interface AccessManagementDetailsProps : RProps {
   sealed class Config {
@@ -36,11 +39,10 @@ interface AccessManagementDetailsState : RState {
   var locationNameToLocationMap: Map<String, ClientLocation>
   var selectedLocation: ClientLocation?
   var accessControlNoteTextFieldValue: String
+  var accessControlReasonTextFieldValue: String
   var personIdentificationTextFieldValue: String
   var permittedPeopleList: List<String>
-
-  var fromDate: Date
-  var toDate: Date
+  var timeSlots: List<ClientDateRange>
 }
 
 class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManagementDetailsProps, AccessManagementDetailsState>(props) {
@@ -50,12 +52,17 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     locationNameToLocationMap = emptyMap()
     selectedLocation = null
     accessControlNoteTextFieldValue = ""
+    accessControlReasonTextFieldValue = ""
     personIdentificationTextFieldValue = ""
     permittedPeopleList = emptyList()
 
-    val now = Date()
-    fromDate = now.addHours(1).with(minute = 0)
-    toDate = fromDate.addHours(1)
+    val fromDate = Date().addHours(1).with(minute = 0)
+    timeSlots = listOf(
+        ClientDateRange(
+            from = fromDate.getTime(),
+            to = fromDate.addHours(2).getTime()
+        )
+    )
   }
 
   override fun componentDidMount() {
@@ -65,12 +72,11 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   private fun fetchLocations() = launch {
     setState { showProgress = true }
     val response = NetworkManager.get<Array<ClientLocation>>("$apiBase/location/list")
-    console.log(response)
     setState {
       if (response != null) {
         locationNameToLocationMap = response.associateBy { it.name }
       } else {
-        // TODO: Show network error
+        // TODO: Show error
       }
       showProgress = false
     }
@@ -82,15 +88,11 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         url = "$apiBase/access/create",
         json = JSON.stringify(
             NewAccess(
-                allowedEmails = state.permittedPeopleList,
-                dateRanges = listOf(
-                    ClientDateRange(
-                        Date().getTime(),
-                        Date().getTime()
-                    )
-                ),
+                locationId = state.selectedLocation!!.id,
+                allowedEmails = state.permittedPeopleList.toTypedArray(),
+                dateRanges = state.timeSlots.toTypedArray(),
                 note = state.accessControlNoteTextFieldValue,
-                reason = ""
+                reason = state.accessControlReasonTextFieldValue
             )
         )
     )
@@ -107,16 +109,11 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         url = "$apiBase/access/$accessManagementId/edit",
         json = JSON.stringify(
             EditAccess(
-                locationId = null, // TODO: Where am I supposed to get location id from?
-                allowedEmails = state.permittedPeopleList,
-                dateRanges = listOf(
-                    ClientDateRange(
-                        Date().getTime(),
-                        Date().getTime()
-                    )
-                ),
+                locationId = state.selectedLocation?.id,
+                allowedEmails = state.permittedPeopleList.toTypedArray(),
+                dateRanges = state.timeSlots.toTypedArray(),
                 note = state.accessControlNoteTextFieldValue,
-                reason = "" // TODO: What is reason?
+                reason = state.accessControlReasonTextFieldValue
             )
         )
     )
@@ -127,6 +124,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 
   private fun validateInput(): Boolean {
+    // TODO: Validation
     /*
     if (state.locationTextFieldValue.isEmpty()) {
       setState {
@@ -134,19 +132,20 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       }
       return false
     }
-
-     */
+    */
     return true
   }
 
   override fun RBuilder.render() {
+    renderLinearProgress(state.showProgress)
 
+    console.log("locationmap", state.locationNameToLocationMap)
     muiAutocomplete {
       attrs.disabled = props.config is Config.Details
       attrs.value = state.selectedLocation?.name ?: ""
-      attrs.onChange = { _, target: Array<String>?, _ ->
+      attrs.onChange = { _, target: String?, _ ->
         setState {
-          selectedLocation = target?.first()?.let { locationNameToLocationMap[it] }
+          selectedLocation = target?.let { locationNameToLocationMap[it] }
         }
       }
       attrs.openOnFocus = true
@@ -184,45 +183,115 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       }
     }
 
+    spacer(16)
+
+    textField {
+      attrs.fullWidth = true
+      attrs.variant = "outlined"
+      attrs.label = Strings.access_control_reason.get()
+      attrs.value = state.accessControlReasonTextFieldValue
+      attrs.inputProps = js {
+        maxLength = 40 // Make sure names stay printable
+      }
+      attrs.onChange = { event: Event ->
+        val value = event.inputValue
+        setState {
+          accessControlReasonTextFieldValue = value
+        }
+      }
+    }
+
     spacer(24)
 
-    typography {
-      +"Time slots"
+    div(GlobalCss.flex) {
+      typography {
+        +"Time slots"
+      }
+      muiTooltip {
+        attrs.title = "Add a time slot"
+        iconButton {
+          attrs.classes = js {
+            root = props.classes.addTimeSlotButton
+          }
+          addIcon {}
+          attrs.onClick = {
+            setState {
+              timeSlots = (timeSlots + ClientDateRange(timeSlots.last().from, timeSlots.last().to))
+            }
+          }
+        }
+      }
     }
+
     spacer(12)
-    gridContainer(GridDirection.ROW, alignItems = "center", spacing = 1) {
-      gridItem(GridSize(xs = 6)) {
-        muiDateTimePicker {
-          attrs.format = "dd.MM.yyyy, hh:mm"
-          attrs.ampm = false
-          attrs.inputVariant = "outlined"
-          attrs.fullWidth = true
-          attrs.label = "From"
-          attrs.value = state.fromDate
-          attrs.onChange = {
-            setState {
-              fromDate = it.toJSDate()
+    state.timeSlots.forEach { clientDateRange ->
+      gridContainer(GridDirection.ROW, alignItems = "center", spacing = 1) {
+        gridItem(GridSize(xs = 12, sm = true)) {
+          muiDateTimePicker {
+            attrs.format = "dd.MM.yyyy, hh:mm"
+            attrs.ampm = false
+            attrs.inputVariant = "outlined"
+            attrs.fullWidth = true
+            attrs.label = "From"
+            attrs.value = Date(clientDateRange.from)
+            attrs.onChange = { selectedDateTime ->
+              setState {
+                timeSlots = timeSlots.map { timeSlot ->
+                  if (timeSlot == clientDateRange) {
+                    ClientDateRange(
+                        from = selectedDateTime.toJSDate().getTime(),
+                        to = clientDateRange.to
+                    )
+                  } else timeSlot
+                }
+              }
+            }
+          }
+        }
+        gridItem(GridSize(xs = 12, sm = true)) {
+          muiDateTimePicker {
+            attrs.format = "dd.MM.yyyy, hh:mm"
+            attrs.ampm = false
+            attrs.inputVariant = "outlined"
+            attrs.fullWidth = true
+            attrs.label = "To"
+            attrs.value = Date(clientDateRange.to)
+            attrs.onChange = { selectedDateTime ->
+              setState {
+                timeSlots = timeSlots.map { timeSlot ->
+                  if (timeSlot == clientDateRange) {
+                    ClientDateRange(
+                        from = clientDateRange.from,
+                        to = selectedDateTime.toJSDate().getTime()
+                    )
+                  } else timeSlot
+                }
+              }
+            }
+          }
+        }
+        gridItem(GridSize(xs = 1)) {
+          muiTooltip {
+            attrs.title = "Remove this timeslot"
+            iconButton {
+              attrs.classes = js {
+                root = props.classes.removeTimeSlotButton
+              }
+              // At least one time slot must be set
+              attrs.disabled = state.timeSlots.count() == 1
+              closeIcon {}
+              attrs.onClick = {
+                setState {
+                  timeSlots = timeSlots.filter { it != clientDateRange }
+                }
+              }
             }
           }
         }
       }
-      gridItem(GridSize(xs = 6)) {
-        muiDateTimePicker {
-          attrs.format = "dd.MM.yyyy, hh:mm"
-          attrs.ampm = false
-          attrs.inputVariant = "outlined"
-          attrs.fullWidth = true
-          attrs.label = "To"
-          attrs.value = state.toDate
-          attrs.onChange = {
-            setState {
-              toDate = it.toJSDate()
-            }
-          }
-        }
-      }
+      spacer(24)
     }
-    spacer(24)
+
     typography {
       +"Permitted people"
     }
@@ -340,6 +409,8 @@ interface AddLocationClasses {
   // Keep in sync with AddLocationStyle!
   var addButton: String
   var form: String
+  var addTimeSlotButton: String
+  var removeTimeSlotButton: String
 }
 
 private val AddLocationStyle = { theme: dynamic ->
@@ -350,6 +421,14 @@ private val AddLocationStyle = { theme: dynamic ->
     }
     form = js {
       width = "100%"
+    }
+    addTimeSlotButton = js {
+      padding = 0
+      marginLeft = 8
+    }
+    removeTimeSlotButton = js {
+      marginLeft = 4
+      marginRight = 8
     }
   }
 }

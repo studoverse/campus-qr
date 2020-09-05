@@ -46,7 +46,7 @@ class ClientUser(
 class ClientAccessManagement(
   val id: String,
   val locationName: String,
-  val allowedEmails: List<String>,
+  val allowedEmails: Array<String>,
   val note: String
 ) : ClientPayload
 
@@ -56,16 +56,17 @@ class ClientDateRange(
 ) : ClientPayload
 
 class NewAccess(
-  val allowedEmails: List<String>,
-  val dateRanges: List<ClientDateRange>,
+  val locationId: String,
+  val allowedEmails: Array<String>,
+  val dateRanges: Array<ClientDateRange>,
   val note: String,
   val reason: String
 ) : ClientPayload
 
 class EditAccess(
   val locationId: String? = null,
-  val allowedEmails: List<String>? = null,
-  val dateRanges: List<ClientDateRange>? = null,
+  val allowedEmails: Array<String>? = null,
+  val dateRanges: Array<ClientDateRange>? = null,
   val note: String? = null,
   val reason: String? = null
 ) : ClientPayload

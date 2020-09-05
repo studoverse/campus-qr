@@ -1219,7 +1219,7 @@ interface AutocompleteProps<T> : RProps {
   var loadingText: String // def: 'Loading...'
   var multiple: Boolean
   var noOptionsText: String // def: 'No options'
-  var onChange: (event: dynamic, value: Array<T>, reason: String) -> Unit // reason: create-option", "select-option", "remove-option", "blur", "clear"
+  var onChange: (event: dynamic, value: dynamic, reason: String) -> Unit // reason: create-option", "select-option", "remove-option", "blur", "clear"
   var onClose: (event: dynamic, reason: String) -> Unit // reason: "toggleInput" | "escape" | "select-option" | "blur"
   var onHighlightChange: (event: dynamic, option: T, reason: String) -> Unit // reason: "keyboard", "auto", "mouse"
   var onInputChange: (event: dynamic, value: String, reason: String) -> Unit // reason: "input" | "reset" | "clear"
