@@ -5,12 +5,14 @@ import apiBase
 import app.baseUrl
 import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.LocationVisitData
+import com.studo.campusqr.common.accessTypeEnum
 import kotlinx.browser.window
 import materialMenu
 import react.*
 import util.Strings
 import util.fileDownload
 import util.get
+import util.localizedString
 import views.locations.AddLocationProps
 import views.locations.renderAddLocation
 import webcore.NetworkManager
@@ -72,6 +74,9 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
       }
       mTableCell {
         +props.config.location.checkInCount.toString()
+      }
+      mTableCell {
+        +props.config.location.accessTypeEnum.localizedString.get()
       }
       mTableCell {
         if (state.working) {

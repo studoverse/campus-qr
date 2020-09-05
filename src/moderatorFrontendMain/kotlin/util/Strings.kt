@@ -1,5 +1,6 @@
 package util
 
+import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.utils.LocalizedString
 
@@ -89,6 +90,11 @@ object Strings {
     "Bezeichnung"
   )
 
+  val location_access_type = LocalizedString(
+    "Access Type",
+    "Zugangsart"
+  )
+
   val location_check_in_count = LocalizedString(
     "Total check ins",
     "Gesamtanzahl der Check-Ins"
@@ -117,6 +123,16 @@ object Strings {
   val location_no_locations_title = LocalizedString(
     "No locations yet",
     "Noch keine Orte"
+  )
+
+  val location_access_type_free = LocalizedString(
+    "Free",
+    "Frei"
+  )
+
+  val location_access_type_restricted = LocalizedString(
+    "Restricted",
+    "Beschränkt"
   )
 
   val location_no_locations_subtitle = LocalizedString(
@@ -530,4 +546,10 @@ val UserType.localizedStringAction: LocalizedString
     UserType.ADMIN -> Strings.user_type_admin_action
     UserType.MODERATOR -> Strings.user_type_moderator_action
     UserType.ACCESS_MANAGER -> Strings.access_control
+  }
+
+val LocationAccessType.localizedString: LocalizedString
+  get() = when (this) {
+    LocationAccessType.FREE -> Strings.location_access_type_free
+    LocationAccessType.RESTRICTED -> Strings.location_access_type_restricted
   }

@@ -55,10 +55,10 @@ class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
   var accessType = LocationAccessType.FREE
 
   override fun toClientClass(language: String) = ClientLocation(
-      id = _id,
-      name = name,
-      checkInCount = checkInCount,
-      accessType = accessType
+    id = _id,
+    name = name,
+    checkInCount = checkInCount,
+    accessType = accessType.name
   )
 }
 

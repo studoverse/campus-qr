@@ -162,11 +162,15 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
   val params = receiveJsonMap()
 
   val newName = params["name"]?.trim()
+  val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
 
   runOnDb {
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal locationId) {
       if (newName != null) {
         BackendLocation::name setTo newName
+      }
+      if (accessType != null) {
+        BackendLocation::accessType setTo accessType
       }
     }
   }

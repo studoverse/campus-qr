@@ -4,11 +4,14 @@ package com.studo.campusqr.common
 interface ClientPayload
 
 class ClientLocation(
-    val id: String,
-    val name: String,
-    val checkInCount: Int,
-    val accessType: LocationAccessType
+  val id: String,
+  val name: String,
+  val checkInCount: Int,
+  val accessType: String
 ) : ClientPayload
+
+val ClientLocation.accessTypeEnum get() = LocationAccessType.valueOf(accessType)
+
 
 class UserData : ClientPayload {
   lateinit var appName: String
