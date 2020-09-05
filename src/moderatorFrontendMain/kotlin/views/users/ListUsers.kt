@@ -22,7 +22,7 @@ interface ListUsersProps : RProps {
 }
 
 interface ListUsersState : RState {
-  var userList: List<ClientUser>
+  var userList: List<ClientUser>?
   var showAddUserDialog: Boolean
   var showSsoInfoDialog: Boolean
   var loadingUserList: Boolean
@@ -32,7 +32,7 @@ interface ListUsersState : RState {
 class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 
   override fun ListUsersState.init() {
-    userList = emptyList()
+    userList = null
     showAddUserDialog = false
     showSsoInfoDialog = false
     loadingUserList = false
@@ -43,7 +43,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     setState { loadingUserList = true }
     val response = NetworkManager.get<Array<ClientUser>>("$apiBase/user/list")
     setState {
-      userList = response?.toList() ?: emptyList()
+      userList = response?.toList()
       loadingUserList = false
     }
   }
@@ -179,7 +179,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       }
     }
 
-    if (state.userList.isNotEmpty()) {
+    if (state.userList?.isNotEmpty() == true) {
       mTable {
         mTableHead {
           mTableRow {
@@ -191,7 +191,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
           }
         }
         mTableBody {
-          state.userList.forEach { user ->
+          state.userList!!.forEach { user ->
             renderUserTableRow(
               UserTableRowProps.Config(user, onEditFinished = { response ->
                 handleCreateOrAddUserResponse(response)
@@ -201,8 +201,10 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
           }
         }
       }
-    } else if (!state.loadingUserList) {
+    } else if (state.userList == null && !state.loadingUserList) {
       networkErrorView()
+    } else if (!state.loadingUserList) {
+      throw Exception("At least one user must exist")
     }
   }
 }

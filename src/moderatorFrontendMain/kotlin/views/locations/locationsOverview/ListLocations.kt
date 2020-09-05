@@ -9,9 +9,9 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
-import views.locations.AddLocationProps.Config
 import views.common.genericErrorView
 import views.common.networkErrorView
+import views.locations.AddLocationProps.Config
 import views.locations.LocationTableRowProps
 import views.locations.renderAddLocation
 import views.locations.renderLocationTableRow
@@ -45,7 +45,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     setState { loadingLocationList = true }
     val response = NetworkManager.get<Array<ClientLocation>>("$apiBase/location/list")
     setState {
-      locationList = response?.toList() ?: emptyList()
+      locationList = response?.toList()
       loadingLocationList = false
     }
   }

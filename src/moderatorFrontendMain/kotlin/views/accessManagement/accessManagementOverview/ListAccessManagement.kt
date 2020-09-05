@@ -62,7 +62,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
       )
     )
     setState {
-      accessManagementList = response?.toList() ?: emptyList()
+      accessManagementList = response?.toList()
       loadingAccessManagementList = false
     }
   }
