@@ -13,6 +13,10 @@ import com.studo.katerbase.inArray
 import io.ktor.application.*
 import java.util.*
 
+suspend fun getAccess(id: String): BackendAccess? = runOnDb {
+  getCollection<BackendAccess>().findOne(BackendAccess::_id equal id)
+}
+
 suspend fun ApplicationCall.listAccess() {
   val user = getUser()
 
@@ -62,6 +66,40 @@ suspend fun ApplicationCall.createAccess() {
     dateRanges = newAccessPayload.dateRanges.map { DateRange(it) }
     note = newAccessPayload.note
     reason = newAccessPayload.reason
+  }
+
+  runOnDb {
+    getCollection<BackendAccess>().insertOne(newAccess, upsert = false)
+  }
+
+  respondOk()
+}
+
+suspend fun ApplicationCall.deleteAccess() {
+  val user = getUser()
+  val accessId = parameters["id"]!!
+
+  val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+
+  if (user._id != access.createdBy && !user.isModerator) {
+    respondForbidden()
+    return
+  }
+
+  runOnDb {
+    getCollection<BackendAccess>().deleteOne(BackendAccess::_id equal access._id)
+  }
+
+  respondOk()
+}
+
+suspend fun ApplicationCall.duplicateAccess() {
+  getUser()
+  val accessId = parameters["id"]!!
+
+  val oldAccess = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+  val newAccess = oldAccess.apply {
+    _id = randomId()
   }
 
   runOnDb {

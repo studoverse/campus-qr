@@ -108,6 +108,11 @@ suspend fun main() {
       route("access") {
         post("list") { call.listAccess() }
         post("create") { call.createAccess() }
+
+        route("{id}") {
+          get("delete") { call.deleteAccess() }
+          get("duplicate") { call.duplicateAccess() }
+        }
       }
       post("report/list") { call.returnReportData() }
       route("admin") {

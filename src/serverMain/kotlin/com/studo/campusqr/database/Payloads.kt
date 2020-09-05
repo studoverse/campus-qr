@@ -33,6 +33,9 @@ class BackendUser : MongoMainEntry(), ClientPayloadable<ClientUser> {
         "Noch nicht eingeloggt"
       ).get(language)
   )
+
+  val isAdmin get() = type == UserType.ADMIN
+  val isModerator get() = type == UserType.MODERATOR || isAdmin
 }
 
 class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
