@@ -73,6 +73,9 @@ fun HTML.headTemplate(subtitle: String?, js: String, css: String, async: Boolean
     styleLink(url = "https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400&display=swap")
     styleLink(url = "/static/normalize.min.css")
     styleLink(url = "/static/$css")
+    script(src = "/static/userFrontend/anime.js") { // Library
+      this.async = async
+    }
     script(src = "/static/$js") { // Library
       this.async = async
     }

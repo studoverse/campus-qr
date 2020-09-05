@@ -1,7 +1,8 @@
 let locationId = new URLSearchParams(window.location.search).get("l")
 
 function onLoad() {
-  if (window.location.search.includes("s=1")) {
+  if (window.location.search.includes("s=1")) { // If "just scanned"
+    // Remove "just scanned" parameter from url and replace state so the user cannot check in again by just reloading or going back
     let url = window.location.href.split(window.location.search)[0];
     window.history.replaceState(null, null, url + "?l=locationName");
   } else {
@@ -59,6 +60,7 @@ function onLoad() {
             // Success
             window.localStorage.setItem("email", email);
             form.className += " hidden";
+            document.getElementById("result-ok-id").innerText = email
             resultOk.className = resultOk.className.replace("hidden", "");
           } else {
             // Failure
