@@ -58,14 +58,14 @@ class LdapAuth(val ldapUrl: String) : AuthProvider {
       val user = runOnDb {
         getCollection<BackendUser>().findOneOrInsert(BackendUser::_id equal userId) {
           BackendUser(
-            userId = userId,
-            email = email,
-            name = email
-              .substringBefore("@")
-              .replace(".", " ")
-              .split(" ")
-              .joinToString(separator = " ", transform = { it.capitalize() }),
-            type = UserType.MODERATOR // TODO
+              userId = userId,
+              email = email,
+              name = email
+                  .substringBefore("@")
+                  .replace(".", " ")
+                  .split(" ")
+                  .joinToString(separator = " ", transform = { it.capitalize() }),
+              type = UserType.ACCESS_MANAGER
           )
         }
       }
