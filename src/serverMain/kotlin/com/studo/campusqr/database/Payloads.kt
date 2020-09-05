@@ -11,7 +11,7 @@ import java.util.*
  * These classes are allowed to have additional functions and computed properties.
  */
 interface ClientPayloadable<out T : ClientPayload> {
-  fun toClientClass(language: String = "en"): T
+  fun toClientClass(language: String): T
 }
 
 class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
