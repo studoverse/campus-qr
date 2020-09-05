@@ -17,6 +17,19 @@ suspend fun getAccess(id: String): BackendAccess? = runOnDb {
   getCollection<BackendAccess>().findOne(BackendAccess::_id equal id)
 }
 
+private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAccessManagement(
+    id = _id,
+    locationName = location.name,
+    allowedEmails = allowedEmails,
+    note = note
+)
+
+private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocation> = runOnDb {
+  getCollection<BackendLocation>()
+      .find(BackendLocation::_id inArray ids)
+      .associateBy { it._id }
+}
+
 suspend fun AuthenticatedApplicationCall.listAccess() {
   val params = receiveJsonMap()
 
@@ -35,20 +48,17 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
     }
   }
 
-  val locations = runOnDb {
-    getCollection<BackendLocation>().find(
-      BackendLocation::_id inArray if (locationId != null) listOf(locationId) else accessPayloads.map { it.locationId }
-    ).associateBy { it._id }
-  }
+  val locations = getLocationsMap(if (locationId != null) listOf(locationId) else accessPayloads.map { it.locationId })
+  respondObject(accessPayloads.map { it.toClientClass(locations.getValue(it.locationId)) })
+}
 
-  respondObject(accessPayloads.map { access ->
-    ClientAccessManagement(
-      id = access._id,
-      locationName = locations.getValue(access.locationId).name,
-      allowedEmails = access.allowedEmails,
-      note = access.note
-    )
-  })
+suspend fun AuthenticatedApplicationCall.getAccess() {
+  val accessId = parameters["id"]!!
+
+  val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+  val location = getLocationsMap(listOf(access.locationId)).getValue(access.locationId)
+
+  respondObject(access.toClientClass(location))
 }
 
 suspend fun AuthenticatedApplicationCall.createAccess() {

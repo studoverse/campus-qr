@@ -111,6 +111,7 @@ suspend fun main() {
         post("create") { call.getAuthenticatedCall()?.createAccess() }
 
         route("{id}") {
+          get("/") { call.getAuthenticatedCall()?.getAccess() }
           get("delete") { call.getAuthenticatedCall()?.deleteAccess() }
           get("duplicate") { call.getAuthenticatedCall()?.duplicateAccess() }
           post("edit") { call.getAuthenticatedCall()?.editAccess() }
