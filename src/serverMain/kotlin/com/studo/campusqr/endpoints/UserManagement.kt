@@ -4,6 +4,8 @@ import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.UserType.ADMIN
 import com.studo.campusqr.common.UserType.MODERATOR
 import com.studo.campusqr.database.BackendUser
+import com.studo.campusqr.database.MainDatabase
+import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.Algorithm
 import com.studo.campusqr.utils.getSessionToken
@@ -65,6 +67,7 @@ suspend fun ApplicationCall.deleteUser() {
   val userId = params.getValue("userId")
 
   runOnDb {
+    MainDatabase.getCollection<SessionToken>().deleteMany(SessionToken::userId equal userId)
     getCollection<BackendUser>().deleteOne(BackendUser::_id equal userId)
   }
 

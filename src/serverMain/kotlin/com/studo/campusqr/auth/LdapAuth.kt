@@ -2,6 +2,8 @@ package com.studo.campusqr.auth
 
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.database.BackendUser
+import com.studo.campusqr.database.MainDatabase
+import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.serverScope
 import com.studo.katerbase.MongoMainEntry
@@ -73,7 +75,7 @@ class LdapAuth(val ldapUrl: String) : AuthProvider {
     }
   }
 
-  suspend fun automaticUserDisabling() = serverScope.launch {
+  private suspend fun automaticUserDisabling() = serverScope.launch {
     while (true) {
       try {
         // Use the service user to authenticate
@@ -88,13 +90,18 @@ class LdapAuth(val ldapUrl: String) : AuthProvider {
         var stillEnabledUsers = 0
         val disabledUsers = mutableListOf<String>()
         try {
-          listOf("gauss", "asdfasdfasdf").forEach { email -> // TODO iterate over all users
-            try {
-              context.lookup(ldapSearchFilter.format(ldapEscape(email)))
-              stillEnabledUsers++
-            } catch (e: NameNotFoundException) {
-              // TODO disable user
-              disabledUsers.add(email)
+          runOnDb {
+            getCollection<BackendUser>().find().forEach { user ->
+              try {
+                context.lookup(ldapSearchFilter.format(ldapEscape(user.email)))
+                stillEnabledUsers++
+              } catch (e: NameNotFoundException) {
+                // Delete sessions and user
+                MainDatabase.getCollection<SessionToken>().deleteMany(SessionToken::userId equal user._id)
+                getCollection<BackendUser>().deleteOne(BackendUser::_id equal user._id)
+
+                disabledUsers.add(user.email)
+              }
             }
           }
         } finally {
