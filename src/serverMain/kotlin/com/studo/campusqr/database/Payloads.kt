@@ -1,9 +1,6 @@
 package com.studo.campusqr.database
 
-import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.ClientPayload
-import com.studo.campusqr.common.ClientUser
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.extensions.toAustrianTime
 import com.studo.katerbase.MongoMainEntry
@@ -14,7 +11,7 @@ import java.util.*
  * These classes are allowed to have additional functions and computed properties.
  */
 interface ClientPayloadable<out T : ClientPayload> {
-  fun toClientClass(language: String): T
+  fun toClientClass(language: String = "en"): T
 }
 
 class BackendUser : MongoMainEntry(), ClientPayloadable<ClientUser> {
@@ -49,6 +46,18 @@ class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
     name = name,
     checkInCount = checkInCount
   )
+}
+
+class BackendAccess : MongoMainEntry(), ClientPayloadable<ClientAccessManagement> {
+  lateinit var locationId: String
+  lateinit var createdBy: String // userId
+  lateinit var createdDate: Date
+  lateinit var allowedEmails: List<String>
+  lateinit var dateRanges: List<DateRange>
+  lateinit var note: String
+  lateinit var reason: String
+
+  override fun toClientClass(language: String) = throw NotImplementedError()
 }
 
 class CheckIn : MongoMainEntry() {
@@ -86,4 +95,10 @@ class Configuration : MongoMainEntry {
     _id = id
     intValue = if (value) 1 else 0
   }
+}
+
+class DateRange(val from: Date, val to: Date) : ClientPayloadable<ClientDateRange> {
+  constructor(dateRange: ClientDateRange) : this(from = Date(dateRange.from), to = Date(dateRange.to))
+
+  override fun toClientClass(language: String) = ClientDateRange(from = from.time, to = to.time)
 }

@@ -2,16 +2,15 @@ package views.accessManagement.accessManagementOverview
 
 import app.GlobalCss
 import com.studo.campusqr.common.ClientAccessManagement
-import com.studo.campusqr.common.ClientLocation
 import kotlinext.js.js
 import react.*
 import react.dom.div
 import util.Strings
 import util.get
-import views.locations.AddLocationProps.Config
-import views.locations.renderAddLocation
 import views.common.genericErrorView
 import views.common.networkErrorView
+import views.locations.AddLocationProps.Config
+import views.locations.renderAddLocation
 import webcore.MbSnackbarProps
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -46,21 +45,13 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
     val response: List<ClientAccessManagement> = listOf(
       ClientAccessManagement(
         id = "kdsfksdf",
-        location = ClientLocation(
-          id = "sdfsdf",
-          name = "Room 1",
-          checkInCount = 124,
-        ),
+        locationName = "Room 1",
         allowedEmails = listOf("ziga.veho@gmail.com", "janez.novak@outlook.si"),
         note = "PE Class"
       ),
       ClientAccessManagement(
         id = "kdsfksdgwef",
-        location = ClientLocation(
-          id = "wegweg",
-          name = "Room 2",
-          checkInCount = 12
-        ),
+        locationName = "Room 2",
         allowedEmails = listOf(
           "ziga.veho@gmail.com",
           "janez.novak@outlook.si",

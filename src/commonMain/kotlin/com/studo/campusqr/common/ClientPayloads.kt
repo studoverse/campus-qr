@@ -45,7 +45,19 @@ class ClientUser(
 
 class ClientAccessManagement(
   val id: String,
-  val location: ClientLocation,
+  val locationName: String,
   val allowedEmails: List<String>,
   val note: String
 ) : ClientPayload
+
+class ClientDateRange(
+  val from: Long,
+  val to: Long
+) : ClientPayload
+
+class NewAccess(
+  val allowedEmails: List<String>,
+  val dateRanges: List<ClientDateRange>,
+  val note: String,
+  val reason: String
+)

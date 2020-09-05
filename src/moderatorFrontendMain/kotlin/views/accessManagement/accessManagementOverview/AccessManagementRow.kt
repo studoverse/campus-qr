@@ -62,7 +62,7 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
       // TODO: Click to see the details/edit
 
       mTableCell {
-        +props.config.accessManagement.location.name
+        +props.config.accessManagement.locationName
       }
       mTableCell {
         +props.config.accessManagement.allowedEmails.count().toString()

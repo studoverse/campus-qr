@@ -105,6 +105,10 @@ suspend fun main() {
           get("delete") { call.deleteLocation() }
         }
       }
+      route("access") {
+        post("list") { call.listAccess() }
+        post("create") { call.createAccess() }
+      }
       post("report/list") { call.returnReportData() }
       route("admin") {
         get("campusqr-admin.js") { call.returnModeratorJs() }
