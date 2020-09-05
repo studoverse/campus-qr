@@ -123,7 +123,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
 
       if (userType == UserType.MODERATOR || userType == UserType.ADMIN) {
         listSubheader {
-          +UserType.ADMIN.localizedStringAction.get()
+          +UserType.MODERATOR.localizedStringAction.get()
         }
         props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
