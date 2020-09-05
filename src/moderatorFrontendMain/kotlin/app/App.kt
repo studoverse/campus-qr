@@ -70,11 +70,6 @@ class App : RComponent<AppProps, AppState>() {
       icon = contactMailIcon,
       url = Url.REPORT
     ),
-    SideDrawerItem(
-      label = Url.ACCOUNT_SETTINGS.title,
-      icon = settingsIcon,
-      url = Url.ACCOUNT_SETTINGS
-    ),
   )
 
   private val adminSideDrawerItems = listOf(

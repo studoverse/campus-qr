@@ -54,7 +54,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
       Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList()
       Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
-      Url.USERS -> renderUsers(currentUser = props.config.userData!!.clientUser!!)
+      Url.USERS -> renderUsers(userData = props.config.userData!!)
       Url.ACCOUNT_SETTINGS -> div(classes = props.classes.container) {
         mbSnackbar(
           MbSnackbarProps.Config(
@@ -78,7 +78,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
               }
             }
           ),
-          currentUser = props.config.userData!!.clientUser!!
+          userData = props.config.userData!!
         )
       }
       Url.ADMIN_INFO -> renderAdminInfo()

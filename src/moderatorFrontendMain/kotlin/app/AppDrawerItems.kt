@@ -163,7 +163,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         flex = "1"
       }
     }
-    renderSettings()
+    renderSettings(userData = props.config.userData)
     spacer(16)
   }
 }
