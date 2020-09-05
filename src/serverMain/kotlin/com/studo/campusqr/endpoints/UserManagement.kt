@@ -2,9 +2,6 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.UserType.ACCESS_MANAGER
-import com.studo.campusqr.common.UserType.valueOf
-import com.studo.campusqr.common.UserType.ADMIN
-import com.studo.campusqr.common.UserType.MODERATOR
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -14,8 +11,6 @@ import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.MongoDatabase
 import com.studo.katerbase.MongoMainEntry
 import com.studo.katerbase.equal
-import java.util.*
-import io.ktor.application.*
 
 /**
  * This file contains every endpoint which is used in the user management.

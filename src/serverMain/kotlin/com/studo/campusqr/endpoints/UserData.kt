@@ -9,10 +9,7 @@ import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.Configuration
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
-import com.studo.campusqr.utils.Session
-import com.studo.campusqr.utils.createNewSessionToken
-import com.studo.campusqr.utils.getSessionToken
-import com.studo.campusqr.utils.validateCsrfToken
+import com.studo.campusqr.utils.*
 import com.studo.katerbase.equal
 import io.ktor.application.*
 import io.ktor.response.*
