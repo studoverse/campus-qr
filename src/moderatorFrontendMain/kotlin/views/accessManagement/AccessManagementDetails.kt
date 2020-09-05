@@ -233,10 +233,10 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
     div(GlobalCss.flex) {
       typography {
-        +"Time slots"
+        +Strings.access_control_time_slots.get()
       }
       muiTooltip {
-        attrs.title = "Add a time slot"
+        attrs.title = Strings.access_control_time_slot_add.get()
         iconButton {
           attrs.classes = js {
             root = props.classes.addTimeSlotButton
@@ -262,7 +262,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.ampm = false
             attrs.inputVariant = "outlined"
             attrs.fullWidth = true
-            attrs.label = "From"
+            attrs.label = Strings.access_control_from.get()
             attrs.disablePast = true
             attrs.value = Date(clientDateRange.from)
             attrs.onChange = { selectedDateTime ->
@@ -290,7 +290,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.ampm = false
             attrs.inputVariant = "outlined"
             attrs.fullWidth = true
-            attrs.label = "To"
+            attrs.label = Strings.access_control_to.get()
             attrs.disablePast = true
             attrs.value = Date(clientDateRange.to)
             attrs.onChange = { selectedDateTime ->
@@ -309,7 +309,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         }
         gridItem(GridSize(xs = 1)) {
           muiTooltip {
-            attrs.title = "Remove this timeslot"
+            attrs.title = Strings.access_control_time_slot_remove.get()
             iconButton {
               attrs.classes = js {
                 root = props.classes.removeTimeSlotButton
@@ -336,7 +336,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     }
 
     typography {
-      +"Permitted people"
+      +Strings.access_control_permitted_people.get()
     }
     spacer(12)
     form(props.classes.form) {
@@ -351,10 +351,10 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       }
       div(GlobalCss.flex) {
         textField {
-          attrs.helperText = "Tip: You can add multiple people, by using comma a sperator"
+          attrs.helperText = Strings.access_control_add_permitted_people_tip.get()
           attrs.fullWidth = true
           attrs.variant = "outlined"
-          attrs.label = "Email or student id"
+          attrs.label = Strings.email_address.get()
           attrs.value = state.personIdentificationTextFieldValue
           attrs.inputProps = js {
             maxLength = 40 // Make sure names stay printable
@@ -376,7 +376,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.onClick = {
               submitPermittedPerson()
             }
-            +"Add permitted person"
+            +Strings.access_control_add_permitted_people.get()
           }
         }
       }
@@ -386,7 +386,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       mTable {
         mTableHead {
           mTableRow {
-            mTableCell { +"Person identification" }
+            mTableCell { +Strings.email_address.get() }
             mTableCell { }
           }
         }

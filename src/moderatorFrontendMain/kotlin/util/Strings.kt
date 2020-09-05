@@ -428,6 +428,41 @@ object Strings {
     "Begründung"
   )
 
+  val access_control_time_slots = LocalizedString(
+    "Time slots",
+    "Zeitfenster"
+  )
+
+  val access_control_time_slot_add = LocalizedString(
+    "Add time slot",
+    "Zeitfenster hinzufügen"
+  )
+
+  val access_control_time_slot_remove = LocalizedString(
+    "Remove this timeslot",
+    "Dieses Zeitfenster entfernen"
+  )
+
+  val access_control_from = LocalizedString(
+    "From",
+    "Von"
+  )
+
+  val access_control_to = LocalizedString(
+    "To",
+    "Bis"
+  )
+
+  val access_control_add_permitted_people = LocalizedString(
+    "Add person",
+    "Person hinzufügen"
+  )
+
+  val access_control_add_permitted_people_tip = LocalizedString(
+    "Multiple e-mail addresses can be added by separating them with a comma.",
+    "Mehrere E-Mail Adressen können hinzugefügt werden, indem sie durch einen Beistrich getrennt angegeben werden."
+  )
+
   val user_sso_info = LocalizedString(
     "Single Sign On",
     "Single Sign On"
