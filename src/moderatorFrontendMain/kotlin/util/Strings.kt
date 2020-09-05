@@ -400,7 +400,7 @@ object Strings {
 
   val access_control_create = LocalizedString(
     "Create access control",
-    "Zugriffskontrolle erstellen"
+    "Zugangskontrolle erstellen"
   )
 
   val access_control_not_configured_yet = LocalizedString(
@@ -410,7 +410,7 @@ object Strings {
 
   val access_control_not_configured_yet_subtitle = LocalizedString(
     "Click on \"create access control\" button in the top right corner to create access control.",
-    "Klicken Sie rechts oben auf \"Zugriffskontrolle erstellen\" um die Zugriffskontrolle zu erstellen."
+    "Klicken Sie rechts oben auf \"Zugangskontrolle erstellen\" um die Zugangskontrolle zu erstellen."
   )
 
   val access_control_permitted_people = LocalizedString(
@@ -424,8 +424,8 @@ object Strings {
   )
 
   val access_control_reason = LocalizedString(
-      "Reason",
-      "Grund"
+    "Reason",
+    "Begründung"
   )
 
   val user_sso_info = LocalizedString(
@@ -437,12 +437,12 @@ object Strings {
     "To connect this web application to the Single Sign On system used at the university or to enable an " +
         "SSO login via the Campus Management System, " +
         "please contact the developers of this application directly. " +
-        "The authentication can also be done by LDAP oder OAuth2. " +
+        "The authentication can also be done by LDAP. " +
         "The Studo team can integrate a customized SSO solution in coordination with the university.",
     "Um diese Web Applikation mit dem an der Hochschule verwendeten Single Sign On System zu verbinden bzw. " +
         "einen SSO-Login über das Campus Management System zu ermöglichen, " +
         "kontaktieren Sie bitte direkt die Entwickkler dieser Applikation. " +
-        "Die Authentifizierung kann desweiteren durch LDAP oder OAuth2 erfolgen." +
+        "Die Authentifizierung kann desweiteren durch LDAP erfolgen." +
         "Das Studo Team kann in Abstimmung der Hochschule eine für Sie zugeschnitte SSO-Lösung integrieren."
   )
 

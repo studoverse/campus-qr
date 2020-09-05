@@ -53,7 +53,7 @@ class App : RComponent<AppProps, AppState>() {
 
   private val accessManagerSideDrawerItems = listOf(
     SideDrawerItem(
-      label = Url.ACCESS_MANAGEMENT_LIST.title, // TODO change 2x to access management
+      label = Url.ACCESS_MANAGEMENT_LIST.title,
       icon = listIcon,
       url = Url.ACCESS_MANAGEMENT_LIST
     ),
