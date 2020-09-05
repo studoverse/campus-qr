@@ -1,5 +1,7 @@
 package com.studo.campusqr.endpoints
 
+import com.studo.campusqr.auth.AuthProvider
+import com.studo.campusqr.authProvider
 import com.studo.campusqr.baseUrl
 import com.studo.campusqr.common.LoginResult
 import com.studo.campusqr.common.UserData
@@ -7,7 +9,10 @@ import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.Configuration
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
-import com.studo.campusqr.utils.*
+import com.studo.campusqr.utils.Session
+import com.studo.campusqr.utils.createNewSessionToken
+import com.studo.campusqr.utils.getSessionToken
+import com.studo.campusqr.utils.validateCsrfToken
 import com.studo.katerbase.equal
 import io.ktor.application.*
 import io.ktor.response.*
@@ -63,21 +68,27 @@ suspend fun ApplicationCall.login() {
     return
   }
 
-  val user = runOnDb { getCollection<BackendUser>().findOne(BackendUser::email equal email) }
+  val loginResult = authProvider.login(email, password)
 
-  if (user == null || !Algorithm.validatePassword(password, user.passwordHash)) {
+  if (loginResult is AuthProvider.Result.InvalidCredentials) {
     respondEnum(LoginResult.LOGIN_FAILED)
     return
   }
 
+  // User login was successful
+  loginResult as AuthProvider.Result.Success
+
   runOnDb {
-    getCollection<BackendUser>().updateOne(BackendUser::_id equal user._id, BackendUser::firstLoginDate equal null) {
+    getCollection<BackendUser>().updateOne(
+      BackendUser::_id equal loginResult.user._id,
+      BackendUser::firstLoginDate equal null
+    ) {
       BackendUser::firstLoginDate setTo Date()
     }
   }
 
   val sessionToken = (getSessionToken() ?: createNewSessionToken()).apply {
-    userId = user._id
+    userId = loginResult.user._id
   }
 
   runOnDb {
