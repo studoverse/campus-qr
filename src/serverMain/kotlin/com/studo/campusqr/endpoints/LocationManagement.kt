@@ -1,14 +1,13 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.LocationVisitData
 import com.studo.campusqr.common.extensions.emailRegex
-import com.studo.campusqr.database.BackendLocation
-import com.studo.campusqr.database.CheckIn
-import com.studo.campusqr.database.MainDatabase
+import com.studo.campusqr.database.*
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.katerbase.equal
+import com.studo.katerbase.*
 import io.ktor.application.*
 import io.ktor.http.*
 import java.util.*
@@ -85,6 +84,27 @@ suspend fun ApplicationCall.visitLocation() {
     respondError("email_not_valid") // At least do a very basic email validation to catch common errors
     return
   }
+  var accessId: String? = null
+
+  if (location.accessType == LocationAccessType.RESTRICTED) {
+    val access = runOnDb {
+      getCollection<BackendAccess>().findOne(
+          BackendAccess::locationId equal location._id,
+          BackendAccess::allowedEmails has email,
+          BackendAccess::dateRanges.any(
+              DateRange::from lowerEquals now,
+              DateRange::to greaterEquals now
+          )
+      )
+    }
+
+    if (access == null) {
+      respondForbidden()
+      return
+    } else {
+      accessId = access._id
+    }
+  }
 
   val checkIn = CheckIn().apply {
     this._id = randomId()
@@ -92,6 +112,7 @@ suspend fun ApplicationCall.visitLocation() {
     this.date = visitDate ?: now
     this.email = email
     this.userAgent = request.headers[HttpHeaders.UserAgent] ?: ""
+    this.grantAccessId = accessId
   }
 
   runOnDb {

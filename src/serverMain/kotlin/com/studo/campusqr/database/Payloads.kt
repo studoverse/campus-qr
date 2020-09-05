@@ -4,6 +4,7 @@ import com.studo.campusqr.common.*
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.extensions.toAustrianTime
 import com.studo.katerbase.MongoMainEntry
+import com.studo.katerbase.MongoSubEntry
 import java.util.*
 
 /**
@@ -23,15 +24,15 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
   var firstLoginDate: Date? = null
   var type = UserType.MODERATOR
   override fun toClientClass(language: String) = ClientUser(
-    id = _id,
-    email = email,
-    name = name,
-    type = type.name,
-    firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
-      ?: LocalizedString(
-        "Not logged in yet",
-        "Noch nicht eingeloggt"
-      ).get(language)
+      id = _id,
+      email = email,
+      name = name,
+      type = type.name,
+      firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
+          ?: LocalizedString(
+              "Not logged in yet",
+              "Noch nicht eingeloggt"
+          ).get(language)
   )
 
   constructor(userId: String, email: String, name: String, type: UserType) : this() {
@@ -51,11 +52,13 @@ class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
   lateinit var createdBy: String // userId
   lateinit var createdDate: Date
   var checkInCount: Int = 0
+  var accessType = LocationAccessType.FREE
 
   override fun toClientClass(language: String) = ClientLocation(
-    id = _id,
-    name = name,
-    checkInCount = checkInCount
+      id = _id,
+      name = name,
+      checkInCount = checkInCount,
+      accessType = accessType
   )
 }
 
@@ -76,6 +79,7 @@ class CheckIn : MongoMainEntry() {
   lateinit var date: Date
   lateinit var email: String
   lateinit var userAgent: String
+  var grantAccessId: String? = null // id of BackendAccess which was used to enter, null if no BackendAccess was used
 }
 
 class SessionToken : MongoMainEntry() {
@@ -108,7 +112,7 @@ class Configuration : MongoMainEntry {
   }
 }
 
-class DateRange(val from: Date, val to: Date) : ClientPayloadable<ClientDateRange> {
+class DateRange(var from: Date, var to: Date) : MongoSubEntry(), ClientPayloadable<ClientDateRange> {
   constructor(dateRange: ClientDateRange) : this(from = Date(dateRange.from.toLong()), to = Date(dateRange.to.toLong()))
 
   override fun toClientClass(language: String) = ClientDateRange(from = from.time.toDouble(), to = to.time.toDouble())

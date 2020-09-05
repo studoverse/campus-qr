@@ -13,3 +13,7 @@ enum class UserType {
 }
 
 val emailSeparators = arrayOf(" ", ",", ";")
+
+enum class LocationAccessType {
+  FREE, RESTRICTED
+}

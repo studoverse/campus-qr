@@ -4,9 +4,10 @@ package com.studo.campusqr.common
 interface ClientPayload
 
 class ClientLocation(
-  val id: String,
-  val name: String,
-  val checkInCount: Int
+    val id: String,
+    val name: String,
+    val checkInCount: Int,
+    val accessType: LocationAccessType
 ) : ClientPayload
 
 class UserData : ClientPayload {
