@@ -10,6 +10,8 @@ import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.http.*
 import kotlinx.html.*
+import java.util.*
+
 
 suspend fun ApplicationCall.userFrontend() {
   val locationId = parameters["l"]
@@ -23,6 +25,8 @@ suspend fun ApplicationCall.userFrontend() {
         keySelector = { it._id.substringBefore("_$language") },
         valueTransform = { it.stringValue!! })
   }
+
+  val now = Date()
 
   respondHtml(HttpStatusCode.OK) {
     lang = language
@@ -70,7 +74,7 @@ suspend fun ApplicationCall.userFrontend() {
           div {
             id = "form"
             div("location-wrapper") {
-              div("icon-wrap") {
+              div("icon wrap") {
                 img {
                   src = "/static/userFrontend/locationIcon.svg"
                 }
@@ -126,19 +130,72 @@ suspend fun ApplicationCall.userFrontend() {
               }
             }
           }
-          div("result hidden") {
-            id = "result-ok"
-            div("icon-wrap") {
-              img {
-                src = "/static/userFrontend/smileIcon.svg"
+          div("result-wrapper hidden") {
+            div("result hidden") {
+              id = "result-ok"
+              div("header") {
+                span {
+                  +LocalizedString("Check-in successful!", "Check-in erfolgreich!").get(this@userFrontend)
+                }
+              }
+              div("large") {
+                div("location") {
+                  img {
+                    src = "/static/userFrontend/locationIcon.svg"
+                  }
+                  span {
+                    +locationName
+                  }
+                }
+                div("number") {
+                  unsafe {
+                    +"""
+                  <svg>
+                  	<symbol id="s-text">
+                  		<text text-anchor="middle" x="50%" y="90%">${now.date.toString().padStart(2, '0')}</text>
+                  	</symbol>
+
+                  	<g class = "g-ants">
+                  		<use xlink:href="#s-text" class="text-copy"></use>
+                  		<use xlink:href="#s-text" class="text-copy"></use>
+                  		<use xlink:href="#s-text" class="text-copy"></use>
+                  		<use xlink:href="#s-text" class="text-copy"></use>
+                  		<use xlink:href="#s-text" class="text-copy"></use>
+                  	</g>
+                  </svg>
+                """.trimIndent()
+                  }
+                }
+                div("verification") {
+                  span {
+                    +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)
+                  }
+                }
+              }
+              div("details") {
+                //h3 { +"Details" }
+                span("datetime") {
+                  // TODO calendar icon
+                  //+(SimpleDateFormat("dd.MM.yyyy").format(now)
+                  +LocalizedString(" at ", " um ").get(this@userFrontend) //+
+                  //SimpleDateFormat("HH:mm").format(now))
+                }
+                span("identification") {
+                  id = "result-ok-id"
+                  // TODO user icon
+                }
               }
             }
-            span {
-              +LocalizedString("Check-in successful!", "Check-in erfolgreich!").get(this@userFrontend)
-            }
           }
-          span("result hidden") {
-            id = "result-fail"
+          span("result fail hidden") {
+            id = "result-not-allowed"
+            +LocalizedString(
+              "Error! You're not allowed to check-in.",
+              "Fehler! Du hast keine Berechtigung um einzuchecken."
+            ).get(this@userFrontend)
+          }
+          span("result fail hidden") {
+            id = "result-net-err"
             +LocalizedString(
               "Error! Please try again.",
               "Fehler! Bitte versuche es erneut."
