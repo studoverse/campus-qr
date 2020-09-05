@@ -1,6 +1,7 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.auth.AuthProvider
+import com.studo.campusqr.auth.CampusQrAuth
 import com.studo.campusqr.authProvider
 import com.studo.campusqr.baseUrl
 import com.studo.campusqr.common.LoginResult
@@ -32,6 +33,7 @@ suspend fun ApplicationCall.getUserData() {
   respondObject(UserData().apply {
     this.appName = appName
     this.clientUser = user?.toClientClass(this@getUserData.language)
+    this.externalAuthProvider = authProvider !is CampusQrAuth
   })
 }
 

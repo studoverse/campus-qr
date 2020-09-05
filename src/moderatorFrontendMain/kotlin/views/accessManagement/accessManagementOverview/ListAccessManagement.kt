@@ -151,6 +151,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
                 AccessManagementTableRowProps.Config(accessManagement,
                     onEditFinished = { response ->
                       handleCreateOrEditLocationResponse(response)
+                      fetchAccessManagementList()
                     },
                     onCopyFinished = { success ->
                       // TODO: Show snackbar

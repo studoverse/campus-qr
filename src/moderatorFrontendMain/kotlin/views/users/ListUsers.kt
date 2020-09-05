@@ -3,6 +3,7 @@ package views.users
 import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.ClientUser
+import com.studo.campusqr.common.UserData
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
@@ -17,7 +18,7 @@ import webcore.extensions.launch
 import webcore.materialUI.*
 
 interface ListUsersProps : RProps {
-  var currentUser: ClientUser
+  var userData: UserData
   var classes: ListUsersClasses
 }
 
@@ -72,7 +73,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     customContent = {
       renderAddUser(
         config = AddUserProps.Config.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
-        currentUser = props.currentUser
+        userData = props.userData
       )
     },
     buttons = null,
@@ -196,7 +197,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
               UserTableRowProps.Config(user, onEditFinished = { response ->
                 handleCreateOrAddUserResponse(response)
               }),
-              currentUser = props.currentUser
+              userData = props.userData
             )
           }
         }
@@ -245,7 +246,7 @@ private val ListUsersStyle = { theme: dynamic ->
 
 private val styled = withStyles<ListUsersProps, ListUsers>(ListUsersStyle)
 
-fun RBuilder.renderUsers(currentUser: ClientUser) = styled {
-  attrs.currentUser = currentUser
+fun RBuilder.renderUsers(userData: UserData) = styled {
+  attrs.userData = userData
 }
   

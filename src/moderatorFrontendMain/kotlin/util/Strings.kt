@@ -319,8 +319,8 @@ object Strings {
   )
 
   val user_administration_hint3 = LocalizedString(
-    "Administrators can additionally create, delete and edit users (moderators and other administrators).",
-    "Administratoren können zusätzlich Benutzer (Moderatoren und weitere Administratoren) anlegen, löschen und bearbeiten."
+    "Administrators can additionally create, delete and edit users (access managers, moderators and other administrators).",
+    "Administratoren können zusätzlich Benutzer (Zugangsveralter, Moderatoren und weitere Administratoren) erstellen, löschen und bearbeiten."
   )
 
   val user_name = LocalizedString(

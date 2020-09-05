@@ -21,7 +21,7 @@ private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAcces
     id = _id,
     locationName = location.name,
     allowedEmails = allowedEmails.toTypedArray(),
-    dateRanges = dateRanges.map { it.toClientClass() }.toTypedArray(),
+    dateRanges = dateRanges.map { it.toClientClass("") }.toTypedArray(), // TODO @zs
     note = note,
     reason = reason
 )

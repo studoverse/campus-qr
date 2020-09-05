@@ -3,6 +3,7 @@ package views.users
 import MenuItem
 import apiBase
 import com.studo.campusqr.common.ClientUser
+import com.studo.campusqr.common.UserData
 import com.studo.campusqr.common.UserType
 import materialMenu
 import react.*
@@ -24,7 +25,7 @@ interface UserTableRowProps : RProps {
   )
 
   var config: Config
-  var currentUser: ClientUser
+  var userData: UserData
   var classes: UserTableRowClasses
 }
 
@@ -56,7 +57,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
           }
           props.config.onEditFinished(response)
         }),
-        currentUser = props.currentUser
+        userData = props.userData
       )
     },
     buttons = null,
@@ -112,7 +113,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
                 )
                 props.config.onEditFinished(response)
               }
-            }, enabled = props.config.user.id != props.currentUser.id), // Don't delete own user for better UX
+            }, enabled = props.config.user.id != props.userData.clientUser!!.id), // Don't delete own user for better UX
           )
         )
       }
@@ -130,8 +131,8 @@ private val UserTableRowStyle = { theme: dynamic ->
 
 private val styled = withStyles<UserTableRowProps, UserTableRow>(UserTableRowStyle)
 
-fun RBuilder.renderUserTableRow(config: UserTableRowProps.Config, currentUser: ClientUser) = styled {
+fun RBuilder.renderUserTableRow(config: UserTableRowProps.Config, userData: UserData) = styled {
   attrs.config = config
-  attrs.currentUser = currentUser
+  attrs.userData = userData
 }
   

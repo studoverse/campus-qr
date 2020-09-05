@@ -13,6 +13,7 @@ class ClientLocation(
 class UserData : ClientPayload {
   lateinit var appName: String
   var clientUser: ClientUser? = null // Null when unauthenticated
+  var externalAuthProvider: Boolean = false
 }
 
 val UserData.isAuthenticated get() = clientUser != null
