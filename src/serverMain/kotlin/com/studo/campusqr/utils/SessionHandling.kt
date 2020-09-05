@@ -23,14 +23,8 @@ suspend fun ApplicationCall.getAuthenticatedCall(): AuthenticatedApplicationCall
   return when (this) {
     is AuthenticatedApplicationCall -> this
     else -> {
-      val sessionToken = getSessionToken() ?: run {
-        respondForbidden()
-        return null
-      }
-      val user = getUser(sessionToken) ?: run {
-        respondForbidden()
-        return null
-      }
+      val sessionToken = getSessionToken() ?: run { respondForbidden(); return null }
+      val user = getUser(sessionToken) ?: run { respondForbidden(); return null }
       AuthenticatedApplicationCall(this, sessionToken, user)
     }
   }
