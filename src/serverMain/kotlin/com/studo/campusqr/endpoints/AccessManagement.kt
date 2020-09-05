@@ -21,7 +21,9 @@ private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAcces
     id = _id,
     locationName = location.name,
     allowedEmails = allowedEmails.toTypedArray(),
-    note = note
+    dateRanges = dateRanges.map { it.toClientClass() }.toTypedArray(),
+    note = note,
+    reason = reason
 )
 
 private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocation> = runOnDb {

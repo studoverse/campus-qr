@@ -13,6 +13,8 @@ import react.dom.form
 import util.Strings
 import util.get
 import views.accessManagement.AccessManagementDetailsProps.Config
+import views.common.centeredProgress
+import views.common.networkErrorView
 import views.common.renderLinearProgress
 import views.common.spacer
 import webcore.*
@@ -24,10 +26,10 @@ import webcore.materialUI.*
 import kotlin.js.Date
 
 interface AccessManagementDetailsProps : RProps {
-  sealed class Config {
+  sealed class Config() {
     class Create(val onCreated: (Boolean) -> Unit) : Config()
-    class Edit(val accessManagementId: String, val onEdited: (Boolean) -> Unit) : Config()
-    class Details(val accessManagementId: String) : Config()
+    class Edit(val accessManagement: ClientAccessManagement, val onEdited: (Boolean) -> Unit) : Config()
+    class Details(val accessManagement: ClientAccessManagement) : Config()
   }
 
   var config: Config
@@ -35,6 +37,7 @@ interface AccessManagementDetailsProps : RProps {
 }
 
 interface AccessManagementDetailsState : RState {
+  var locationFetchInProgress: Boolean
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>
 
@@ -52,25 +55,34 @@ interface AccessManagementDetailsState : RState {
 class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManagementDetailsProps, AccessManagementDetailsState>(props) {
 
   override fun AccessManagementDetailsState.init(props: AccessManagementDetailsProps) {
-    showProgress = false
-    locationNameToLocationMap = emptyMap()
+    fun initFields(accessManagement: ClientAccessManagement?) {
+      locationFetchInProgress = false
+      showProgress = false
+      locationNameToLocationMap = emptyMap()
 
-    selectedLocation = null
-    selectedLocationTextFieldError = ""
+      selectedLocation = null // TODO: We have to fetch locations first
+      selectedLocationTextFieldError = ""
 
-    accessControlNoteTextFieldValue = ""
-    accessControlReasonTextFieldValue = ""
-    personIdentificationTextFieldValue = ""
-    permittedPeopleList = emptyList()
-    toDateTextFieldError = ""
+      accessControlNoteTextFieldValue = accessManagement?.note ?: ""
+      accessControlReasonTextFieldValue = accessManagement?.reason ?: ""
+      personIdentificationTextFieldValue = ""
+      permittedPeopleList = accessManagement?.allowedEmails?.toList() ?: emptyList()
+      toDateTextFieldError = ""
 
-    val fromDate = Date().addHours(1).with(minute = 0)
-    timeSlots = listOf(
-        ClientDateRange(
-            from = fromDate.getTime(),
-            to = fromDate.addHours(2).getTime()
-        )
-    )
+      val fromDate = Date().addHours(1).with(minute = 0)
+      timeSlots = accessManagement?.dateRanges?.toList() ?: listOf(
+          ClientDateRange(
+              from = fromDate.getTime(),
+              to = fromDate.addHours(2).getTime()
+          )
+      )
+    }
+
+    when (val config = props.config) {
+      is Config.Details -> initFields(config.accessManagement)
+      is Config.Edit -> initFields(config.accessManagement)
+      else -> initFields(null)
+    }
   }
 
   override fun componentDidMount() {
@@ -78,15 +90,26 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 
   private fun fetchLocations() = launch {
-    setState { showProgress = true }
+    setState {
+      locationFetchInProgress = true
+    }
     val response = NetworkManager.get<Array<ClientLocation>>("$apiBase/location/list")
     setState {
       if (response != null) {
         locationNameToLocationMap = response.associateBy { it.name }
-      } else {
-        // TODO: Show error
+        // Auto select current location, if in details/editMode
+        fun selectCurrentLocation(locationName: String) {
+          setState {
+            selectedLocation = locationNameToLocationMap[locationName]
+          }
+        }
+        when (val config = props.config) {
+          is Config.Details -> selectCurrentLocation(config.accessManagement.locationName)
+          is Config.Edit -> selectCurrentLocation(config.accessManagement.locationName)
+          else -> Unit
+        }
       }
-      showProgress = false
+      locationFetchInProgress = false
     }
   }
 
@@ -112,7 +135,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
   private fun editAccessControl() = launch {
     setState { showProgress = true }
-    val accessManagementId = (props.config as Config.Edit).accessManagementId
+    val accessManagementId = (props.config as Config.Edit).accessManagement.id
     val response = NetworkManager.post<String>(
         url = "$apiBase/access/$accessManagementId/edit",
         json = JSON.stringify(
@@ -158,12 +181,22 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       }
     }
 
+    // It can happen that user fogot to click on the create access control button,
+    // so add contents automatically
+    if (state.personIdentificationTextFieldValue.isNotEmpty()) {
+      submitPermittedPeopleToState()
+    }
+
     // Note, reason, permitted people are all optional fields
     return true
   }
 
-  override fun RBuilder.render() {
-    renderLinearProgress(state.showProgress)
+  private fun submitPermittedPeopleToState() = setState {
+    permittedPeopleList += personIdentificationTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
+    personIdentificationTextFieldValue = ""
+  }
+
+  private fun RBuilder.renderDetailsContent() {
 
     muiAutocomplete {
       attrs.disabled = props.config is Config.Details
@@ -340,12 +373,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     }
     spacer(12)
     form(props.classes.form) {
-      fun submitPermittedPerson() = setState {
-        permittedPeopleList += personIdentificationTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
-        personIdentificationTextFieldValue = ""
-      }
       attrs.onSubmitFunction = { event ->
-        submitPermittedPerson()
+        submitPermittedPeopleToState()
         event.preventDefault()
         event.stopPropagation()
       }
@@ -374,7 +403,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.color = "primary"
             attrs.variant = "outlined"
             attrs.onClick = {
-              submitPermittedPerson()
+              submitPermittedPeopleToState()
             }
             +Strings.access_control_add_permitted_people.get()
           }
@@ -444,6 +473,18 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           }
         }
       }
+    }
+  }
+
+  override fun RBuilder.render() {
+    renderLinearProgress(state.showProgress)
+
+    if (!state.locationFetchInProgress && state.locationNameToLocationMap.isEmpty()) {
+      networkErrorView()
+    } else if (state.locationFetchInProgress) {
+      centeredProgress()
+    } else {
+      renderDetailsContent()
     }
   }
 }

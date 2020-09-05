@@ -1,18 +1,26 @@
 package views.accessManagement.accessManagementOverview
 
 import MenuItem
+import apiBase
 import com.studo.campusqr.common.ClientAccessManagement
 import materialMenu
+import pathBase
 import react.*
 import util.Strings
 import util.get
+import views.accessManagement.AccessManagementDetailsProps
+import views.accessManagement.renderAccessManagementDetails
+import webcore.NetworkManager
+import webcore.extensions.launch
 import webcore.materialUI.*
 import webcore.mbMaterialDialog
 
 interface AccessManagementTableRowProps : RProps {
   class Config(
     val accessManagement: ClientAccessManagement,
-    val onEditFinished: (response: String?) -> Unit
+    val onEditFinished: (response: String?) -> Unit,
+    val onDeleteFinsihed: (success: Boolean) -> Unit,
+    val onCopyFinished: (success: Boolean) -> Unit
   )
 
   var config: Config
@@ -35,15 +43,14 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
     show = true,
     title = Strings.location_edit.get(),
     customContent = {
-      // TODO: Access management edit dialog
-//      renderAddLocation(AddLocationProps.Config.Edit(props.config.location, onFinished = { response ->
-//        if (response == "ok") {
-//          setState {
-//            showEditAccessManagementDialog = false
-//          }
-//        }
-//        props.config.onEditFinished(response)
-//      }))
+      renderAccessManagementDetails(AccessManagementDetailsProps.Config.Edit(
+          accessManagement = props.config.accessManagement,
+          onEdited = { success ->
+        // TODO: show snackbar
+        setState {
+          showEditAccessManagementDialog = false
+        }
+      }))
     },
     buttons = null,
     onClose = {
@@ -77,10 +84,21 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
           materialMenu(
             menuItems = listOf(
               MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
+                setState {
+                  showEditAccessManagementDialog = true
+                }
               }),
               MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
+                launch {
+                  val response = NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
+                  props.config.onDeleteFinsihed(response == "ok")
+                }
               }),
               MenuItem(text = Strings.copy.get(), icon = fileCopyOutlinedIcon, onClick = {
+                launch {
+                  val response = NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
+                  props.config.onDeleteFinsihed(response == "ok")
+                }
               }),
             )
           )

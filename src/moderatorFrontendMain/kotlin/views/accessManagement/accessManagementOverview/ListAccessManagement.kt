@@ -72,6 +72,14 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
       title = Strings.access_control_create.get(),
       customContent = {
         renderAccessManagementDetails(AccessManagementDetailsProps.Config.Create(onCreated = { success ->
+          setState {
+            showAddAccessManagementDialog = false
+            snackbarText = if (success) {
+              "Access management created succesfully"
+            } else {
+              "Access management creation failed"
+            }
+          }
           fetchAccessManagementList()
         }))
       },
@@ -84,12 +92,12 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   )
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(
-      show = state.snackbarText.isNotEmpty(),
-      message = state.snackbarText,
-      onClose = {
-        setState { snackbarText = "" }
-      })
+      MbSnackbarProps.Config(
+          show = state.snackbarText.isNotEmpty(),
+          message = state.snackbarText,
+          onClose = {
+            setState { snackbarText = "" }
+          })
   )
 
   override fun RBuilder.render() {
@@ -140,9 +148,19 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 
           state.accessManagementList!!.forEach { accessManagement ->
             renderAccessManagementRow(
-              AccessManagementTableRowProps.Config(accessManagement, onEditFinished = { response ->
-                handleCreateOrEditLocationResponse(response)
-              })
+                AccessManagementTableRowProps.Config(accessManagement,
+                    onEditFinished = { response ->
+                      handleCreateOrEditLocationResponse(response)
+                    },
+                    onCopyFinished = { success ->
+                      // TODO: Show snackbar
+                      fetchAccessManagementList()
+                    },
+                    onDeleteFinsihed = { success ->
+                      // TODO: Show snackbar
+                      fetchAccessManagementList()
+                    }
+                )
             )
           }
         }
@@ -151,8 +169,8 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
       networkErrorView()
     } else if (!state.loadingAccessManagementList) {
       genericErrorView(
-        Strings.access_control_not_configured_yet.get(),
-        Strings.access_control_not_configured_yet_subtitle.get()
+          Strings.access_control_not_configured_yet.get(),
+          Strings.access_control_not_configured_yet_subtitle.get()
       )
     }
   }

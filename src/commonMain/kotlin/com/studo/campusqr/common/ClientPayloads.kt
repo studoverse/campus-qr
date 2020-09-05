@@ -48,7 +48,9 @@ class ClientAccessManagement(
   val id: String,
   val locationName: String,
   val allowedEmails: Array<String>,
-  val note: String
+  val dateRanges: Array<ClientDateRange>,
+  val note: String,
+  val reason: String
 ) : ClientPayload
 
 class ClientDateRange(
