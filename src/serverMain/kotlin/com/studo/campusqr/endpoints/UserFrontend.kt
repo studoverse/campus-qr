@@ -191,14 +191,14 @@ suspend fun ApplicationCall.userFrontend() {
             id = "result-not-allowed"
             +LocalizedString(
               "Error! You're not allowed to check-in.",
-              "Fehler! Du hast keine Berechtigung um einzuchecken."
+              "Fehler! Sie haben keine Berechtigung um einzuchecken."
             ).get(this@userFrontend)
           }
           span("result fail hidden") {
             id = "result-net-err"
             +LocalizedString(
               "Error! Please try again.",
-              "Fehler! Bitte versuche es erneut."
+              "Fehler! Bitte versuchen Sie es erneut."
             ).get(this@userFrontend)
           }
         }

@@ -40,7 +40,6 @@ body > .header {
   justify-content: center;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /*border-bottom: 2px solid #e5e5e5;*/
   width: 100%;
 }
 
@@ -89,8 +88,6 @@ body > .header > h2 {
 #form {
   display: flex;
   flex-direction: column;
-  /*padding: 12px;*/
-  /*border: 2 px solid rgba(0, 0, 0, 0.2);*/
   border-radius: 4px;
 }
 
@@ -195,7 +192,6 @@ button#submit-button:active {
 }
 
 #result-ok {
-  /*height: calc(100vh - 64px - 172px - 96px);*/
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -218,11 +214,8 @@ button#submit-button:active {
 
 .result > .large {
   border-radius: 16px;
-  /*box-shadow: 0 0 16px 1px rgba(0, 0, 0, 0.2);
-  border: 2px solid #959EA6;*/
   width: 100%;
   padding: 24px;
-  /*margin-bottom: 64px;*/
   perspective: 10em;
 }
 
@@ -270,8 +263,8 @@ button#submit-button:active {
   text-transform: uppercase;
 }
 
-/* https://codepen.io/ClaireLarsen/pen/XmVyVX */
 
+/* Svg animation taken from: https://codepen.io/ClaireLarsen/pen/XmVyVX */
 .result > .large > .number > svg {
   display: block;
   width: 100%;
@@ -317,9 +310,6 @@ button#submit-button:active {
     stroke-dashoffset: -40%;
   }
 }
-
-/*.result > .large > .number-wrapper > .number {
-}*/
 
 .result > .details {
   display: flex;
