@@ -3,7 +3,6 @@ package com.studo.campusqr.endpoints
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.EditAccess
 import com.studo.campusqr.common.NewAccess
-import com.studo.campusqr.common.UserType
 import com.studo.campusqr.database.BackendAccess
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange
@@ -38,7 +37,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.type == UserType.MODERATOR || user.type == UserType.ADMIN) -> {
+        locationId != null && (user.isModerator) -> {
           find(BackendAccess::locationId equal locationId).toList()
         }
         else -> {
