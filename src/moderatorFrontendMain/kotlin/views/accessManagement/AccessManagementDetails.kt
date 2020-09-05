@@ -18,6 +18,7 @@ import webcore.*
 import webcore.extensions.*
 import webcore.materialUI.*
 import kotlin.js.Date
+import kotlin.js.Json
 
 interface AccessManagementDetailsProps : RProps {
   sealed class Config {
@@ -84,8 +85,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 allowedEmails = state.permittedPeopleList,
                 dateRanges = listOf(
                     ClientDateRange(
-                        Date().getTime().toLong(),
-                        Date().getTime().toLong()
+                        Date().getTime(),
+                        Date().getTime()
                     )
                 ),
                 note = state.accessControlNoteTextFieldValue,
@@ -110,8 +111,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 allowedEmails = state.permittedPeopleList,
                 dateRanges = listOf(
                     ClientDateRange(
-                        Date().getTime().toLong(),
-                        Date().getTime().toLong()
+                        Date().getTime(),
+                        Date().getTime()
                     )
                 ),
                 note = state.accessControlNoteTextFieldValue,

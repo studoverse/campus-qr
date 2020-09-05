@@ -51,8 +51,8 @@ class ClientAccessManagement(
 ) : ClientPayload
 
 class ClientDateRange(
-  val from: Long,
-  val to: Long
+  val from: Double,
+  val to: Double
 ) : ClientPayload
 
 class NewAccess(

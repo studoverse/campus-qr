@@ -17,6 +17,7 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
         index(BackendUser::email.ascending())
     }
     collection<BackendLocation>("locations")
+    collection<BackendAccess>("accesses")
     collection<Configuration>("configurations")
     collection<SessionToken>("sessionTokens")
     collection<CheckIn>("checkIns") {
