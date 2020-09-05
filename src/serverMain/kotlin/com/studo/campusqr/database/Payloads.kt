@@ -115,5 +115,6 @@ class Configuration : MongoMainEntry {
 class DateRange(var from: Date, var to: Date) : MongoSubEntry(), ClientPayloadable<ClientDateRange> {
   constructor(dateRange: ClientDateRange) : this(from = Date(dateRange.from.toLong()), to = Date(dateRange.to.toLong()))
 
-  override fun toClientClass(language: String) = ClientDateRange(from = from.time.toDouble(), to = to.time.toDouble())
+  override fun toClientClass(language: String) = toClientClass()
+  fun toClientClass() = ClientDateRange(from = from.time.toDouble(), to = to.time.toDouble())
 }
