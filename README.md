@@ -56,7 +56,8 @@ Employees of a university can login, create locations, report infections to noti
 ![tracing](screenshots/moderation-tracing.png)
 ![userManagement](screenshots/moderation-userManagement.png)
 
-# Setup
+# Self hosting
+## Setup
 The following environment variables need to be configured:
 * `PORT` (default: `8070`): Port where the web application will listen to
 * `HOST` (default: `0.0.0.0`): By default the web application is accessible from every host. Set it to `127.0.0.1` if the web application should only be accessible from localhost.
@@ -65,7 +66,7 @@ The following environment variables need to be configured:
 Start the application by `./gradlew run` or build the application with `.gradlew stage` to run it with `java -jar build/libs/Server.jar`.
 The default admin email address is `admin@exmpe.org` with password `admin`. Please change it immediately after your first login to the moderation frontend.
 
-# Deployment
+## Deployment
 ### Deployment on generic PaaS with Procfile
 This repository provides a generic `Procfile` for easy deployment to most **PaaS** providers like [Scalingo](https://scalingo.com). 
 
