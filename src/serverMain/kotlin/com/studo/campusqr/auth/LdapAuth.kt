@@ -66,15 +66,14 @@ class LdapAuth(val ldapUrl: String) : AuthProvider {
               .split(" ")
               .joinToString(separator = " ", transform = { it.capitalize() }),
             type = UserType.MODERATOR // TODO
-          ).apply {
-
-          }
+          )
         }
       }
       AuthProvider.Result.Success(user)
     }
   }
 
+  // Synchronize users so if a user in LDAP is disabled it gets also deleted in the campus-qr database
   private suspend fun automaticUserDisabling() = serverScope.launch {
     while (true) {
       try {
