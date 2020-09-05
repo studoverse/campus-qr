@@ -60,7 +60,7 @@ suspend fun main() {
       default()
     }
     install(Sessions) {
-      cookie<Session>("SESSION")
+      cookie<Session>("SESSION_CAMPUS_QR")
     }
 
     install(CORS) {
