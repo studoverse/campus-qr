@@ -86,8 +86,8 @@ object Strings {
   )
 
   val location_name = LocalizedString(
-    "Location name",
-    "Bezeichnung"
+    "Location",
+    "Ort"
   )
 
   val location_access_type = LocalizedString(

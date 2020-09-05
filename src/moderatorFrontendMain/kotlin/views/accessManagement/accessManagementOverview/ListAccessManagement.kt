@@ -71,27 +71,27 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 
   private fun RBuilder.renderAddAccessManagementDialog() = mbMaterialDialog(
-      show = state.showAddAccessManagementDialog,
-      title = Strings.access_control_create.get(),
-      customContent = {
-        renderAccessManagementDetails(AccessManagementDetailsProps.Config.Create(onCreated = { success ->
-          setState {
-            showAddAccessManagementDialog = false
-            snackbarText = if (success) {
-              "Access management created succesfully"
-            } else {
-              "Access management creation failed"
-            }
-          }
-          fetchAccessManagementList()
-        }))
-      },
-      buttons = null,
-      onClose = {
+    show = state.showAddAccessManagementDialog,
+    title = Strings.access_control_create.get(),
+    customContent = {
+      renderAccessManagementDetails(AccessManagementDetailsProps.Config.Create(onCreated = { success ->
         setState {
           showAddAccessManagementDialog = false
+          snackbarText = if (success) {
+            "Access management created succesfully" // TODO localize view
+          } else {
+            "Access management creation failed"
+          }
         }
+        fetchAccessManagementList()
+      }))
+    },
+    buttons = null,
+    onClose = {
+      setState {
+        showAddAccessManagementDialog = false
       }
+    }
   )
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
@@ -146,6 +146,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
         mTableHead {
           mTableRow {
             mTableCell { +Strings.location_name.get() }
+            mTableCell { +Strings.access_control_time_slots.get() }
             mTableCell { +Strings.access_control_permitted_people.get() }
             mTableCell { +Strings.access_control_note.get() }
             mTableCell { +Strings.actions.get() }

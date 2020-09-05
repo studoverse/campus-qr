@@ -3,11 +3,8 @@ package views.accessManagement.accessManagementOverview
 import MenuItem
 import apiBase
 import com.studo.campusqr.common.ClientAccessManagement
-import kotlinx.browser.window
 import materialMenu
-import pathBase
 import react.*
-import react.dom.a
 import util.Strings
 import util.get
 import views.accessManagement.AccessManagementDetailsProps
@@ -89,31 +86,28 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
       renderDetailsAccessManagementDialog()
     }
     mTableRow {
+      val tableRowClick = {
+        setState {
+          showDetailsAccessManagementDialog = true
+        }
+      }
       attrs.hover = true
       // TODO: Click to see the details/edit
 
       mTableCell {
-        attrs.onClick = {
-          setState {
-            showDetailsAccessManagementDialog = true
-          }
-        }
+        attrs.onClick = tableRowClick
         +props.config.accessManagement.locationName
       }
       mTableCell {
-        attrs.onClick = {
-          setState {
-            showDetailsAccessManagementDialog = true
-          }
-        }
+        attrs.onClick = tableRowClick
+        +props.config.accessManagement.dateRanges.toString() // TODO better formatting
+      }
+      mTableCell {
+        attrs.onClick = tableRowClick
         +props.config.accessManagement.allowedEmails.count().toString()
       }
       mTableCell {
-        attrs.onClick = {
-          setState {
-            showDetailsAccessManagementDialog = true
-          }
-        }
+        attrs.onClick = tableRowClick
         +props.config.accessManagement.note
       }
       mTableCell {
@@ -121,25 +115,27 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
           circularProgress {}
         } else {
           materialMenu(
-              menuItems = listOf(
-                  MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
-                    setState {
-                      showEditAccessManagementDialog = true
-                    }
-                  }),
-                  MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
-                    launch {
-                      val response = NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
-                      props.config.onDeleteFinsihed(response == "ok")
-                    }
-                  }),
-                  MenuItem(text = Strings.copy.get(), icon = fileCopyOutlinedIcon, onClick = {
-                    launch {
-                      val response = NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
-                      props.config.onDeleteFinsihed(response == "ok")
-                    }
-                  }),
-              )
+            menuItems = listOf(
+              MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
+                setState {
+                  showEditAccessManagementDialog = true
+                }
+              }),
+              MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
+                launch {
+                  val response =
+                    NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
+                  props.config.onDeleteFinsihed(response == "ok")
+                }
+              }),
+              MenuItem(text = Strings.copy.get(), icon = fileCopyOutlinedIcon, onClick = {
+                launch {
+                  val response =
+                    NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
+                  props.config.onDeleteFinsihed(response == "ok")
+                }
+              }),
+            )
           )
         }
       }
