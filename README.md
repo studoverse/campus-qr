@@ -24,10 +24,25 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **Fully configurable**: Names, logos, links, privacy policy and text content is configurable in production without changing the source code.
 * **Exportable**: Check-ins at specific locations and check-ins from specific people can be downloaded as csv file to open them in Excel.
 * **Infection tracing**: Fast and reliable tracing of infection chains. 
-* **Automatic data deletion**: After a configurable time (default: 1 month) the check-in data will be automatically deleted to comply with the GDPR.
+* **Automatic data deletion**: After a configurable time (default: 4 weeks) the check-in data will be automatically deleted to comply with the GDPR.
 * **Multirole administration**: The moderation frontend of Campus QR can be used by thousands of employees of a university.
 * **Access management**: Creation of specific access for students or guests within selected time frame to allow a controlled reopening of university buildings.
 * **Scalable access verification**: Access control can be verified by one doorman or lecturer in parallel to avoid crowds around entries.
+* **External identity management**: SSO, LDAP (using JNDI) and OAuth2 are supported by Ktor authentication packages. 
+
+## Managed hosting features
+Campus QR can be hosted by the university itself or by [Studo](https://studo.com). When hosted by Studo, the following hosting features are available per default: 
+* **Horizontal application scaling**: By running several API nodes in parallel, the application infrastructure can be scaled to as many nodes as required.
+* **Zero-downtime operations**: Deployment, container restarts and upgrades are zero-downtime operations: New containers have to be available at first before stopping the old containers.
+* **Automatic security updates**: Containers apply OS and JVM security updates with zero downtime.
+* **Real time metrics and logs**: Application nodes and database nodes allow easy monitoring and auditing.
+* **Scalable database infrastructure**: The MongoDB database runs in high availability mode (replicaset) with 2 active data nodes, 1 backup node and 1 arbiter to ensure zero downtime (99.96% uptime guaranteed by SLA).
+* **Dockerized database containers**: Database servers are dedicated processes sealed in docker containers. It allows seamless database upgrades with zero downtime if more space or memory is required.
+* **Database backups**: Daily automated encrypted backups with retention policies to auto-delete old backups.
+* **Database security**: SSL connections and Encryption-at-Rest are enabled per default.
+* **Optimal database performance**: SSD-like performance on SAN-backed dedicated MongoDB processes.
+* **Dedicated expect care and support**: Your application will be manged by an expert team that handles an infrastructure with more than 10.000 requests per minute.
+* **GDPR compliant**: Hosted in the EU on ISO/IEC 27001:2013 certified datacenter infrastructure.
 
 # Screenshots
 ## User Frontend
