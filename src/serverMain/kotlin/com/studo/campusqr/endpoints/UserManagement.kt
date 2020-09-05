@@ -39,7 +39,7 @@ suspend fun ApplicationCall.createNewUser() {
     userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
     email = email,
     name = params.getValue("name").trim(),
-    type = params["userType"]?.let { UserType.valueOf(it) } ?: MODERATOR
+    type = params["userType"]?.let { UserType.valueOf(it) } ?: MODERATOR // TODO
   ).apply {
     this.passwordHash = Algorithm.hashPassword(params.getValue("password"))
     this.createdBy = currentUser._id
