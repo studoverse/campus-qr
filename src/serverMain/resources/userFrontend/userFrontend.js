@@ -34,7 +34,6 @@ function normalStartup() {
       window.history.replaceState(null, null, url + "?l=" + locationId);
     } else {
       let overlay = document.getElementById("overlay");
-      //overlay.innerText = "Please scan the qr code again"
       overlay.className = overlay.className.replace("hidden", "");
     }
 
@@ -92,7 +91,6 @@ function normalStartup() {
               showCheckin(email)
 
             } else if (this.status === 403) {
-              //TODO error code for "you're not on the allowlist"
               resultNotAllowed.className = resultNotAllowed.className.replace("hidden", "");
 
             } else {
