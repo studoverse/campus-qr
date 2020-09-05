@@ -46,7 +46,8 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
       renderAccessManagementDetails(AccessManagementDetailsProps.Config.Edit(
           accessManagement = props.config.accessManagement,
           onEdited = { success ->
-        // TODO: show snackbar
+        // TODO: Prooagate back to AccessOverview
+            props.config.onEditFinished("ok")
         setState {
           showEditAccessManagementDialog = false
         }

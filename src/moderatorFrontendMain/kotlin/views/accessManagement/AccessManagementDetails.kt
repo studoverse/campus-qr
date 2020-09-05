@@ -481,8 +481,10 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
     if (!state.locationFetchInProgress && state.locationNameToLocationMap.isEmpty()) {
       networkErrorView()
+      spacer(36)
     } else if (state.locationFetchInProgress) {
       centeredProgress()
+      spacer(36)
     } else {
       renderDetailsContent()
     }
