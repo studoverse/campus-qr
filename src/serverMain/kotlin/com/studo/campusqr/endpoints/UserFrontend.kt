@@ -175,17 +175,11 @@ suspend fun ApplicationCall.userFrontend() {
               div("details") {
                 //h3 { +"Details" }
                 div("row") {
-                  img {
-                    src = "/static/userFrontend/calendar-icon.svg"
-                  }
                   span("datetime") {
                     +LocalizedString(" at ", " um ").get(this@userFrontend)
                   }
                 }
                 div("row") {
-                  img {
-                    src = "/static/userFrontend/user-icon.svg"
-                  }
                   span("identification") {
                     id = "result-ok-id"
                   }
