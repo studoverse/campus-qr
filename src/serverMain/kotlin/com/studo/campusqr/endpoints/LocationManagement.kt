@@ -106,7 +106,7 @@ suspend fun ApplicationCall.visitLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
-  if (!sessionToken.isAuthenticated) {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }
@@ -131,7 +131,7 @@ suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
 }
 
 suspend fun AuthenticatedApplicationCall.editLocation() {
-  if (!sessionToken.isAuthenticated) {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }
@@ -154,7 +154,7 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteLocation() {
-  if (!sessionToken.isAuthenticated) {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }

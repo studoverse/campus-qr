@@ -3,6 +3,7 @@ package com.studo.campusqr.endpoints
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.EditAccess
 import com.studo.campusqr.common.NewAccess
+import com.studo.campusqr.common.UserType
 import com.studo.campusqr.database.BackendAccess
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange
@@ -29,7 +30,13 @@ private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocat
       .associateBy { it._id }
 }
 
+private val AuthenticatedApplicationCall.isAllowed get() = user.isModerator || user.type == UserType.ACCESS_MANAGER
+
 suspend fun AuthenticatedApplicationCall.listAccess() {
+  if (!isAllowed) {
+    respondForbidden(); return
+  }
+
   val params = receiveJsonMap()
 
   val locationId = params["locationId"]
@@ -52,6 +59,10 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.getAccess() {
+  if (!isAllowed) {
+    respondForbidden(); return
+  }
+
   val accessId = parameters["id"]!!
 
   val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
@@ -61,6 +72,10 @@ suspend fun AuthenticatedApplicationCall.getAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.createAccess() {
+  if (!isAllowed) {
+    respondForbidden(); return
+  }
+
   val newAccessPayload: NewAccess = receiveClientPayload()
 
   val newAccess = BackendAccess().apply {
@@ -81,13 +96,16 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteAccess() {
+  if (!isAllowed) {
+    respondForbidden(); return
+  }
+
   val accessId = parameters["id"]!!
 
   val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
 
   if (user._id != access.createdBy && !user.isModerator) {
-    respondForbidden()
-    return
+    respondForbidden(); return
   }
 
   runOnDb {
@@ -98,6 +116,10 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.duplicateAccess() {
+  if (!isAllowed) {
+    respondForbidden(); return
+  }
+
   val accessId = parameters["id"]!!
 
   val oldAccess = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
@@ -113,12 +135,15 @@ suspend fun AuthenticatedApplicationCall.duplicateAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.editAccess() {
+  if (!isAllowed) {
+    respondForbidden(); return
+  }
+
   val accessId = parameters["id"]!!
   val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
 
   if (user._id != access.createdBy && !user.isModerator) {
-    respondForbidden()
-    return
+    respondForbidden(); return
   }
 
   val editAccessPayload: EditAccess = receiveClientPayload()

@@ -1,7 +1,8 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.UserType
-import com.studo.campusqr.common.UserType.*
+import com.studo.campusqr.common.UserType.ACCESS_MANAGER
+import com.studo.campusqr.common.UserType.valueOf
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.Algorithm
@@ -19,7 +20,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
     return
   }
 
-  if (user.type != ADMIN) {
+  if (!user.isAdmin) {
     respondForbidden()
     return
   }
@@ -49,7 +50,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteUser() {
-  if (!sessionToken.isAuthenticated || user.type != ADMIN) {
+  if (!user.isAdmin) {
     respondForbidden()
     return
   }
@@ -79,7 +80,7 @@ suspend fun AuthenticatedApplicationCall.editUser() {
 
   // Only ADMIN users can change the password of other users
   // Only ADMIN users can change user types
-  if (user.type != ADMIN && (changedUserId != user._id || newUserType != null)) {
+  if (!user.isAdmin && (changedUserId != user._id || newUserType != null)) {
     respondForbidden()
     return
   }
@@ -102,7 +103,7 @@ suspend fun AuthenticatedApplicationCall.editUser() {
 }
 
 suspend fun AuthenticatedApplicationCall.listUsers() {
-  if (!sessionToken.isAuthenticated || user.type != ADMIN) {
+  if (!user.isAdmin) {
     respondForbidden()
     return
   }
