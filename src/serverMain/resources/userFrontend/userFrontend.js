@@ -28,16 +28,15 @@ function onLoad() {
 }
 
 function normalStartup() {
-  /*
-  if (window.location.search.includes("s=1")) { // If "just scanned"
-    // Remove "just scanned" parameter from url and replace state so the user cannot check in again by just reloading or going back
-    let url = window.location.href.split(window.location.search)[0];
-    window.history.replaceState(null, null, url + "?l=locationName");
-  } else {
-    let overlay = document.getElementById("overlay");
-    //overlay.innerText = "Please scan the qr code again"
-    overlay.className = overlay.className.replace("hidden", "");
-  }*/
+    if (window.location.search.includes("s=1")) { // If "just scanned"
+      // Remove "just scanned" parameter from url and replace state so the user cannot check in again by just reloading or going back
+      let url = window.location.href.split(window.location.search)[0];
+      window.history.replaceState(null, null, url + "?l=" + locationId);
+    } else {
+      let overlay = document.getElementById("overlay");
+      //overlay.innerText = "Please scan the qr code again"
+      overlay.className = overlay.className.replace("hidden", "");
+    }
 
   if (!locationId) {
     let overlay = document.getElementById("overlay");
