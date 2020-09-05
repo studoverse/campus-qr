@@ -39,6 +39,7 @@ val muiDatePicker: RClass<MuiDatePickerProps> = importedMuiPickers.DatePicker
 
 interface MuiDateTimePickerProps : MuiDatePickerProps {
   var ampm: Boolean
+  var disablePast: Boolean
 }
 
 val muiDateTimePicker: RClass<MuiDateTimePickerProps> = importedMuiPickers.DateTimePicker

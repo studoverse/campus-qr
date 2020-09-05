@@ -72,7 +72,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
       title = Strings.access_control_create.get(),
       customContent = {
         renderAccessManagementDetails(AccessManagementDetailsProps.Config.Create(onCreated = { success ->
-
+          fetchAccessManagementList()
         }))
       },
       buttons = null,

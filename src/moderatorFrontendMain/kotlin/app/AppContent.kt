@@ -50,7 +50,6 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
   override fun RBuilder.render() {
     val url = props.config.currentAppRoute?.url
     val windowPath = window.location.href.substringAfter("$pathBase/")
-    console.log(url)
     when (url) {
       Url.ACCESS_MANAGEMENT_DETAILS -> renderAccessManagementDetails(AccessManagementDetailsProps.Config.Details(props.config.currentAppRoute!!.pathParams["id"]!!))
       Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList()

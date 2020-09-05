@@ -37,12 +37,16 @@ interface AccessManagementDetailsProps : RProps {
 interface AccessManagementDetailsState : RState {
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>
+
   var selectedLocation: ClientLocation?
+  var selectedLocationTextFieldError: String
+
   var accessControlNoteTextFieldValue: String
   var accessControlReasonTextFieldValue: String
   var personIdentificationTextFieldValue: String
   var permittedPeopleList: List<String>
   var timeSlots: List<ClientDateRange>
+  var toDateTextFieldError: String
 }
 
 class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManagementDetailsProps, AccessManagementDetailsState>(props) {
@@ -50,11 +54,15 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   override fun AccessManagementDetailsState.init(props: AccessManagementDetailsProps) {
     showProgress = false
     locationNameToLocationMap = emptyMap()
+
     selectedLocation = null
+    selectedLocationTextFieldError = ""
+
     accessControlNoteTextFieldValue = ""
     accessControlReasonTextFieldValue = ""
     personIdentificationTextFieldValue = ""
     permittedPeopleList = emptyList()
+    toDateTextFieldError = ""
 
     val fromDate = Date().addHours(1).with(minute = 0)
     timeSlots = listOf(
@@ -124,27 +132,45 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 
   private fun validateInput(): Boolean {
-    // TODO: Validation
-    /*
-    if (state.locationTextFieldValue.isEmpty()) {
+    // Location has to be selected for creation
+    if (props.config is Config.Create && state.selectedLocation == null) {
       setState {
-        locationTextFieldError = Strings.parameter_cannot_be_empty_format.get().format(Strings.name.get())
+        selectedLocationTextFieldError = "Please select a location!"
       }
       return false
     }
-    */
+
+    // At least one time slot has to be there in creation mode
+    if (props.config is Config.Create && state.timeSlots.isEmpty()) {
+      // This shouldn't happen
+      error("timeSlots empty: ${state.timeSlots}")
+    }
+
+    // Validate every timeslot
+    state.timeSlots.forEach { timeSlot ->
+      // End time cannot be before start time
+      if (timeSlot.to < timeSlot.from) {
+        // This shouldn't happen
+        setState {
+          toDateTextFieldError = "End date cannot happen before start date!"
+        }
+        return false
+      }
+    }
+
+    // Note, reason, permitted people are all optional fields
     return true
   }
 
   override fun RBuilder.render() {
     renderLinearProgress(state.showProgress)
 
-    console.log("locationmap", state.locationNameToLocationMap)
     muiAutocomplete {
       attrs.disabled = props.config is Config.Details
       attrs.value = state.selectedLocation?.name ?: ""
       attrs.onChange = { _, target: String?, _ ->
         setState {
+          selectedLocationTextFieldError = ""
           selectedLocation = target?.let { locationNameToLocationMap[it] }
         }
       }
@@ -153,6 +179,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       attrs.getOptionLabel = { it }
       attrs.renderInput = { params: dynamic ->
         textField {
+          attrs.error = state.selectedLocationTextFieldError.isNotEmpty()
+          attrs.helperText = state.selectedLocationTextFieldError
           attrs.id = params.id
           attrs.InputProps = params.InputProps
           attrs.inputProps = params.inputProps
@@ -224,6 +252,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     }
 
     spacer(12)
+
+    // TODO: start-end logic
     state.timeSlots.forEach { clientDateRange ->
       gridContainer(GridDirection.ROW, alignItems = "center", spacing = 1) {
         gridItem(GridSize(xs = 12, sm = true)) {
@@ -233,14 +263,20 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.inputVariant = "outlined"
             attrs.fullWidth = true
             attrs.label = "From"
+            attrs.disablePast = true
             attrs.value = Date(clientDateRange.from)
             attrs.onChange = { selectedDateTime ->
               setState {
                 timeSlots = timeSlots.map { timeSlot ->
                   if (timeSlot == clientDateRange) {
+                    // If start is after end, update end = start + 2h
+                    val from = selectedDateTime.toJSDate().getTime()
+                    val to = if (from >= clientDateRange.to) {
+                      selectedDateTime.toJSDate().addHours(2).getTime()
+                    } else clientDateRange.to
                     ClientDateRange(
-                        from = selectedDateTime.toJSDate().getTime(),
-                        to = clientDateRange.to
+                        from = from,
+                        to = to
                     )
                   } else timeSlot
                 }
@@ -255,6 +291,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.inputVariant = "outlined"
             attrs.fullWidth = true
             attrs.label = "To"
+            attrs.disablePast = true
             attrs.value = Date(clientDateRange.to)
             attrs.onChange = { selectedDateTime ->
               setState {
@@ -286,6 +323,12 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 }
               }
             }
+          }
+        }
+        if (state.toDateTextFieldError.isNotEmpty()) {
+          typography {
+            attrs.color = "error"
+            +state.toDateTextFieldError
           }
         }
       }
