@@ -14,11 +14,11 @@ interface ClientPayloadable<out T : ClientPayload> {
   fun toClientClass(language: String = "en"): T
 }
 
-class BackendUser : MongoMainEntry(), ClientPayloadable<ClientUser> {
+class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
   lateinit var email: String // Use email as primary key. Email can not be changed.
-  lateinit var passwordHash: String
+  var passwordHash: String? = null
   lateinit var createdDate: Date
-  lateinit var createdBy: String // userId
+  var createdBy: String? = null // userId (null on ldap)
   lateinit var name: String
   var firstLoginDate: Date? = null
   var type = UserType.MODERATOR
@@ -33,6 +33,14 @@ class BackendUser : MongoMainEntry(), ClientPayloadable<ClientUser> {
         "Noch nicht eingeloggt"
       ).get(language)
   )
+
+  constructor(userId: String, email: String, name: String, type: UserType) : this() {
+    this.email = email
+    this._id = userId
+    this.name = name
+    this.createdDate = Date()
+    this.type = type
+  }
 
   val isAdmin get() = type == UserType.ADMIN
   val isModerator get() = type == UserType.MODERATOR || isAdmin

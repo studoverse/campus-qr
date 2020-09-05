@@ -3,13 +3,19 @@ package com.studo.campusqr.endpoints
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.UserType.ACCESS_MANAGER
 import com.studo.campusqr.common.UserType.valueOf
+import com.studo.campusqr.common.UserType.ADMIN
+import com.studo.campusqr.common.UserType.MODERATOR
 import com.studo.campusqr.database.BackendUser
+import com.studo.campusqr.database.MainDatabase
+import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.Algorithm
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.MongoDatabase
+import com.studo.katerbase.MongoMainEntry
 import com.studo.katerbase.equal
 import java.util.*
+import io.ktor.application.*
 
 /**
  * This file contains every endpoint which is used in the user management.
@@ -27,14 +33,15 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 
   val params = receiveJsonMap()
 
-  val newUser = BackendUser().apply {
-    email = params.getValue("email").trim()
-    _id = generateId(email) // Use email as primary key. Email can not be changed.
-    passwordHash = Algorithm.hashPassword(params.getValue("password"))
-    name = params.getValue("name").trim()
-    createdDate = Date()
-    createdBy = user._id
-    type = params["userType"]?.let { valueOf(it) } ?: ACCESS_MANAGER
+  val email = params.getValue("email").trim()
+  val newUser = BackendUser(
+      userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
+      email = email,
+      name = params.getValue("name").trim(),
+      type = params["userType"]?.let { UserType.valueOf(it) } ?: ACCESS_MANAGER
+  ).apply {
+    this.passwordHash = Algorithm.hashPassword(params.getValue("password"))
+    this.createdBy = user._id
   }
 
   try {
@@ -59,6 +66,7 @@ suspend fun AuthenticatedApplicationCall.deleteUser() {
   val userId = params.getValue("userId")
 
   runOnDb {
+    MainDatabase.getCollection<SessionToken>().deleteMany(SessionToken::userId equal userId)
     getCollection<BackendUser>().deleteOne(BackendUser::_id equal userId)
   }
 

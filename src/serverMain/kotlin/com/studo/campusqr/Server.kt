@@ -1,6 +1,8 @@
 package com.studo.campusqr
 
 import ch.qos.logback.classic.Level
+import com.studo.campusqr.auth.AuthProvider
+import com.studo.campusqr.auth.getAuthProvider
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.automaticDataDeletion
 import com.studo.campusqr.database.initialDatabaseSetup
@@ -27,9 +29,12 @@ object Server
 
 val serverScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 val baseUrl: String get() = MainDatabase.getConfig("baseUrl")
+lateinit var authProvider: AuthProvider
 
 suspend fun main() {
   initialDatabaseSetup()
+
+  authProvider = getAuthProvider()
 
   automaticDataDeletion()
 
@@ -47,8 +52,8 @@ suspend fun main() {
       header("Content-Security-Policy", "script-src 'self'")
       header("Referrer-Policy", "no-referrer")
       header(
-          "Feature-Policy", "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; " +
-          "magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+        "Feature-Policy", "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; " +
+            "magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
       )
     }
     install(StatusPages) {
