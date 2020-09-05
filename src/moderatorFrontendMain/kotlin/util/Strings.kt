@@ -409,8 +409,8 @@ object Strings {
   )
 
   val access_control_not_configured_yet_subtitle = LocalizedString(
-    "Click on \"create access control\" button in the top right corner to create access control.",
-    "Klicken Sie rechts oben auf \"Zugangskontrolle erstellen\" um die Zugangskontrolle zu erstellen."
+    "Click on \"create access control\" button in the top right corner to create an access control.",
+    "Klicken Sie rechts oben auf \"Zugangskontrolle erstellen\" um eine Zugangskontrolle zu erstellen."
   )
 
   val access_control_permitted_people = LocalizedString(
