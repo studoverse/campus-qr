@@ -3,6 +3,7 @@ package views.accessManagement.accessManagementOverview
 import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.ClientAccessManagement
+import com.studo.campusqr.common.ClientLocation
 import kotlinext.js.js
 import react.*
 import react.dom.div
@@ -20,7 +21,8 @@ import webcore.mbMaterialDialog
 import webcore.mbSnackbar
 
 interface ListAccessManagementProps : RProps {
-  var classes: ListLocationsClasses
+  var classes: ListAccessClasses
+  var location: ClientLocation?
 }
 
 interface ListAccessManagementState : RState {
@@ -43,7 +45,8 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 
   private fun fetchAccessManagementList() = launch {
     setState { loadingAccessManagementList = true }
-    val response = NetworkManager.get<Array<ClientAccessManagement>>("$apiBase/access/list")
+    val params = props.location?.id?.let { "?locationId=$it" } ?: ""
+    val response = NetworkManager.get<Array<ClientAccessManagement>>("$apiBase/access/list$params")
     setState {
       accessManagementList = response?.toList()
       loadingAccessManagementList = false
@@ -109,6 +112,10 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
         attrs.className = props.classes.header
         attrs.variant = "h5"
         +Strings.access_control.get()
+        if (props.location != null) {
+          +" - "
+          +props.location!!.name
+        }
       }
       div(GlobalCss.flexEnd) {
 
@@ -177,7 +184,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 }
 
-interface ListLocationsClasses {
+interface ListAccessClasses {
   var header: String
   var button: String
   var createButton: String
@@ -208,6 +215,7 @@ private val ListLocationsStyle = { theme: dynamic ->
 
 private val styled = withStyles<ListAccessManagementProps, ListAccessManagement>(ListLocationsStyle)
 
-fun RBuilder.renderAccessManagementList() = styled {
+fun RBuilder.renderAccessManagementList(location: ClientLocation?) = styled {
   // Set component attrs here
+  attrs.location = location
 }

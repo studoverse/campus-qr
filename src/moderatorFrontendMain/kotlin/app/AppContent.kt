@@ -10,9 +10,7 @@ import react.dom.div
 import util.AppRoute
 import util.Strings
 import util.get
-import views.accessManagement.AccessManagementDetailsProps
 import views.accessManagement.accessManagementOverview.renderAccessManagementList
-import views.accessManagement.renderAccessManagementDetails
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
 import views.locations.locationsOverview.renderListLocations
@@ -51,7 +49,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
     val url = props.config.currentAppRoute?.url
     val windowPath = window.location.href.substringAfter("$pathBase/")
     when (url) {
-      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList()
+      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(location = null)
       Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
       Url.USERS -> renderUsers(userData = props.config.userData!!)
