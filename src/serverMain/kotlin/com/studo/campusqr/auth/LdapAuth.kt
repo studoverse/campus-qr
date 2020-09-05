@@ -1,7 +1,11 @@
 package com.studo.campusqr.auth
 
+import com.studo.campusqr.common.UserType
+import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.serverScope
+import com.studo.katerbase.MongoMainEntry
+import com.studo.katerbase.equal
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -47,8 +51,25 @@ class LdapAuth(val ldapUrl: String) : AuthProvider {
     return if (!valid) {
       AuthProvider.Result.InvalidCredentials
     } else {
-      // TODO insert/upsert user
-      AuthProvider.Result.Success(TODO("user"))
+      // Insert user if not yet created
+      val userId = MongoMainEntry.generateId(email)
+      val user = runOnDb {
+        getCollection<BackendUser>().findOneOrInsert(BackendUser::_id equal userId) {
+          BackendUser(
+            userId = userId,
+            email = email,
+            name = email
+              .substringBefore("@")
+              .replace(".", " ")
+              .split(" ")
+              .joinToString(separator = " ", transform = { it.capitalize() }),
+            type = UserType.MODERATOR // TODO
+          ).apply {
+
+          }
+        }
+      }
+      AuthProvider.Result.Success(user)
     }
   }
 

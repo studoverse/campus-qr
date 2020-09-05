@@ -1,7 +1,8 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.UserType
-import com.studo.campusqr.common.UserType.*
+import com.studo.campusqr.common.UserType.ADMIN
+import com.studo.campusqr.common.UserType.MODERATOR
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.Algorithm
@@ -9,9 +10,9 @@ import com.studo.campusqr.utils.getSessionToken
 import com.studo.campusqr.utils.getUser
 import com.studo.campusqr.utils.isAuthenticated
 import com.studo.katerbase.MongoDatabase
+import com.studo.katerbase.MongoMainEntry
 import com.studo.katerbase.equal
 import io.ktor.application.*
-import java.util.*
 
 /**
  * This file contains every endpoint which is used in the user management.
@@ -31,14 +32,15 @@ suspend fun ApplicationCall.createNewUser() {
 
   val params = receiveJsonMap()
 
-  val newUser = BackendUser().apply {
-    email = params.getValue("email").trim()
-    _id = generateId(email) // Use email as primary key. Email can not be changed.
-    passwordHash = Algorithm.hashPassword(params.getValue("password"))
-    name = params.getValue("name").trim()
-    createdDate = Date()
-    createdBy = currentUser._id
-    type = params["userType"]?.let { valueOf(it) } ?: MODERATOR
+  val email = params.getValue("email").trim()
+  val newUser = BackendUser(
+    userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
+    email = email,
+    name = params.getValue("name").trim(),
+    type = params["userType"]?.let { UserType.valueOf(it) } ?: MODERATOR
+  ).apply {
+    this.passwordHash = Algorithm.hashPassword(params.getValue("password"))
+    this.createdBy = currentUser._id
   }
 
   try {
