@@ -324,25 +324,24 @@ button#submit-button:active {
 .result > .details {
   display: flex;
   flex-direction: column;
-  /*border: 1px solid #959EA6;*/
-  /*padding: 12px 16px;*/
   border-radius: 4px;
-  width: 100%;
-  line-height: 2.5;
+  width: max-content;
   text-align: center;
-  /*box-shadow: 0 2px 8px 1.5px rgba(0, 0, 0, 0.15);*/
+  align-items: center;
 }
 
-/*.result > .details > * {
-  border-bottom: 1px solid #b5b5b5;
-}*/
+.result > .details > .row {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  width: 100%;
+}
 
-.result > .details > h3 {
-  margin: 0;
-  text-transform: uppercase;
-  font-size: 14px;
-  color: #8a8888;
-  letter-spacing: 1px;
+.result > .details img {
+  height: 24px;
+  width: 24px;
+  opacity: 0.5;
+  margin-right: 18px;
 }
 
 div.icon.wrap {

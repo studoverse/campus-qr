@@ -119,7 +119,7 @@ function setDatetimeElement(dateLong) {
     datetimeElement.innerText =
         `${pad(date.getDate(), 2)}.${pad(date.getMonth() + 1, 2)}.${date.getFullYear()} ${
             datetimeElement.innerText} ${pad(date.getHours(), 2)
-        },${pad(date.getMinutes(), 2)}`;
+        }:${pad(date.getMinutes(), 2)}`;
   }
 }
 

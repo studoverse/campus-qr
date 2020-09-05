@@ -174,15 +174,21 @@ suspend fun ApplicationCall.userFrontend() {
               }
               div("details") {
                 //h3 { +"Details" }
-                span("datetime") {
-                  // TODO calendar icon
-                  //+(SimpleDateFormat("dd.MM.yyyy").format(now)
-                  +LocalizedString(" at ", " um ").get(this@userFrontend) //+
-                  //SimpleDateFormat("HH:mm").format(now))
+                div("row") {
+                  img {
+                    src = "/static/userFrontend/calendar-icon.svg"
+                  }
+                  span("datetime") {
+                    +LocalizedString(" at ", " um ").get(this@userFrontend)
+                  }
                 }
-                span("identification") {
-                  id = "result-ok-id"
-                  // TODO user icon
+                div("row") {
+                  img {
+                    src = "/static/userFrontend/user-icon.svg"
+                  }
+                  span("identification") {
+                    id = "result-ok-id"
+                  }
                 }
               }
             }
