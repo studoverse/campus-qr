@@ -300,7 +300,7 @@ private val styles = { theme: dynamic ->
 object ColorPalette {
   const val default = "#FFFFFF" // White
   const val primaryColor = "#5994F0"
-  const val secondaryColor = "#5994F0"
+  const val secondaryColor = "#FF4081"
   const val gray = "#9D9D9D"
   const val textDefault = "#000000"
 }

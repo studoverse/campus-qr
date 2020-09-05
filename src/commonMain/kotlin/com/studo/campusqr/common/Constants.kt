@@ -12,4 +12,4 @@ enum class UserType {
   ACCESS_MANAGER, // Can give access to existing locations
 }
 
-val reportEmailSeparators = arrayOf(" ", ",", ";")
+val emailSeparators = arrayOf(" ", ",", ";")

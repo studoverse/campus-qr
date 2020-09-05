@@ -12,9 +12,7 @@ import util.get
 import views.common.genericErrorView
 import views.common.networkErrorView
 import views.locations.AddLocationProps.Config
-import views.locations.LocationTableRowProps
 import views.locations.renderAddLocation
-import views.locations.renderLocationTableRow
 import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*

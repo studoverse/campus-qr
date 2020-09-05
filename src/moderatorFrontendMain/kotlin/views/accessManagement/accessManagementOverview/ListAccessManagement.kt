@@ -7,10 +7,10 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
+import views.accessManagement.AccessManagementDetailsProps
+import views.accessManagement.renderAccessManagementDetails
 import views.common.genericErrorView
 import views.common.networkErrorView
-import views.locations.AddLocationProps.Config
-import views.locations.renderAddLocation
 import webcore.MbSnackbarProps
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -85,22 +85,19 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 
   private fun RBuilder.renderAddAccessManagementDialog() = mbMaterialDialog(
-    show = state.showAddAccessManagementDialog,
-    title = Strings.location_add.get(),
-    customContent = {
-      // TODO : render AddAccessManagement
-      renderAddLocation(
-        Config.Create(onFinished = { response ->
-          handleCreateOrEditLocationResponse(response)
-        })
-      )
-    },
-    buttons = null,
-    onClose = {
-      setState {
-        showAddAccessManagementDialog = false
+      show = state.showAddAccessManagementDialog,
+      title = Strings.access_control_create.get(),
+      customContent = {
+        renderAccessManagementDetails(AccessManagementDetailsProps.Config.Create(onCreated = { success ->
+
+        }))
+      },
+      buttons = null,
+      onClose = {
+        setState {
+          showAddAccessManagementDialog = false
+        }
       }
-    }
   )
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
