@@ -1,4 +1,4 @@
-package views.addLocation
+package views.locations
 
 import apiBase
 import app.GlobalCss
@@ -7,11 +7,10 @@ import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.br
 import react.dom.div
 import util.Strings
 import util.get
-import views.addLocation.AddLocationProps.Config
+import views.locations.AddLocationProps.Config
 import views.common.spacer
 import webcore.NetworkManager
 import webcore.extensions.inputValue

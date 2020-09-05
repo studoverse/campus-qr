@@ -11,11 +11,11 @@ import util.AppRoute
 import util.Strings
 import util.get
 import views.accessManagement.AccessManagementDetailsProps
-import views.accessManagement.accessManagementList.renderAccessManagementList
+import views.accessManagement.accessManagementOverview.renderAccessManagementList
 import views.accessManagement.renderAccessManagementDetails
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
-import views.listLocations.renderListLocations
+import views.locations.locationsOverview.renderListLocations
 import views.login.LoginMode
 import views.login.renderLoginView
 import views.report.renderReport

@@ -1,4 +1,4 @@
-package views.listLocations
+package views.locations.locationsOverview
 
 import apiBase
 import app.GlobalCss
@@ -9,10 +9,12 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
-import views.addLocation.AddLocationProps.Config
-import views.addLocation.renderAddLocation
+import views.locations.AddLocationProps.Config
 import views.common.genericErrorView
 import views.common.networkErrorView
+import views.locations.LocationTableRowProps
+import views.locations.renderAddLocation
+import views.locations.renderLocationTableRow
 import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -185,9 +187,9 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
         mTableBody {
           state.locationList!!.forEach { location ->
             renderLocationTableRow(
-              LocationTableRowProps.Config(location, onEditFinished = { response ->
-                handleCreateOrEditLocationResponse(response)
-              })
+                LocationTableRowProps.Config(location, onEditFinished = { response ->
+                  handleCreateOrEditLocationResponse(response)
+                })
             )
           }
         }

@@ -1,4 +1,4 @@
-package views.accessManagement.accessManagementList
+package views.accessManagement.accessManagementOverview
 
 import app.GlobalCss
 import com.studo.campusqr.common.ClientAccessManagement
@@ -8,8 +8,8 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
-import views.addLocation.AddLocationProps.Config
-import views.addLocation.renderAddLocation
+import views.locations.AddLocationProps.Config
+import views.locations.renderAddLocation
 import views.common.genericErrorView
 import views.common.networkErrorView
 import webcore.MbSnackbarProps

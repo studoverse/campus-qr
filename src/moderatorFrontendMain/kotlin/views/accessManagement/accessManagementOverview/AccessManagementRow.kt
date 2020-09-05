@@ -1,4 +1,4 @@
-package views.accessManagement.accessManagementList
+package views.accessManagement.accessManagementOverview
 
 import MenuItem
 import com.studo.campusqr.common.ClientAccessManagement

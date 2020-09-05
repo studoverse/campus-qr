@@ -1,4 +1,4 @@
-package views.listLocations
+package views.locations
 
 import MenuItem
 import apiBase
@@ -11,8 +11,6 @@ import react.*
 import util.Strings
 import util.fileDownload
 import util.get
-import views.addLocation.AddLocationProps
-import views.addLocation.renderAddLocation
 import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.materialUI.*
