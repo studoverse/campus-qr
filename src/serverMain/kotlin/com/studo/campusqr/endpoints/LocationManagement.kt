@@ -7,9 +7,7 @@ import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.extensions.*
-import com.studo.campusqr.utils.getSessionToken
-import com.studo.campusqr.utils.getUser
-import com.studo.campusqr.utils.isAuthenticated
+import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.equal
 import io.ktor.application.*
 import io.ktor.http.*
@@ -30,8 +28,8 @@ suspend fun getAllLocations(language: String): List<ClientLocation> {
   return runOnDb { getCollection<BackendLocation>().find().toList() }.map { it.toClientClass(language) }
 }
 
-suspend fun ApplicationCall.createLocation() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.createLocation() {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }
@@ -44,7 +42,7 @@ suspend fun ApplicationCall.createLocation() {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
     this.name = name
     this.createdDate = Date()
-    this.createdBy = getUser()._id
+    this.createdBy = user._id
     this.checkInCount = 0
   }
 
@@ -53,8 +51,8 @@ suspend fun ApplicationCall.createLocation() {
   respondOk()
 }
 
-suspend fun ApplicationCall.listLocations() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.listLocations() {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }
@@ -107,8 +105,8 @@ suspend fun ApplicationCall.visitLocation() {
   respondOk()
 }
 
-suspend fun ApplicationCall.returnLocationVisitCsvData() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }
@@ -132,8 +130,8 @@ suspend fun ApplicationCall.returnLocationVisitCsvData() {
   )
 }
 
-suspend fun ApplicationCall.editLocation() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.editLocation() {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }
@@ -155,8 +153,8 @@ suspend fun ApplicationCall.editLocation() {
   respondOk()
 }
 
-suspend fun ApplicationCall.deleteLocation() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.deleteLocation() {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }

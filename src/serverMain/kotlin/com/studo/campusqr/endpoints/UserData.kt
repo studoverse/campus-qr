@@ -23,30 +23,24 @@ private suspend fun getUser(id: String?): BackendUser? {
   return runOnDb { getCollection<BackendUser>().findOne(BackendUser::_id equal id) }
 }
 
-suspend fun ApplicationCall.getUserData() {
-  val sessionToken = getSessionToken() ?: createNewSessionToken()
-  val user = if (sessionToken.isAuthenticated) getUser(sessionToken.userId) else null
-
+suspend fun AuthenticatedApplicationCall.getUserData() {
   val appName = runOnDb {
     getCollection<Configuration>().findOne(Configuration::_id equal "appName")?.stringValue ?: ""
   }
 
   respondObject(UserData().apply {
     this.appName = appName
-    this.clientUser = user?.toClientClass(this@getUserData.language)
+    this.clientUser = user.toClientClass(this@getUserData.language)
   })
 }
 
-suspend fun ApplicationCall.logout() {
-  val sessionToken = getSessionToken()
-  if (sessionToken != null) {
-    runOnDb {
-      getCollection<SessionToken>().updateOne(SessionToken::_id equal sessionToken._id) {
-        SessionToken::expiryDate setTo Date()
-      }
+suspend fun AuthenticatedApplicationCall.logout() {
+  runOnDb {
+    getCollection<SessionToken>().updateOne(SessionToken::_id equal sessionToken._id) {
+      SessionToken::expiryDate setTo Date()
     }
-    sessions.clear<Session>()
   }
+  sessions.clear<Session>()
   respondRedirect(baseUrl, permanent = false)
 }
 

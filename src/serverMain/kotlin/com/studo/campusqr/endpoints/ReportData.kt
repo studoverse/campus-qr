@@ -6,13 +6,11 @@ import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.serverScope
-import com.studo.campusqr.utils.getSessionToken
-import com.studo.campusqr.utils.isAuthenticated
+import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.equal
 import com.studo.katerbase.greaterEquals
 import com.studo.katerbase.inArray
 import com.studo.katerbase.inRange
-import io.ktor.application.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.util.*
@@ -20,8 +18,8 @@ import java.util.*
 /**
  * This file contains the contact tracing endpoint.
  */
-suspend fun ApplicationCall.returnReportData() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.returnReportData() {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }

@@ -50,7 +50,8 @@ val ApplicationCall.language: String
 suspend fun ApplicationCall.receiveJsonMap(): Map<String, String> = JsonHandler.fromJson(receiveText())
 
 suspend fun <T : ClientPayload> ApplicationCall.receiveClientPayload(payloadClass: KClass<T>): T {
-  return JsonHandler.fromJson(receiveText(), payloadClass)
+  val json = receiveText()
+  return JsonHandler.fromJson(json, payloadClass)
 }
 
 suspend inline fun <reified T : ClientPayload> ApplicationCall.receiveClientPayload(): T {

@@ -8,19 +8,16 @@ import com.studo.campusqr.database.BackendAccess
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange
 import com.studo.campusqr.extensions.*
-import com.studo.campusqr.utils.getUser
+import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.equal
 import com.studo.katerbase.inArray
-import io.ktor.application.*
 import java.util.*
 
 suspend fun getAccess(id: String): BackendAccess? = runOnDb {
   getCollection<BackendAccess>().findOne(BackendAccess::_id equal id)
 }
 
-suspend fun ApplicationCall.listAccess() {
-  val user = getUser()
-
+suspend fun AuthenticatedApplicationCall.listAccess() {
   val params = receiveJsonMap()
 
   val locationId = params["locationId"]
@@ -54,11 +51,8 @@ suspend fun ApplicationCall.listAccess() {
   })
 }
 
-suspend fun ApplicationCall.createAccess() {
-  val user = getUser()
-
+suspend fun AuthenticatedApplicationCall.createAccess() {
   val newAccessPayload: NewAccess = receiveClientPayload()
-
 
   val newAccess = BackendAccess().apply {
     _id = randomId()
@@ -77,8 +71,7 @@ suspend fun ApplicationCall.createAccess() {
   respondOk()
 }
 
-suspend fun ApplicationCall.deleteAccess() {
-  val user = getUser()
+suspend fun AuthenticatedApplicationCall.deleteAccess() {
   val accessId = parameters["id"]!!
 
   val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
@@ -95,8 +88,7 @@ suspend fun ApplicationCall.deleteAccess() {
   respondOk()
 }
 
-suspend fun ApplicationCall.duplicateAccess() {
-  getUser()
+suspend fun AuthenticatedApplicationCall.duplicateAccess() {
   val accessId = parameters["id"]!!
 
   val oldAccess = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
@@ -111,8 +103,7 @@ suspend fun ApplicationCall.duplicateAccess() {
   respondOk()
 }
 
-suspend fun ApplicationCall.editAccess() {
-  val user = getUser()
+suspend fun AuthenticatedApplicationCall.editAccess() {
   val accessId = parameters["id"]!!
   val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
 

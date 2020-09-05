@@ -5,6 +5,7 @@ import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.addDays
 import com.studo.campusqr.extensions.addYears
+import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.katerbase.equal
 import com.studo.katerbase.sha256
@@ -17,6 +18,29 @@ import java.util.*
  */
 
 data class Session(val token: String)
+
+suspend fun ApplicationCall.getAuthenticatedCall(): AuthenticatedApplicationCall? {
+  return when (this) {
+    is AuthenticatedApplicationCall -> this
+    else -> {
+      val sessionToken = getSessionToken() ?: run {
+        respondForbidden()
+        return null
+      }
+      val user = getUser(sessionToken) ?: run {
+        respondForbidden()
+        return null
+      }
+      AuthenticatedApplicationCall(this, sessionToken, user)
+    }
+  }
+}
+
+class AuthenticatedApplicationCall(
+    val call: ApplicationCall,
+    val sessionToken: SessionToken,
+    val user: BackendUser
+) : ApplicationCall by call
 
 suspend fun ApplicationCall.createNewSessionToken(): SessionToken {
   val sessionToken = SessionToken().apply {
@@ -43,14 +67,11 @@ suspend fun ApplicationCall.getSessionToken(): SessionToken? {
 
 val SessionToken?.isAuthenticated get() = this?.isAuthenticated ?: false
 
-suspend fun ApplicationCall.getUser(): BackendUser {
-  fun throwNotLoggedIn(): Nothing = throw IllegalStateException("User is not logged in")
-
-  val sessionToken = getSessionToken() ?: throwNotLoggedIn()
-  if (!sessionToken.isAuthenticated) throwNotLoggedIn()
+suspend fun ApplicationCall.getUser(sessionToken: SessionToken? = null): BackendUser? {
+  val sessionToken = sessionToken ?: getSessionToken() ?: return null
+  if (!sessionToken.isAuthenticated) return null
 
   return runOnDb { getCollection<BackendUser>().findOne(BackendUser::_id equal sessionToken.userId!!) }
-      ?: throwNotLoggedIn()
 }
 
 private val csrfHashSecret: String = MainDatabase.getConfig("csrfHashSecret")

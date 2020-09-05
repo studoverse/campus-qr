@@ -6,6 +6,7 @@ import com.studo.campusqr.database.automaticDataDeletion
 import com.studo.campusqr.database.initialDatabaseSetup
 import com.studo.campusqr.endpoints.*
 import com.studo.campusqr.utils.Session
+import com.studo.campusqr.utils.getAuthenticatedCall
 import com.studo.katerbase.setLogLevel
 import io.ktor.application.*
 import io.ktor.features.*
@@ -80,42 +81,42 @@ suspend fun main() {
       get("/") { call.index() }
       get("campus-qr") { call.userFrontend() }
       route("user") {
-        get("data") { call.getUserData() }
-        get("logout") { call.logout() }
+        get("data") { call.getAuthenticatedCall()?.getUserData() }
+        get("logout") { call.getAuthenticatedCall()?.logout() }
         post("login") { call.login() }
 
         // Management
-        post("create") { call.createNewUser() }
-        post("delete") { call.deleteUser() }
-        post("edit") { call.editUser() }
-        get("list") { call.listUsers() }
+        post("create") { call.getAuthenticatedCall()?.createNewUser() }
+        post("delete") { call.getAuthenticatedCall()?.deleteUser() }
+        post("edit") { call.getAuthenticatedCall()?.editUser() }
+        get("list") { call.getAuthenticatedCall()?.listUsers() }
       }
       route("location") {
-        post("create") { call.createLocation() }
+        post("create") { call.getAuthenticatedCall()?.createLocation() }
         route("list") {
-          get { call.listLocations() }
+          get { call.getAuthenticatedCall()?.listLocations() }
           get("qr-codes") { call.viewAllQrCodes() }
         }
 
         route("{id}") {
           post("visit") { call.visitLocation() }
-          get("visitsCsv") { call.returnLocationVisitCsvData() }
-          post("edit") { call.editLocation() }
+          get("visitsCsv") { call.getAuthenticatedCall()?.returnLocationVisitCsvData() }
+          post("edit") { call.getAuthenticatedCall()?.editLocation() }
           get("qr-code") { call.viewSingleQrCode() }
-          get("delete") { call.deleteLocation() }
+          get("delete") { call.getAuthenticatedCall()?.deleteLocation() }
         }
       }
       route("access") {
-        post("list") { call.listAccess() }
-        post("create") { call.createAccess() }
+        post("list") { call.getAuthenticatedCall()?.listAccess() }
+        post("create") { call.getAuthenticatedCall()?.createAccess() }
 
         route("{id}") {
-          get("delete") { call.deleteAccess() }
-          get("duplicate") { call.duplicateAccess() }
-          post("edit") { call.editAccess() }
+          get("delete") { call.getAuthenticatedCall()?.deleteAccess() }
+          get("duplicate") { call.getAuthenticatedCall()?.duplicateAccess() }
+          post("edit") { call.getAuthenticatedCall()?.editAccess() }
         }
       }
-      post("report/list") { call.returnReportData() }
+      post("report/list") { call.getAuthenticatedCall()?.returnReportData() }
       route("admin") {
         get("campusqr-admin.js") { call.returnModeratorJs() }
         get("/{...}") { call.returnModeratorIndexHtml() }
