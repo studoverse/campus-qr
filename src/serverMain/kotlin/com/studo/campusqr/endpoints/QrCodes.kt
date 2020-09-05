@@ -6,15 +6,13 @@ import com.studo.campusqr.database.getConfigs
 import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.extensions.respondForbidden
-import com.studo.campusqr.utils.getSessionToken
-import com.studo.campusqr.utils.isAuthenticated
-import io.ktor.application.*
+import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import io.ktor.html.*
 import io.ktor.http.*
 import kotlinx.html.*
 
-suspend fun ApplicationCall.viewSingleQrCode() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }
@@ -57,8 +55,8 @@ suspend fun ApplicationCall.viewSingleQrCode() {
   }
 }
 
-suspend fun ApplicationCall.viewAllQrCodes() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }

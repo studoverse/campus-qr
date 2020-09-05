@@ -37,7 +37,7 @@ suspend fun ApplicationCall.getAuthenticatedCall(): AuthenticatedApplicationCall
 }
 
 class AuthenticatedApplicationCall(
-    val call: ApplicationCall,
+    private val call: ApplicationCall,
     val sessionToken: SessionToken,
     val user: BackendUser
 ) : ApplicationCall by call
@@ -67,10 +67,8 @@ suspend fun ApplicationCall.getSessionToken(): SessionToken? {
 
 val SessionToken?.isAuthenticated get() = this?.isAuthenticated ?: false
 
-suspend fun ApplicationCall.getUser(sessionToken: SessionToken? = null): BackendUser? {
-  val sessionToken = sessionToken ?: getSessionToken() ?: return null
+private suspend fun getUser(sessionToken: SessionToken): BackendUser? {
   if (!sessionToken.isAuthenticated) return null
-
   return runOnDb { getCollection<BackendUser>().findOne(BackendUser::_id equal sessionToken.userId!!) }
 }
 

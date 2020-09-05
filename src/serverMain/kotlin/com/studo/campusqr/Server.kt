@@ -95,14 +95,14 @@ suspend fun main() {
         post("create") { call.getAuthenticatedCall()?.createLocation() }
         route("list") {
           get { call.getAuthenticatedCall()?.listLocations() }
-          get("qr-codes") { call.viewAllQrCodes() }
+          get("qr-codes") { call.getAuthenticatedCall()?.viewAllQrCodes() }
         }
 
         route("{id}") {
           post("visit") { call.visitLocation() }
           get("visitsCsv") { call.getAuthenticatedCall()?.returnLocationVisitCsvData() }
           post("edit") { call.getAuthenticatedCall()?.editLocation() }
-          get("qr-code") { call.viewSingleQrCode() }
+          get("qr-code") { call.getAuthenticatedCall()?.viewSingleQrCode() }
           get("delete") { call.getAuthenticatedCall()?.deleteLocation() }
         }
       }
