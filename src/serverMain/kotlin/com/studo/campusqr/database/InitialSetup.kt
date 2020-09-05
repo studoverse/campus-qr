@@ -60,6 +60,12 @@ suspend fun initialDatabaseSetup() {
       insert("nextInfectionHours", 12)
 
       insert("csrfHashSecret", Algorithm.secureRandom.longs(64).toList().joinToString().sha256())
+
+      insert("ldapUrl", "") // "" = ldap disabled. E.g. "ldap://ldap.forumsys.com:389"
+      insert("ldapSearchFilter", "(uid=%s,dc=example,dc=com)") // For user authentication
+      insert("ldapApplicationUserPrincipal", "cn=read-only-admin,dc=example,dc=com") // For user disabling via lookup
+      insert("ldapApplicationUserCredentials", "password") // For user disabling via lookup
+      insert("ldapUserDisablingIntervalMinutes", 24 * 60)
     }
 
     // Create root user
