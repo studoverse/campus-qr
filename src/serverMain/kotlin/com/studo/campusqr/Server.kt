@@ -112,6 +112,7 @@ suspend fun main() {
         route("{id}") {
           get("delete") { call.deleteAccess() }
           get("duplicate") { call.duplicateAccess() }
+          post("edit") { call.editAccess() }
         }
       }
       post("report/list") { call.returnReportData() }

@@ -53,5 +53,6 @@ suspend fun <T : ClientPayload> ApplicationCall.receiveClientPayload(payloadClas
   return JsonHandler.fromJson(receiveText(), payloadClass)
 }
 
-suspend inline fun <reified T : ClientPayload> ApplicationCall.receiveClientPayload(): T =
-  receiveClientPayload(T::class)
+suspend inline fun <reified T : ClientPayload> ApplicationCall.receiveClientPayload(): T {
+  return receiveClientPayload(T::class)
+}

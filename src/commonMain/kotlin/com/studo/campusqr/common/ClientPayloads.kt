@@ -60,4 +60,12 @@ class NewAccess(
   val dateRanges: List<ClientDateRange>,
   val note: String,
   val reason: String
-)
+) : ClientPayload
+
+class EditAccess(
+  val locationId: String? = null,
+  val allowedEmails: List<String>? = null,
+  val dateRanges: List<ClientDateRange>? = null,
+  val note: String? = null,
+  val reason: String? = null
+) : ClientPayload

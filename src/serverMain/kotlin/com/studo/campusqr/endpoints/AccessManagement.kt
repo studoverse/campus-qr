@@ -1,6 +1,7 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.ClientAccessManagement
+import com.studo.campusqr.common.EditAccess
 import com.studo.campusqr.common.NewAccess
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.database.BackendAccess
@@ -58,6 +59,7 @@ suspend fun ApplicationCall.createAccess() {
 
   val newAccessPayload: NewAccess = receiveClientPayload()
 
+
   val newAccess = BackendAccess().apply {
     _id = randomId()
     createdBy = user._id
@@ -104,6 +106,43 @@ suspend fun ApplicationCall.duplicateAccess() {
 
   runOnDb {
     getCollection<BackendAccess>().insertOne(newAccess, upsert = false)
+  }
+
+  respondOk()
+}
+
+suspend fun ApplicationCall.editAccess() {
+  val user = getUser()
+  val accessId = parameters["id"]!!
+  val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+
+  if (user._id != access.createdBy && !user.isModerator) {
+    respondForbidden()
+    return
+  }
+
+  val editAccessPayload: EditAccess = receiveClientPayload()
+
+  runOnDb {
+    getCollection<BackendAccess>().updateOne(BackendAccess::_id equal accessId) {
+      with(editAccessPayload) {
+        if (locationId != null) {
+          BackendAccess::locationId setTo locationId
+        }
+        if (allowedEmails != null) {
+          BackendAccess::allowedEmails setTo allowedEmails
+        }
+        if (dateRanges != null) {
+          BackendAccess::dateRanges setTo dateRanges.map { DateRange(it) }
+        }
+        if (note != null) {
+          BackendAccess::note setTo note
+        }
+        if (reason != null) {
+          BackendAccess::reason setTo reason
+        }
+      }
+    }
   }
 
   respondOk()
