@@ -229,6 +229,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     spacer(16)
 
     textField {
+      attrs.disabled = props.config is Config.Details
       attrs.fullWidth = true
       attrs.variant = "outlined"
       attrs.label = Strings.access_control_note.get()
@@ -247,6 +248,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     spacer(16)
 
     textField {
+      attrs.disabled = props.config is Config.Details
       attrs.fullWidth = true
       attrs.variant = "outlined"
       attrs.label = Strings.access_control_reason.get()
@@ -268,16 +270,18 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       typography {
         +Strings.access_control_time_slots.get()
       }
-      muiTooltip {
-        attrs.title = Strings.access_control_time_slot_add.get()
-        iconButton {
-          attrs.classes = js {
-            root = props.classes.addTimeSlotButton
-          }
-          addIcon {}
-          attrs.onClick = {
-            setState {
-              timeSlots = (timeSlots + ClientDateRange(timeSlots.last().from, timeSlots.last().to))
+      if (props.config !is Config.Details) {
+        muiTooltip {
+          attrs.title = Strings.access_control_time_slot_add.get()
+          iconButton {
+            attrs.classes = js {
+              root = props.classes.addTimeSlotButton
+            }
+            addIcon {}
+            attrs.onClick = {
+              setState {
+                timeSlots = (timeSlots + ClientDateRange(timeSlots.last().from, timeSlots.last().to))
+              }
             }
           }
         }
@@ -291,6 +295,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       gridContainer(GridDirection.ROW, alignItems = "center", spacing = 1) {
         gridItem(GridSize(xs = 12, sm = true)) {
           muiDateTimePicker {
+            attrs.disabled = props.config is Config.Details
             attrs.format = "dd.MM.yyyy, hh:mm"
             attrs.ampm = false
             attrs.inputVariant = "outlined"
@@ -319,6 +324,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         }
         gridItem(GridSize(xs = 12, sm = true)) {
           muiDateTimePicker {
+            attrs.disabled = props.config is Config.Details
             attrs.format = "dd.MM.yyyy, hh:mm"
             attrs.ampm = false
             attrs.inputVariant = "outlined"
@@ -341,18 +347,20 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           }
         }
         gridItem(GridSize(xs = 1)) {
-          muiTooltip {
-            attrs.title = Strings.access_control_time_slot_remove.get()
-            iconButton {
-              attrs.classes = js {
-                root = props.classes.removeTimeSlotButton
-              }
-              // At least one time slot must be set
-              attrs.disabled = state.timeSlots.count() == 1
-              closeIcon {}
-              attrs.onClick = {
-                setState {
-                  timeSlots = timeSlots.filter { it != clientDateRange }
+          if (props.config !is Config.Details) {
+            muiTooltip {
+              attrs.title = Strings.access_control_time_slot_remove.get()
+              iconButton {
+                attrs.classes = js {
+                  root = props.classes.removeTimeSlotButton
+                }
+                // At least one time slot must be set
+                attrs.disabled = state.timeSlots.count() == 1
+                closeIcon {}
+                attrs.onClick = {
+                  setState {
+                    timeSlots = timeSlots.filter { it != clientDateRange }
+                  }
                 }
               }
             }
@@ -374,38 +382,43 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     spacer(12)
     form(props.classes.form) {
       attrs.onSubmitFunction = { event ->
-        submitPermittedPeopleToState()
+        if (props.config !is Config.Details) {
+          submitPermittedPeopleToState()
+        }
         event.preventDefault()
         event.stopPropagation()
       }
-      div(GlobalCss.flex) {
-        textField {
-          attrs.helperText = Strings.access_control_add_permitted_people_tip.get()
-          attrs.fullWidth = true
-          attrs.variant = "outlined"
-          attrs.label = Strings.email_address.get()
-          attrs.value = state.personIdentificationTextFieldValue
-          attrs.inputProps = js {
-            maxLength = 40 // Make sure names stay printable
-          }
-          attrs.onChange = { event: Event ->
-            val value = event.inputValue
-            setState {
-              personIdentificationTextFieldValue = value
-            }
-          }
-        }
-
-        div(GlobalCss.flexEnd) {
-          spacer()
-          muiButton {
-            attrs.size = "small"
-            attrs.color = "primary"
+      if (props.config !is Config.Details) {
+        div(GlobalCss.flex) {
+          textField {
+            attrs.disabled = props.config is Config.Details
+            attrs.helperText = Strings.access_control_add_permitted_people_tip.get()
+            attrs.fullWidth = true
             attrs.variant = "outlined"
-            attrs.onClick = {
-              submitPermittedPeopleToState()
+            attrs.label = Strings.email_address.get()
+            attrs.value = state.personIdentificationTextFieldValue
+            attrs.inputProps = js {
+              maxLength = 40 // Make sure names stay printable
             }
-            +Strings.access_control_add_permitted_people.get()
+            attrs.onChange = { event: Event ->
+              val value = event.inputValue
+              setState {
+                personIdentificationTextFieldValue = value
+              }
+            }
+          }
+
+          div(GlobalCss.flexEnd) {
+            spacer()
+            muiButton {
+              attrs.size = "small"
+              attrs.color = "primary"
+              attrs.variant = "outlined"
+              attrs.onClick = {
+                submitPermittedPeopleToState()
+              }
+              +Strings.access_control_add_permitted_people.get()
+            }
           }
         }
       }
@@ -426,9 +439,9 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 +personIdentification
               }
 
-              if (props.config !is Config.Details) {
-                mTableCell {
-                  attrs.align = "right"
+              mTableCell {
+                attrs.align = "right"
+                if (props.config !is Config.Details) {
                   iconButton {
                     closeIcon {}
                     attrs.onClick = {
