@@ -1688,6 +1688,7 @@ external interface TableCellProps : RProps {
   var style: dynamic
   var width: String
   var scope: String
+  var onClick: () -> Unit
 }
 
 var mTableCell: RClass<TableCellProps> = TableCellImport.default
