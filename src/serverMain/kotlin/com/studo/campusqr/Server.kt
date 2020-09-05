@@ -86,7 +86,7 @@ suspend fun main() {
       get("/") { call.index() }
       get("campus-qr") { call.userFrontend() }
       route("user") {
-        get("data") { call.getAuthenticatedCall()?.getUserData() }
+        get("data") { call.getUserData() }
         get("logout") { call.getAuthenticatedCall()?.logout() }
         post("login") { call.login() }
 

@@ -61,7 +61,7 @@ suspend fun ApplicationCall.getSessionToken(): SessionToken? {
 
 val SessionToken?.isAuthenticated get() = this?.isAuthenticated ?: false
 
-private suspend fun getUser(sessionToken: SessionToken): BackendUser? {
+suspend fun getUser(sessionToken: SessionToken): BackendUser? {
   if (!sessionToken.isAuthenticated) return null
   return runOnDb { getCollection<BackendUser>().findOne(BackendUser::_id equal sessionToken.userId!!) }
 }

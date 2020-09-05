@@ -20,19 +20,18 @@ import java.util.*
  * This file contains every endpoint which is used in the user lifecycle.
  */
 
-private suspend fun getUser(id: String?): BackendUser? {
-  if (id == null) return null
-  return runOnDb { getCollection<BackendUser>().findOne(BackendUser::_id equal id) }
-}
-
-suspend fun AuthenticatedApplicationCall.getUserData() {
+suspend fun ApplicationCall.getUserData() {
   val appName = runOnDb {
     getCollection<Configuration>().findOne(Configuration::_id equal "appName")?.stringValue ?: ""
   }
 
+  // sessionToken or user might be null when user is logged out or session expired
+  val sessionToken = getSessionToken()
+  val user = sessionToken?.let { runOnDb { getUser(it) } }
+
   respondObject(UserData().apply {
     this.appName = appName
-    this.clientUser = user.toClientClass(this@getUserData.language)
+    this.clientUser = user?.toClientClass(this@getUserData.language)
   })
 }
 
