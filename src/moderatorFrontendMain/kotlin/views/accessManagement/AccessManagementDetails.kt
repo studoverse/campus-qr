@@ -49,6 +49,8 @@ interface AccessManagementDetailsState : RState {
   var personIdentificationTextFieldValue: String
   var permittedPeopleList: List<String>
   var timeSlots: List<ClientDateRange>
+
+  var fromDateTextFieldError: String
   var toDateTextFieldError: String
 }
 
@@ -60,13 +62,15 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       showProgress = false
       locationNameToLocationMap = emptyMap()
 
-      selectedLocation = null // TODO: We have to fetch locations first
+      selectedLocation = null
       selectedLocationTextFieldError = ""
 
       accessControlNoteTextFieldValue = accessManagement?.note ?: ""
       accessControlReasonTextFieldValue = accessManagement?.reason ?: ""
       personIdentificationTextFieldValue = ""
       permittedPeopleList = accessManagement?.allowedEmails?.toList() ?: emptyList()
+
+      fromDateTextFieldError = ""
       toDateTextFieldError = ""
 
       val fromDate = Date().addHours(1).with(minute = 0)
@@ -156,7 +160,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     // Location has to be selected for creation
     if (props.config is Config.Create && state.selectedLocation == null) {
       setState {
-        selectedLocationTextFieldError = "Please select a location!"
+        selectedLocationTextFieldError = Strings.access_control_please_select_location.get()
       }
       return false
     }
@@ -171,9 +175,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     state.timeSlots.forEach { timeSlot ->
       // End time cannot be before start time
       if (timeSlot.to < timeSlot.from) {
-        // This shouldn't happen
         setState {
-          toDateTextFieldError = "End date cannot happen before start date!"
+          toDateTextFieldError = Strings.access_control_end_date_before_start_date.get()
         }
         return false
       }
@@ -194,8 +197,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     personIdentificationTextFieldValue = ""
   }
 
-  private fun RBuilder.renderDetailsContent() {
-
+  private fun RBuilder.renderLocationSelection() {
     muiAutocomplete {
       attrs.disabled = props.config is Config.Details
       attrs.value = state.selectedLocation?.name ?: ""
@@ -223,9 +225,9 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         }
       }
     }
+  }
 
-    spacer(16)
-
+  private fun RBuilder.renderNoteTextField() {
     textField {
       attrs.disabled = props.config is Config.Details
       attrs.fullWidth = true
@@ -242,9 +244,9 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         }
       }
     }
+  }
 
-    spacer(16)
-
+  private fun RBuilder.renderReasonTextField() {
     textField {
       attrs.disabled = props.config is Config.Details
       attrs.fullWidth = true
@@ -262,8 +264,9 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       }
     }
 
-    spacer(24)
+  }
 
+  private fun RBuilder.renderTimeSlotPickers() {
     div(GlobalCss.flex) {
       typography {
         +Strings.access_control_time_slots.get()
@@ -285,10 +288,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         }
       }
     }
-
     spacer(12)
-
-    // TODO: start-end logic
     state.timeSlots.forEach { clientDateRange ->
       gridContainer(GridDirection.ROW, alignItems = "center", spacing = 1) {
         gridItem(GridSize(xs = 12, sm = true)) {
@@ -344,8 +344,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             }
           }
         }
-        gridItem(GridSize(xs = 1)) {
-          if (props.config !is Config.Details) {
+        if (props.config !is Config.Details) {
+          gridItem(GridSize(xs = 1)) {
             muiTooltip {
               attrs.title = Strings.access_control_time_slot_remove.get()
               iconButton {
@@ -364,16 +364,33 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             }
           }
         }
-        if (state.toDateTextFieldError.isNotEmpty()) {
-          typography {
-            attrs.color = "error"
-            +state.toDateTextFieldError
+      }
+      gridContainer(GridDirection.ROW, alignItems = "center", spacing = 1) {
+        gridItem(GridSize(xs = 12, sm = true)) {
+          if (state.fromDateTextFieldError.isNotEmpty()) {
+            typography {
+              attrs.color = "error"
+              +state.fromDateTextFieldError
+            }
           }
+        }
+        gridItem(GridSize(xs = 12, sm = true)) {
+          if (state.toDateTextFieldError.isNotEmpty()) {
+            typography {
+              attrs.color = "error"
+              +state.toDateTextFieldError
+            }
+          }
+        }
+        if (props.config !is Config.Details) {
+          gridItem(GridSize(xs = 1)) {}
         }
       }
       spacer(24)
     }
+  }
 
+  private fun RBuilder.renderPermittedPeople() {
     typography {
       +Strings.access_control_permitted_people.get()
     }
@@ -455,12 +472,12 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         }
       }
     }
+  }
 
-    spacer(32)
-
+  private fun RBuilder.renderSubmitButton() {
     val createButtonText = when (props.config) {
-      is Config.Create -> "Create access control"
-      is Config.Edit -> "Save access control"
+      is Config.Create -> Strings.access_control_create.get()
+      is Config.Edit -> Strings.access_control_save.get()
       is Config.Details -> ""
     }
     if (createButtonText.isNotEmpty()) {
@@ -477,6 +494,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 when (props.config) {
                   is Config.Create -> createAccessControl()
                   is Config.Edit -> editAccessControl()
+                  else -> Unit
                 }
               }
             }
@@ -485,6 +503,19 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         }
       }
     }
+  }
+
+  private fun RBuilder.renderDetailsContent() {
+    renderLocationSelection()
+    spacer(16)
+    renderNoteTextField()
+    spacer(16)
+    renderReasonTextField()
+    spacer(24)
+    renderTimeSlotPickers()
+    renderPermittedPeople()
+    spacer(32)
+    renderSubmitButton()
   }
 
   override fun RBuilder.render() {

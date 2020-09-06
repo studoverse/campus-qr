@@ -21,6 +21,11 @@ object Strings {
     "Kopieren"
   )
 
+  val duplicate = LocalizedString(
+      "Duplicate",
+      "Duplizieren"
+  )
+
   val locations_element_download_qr_code = LocalizedString(
       "Print / download QR code",
       "QR-Code drucken / herunterladen"
@@ -434,6 +439,11 @@ object Strings {
     "Zugangskontrolle erstellen"
   )
 
+  val access_control_save = LocalizedString(
+      "Save access control",
+      "Zugangskontrolle speichern"
+  )
+
   val access_control_not_configured_yet = LocalizedString(
     "Access control not configured yet.",
     "Die Zugangskontrolle ist noch nicht konfiguriert."
@@ -502,6 +512,41 @@ object Strings {
   val access_control_add_permitted_people_tip = LocalizedString(
     "Multiple e-mail addresses can be added by separating them with a comma.",
     "Mehrere E-Mail Adressen können hinzugefügt werden, indem sie durch einen Beistrich getrennt angegeben werden."
+  )
+
+  val access_control_created_successfully = LocalizedString(
+    "Access control created successfully!",
+    "Zugangskontrolle erfolgreich erstellt!"
+  )
+
+  val access_control_duplicated_successfully = LocalizedString(
+    "Access control duplicated successfully!",
+    "Zugangskontrolle erfolgreich dupliziert!"
+  )
+
+  val access_control_deleted_successfully = LocalizedString(
+    "Access control deleted successfully!",
+    "Zugangskontrolle erfolgreich gelöscht!"
+  )
+
+  val access_control_edited_successfully = LocalizedString(
+    "Access control edited successfully!",
+    "Zugangskontrolle erfolgreich bearbeitet!"
+  )
+
+  val access_control_delete_are_your_sure = LocalizedString(
+    "Are you sure you want to delete this access control?",
+    "Sind Sie sicher, dass Sie diese Zugangskontrolle löschen möchten?"
+  )
+
+  val access_control_please_select_location = LocalizedString(
+    "Please select a location!",
+    "Bitte wählen Sie einen Ort!"
+  )
+
+  val access_control_end_date_before_start_date = LocalizedString(
+    "End date cannot be before start date!",
+    "Das Enddatum kann nicht vor dem Anfangsdatum liegen!"
   )
 
   val user_sso_info = LocalizedString(

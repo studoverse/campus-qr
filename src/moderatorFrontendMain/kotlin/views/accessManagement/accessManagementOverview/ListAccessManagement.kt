@@ -14,6 +14,7 @@ import util.Strings
 import util.get
 import util.toRoute
 import views.accessManagement.AccessManagementDetailsProps
+import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.*
 import views.accessManagement.renderAccessManagementDetails
 import views.common.genericErrorView
 import views.common.networkErrorView
@@ -77,19 +78,6 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
     fetchAccessManagementList()
   }
 
-  private fun handleCreateOrEditLocationResponse(response: String?) {
-    setState {
-      snackbarText = when (response) {
-        "ok" -> {
-          fetchAccessManagementList()
-          showAddAccessManagementDialog = false
-          Strings.location_created.get()
-        }
-        else -> Strings.error_try_again.get()
-      }
-    }
-  }
-
   private fun RBuilder.renderAddAccessManagementDialog() = mbMaterialDialog(
       show = state.showAddAccessManagementDialog,
       title = Strings.access_control_create.get(),
@@ -101,9 +89,9 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
                   setState {
                     showAddAccessManagementDialog = false
                     snackbarText = if (success) {
-                      "Access management created succesfully" // TODO localize view
+                      Strings.access_control_created_successfully.get()
                     } else {
-                      "Access management creation failed"
+                      Strings.error_try_again.get()
                     }
                   }
                   fetchAccessManagementList()
@@ -192,21 +180,22 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
           }
         }
         mTableBody {
-
           state.accessManagementList!!.forEach { accessManagement ->
             renderAccessManagementRow(
-                AccessManagementTableRowProps.Config(accessManagement,
-                    onEditFinished = { response ->
-                      handleCreateOrEditLocationResponse(response)
-                      fetchAccessManagementList()
-                    },
-                    onCopyFinished = { success ->
-                      // TODO: Show snackbar
-                      fetchAccessManagementList()
-                    },
-                    onDeleteFinsihed = { success ->
-                      // TODO: Show snackbar
-                      fetchAccessManagementList()
+                Config(accessManagement,
+                    onOperationFinished = { operation, success ->
+                      setState {
+                        snackbarText = if (success) {
+                          fetchAccessManagementList()
+                          when (operation) {
+                            Operation.Edit -> Strings.access_control_edited_successfully.get()
+                            Operation.Duplicate -> Strings.access_control_duplicated_successfully.get()
+                            Operation.Delete -> Strings.access_control_deleted_successfully.get()
+                          }
+                        } else {
+                          Strings.error_try_again.get()
+                        }
+                      }
                     }
                 )
             )

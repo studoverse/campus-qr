@@ -4,6 +4,7 @@ import MenuItem
 import apiBase
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.ClientDateRange
+import kotlinx.browser.window
 import materialMenu
 import react.*
 import react.dom.br
@@ -11,6 +12,7 @@ import react.dom.strong
 import util.Strings
 import util.get
 import views.accessManagement.AccessManagementDetailsProps
+import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.*
 import views.accessManagement.renderAccessManagementDetails
 import webcore.NetworkManager
 import webcore.extensions.launch
@@ -20,11 +22,13 @@ import webcore.mbMaterialDialog
 import kotlin.js.Date
 
 interface AccessManagementTableRowProps : RProps {
+  enum class Operation {
+    Edit, Delete, Duplicate
+  }
+
   class Config(
       val accessManagement: ClientAccessManagement,
-      val onEditFinished: (response: String?) -> Unit,
-      val onDeleteFinsihed: (success: Boolean) -> Unit,
-      val onCopyFinished: (success: Boolean) -> Unit
+      val onOperationFinished: (operation: Operation, success: Boolean) -> Unit
   )
 
   var config: Config
@@ -52,8 +56,7 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
         renderAccessManagementDetails(AccessManagementDetailsProps.Config.Edit(
             accessManagement = props.config.accessManagement,
             onEdited = { success ->
-              // TODO: Prooagate back to AccessOverview
-              props.config.onEditFinished("ok")
+              props.config.onOperationFinished(Operation.Edit, success)
               setState {
                 showEditAccessManagementDialog = false
               }
@@ -99,7 +102,6 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
         }
       }
       attrs.hover = true
-      // TODO: Click to see the details/edit
 
       mTableCell {
         attrs.onClick = tableRowClick
@@ -144,17 +146,19 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
                 }
               }),
               MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
-                launch {
-                  val response =
-                    NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
-                  props.config.onDeleteFinsihed(response == "ok")
+                if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
+                  launch {
+                    val response =
+                        NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
+                    props.config.onOperationFinished(Operation.Delete, response == "ok")
+                  }
                 }
               }),
-              MenuItem(text = Strings.copy.get(), icon = fileCopyOutlinedIcon, onClick = {
+              MenuItem(text = Strings.duplicate.get(), icon = fileCopyOutlinedIcon, onClick = {
                 launch {
                   val response =
                     NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
-                  props.config.onDeleteFinsihed(response == "ok")
+                  props.config.onOperationFinished(Operation.Duplicate, response == "ok")
                 }
               }),
             )
@@ -163,20 +167,6 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
       }
     }
   }
-}
-
-interface AccessManagementTableRowClasses {
-  // Keep in sync with LocationTableRowStyle!
-}
-
-private val LocationTableRowStyle = { theme: dynamic ->
-  // Keep in sync with LocationTableRowClasses!
-}
-
-private val styled = withStyles<AccessManagementTableRowProps, AccessManagementTableRow>(LocationTableRowStyle)
-
-fun RBuilder.renderAccessManagementRow(config: AccessManagementTableRowProps.Config) = styled {
-  attrs.config = config
 }
 
 fun ClientDateRange.format(): String {
@@ -204,4 +194,19 @@ private fun Date.format(showDate: Boolean = true): String {
   val time = "$hour:$minutes"
 
   return if (showDate) "$date $time" else time
+}
+
+
+interface AccessManagementTableRowClasses {
+  // Keep in sync with LocationTableRowStyle!
+}
+
+private val LocationTableRowStyle = { theme: dynamic ->
+  // Keep in sync with LocationTableRowClasses!
+}
+
+private val styled = withStyles<AccessManagementTableRowProps, AccessManagementTableRow>(LocationTableRowStyle)
+
+fun RBuilder.renderAccessManagementRow(config: Config) = styled {
+  attrs.config = config
 }
