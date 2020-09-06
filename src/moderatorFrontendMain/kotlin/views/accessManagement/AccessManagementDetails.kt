@@ -46,7 +46,7 @@ interface AccessManagementDetailsState : RState {
 
   var accessControlNoteTextFieldValue: String
   var accessControlReasonTextFieldValue: String
-  var personIdentificationTextFieldValue: String
+  var personEmailTextFieldValue: String
   var permittedPeopleList: List<String>
   var timeSlots: List<ClientDateRange>
 
@@ -67,7 +67,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
       accessControlNoteTextFieldValue = accessManagement?.note ?: ""
       accessControlReasonTextFieldValue = accessManagement?.reason ?: ""
-      personIdentificationTextFieldValue = ""
+      personEmailTextFieldValue = ""
       permittedPeopleList = accessManagement?.allowedEmails?.toList() ?: emptyList()
 
       fromDateTextFieldError = ""
@@ -122,7 +122,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         json = JSON.stringify(
             NewAccess(
                 locationId = state.selectedLocation!!.id,
-                allowedEmails = state.permittedPeopleList.toTypedArray(),
+                // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
+                allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
                 dateRanges = state.timeSlots.toTypedArray(),
                 note = state.accessControlNoteTextFieldValue,
                 reason = state.accessControlReasonTextFieldValue
@@ -143,7 +144,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         json = JSON.stringify(
             EditAccess(
                 locationId = state.selectedLocation?.id,
-                allowedEmails = state.permittedPeopleList.toTypedArray(),
+                // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
+                allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
                 dateRanges = state.timeSlots.toTypedArray(),
                 note = state.accessControlNoteTextFieldValue,
                 reason = state.accessControlReasonTextFieldValue
@@ -182,19 +184,15 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       }
     }
 
-    // It can happen that user forgot to click on the create access control button,
-    // so add contents automatically
-    if (state.personIdentificationTextFieldValue.isNotEmpty()) {
-      submitPermittedPeopleToState()
-    }
-
-    // Note, reason, permitted people are all optional fields
     return true
   }
 
+  private fun AccessManagementDetailsState.getPermittedEmailsFromTextField() =
+      personEmailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
+
   private fun submitPermittedPeopleToState() = setState {
-    permittedPeopleList += personIdentificationTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
-    personIdentificationTextFieldValue = ""
+    permittedPeopleList += getPermittedEmailsFromTextField()
+    personEmailTextFieldValue = ""
   }
 
   private fun RBuilder.renderLocationSelection() {
@@ -411,14 +409,14 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.fullWidth = true
             attrs.variant = "outlined"
             attrs.label = Strings.email_address.get()
-            attrs.value = state.personIdentificationTextFieldValue
+            attrs.value = state.personEmailTextFieldValue
             attrs.inputProps = js {
               maxLength = 40 // Make sure names stay printable
             }
             attrs.onChange = { event: Event ->
               val value = event.inputValue
               setState {
-                personIdentificationTextFieldValue = value
+                personEmailTextFieldValue = value
               }
             }
           }

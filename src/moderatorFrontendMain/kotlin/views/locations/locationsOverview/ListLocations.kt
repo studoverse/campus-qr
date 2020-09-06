@@ -108,9 +108,12 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-      MbSnackbarProps.Config(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
-        setState { snackbarText = "" }
-      })
+      MbSnackbarProps.Config(
+          show = state.snackbarText.isNotEmpty(),
+          message = state.snackbarText,
+          onClose = {
+            setState { snackbarText = "" }
+          })
   )
 
   override fun RBuilder.render() {
