@@ -3,9 +3,9 @@ package views.report
 import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.ReportData
+import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
-import com.studo.campusqr.common.emailSeparators
 import kotlinext.js.js
 import kotlinx.browser.window
 import muiDatePicker
@@ -86,6 +86,7 @@ class Report : RComponent<ReportProps, ReportState>() {
     div("${GlobalCss.flex} ${props.classes.inputForm}") {
       div(props.classes.inputHolder) {
         muiDatePicker {
+          attrs.format = "dd.MM.yyyy"
           attrs.inputVariant = "outlined"
           attrs.label = Strings.report_infection_date.get()
           attrs.value = state.infectionDate

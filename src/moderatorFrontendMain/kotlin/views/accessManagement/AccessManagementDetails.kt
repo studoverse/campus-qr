@@ -179,7 +179,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       }
     }
 
-    // It can happen that user fogot to click on the create access control button,
+    // It can happen that user forgot to click on the create access control button,
     // so add contents automatically
     if (state.personIdentificationTextFieldValue.isNotEmpty()) {
       submitPermittedPeopleToState()
@@ -299,7 +299,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.inputVariant = "outlined"
             attrs.fullWidth = true
             attrs.label = Strings.access_control_from.get()
-            attrs.disablePast = true
+            attrs.disablePast = props.config is Config.Create
             attrs.value = Date(clientDateRange.from)
             attrs.onChange = { selectedDateTime ->
               setState {
@@ -328,7 +328,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.inputVariant = "outlined"
             attrs.fullWidth = true
             attrs.label = Strings.access_control_to.get()
-            attrs.disablePast = true
+            attrs.disablePast = props.config is Config.Create
             attrs.value = Date(clientDateRange.to)
             attrs.onChange = { selectedDateTime ->
               setState {
