@@ -9,7 +9,7 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
   private var captureSession: AVCaptureSession!
   private var previewLayer: AVCaptureVideoPreviewLayer!
   
-  // MARK: Lifcycle
+  // MARK: Lifecycle
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
