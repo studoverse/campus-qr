@@ -26,8 +26,8 @@ import webcore.materialUI.*
 import kotlin.js.Date
 
 interface AccessManagementDetailsProps : RProps {
-  sealed class Config() {
-    class Create(val onCreated: (Boolean) -> Unit) : Config()
+  sealed class Config {
+    class Create(val locationId: String?, val onCreated: (Boolean) -> Unit) : Config()
     class Edit(val accessManagement: ClientAccessManagement, val onEdited: (Boolean) -> Unit) : Config()
     class Details(val accessManagement: ClientAccessManagement) : Config()
   }
@@ -97,16 +97,14 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     setState {
       if (response != null) {
         locationNameToLocationMap = response.associateBy { it.name }
-        // Auto select current location, if in details/editMode
-        fun selectCurrentLocation(locationName: String) {
-          setState {
-            selectedLocation = locationNameToLocationMap[locationName]
-          }
+        // Auto select current location
+        val selectedLocationId = when (val config = props.config) {
+          is Config.Details -> config.accessManagement.locationId
+          is Config.Edit -> config.accessManagement.locationId
+          is Config.Create -> config.locationId
         }
-        when (val config = props.config) {
-          is Config.Details -> selectCurrentLocation(config.accessManagement.locationName)
-          is Config.Edit -> selectCurrentLocation(config.accessManagement.locationName)
-          else -> Unit
+        if (selectedLocationId != null) {
+          selectedLocation = locationNameToLocationMap.values.firstOrNull { it.id == selectedLocationId }
         }
       }
       locationFetchInProgress = false

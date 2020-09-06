@@ -174,6 +174,12 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       +Strings.user_administration_hint3.get()
     }
 
+    if (props.userData.externalAuthProvider) {
+      div(classes = props.classes.info) {
+        +Strings.user_administration_external_auth_provider.get()
+      }
+    }
+
     div(props.classes.progressHolder) {
       if (state.loadingUserList) {
         linearProgress {}
@@ -217,6 +223,7 @@ interface ListUsersClasses {
   var createButton: String
   var progressHolder: String
   var dialogContent: String
+  var info: String
   // Keep in sync with ListUsersStyle!
 }
 
@@ -240,6 +247,14 @@ private val ListUsersStyle = { theme: dynamic ->
     }
     dialogContent = js {
       color = "rgba(0, 0, 0, 0.54)"
+    }
+    info = js {
+      backgroundColor = "rgb(232, 244, 253)"
+      borderRadius = 4
+      marginLeft = 16
+      marginRight = 16
+      marginBottom = 16
+      padding = 16
     }
   }
 }

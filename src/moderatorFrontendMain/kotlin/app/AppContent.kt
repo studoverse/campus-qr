@@ -3,8 +3,6 @@ package app
 import Url
 import com.studo.campusqr.common.UserData
 import kotlinext.js.js
-import kotlinx.browser.window
-import pathBase
 import react.*
 import react.dom.div
 import util.AppRoute
@@ -46,10 +44,11 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
   }
 
   override fun RBuilder.render() {
-    val url = props.config.currentAppRoute?.url
-    val windowPath = window.location.href.substringAfter("$pathBase/")
-    when (url) {
-      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(location = null)
+    val currentAppRoute = props.config.currentAppRoute
+
+    when (val url = currentAppRoute?.url) {
+      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(locationId = null)
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList(locationId = currentAppRoute.pathParams["id"])
       Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
       Url.USERS -> renderUsers(userData = props.config.userData!!)

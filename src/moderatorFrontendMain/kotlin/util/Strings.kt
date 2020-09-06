@@ -339,6 +339,11 @@ object Strings {
     "Administratoren können zusätzlich Benutzer (Zugangsveralter, Moderatoren und weitere Administratoren) erstellen, löschen und bearbeiten."
   )
 
+  val user_administration_external_auth_provider = LocalizedString(
+    "Users managed by LDAP.",
+    "User werden durch LDAP verwaltet."
+  )
+
   val user_name = LocalizedString(
     "Name",
     "Name"

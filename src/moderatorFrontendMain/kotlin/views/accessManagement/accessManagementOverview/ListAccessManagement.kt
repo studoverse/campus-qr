@@ -2,6 +2,7 @@ package views.accessManagement.accessManagementOverview
 
 import apiBase
 import app.GlobalCss
+import com.studo.campusqr.common.AccessManagementData
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.ClientLocation
 import kotlinext.js.js
@@ -22,11 +23,12 @@ import webcore.mbSnackbar
 
 interface ListAccessManagementProps : RProps {
   var classes: ListAccessClasses
-  var location: ClientLocation?
+  var locationId: String?
 }
 
 interface ListAccessManagementState : RState {
   var accessManagementList: List<ClientAccessManagement>?
+  var clientLocation: ClientLocation?
   var showAddAccessManagementDialog: Boolean
   var showAccessManagementImportDialog: Boolean
   var loadingAccessManagementList: Boolean
@@ -37,6 +39,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 
   override fun ListAccessManagementState.init() {
     accessManagementList = null
+    clientLocation = null
     showAddAccessManagementDialog = false
     showAccessManagementImportDialog = false
     loadingAccessManagementList = false
@@ -45,11 +48,24 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 
   private fun fetchAccessManagementList() = launch {
     setState { loadingAccessManagementList = true }
-    val params = props.location?.id?.let { "?locationId=$it" } ?: ""
-    val response = NetworkManager.get<Array<ClientAccessManagement>>("$apiBase/access/list$params")
+    val params = props.locationId?.let { "?locationId=$it" } ?: ""
+    val response = NetworkManager.get<AccessManagementData>("$apiBase/access/list$params")
     setState {
-      accessManagementList = response?.toList()
+      accessManagementList = response?.accessManagement?.toList()
+      clientLocation = response?.clientLocation
       loadingAccessManagementList = false
+    }
+  }
+
+  override fun componentDidUpdate(
+    prevProps: ListAccessManagementProps, prevState: ListAccessManagementState,
+    snapshot: Any
+  ) {
+    if (prevProps.locationId != props.locationId) {
+      setState {
+        init()
+      }
+      fetchAccessManagementList()
     }
   }
 
@@ -74,17 +90,21 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
     show = state.showAddAccessManagementDialog,
     title = Strings.access_control_create.get(),
     customContent = {
-      renderAccessManagementDetails(AccessManagementDetailsProps.Config.Create(onCreated = { success ->
-        setState {
-          showAddAccessManagementDialog = false
-          snackbarText = if (success) {
-            "Access management created succesfully" // TODO localize view
-          } else {
-            "Access management creation failed"
-          }
-        }
-        fetchAccessManagementList()
-      }))
+      renderAccessManagementDetails(
+        AccessManagementDetailsProps.Config.Create(
+          locationId = props.locationId,
+          onCreated = { success ->
+            setState {
+              showAddAccessManagementDialog = false
+              snackbarText = if (success) {
+                "Access management created succesfully" // TODO localize view
+              } else {
+                "Access management creation failed"
+              }
+            }
+            fetchAccessManagementList()
+          })
+      )
     },
     buttons = null,
     onClose = {
@@ -112,9 +132,9 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
         attrs.className = props.classes.header
         attrs.variant = "h5"
         +Strings.access_control.get()
-        if (props.location != null) {
+        if (state.clientLocation != null) {
           +" - "
-          +props.location!!.name
+          +state.clientLocation!!.name
         }
       }
       div(GlobalCss.flexEnd) {
@@ -216,7 +236,7 @@ private val ListLocationsStyle = { theme: dynamic ->
 
 private val styled = withStyles<ListAccessManagementProps, ListAccessManagement>(ListLocationsStyle)
 
-fun RBuilder.renderAccessManagementList(location: ClientLocation?) = styled {
+fun RBuilder.renderAccessManagementList(locationId: String?) = styled {
   // Set component attrs here
-  attrs.location = location
+  attrs.locationId = locationId
 }

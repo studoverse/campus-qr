@@ -1,9 +1,6 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.common.ClientAccessManagement
-import com.studo.campusqr.common.EditAccess
-import com.studo.campusqr.common.NewAccess
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.*
 import com.studo.campusqr.database.BackendAccess
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange
@@ -18,12 +15,13 @@ suspend fun getAccess(id: String): BackendAccess? = runOnDb {
 }
 
 private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAccessManagement(
-    id = _id,
-    locationName = location.name,
-    allowedEmails = allowedEmails.toTypedArray(),
-    dateRanges = dateRanges.map { it.toClientClass("") }.toTypedArray(), // TODO @zs
-    note = note,
-    reason = reason
+  id = _id,
+  locationName = location.name,
+  locationId = location._id,
+  allowedEmails = allowedEmails.toTypedArray(),
+  dateRanges = dateRanges.map { it.toClientClass("") }.toTypedArray(), // TODO @zs
+  note = note,
+  reason = reason
 )
 
 private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocation> = runOnDb {
@@ -55,7 +53,14 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
   }
 
   val locations = getLocationsMap(if (locationId != null) listOf(locationId) else accessPayloads.map { it.locationId })
-  respondObject(accessPayloads.map { it.toClientClass(locations.getValue(it.locationId)) })
+  val accessManagement = accessPayloads.map { it.toClientClass(locations.getValue(it.locationId)) }
+
+  respondObject(
+    AccessManagementData(
+      accessManagement = accessManagement.toTypedArray(),
+      clientLocation = if (locationId != null) locations.values.firstOrNull()?.toClientClass(language) else null
+    )
+  )
 }
 
 suspend fun AuthenticatedApplicationCall.getAccess() {

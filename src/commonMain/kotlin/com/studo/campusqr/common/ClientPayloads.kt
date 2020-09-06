@@ -48,9 +48,13 @@ class ClientUser(
   val firstLoginDate: String
 ) : ClientPayload
 
+class AccessManagementData(val accessManagement: Array<ClientAccessManagement>, val clientLocation: ClientLocation?) :
+  ClientPayload
+
 class ClientAccessManagement(
   val id: String,
   val locationName: String,
+  val locationId: String,
   val allowedEmails: Array<String>,
   val dateRanges: Array<ClientDateRange>,
   val note: String,
