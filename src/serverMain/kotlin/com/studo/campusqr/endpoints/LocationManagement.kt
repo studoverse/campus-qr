@@ -36,6 +36,8 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
   val params = receiveJsonMap()
 
   val name = params["name"]?.trim() ?: throw IllegalArgumentException("No name was provided")
+  val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
+    ?: throw IllegalArgumentException("No accessType was provided")
 
   val room = BackendLocation().apply {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
@@ -43,6 +45,7 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
     this.createdDate = Date()
     this.createdBy = user._id
     this.checkInCount = 0
+    this.accessType = accessType
   }
 
   MainDatabase.getCollection<BackendLocation>().insertOne(room, upsert = false)

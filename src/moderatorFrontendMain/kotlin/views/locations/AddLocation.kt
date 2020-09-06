@@ -51,7 +51,10 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     setState { locationCreationInProgress = true }
     val response = NetworkManager.post<String>(
       url = "$apiBase/location/create",
-      params = json("name" to state.locationTextFieldValue)
+      params = json(
+        "name" to state.locationTextFieldValue,
+        "accessType" to state.accessType.name
+      )
     )
     setState {
       locationCreationInProgress = false
