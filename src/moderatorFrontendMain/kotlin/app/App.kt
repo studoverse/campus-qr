@@ -167,7 +167,7 @@ class App : RComponent<AppProps, AppState>() {
           // The user is not logged in so push him to login page
           pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }
-        window.location.pathname.removeSuffix("/") == "/admin" -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
+        window.location.pathname.removeSuffix("/") == "/admin" -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
         else -> {
           // User linked directly to a sub-page
           handleHistoryChange()
