@@ -10,6 +10,7 @@ import react.dom.div
 import util.Strings
 import util.get
 import views.common.networkErrorView
+import views.common.renderLinearProgress
 import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -45,8 +46,8 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
   }
 
   override fun componentDidUpdate(
-    prevProps: ListAccessManagementExportProps, prevState: ListAccessManagementExportState,
-    snapshot: Any
+      prevProps: ListAccessManagementExportProps, prevState: ListAccessManagementExportState,
+      snapshot: Any
   ) {
     if (prevProps.locationId != props.locationId) {
       setState {
@@ -75,11 +76,7 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
       }
     }
 
-    div(props.classes.progressHolder) {
-      if (state.loadingPermitList) {
-        linearProgress {}
-      }
-    }
+    renderLinearProgress(state.loadingPermitList)
 
     if (state.permitList != null) {
       mTable {
@@ -103,7 +100,6 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
 
 interface ListAccessManagementExportClasses {
   var header: String
-  var progressHolder: String
 }
 
 private val ListAccessManagementExportStyle = { theme: dynamic ->
@@ -111,14 +107,11 @@ private val ListAccessManagementExportStyle = { theme: dynamic ->
     header = js {
       margin = 16
     }
-    progressHolder = js {
-      height = 8
-    }
   }
 }
 
 private val styled =
-  withStyles<ListAccessManagementExportProps, ListAccessManagementExport>(ListAccessManagementExportStyle)
+    withStyles<ListAccessManagementExportProps, ListAccessManagementExport>(ListAccessManagementExportStyle)
 
 fun RBuilder.renderAccessManagementExportList(locationId: String?) = styled {
   // Set component attrs here

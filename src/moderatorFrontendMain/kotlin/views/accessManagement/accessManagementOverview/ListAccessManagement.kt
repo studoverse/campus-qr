@@ -17,6 +17,7 @@ import views.accessManagement.AccessManagementDetailsProps
 import views.accessManagement.renderAccessManagementDetails
 import views.common.genericErrorView
 import views.common.networkErrorView
+import views.common.renderLinearProgress
 import webcore.MbSnackbarProps
 import webcore.NetworkManager
 import webcore.extensions.launch
@@ -61,8 +62,8 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 
   override fun componentDidUpdate(
-    prevProps: ListAccessManagementProps, prevState: ListAccessManagementState,
-    snapshot: Any
+      prevProps: ListAccessManagementProps, prevState: ListAccessManagementState,
+      snapshot: Any
   ) {
     if (prevProps.locationId != props.locationId) {
       setState {
@@ -90,31 +91,31 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 
   private fun RBuilder.renderAddAccessManagementDialog() = mbMaterialDialog(
-    show = state.showAddAccessManagementDialog,
-    title = Strings.access_control_create.get(),
-    customContent = {
-      renderAccessManagementDetails(
-        AccessManagementDetailsProps.Config.Create(
-          locationId = props.locationId,
-          onCreated = { success ->
-            setState {
-              showAddAccessManagementDialog = false
-              snackbarText = if (success) {
-                "Access management created succesfully" // TODO localize view
-              } else {
-                "Access management creation failed"
-              }
-            }
-            fetchAccessManagementList()
-          })
-      )
-    },
-    buttons = null,
-    onClose = {
-      setState {
-        showAddAccessManagementDialog = false
+      show = state.showAddAccessManagementDialog,
+      title = Strings.access_control_create.get(),
+      customContent = {
+        renderAccessManagementDetails(
+            AccessManagementDetailsProps.Config.Create(
+                locationId = props.locationId,
+                onCreated = { success ->
+                  setState {
+                    showAddAccessManagementDialog = false
+                    snackbarText = if (success) {
+                      "Access management created succesfully" // TODO localize view
+                    } else {
+                      "Access management creation failed"
+                    }
+                  }
+                  fetchAccessManagementList()
+                })
+        )
+      },
+      buttons = null,
+      onClose = {
+        setState {
+          showAddAccessManagementDialog = false
+        }
       }
-    }
   )
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
@@ -177,11 +178,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
       }
     }
 
-    div(props.classes.progressHolder) {
-      if (state.loadingAccessManagementList) {
-        linearProgress {}
-      }
-    }
+    renderLinearProgress(state.loadingAccessManagementList)
 
     if (state.accessManagementList?.isNotEmpty() == true) {
       mTable {
@@ -231,7 +228,6 @@ interface ListAccessClasses {
   var header: String
   var button: String
   var headerButton: String
-  var progressHolder: String
   // Keep in sync with ListLocationsStyle!
 }
 
@@ -249,9 +245,6 @@ private val ListLocationsStyle = { theme: dynamic ->
     }
     headerButton = js {
       margin = 16
-    }
-    progressHolder = js {
-      height = 8
     }
   }
 }

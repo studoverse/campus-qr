@@ -11,6 +11,7 @@ import util.Strings
 import util.get
 import views.common.genericErrorView
 import views.common.networkErrorView
+import views.common.renderLinearProgress
 import views.locations.AddLocationProps.Config
 import views.locations.renderAddLocation
 import webcore.*
@@ -92,24 +93,24 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     }
 
     return mbMaterialDialog(
-      show = state.showImportLocationDialog,
-      title = Strings.location_import.get(),
-      textContent = Strings.location_import_details.get(),
-      buttons = listOf(
-        DialogButton(Strings.more_about_studo.get(), onClick = {
-          closeDialog()
-          window.open("https://studo.com", "_blank")
-        }),
-        DialogButton("OK", onClick = ::closeDialog)
-      ),
-      onClose = ::closeDialog
+        show = state.showImportLocationDialog,
+        title = Strings.location_import.get(),
+        textContent = Strings.location_import_details.get(),
+        buttons = listOf(
+            DialogButton(Strings.more_about_studo.get(), onClick = {
+              closeDialog()
+              window.open("https://studo.com", "_blank")
+            }),
+            DialogButton("OK", onClick = ::closeDialog)
+        ),
+        onClose = ::closeDialog
     )
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
-      setState { snackbarText = "" }
-    })
+      MbSnackbarProps.Config(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
+        setState { snackbarText = "" }
+      })
   )
 
   override fun RBuilder.render() {
@@ -167,11 +168,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
       }
     }
 
-    div(props.classes.progressHolder) {
-      if (state.loadingLocationList) {
-        linearProgress {}
-      }
-    }
+    renderLinearProgress(state.loadingLocationList)
 
     if (state.locationList?.isNotEmpty() == true) {
       mTable {
@@ -197,8 +194,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
       networkErrorView()
     } else if (!state.loadingLocationList) {
       genericErrorView(
-        Strings.location_no_locations_title.get(),
-        Strings.location_no_locations_subtitle.get()
+          Strings.location_no_locations_title.get(),
+          Strings.location_no_locations_subtitle.get()
       )
     }
   }
@@ -208,7 +205,6 @@ interface ListLocationsClasses {
   var header: String
   var button: String
   var createButton: String
-  var progressHolder: String
   // Keep in sync with ListLocationsStyle!
 }
 
@@ -226,9 +222,6 @@ private val ListLocationsStyle = { theme: dynamic ->
     }
     createButton = js {
       margin = 16
-    }
-    progressHolder = js {
-      height = 8
     }
   }
 }
