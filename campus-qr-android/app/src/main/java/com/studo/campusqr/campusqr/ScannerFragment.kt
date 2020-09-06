@@ -139,7 +139,8 @@ class ScannerFragment : Fragment(), SurfaceHolder.Callback, Detector.Processor<B
     val jsonMediaType = "application/json; charset=utf-8".toMediaTypeOrNull()!!
     val requestBody = JSONObject()
       .put("email", email)
-      .put("date", Date().time)
+      // Sending date is useful for offline dispatching, as we want to save the date of the visit and not when the request arrives on the server.
+      .put("date", Date().time.toString())
       .toString()
       .toRequestBody(jsonMediaType)
 
@@ -158,7 +159,6 @@ class ScannerFragment : Fragment(), SurfaceHolder.Callback, Detector.Processor<B
 
       override fun onResponse(call: Call, response: Response) {
         runOnUiThread {
-          Log.d(tag, "request success! ${response.body?.string()}")
           if (response.code == 200 && response.body?.string() == "ok") {
             Toast.makeText(this@ScannerFragment.context, "Checking in successful! :)", Toast.LENGTH_SHORT).show()
           } else {
