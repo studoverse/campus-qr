@@ -27,6 +27,7 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **Automatic data deletion**: After a configurable time (default: 4 weeks) the check-in data will be automatically deleted to comply with the GDPR.
 * **Multirole administration**: The moderation frontend of Campus QR can be used by thousands of employees of a university.
 * **Access management**: Creation of specific access for students or guests within selected time frame to allow a controlled reopening of university buildings.
+* **Visitor list export**: Simple doorman specific interface with upcoming access permits
 * **Scalable access verification**: Access control can be verified by one doorman or lecturer in parallel to avoid crowds around entries.
 * **External identity management**: SSO, LDAP (using JNDI) and OAuth2 are supported by Ktor authentication packages. 
 

@@ -414,9 +414,19 @@ object Strings {
     "Zugangskontrolle"
   )
 
+  val access_control_my = LocalizedString(
+    "My authorizations",
+    "Meine Genehmigungen"
+  )
+
   val access_control_manager = LocalizedString(
     "Access manager",
     "Zugangsverwalter"
+  )
+
+  val access_control_export = LocalizedString(
+    "Visitor list",
+    "Besucherliste"
   )
 
   val access_control_create = LocalizedString(
@@ -434,6 +444,11 @@ object Strings {
     "Klicken Sie rechts oben auf \"Zugangskontrolle erstellen\" um eine Zugangskontrolle zu erstellen."
   )
 
+  val access_control_permitted_person = LocalizedString(
+    "Permitted person",
+    "Zugelassene Person"
+  )
+
   val access_control_permitted_people = LocalizedString(
     "Permitted people",
     "Zugelassene Personen"
@@ -447,6 +462,11 @@ object Strings {
   val access_control_reason = LocalizedString(
     "Reason",
     "Begründung"
+  )
+
+  val access_control_time_slot = LocalizedString(
+    "Time slot",
+    "Zeitfenster"
   )
 
   val access_control_time_slots = LocalizedString(

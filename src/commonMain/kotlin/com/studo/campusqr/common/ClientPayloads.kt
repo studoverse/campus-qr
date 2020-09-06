@@ -51,6 +51,10 @@ class ClientUser(
 class AccessManagementData(val accessManagement: Array<ClientAccessManagement>, val clientLocation: ClientLocation?) :
   ClientPayload
 
+class AccessManagementExportData(val permits: Array<Permit>, val clientLocation: ClientLocation?) : ClientPayload {
+  class Permit(val dateRange: ClientDateRange, val email: String)
+}
+
 class ClientAccessManagement(
   val id: String,
   val locationName: String,

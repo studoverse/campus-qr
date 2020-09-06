@@ -113,6 +113,7 @@ suspend fun main() {
       }
       route("access") {
         get("list") { call.getAuthenticatedCall()?.listAccess() }
+        get("export") { call.getAuthenticatedCall()?.listExportAccess() }
         post("create") { call.getAuthenticatedCall()?.createAccess() }
 
         route("{id}") {

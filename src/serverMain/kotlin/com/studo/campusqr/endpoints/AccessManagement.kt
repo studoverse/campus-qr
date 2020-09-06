@@ -6,7 +6,9 @@ import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
+import com.studo.katerbase.any
 import com.studo.katerbase.equal
+import com.studo.katerbase.greater
 import com.studo.katerbase.inArray
 import java.util.*
 
@@ -26,8 +28,8 @@ private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAcces
 
 private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocation> = runOnDb {
   getCollection<BackendLocation>()
-      .find(BackendLocation::_id inArray ids)
-      .associateBy { it._id }
+    .find(BackendLocation::_id inArray ids)
+    .associateBy { it._id }
 }
 
 private val AuthenticatedApplicationCall.isAllowed get() = user.isModerator || user.type == UserType.ACCESS_MANAGER
@@ -59,6 +61,56 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
     AccessManagementData(
       accessManagement = accessManagement.toTypedArray(),
       clientLocation = if (locationId != null) locations.values.firstOrNull()?.toClientClass(language) else null
+    )
+  )
+}
+
+suspend fun AuthenticatedApplicationCall.listExportAccess() {
+  if (!isAllowed) {
+    respondForbidden(); return
+  }
+
+  val locationId = parameters["locationId"]
+  val now = Date()
+
+  val accessPayloads: List<BackendAccess> = runOnDb {
+    with(getCollection<BackendAccess>()) {
+      when {
+        locationId != null && (user.isModerator) -> {
+          find(
+            BackendAccess::locationId equal locationId,
+            BackendAccess::dateRanges.any(DateRange::to greater now)
+          ).toList()
+        }
+        else -> {
+          find(
+            BackendAccess::createdBy equal user._id,
+            BackendAccess::dateRanges.any(DateRange::to greater now)
+          ).toList()
+        }
+      }
+    }
+  }
+
+  val location = if (locationId != null) getLocationsMap(listOf(locationId)).values.firstOrNull() else null
+
+  val permits = accessPayloads
+    .flatMap { access ->
+      access.dateRanges
+        .filter { it.to > now } // A BackendAccess can have multiple dateRanges, and at least one is (by the query) not in the past
+        .flatMap { dateRange ->
+          access.allowedEmails.map { allowedEmail ->
+            AccessManagementExportData.Permit(dateRange.toClientClass(), allowedEmail)
+          }
+        }
+    }
+    .sortedBy { it.dateRange.to } // Shorter timeslots on top
+    .sortedBy { it.dateRange.from }
+
+  respondObject(
+    AccessManagementExportData(
+      permits = permits.toTypedArray(),
+      clientLocation = location?.toClientClass(language)
     )
   )
 }

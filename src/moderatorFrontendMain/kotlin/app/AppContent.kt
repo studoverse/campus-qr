@@ -8,6 +8,7 @@ import react.dom.div
 import util.AppRoute
 import util.Strings
 import util.get
+import views.accessManagement.accessManagementExport.renderAccessManagementExportList
 import views.accessManagement.accessManagementOverview.renderAccessManagementList
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
@@ -49,6 +50,8 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
     when (val url = currentAppRoute?.url) {
       Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(locationId = null)
       Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList(locationId = currentAppRoute.pathParams["id"])
+      Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
       Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
       Url.USERS -> renderUsers(userData = props.config.userData!!)

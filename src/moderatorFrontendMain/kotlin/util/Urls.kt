@@ -10,7 +10,13 @@ enum class Url(val path: String, val title: LocalizedString, val requiresAuth: B
   BLANK(pathBase, LocalizedString("", "")),
   LOGIN_EMAIL("$pathBase/login", LocalizedString("Log-in", "Einloggen"), requiresAuth = false),
   ACCESS_MANAGEMENT_LIST("$pathBase/access", Strings.access_control, requiresAuth = true),
+  ACCESS_MANAGEMENT_LIST_EXPORT("$pathBase/access/export", Strings.access_control, requiresAuth = true),
   ACCESS_MANAGEMENT_LOCATION_LIST("$pathBase/locationAccess/:id", Strings.access_control, requiresAuth = true),
+  ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT(
+    "$pathBase/locationAccess/:id/export",
+    Strings.access_control,
+    requiresAuth = true
+  ),
   LOCATIONS_LIST("$pathBase/locations", Strings.locations, requiresAuth = true),
   REPORT("$pathBase/report", Strings.report, requiresAuth = true),
   USERS("$pathBase/users", Strings.user_management, requiresAuth = true),

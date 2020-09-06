@@ -1,7 +1,9 @@
 package views.accessManagement.accessManagementOverview
 
+import Url
 import apiBase
 import app.GlobalCss
+import app.routeContext
 import com.studo.campusqr.common.AccessManagementData
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.ClientLocation
@@ -10,6 +12,7 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
+import util.toRoute
 import views.accessManagement.AccessManagementDetailsProps
 import views.accessManagement.renderAccessManagementDetails
 import views.common.genericErrorView
@@ -132,16 +135,35 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
         attrs.className = props.classes.header
         attrs.variant = "h5"
         +Strings.access_control.get()
-        if (state.clientLocation != null) {
-          +" - "
+        +" - "
+        if (state.clientLocation == null) {
+          +Strings.access_control_my.get()
+        } else {
           +state.clientLocation!!.name
         }
       }
       div(GlobalCss.flexEnd) {
+        routeContext.Consumer { routeContext ->
+          muiButton {
+            attrs.classes = js {
+              root = props.classes.headerButton
+            }
+            attrs.variant = "outlined"
+            attrs.color = "primary"
+            attrs.onClick = {
+              if (props.locationId == null) {
+                routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LIST_EXPORT.toRoute()!!)
+              } else {
+                routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(pathParams = mapOf("id" to props.locationId!!))!!)
+              }
+            }
+            +Strings.access_control_export.get()
+          }
+        }
 
         muiButton {
           attrs.classes = js {
-            root = props.classes.createButton
+            root = props.classes.headerButton
           }
           attrs.variant = "contained"
           attrs.color = "primary"
@@ -208,7 +230,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 interface ListAccessClasses {
   var header: String
   var button: String
-  var createButton: String
+  var headerButton: String
   var progressHolder: String
   // Keep in sync with ListLocationsStyle!
 }
@@ -225,7 +247,7 @@ private val ListLocationsStyle = { theme: dynamic ->
       marginBottom = 16
       marginLeft = 8
     }
-    createButton = js {
+    headerButton = js {
       margin = 16
     }
     progressHolder = js {

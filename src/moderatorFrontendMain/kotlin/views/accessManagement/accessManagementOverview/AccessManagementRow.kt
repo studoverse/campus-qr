@@ -68,19 +68,21 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
   )
 
   private fun RBuilder.renderDetailsAccessManagementDialog() = mbMaterialDialog(
-      show = true,
-      title = "Access control details",
-      customContent = {
-        renderAccessManagementDetails(AccessManagementDetailsProps.Config.Details(
-            accessManagement = props.config.accessManagement,
-        ))
-      },
-      buttons = null,
-      onClose = {
-        setState {
-          showDetailsAccessManagementDialog = false
-        }
+    show = true,
+    title = Strings.access_control.get(),
+    customContent = {
+      renderAccessManagementDetails(
+        AccessManagementDetailsProps.Config.Details(
+          accessManagement = props.config.accessManagement,
+        )
+      )
+    },
+    buttons = null,
+    onClose = {
+      setState {
+        showDetailsAccessManagementDialog = false
       }
+    }
   )
 
   override fun RBuilder.render() {
