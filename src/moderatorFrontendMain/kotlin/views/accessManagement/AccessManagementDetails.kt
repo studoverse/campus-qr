@@ -294,7 +294,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         gridItem(GridSize(xs = 12, sm = true)) {
           muiDateTimePicker {
             attrs.disabled = props.config is Config.Details
-            attrs.format = "dd.MM.yyyy, hh:mm"
+            attrs.format = "dd.MM.yyyy HH:mm"
             attrs.ampm = false
             attrs.inputVariant = "outlined"
             attrs.fullWidth = true
@@ -323,7 +323,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         gridItem(GridSize(xs = 12, sm = true)) {
           muiDateTimePicker {
             attrs.disabled = props.config is Config.Details
-            attrs.format = "dd.MM.yyyy, hh:mm"
+            attrs.format = "dd.MM.yyyy HH:mm"
             attrs.ampm = false
             attrs.inputVariant = "outlined"
             attrs.fullWidth = true

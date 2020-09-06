@@ -261,7 +261,7 @@ object Strings {
 
   val network_error_description = LocalizedString(
     "Could not establish a connection. Please ensure a good internet connection and reload the page.",
-    "Verbindung konnte nicht hergestellt werden. Bitte stellen Sie eine gute Internetverbindung her und aktualisiere die Seite."
+    "Verbindung konnte nicht hergestellt werden. Bitte stellen Sie eine gute Internetverbindung her und aktualisiere Sie die Seite."
   )
 
   val login_info = LocalizedString(

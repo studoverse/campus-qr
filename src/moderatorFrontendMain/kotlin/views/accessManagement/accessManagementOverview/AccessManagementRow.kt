@@ -3,16 +3,21 @@ package views.accessManagement.accessManagementOverview
 import MenuItem
 import apiBase
 import com.studo.campusqr.common.ClientAccessManagement
+import com.studo.campusqr.common.ClientDateRange
 import materialMenu
 import react.*
+import react.dom.br
+import react.dom.strong
 import util.Strings
 import util.get
 import views.accessManagement.AccessManagementDetailsProps
 import views.accessManagement.renderAccessManagementDetails
 import webcore.NetworkManager
 import webcore.extensions.launch
+import webcore.extensions.twoDigitString
 import webcore.materialUI.*
 import webcore.mbMaterialDialog
+import kotlin.js.Date
 
 interface AccessManagementTableRowProps : RProps {
   class Config(
@@ -100,7 +105,22 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
       }
       mTableCell {
         attrs.onClick = tableRowClick
-        +props.config.accessManagement.dateRanges.toString() // TODO better formatting
+        val dateRanges = props.config.accessManagement.dateRanges
+        val now = Date().getTime()
+        dateRanges.forEachIndexed { index, dateRange ->
+          if (index != 0) {
+            br { }
+          }
+          if (dateRange.from < now && dateRange.to > now) {
+            // Current date range
+            strong {
+              +dateRange.format()
+            }
+          } else {
+            // Date range in past or future
+            +dateRange.format()
+          }
+        }
       }
       mTableCell {
         attrs.onClick = tableRowClick
@@ -155,4 +175,31 @@ private val styled = withStyles<AccessManagementTableRowProps, AccessManagementT
 
 fun RBuilder.renderAccessManagementRow(config: AccessManagementTableRowProps.Config) = styled {
   attrs.config = config
+}
+
+fun ClientDateRange.format(): String {
+  val fromDate = Date(from)
+  val toDate = Date(to)
+
+  return if (fromDate.toDateString() == toDate.toDateString()) {
+    // 10.11. 13:00 - 14:00
+    fromDate.format() + " - " + toDate.format(showDate = false)
+  } else {
+    // 10.11 13:00 - 11.11. 13:00
+    Date(from).format() + " - " + Date(to).format()
+  }
+}
+
+private fun Date.format(showDate: Boolean = true): String {
+  val day = this.getDate().twoDigitString()
+  val month = (this.getMonth() + 1).twoDigitString()
+  val year = this.getFullYear()
+
+  val date = "$day.$month.${if (year != Date().getFullYear()) year else ""}"
+
+  val hour = this.getHours().twoDigitString()
+  val minutes = this.getMinutes().twoDigitString()
+  val time = "$hour:$minutes"
+
+  return if (showDate) "$date $time" else time
 }
