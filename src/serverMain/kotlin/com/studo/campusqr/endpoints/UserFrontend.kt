@@ -60,14 +60,14 @@ suspend fun ApplicationCall.userFrontend() {
             id = "overlay-retry"
             +LocalizedString(
               "Please close this page and scan the QR code again.",
-              "Bitte schließen Sie dieses Fenster und scannen Sie den QR Code erneut."
+              "Bitte schließen Sie diese Seite und scannen Sie den QR Code erneut."
             ).get(this@userFrontend)
           }
           span("hidden") {
             id = "overlay-expired"
             +LocalizedString(
               "Your check-in has expired. Please close this page and scan the QR code again.",
-              "Ihr Check-in ist abgelaufen. Bitte schließen Sie dieses Fenster und scannen Sie den QR Code erneut."
+              "Ihr Check-in ist abgelaufen. Bitte schließen Sie diese Seite und scannen Sie den QR Code erneut."
             ).get(this@userFrontend)
           }
         }
