@@ -6,6 +6,7 @@ import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
+import com.studo.katerbase.MongoMainEntry.Companion.randomId
 import com.studo.katerbase.any
 import com.studo.katerbase.equal
 import com.studo.katerbase.greater
@@ -180,13 +181,11 @@ suspend fun AuthenticatedApplicationCall.duplicateAccess() {
 
   val accessId = parameters["id"]!!
 
-  val oldAccess = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
-  val newAccess = oldAccess.apply {
-    _id = randomId()
-  }
+  val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+  access._id = randomId()
 
   runOnDb {
-    getCollection<BackendAccess>().insertOne(newAccess, upsert = false)
+    getCollection<BackendAccess>().insertOne(access, upsert = false)
   }
 
   respondOk()
