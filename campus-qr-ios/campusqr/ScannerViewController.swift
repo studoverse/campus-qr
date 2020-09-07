@@ -9,7 +9,7 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
   private var captureSession: AVCaptureSession!
   private var previewLayer: AVCaptureVideoPreviewLayer!
   
-  // MARK: Lifcycle
+  // MARK: Lifecycle
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
@@ -69,16 +69,45 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
     }
   }
   
+  /// Analyze the given qr code and trigger a check-in if it's a valid Campus QR code.
+  private func analyzeQrCode(qrCodeValue: String) {
+    // Qr code contains a check-in url. We have to extract location paramter first.
+    guard let urlComponents = URLComponents(string: qrCodeValue) else { return }
+    guard let queryItems = urlComponents.queryItems else { return }
+    if !urlComponents.path.contains("/campus-qr") {
+      // Not a valid url
+      return
+    }
+    // Extract location id query parameter
+    guard let locationId = queryItems.filter({ $0.name == "l" }).first?.value else { return }
+    
+    let port = urlComponents.port != nil ? ":\(urlComponents.port!)" : ""
+    let baseApiUrl = "\(urlComponents.scheme!)://\(urlComponents.host!)\(port)"
+    
+    if !locationId.isEmpty {
+      AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+      stopDetection()
+      checkIn(baseApiUrl: baseApiUrl, locationId: locationId, email: "name.lastname@uni.at")
+    }
+  }
+  
   /// Sends a post request to the backend, linking provided location with the provided email address.
-  private func sendVisitLocationRequest(baseApiUrl: String, locationId: String, email: String) {
-    postRequest(url: "\(baseApiUrl)/location/\(locationId)/visit", json: ["email", email], onResponse: { response in
-      runOnUiThread {
-        if response == "ok" {
-          self.showToast(message: "Checking in successful! :)")
-        } else {
-          self.showToast(message: "Checking in failed.")
+  private func checkIn(baseApiUrl: String, locationId: String, email: String) {
+    postRequest(
+      url: "\(baseApiUrl)/location/\(locationId)/visit",
+      json: [
+        "email": email,
+        // Sending date is useful for offline dispatching, as we want to save the date of the visit and not when the request arrives on the server.
+        "date": String(Int64(Date().timeIntervalSince1970 * 1000))
+      ],
+      onResponse: { response in
+        runOnUiThread {
+          if response == "ok" {
+            self.showToast(message: "Checking in successful! :)")
+          } else {
+            self.showToast(message: "Checking in failed.")
+          }
         }
-      }
     })
   }
   
@@ -89,24 +118,7 @@ class ScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
       guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
       guard let stringValue = readableObject.stringValue else { return }
 
-      // Qr code contains a check-in url. We have to extract location paramter first.
-      guard let urlComponents = URLComponents(string: stringValue) else { return }
-      guard let queryItems = urlComponents.queryItems else { return }
-      if !urlComponents.path.contains("/campus-qr") {
-        // Not a valid url
-        return
-      }
-      // Extract location id query parameter
-      guard let locationId = queryItems.filter({ $0.name == "l" }).first?.value else { return }
-    
-      let port = urlComponents.port != nil ? ":\(urlComponents.port!)" : ""
-      let baseApiUrl = "\(urlComponents.scheme!)://\(urlComponents.host!)\(port)"
-      
-      if !locationId.isEmpty {
-        AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
-        stopDetection()
-        sendVisitLocationRequest(baseApiUrl: baseApiUrl, locationId: locationId, email: "name.lastname@uni.at")
-      }
+      analyzeQrCode(qrCodeValue: stringValue)
     }
   }
 }

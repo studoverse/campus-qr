@@ -23,6 +23,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
+import java.util.*
 
 /**
  * This Fragment shows a camera preview, and processes the video frames, and looks for a QR code.
@@ -99,36 +100,47 @@ class ScannerFragment : Fragment(), SurfaceHolder.Callback, Detector.Processor<B
   override fun receiveDetections(detections: Detector.Detections<Barcode>?) {
     val detectedItems = detections?.detectedItems
     if (detectedItems?.isNotEmpty() == true) {
-      detectedItems.valueAt(0)?.displayValue?.let { qrValue ->
-        Log.d(tag, "QR Value: $qrValue")
-
-        // Qr code contains a check-in url. We have to extract location paramter first.
-        val httpUrl = qrValue.toHttpUrlOrNull() ?: return
-        if (!httpUrl.pathSegments.contains("campus-qr")) {
-          // Not a Campus Qr url
-          return
-        }
-        // Extract location id query parameter
-        val locationId = httpUrl.queryParameter("l") ?: return
-        // Extract the base url
-        val baseUrl = "${httpUrl.scheme}://${httpUrl.host}:${httpUrl.port}".removeSuffix(":80")
-        if (locationId.isNotEmpty()) {
-          runOnUiThread {
-            stopDetection()
-            checkIn(baseUrl = baseUrl, locationId = locationId, email = "name.lastname@uni.at")
-          }
-        }
+      detectedItems.valueAt(0)?.displayValue?.let { qrCodeValue ->
+        Log.d(tag, "QR Value: $qrCodeValue")
+        analyzeQrCode(qrCodeValue)
       }
     }
   }
 
-  // Sends a post request to the backend, linking provided location with the provided email address.
+  /**
+   * Analyze the given qr code and trigger a check-in if it's a valid Campus QR code.
+   */
+  private fun analyzeQrCode(qrCodeValue: String) {
+    // Qr code contains a check-in url. We have to extract location parameter first.
+    val httpUrl = qrCodeValue.toHttpUrlOrNull() ?: return
+    if (!httpUrl.pathSegments.contains("campus-qr")) {
+      // Not a Campus Qr url
+      return
+    }
+    // Extract location id query parameter
+    val locationId = httpUrl.queryParameter("l") ?: return
+    // Extract the base url
+    val baseUrl = "${httpUrl.scheme}://${httpUrl.toUri().authority}"
+
+    if (locationId.isNotEmpty()) {
+      runOnUiThread {
+        stopDetection()
+        checkIn(baseUrl = baseUrl, locationId = locationId, email = "name.lastname@uni.at")
+      }
+    }
+  }
+
+  /**
+   * Sends a post request to the backend, linking provided location with the provided email address.
+   */
   private fun checkIn(baseUrl: String, locationId: String, email: String) {
     val client = OkHttpClient()
 
     val jsonMediaType = "application/json; charset=utf-8".toMediaTypeOrNull()!!
     val requestBody = JSONObject()
       .put("email", email)
+      // Sending date is useful for offline dispatching, as we want to save the date of the visit and not when the request arrives on the server.
+      .put("date", Date().time.toString())
       .toString()
       .toRequestBody(jsonMediaType)
 
@@ -147,7 +159,6 @@ class ScannerFragment : Fragment(), SurfaceHolder.Callback, Detector.Processor<B
 
       override fun onResponse(call: Call, response: Response) {
         runOnUiThread {
-          Log.d(tag, "request success! ${response.body?.string()}")
           if (response.code == 200 && response.body?.string() == "ok") {
             Toast.makeText(this@ScannerFragment.context, "Checking in successful! :)", Toast.LENGTH_SHORT).show()
           } else {
