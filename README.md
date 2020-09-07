@@ -48,7 +48,9 @@ Campus QR can be hosted by the university itself or by [Studo](https://studo.com
 # Screenshots
 ## User Frontend
 Students and all visitors scan a printed QR code and check in with their e-mail address.
-![checkin](https://i.imgur.com/HTI70rc.png) ![printout](screenshots/printout.png)
+
+![checkin](https://i.imgur.com/HTI70rc.png)
+![printout](screenshots/printout.png)
 
 ## Moderation Frontend
 Employees of a university can login, create locations, report infections to notify affected people and manage users.
@@ -56,6 +58,7 @@ Employees of a university can login, create locations, report infections to noti
 ![locations](screenshots/moderation-locations.png)
 ![tracing](screenshots/moderation-tracing.png)
 ![userManagement](screenshots/moderation-userManagement.png)
+![accessControl](https://i.imgur.com/JAiMK8g.png)
 
 # Self hosting
 ## Setup
