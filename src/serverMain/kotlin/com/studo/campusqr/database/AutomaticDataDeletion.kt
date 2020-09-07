@@ -3,7 +3,10 @@ package com.studo.campusqr.database
 import com.studo.campusqr.extensions.addDays
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.serverScope
-import com.studo.katerbase.*
+import com.studo.katerbase.equal
+import com.studo.katerbase.greaterEquals
+import com.studo.katerbase.lower
+import com.studo.katerbase.none
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -31,13 +34,8 @@ internal suspend fun automaticDataDeletion() {
     getCollection<SessionToken>().deleteMany(SessionToken::expiryDate lower now)
     getCollection<CheckIn>().deleteMany(CheckIn::date lower now.addDays(-deleteDays))
     getCollection<BackendAccess>().deleteMany(
-        BackendAccess::createdDate lowerEquals now.addDays(-deleteDays),
-        or(
-            BackendAccess::allowedEmails equal emptyList(),
-            BackendAccess::dateRanges equal emptyList(),
-            BackendAccess::dateRanges.none(
-                DateRange::to greaterEquals now.addDays(-deleteDays)
-            )
+        BackendAccess::dateRanges.none(
+            DateRange::to greaterEquals now.addDays(-deleteDays)
         )
     )
   }

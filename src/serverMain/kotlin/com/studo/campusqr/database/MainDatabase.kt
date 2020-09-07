@@ -20,7 +20,6 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
     collection<BackendAccess>("accesses") {
         index(BackendAccess::locationId.ascending(), BackendAccess::allowedEmails.ascending())
         index(BackendAccess::dateRanges.ascending())
-        index(BackendAccess::allowedEmails.ascending())
     }
     collection<Configuration>("configurations")
     collection<SessionToken>("sessionTokens")

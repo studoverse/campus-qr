@@ -38,8 +38,12 @@ class AutomaticDeletionTest {
       assertEquals(sessionTokens.count().toLong(), count())
 
       runBlocking { automaticDataDeletion() }
+    }
 
+    with(MainDatabase.getCollection<SessionToken>()) {
       assertEquals(1, count())
+
+      assertEquals(future, find().single().expiryDate)
     }
   }
 
@@ -71,8 +75,12 @@ class AutomaticDeletionTest {
       assertEquals(checkIns.count().toLong(), count())
 
       runBlocking { automaticDataDeletion() }
+    }
 
+    with(MainDatabase.getCollection<CheckIn>()) {
       assertEquals(1, count())
+
+      assertEquals(oneWeekAgo, find().single().date)
     }
   }
 
@@ -91,7 +99,6 @@ class AutomaticDeletionTest {
       reason = ""
     }
 
-    val oneWeekAgo = now.addDays(-7)
     val twoMonthAgo = now.addDays(-(2 * 30))
     val threeMonthAgo = now.addDays(-(3 * 30))
     val future = now.addDays(7)
@@ -102,33 +109,7 @@ class AutomaticDeletionTest {
       clear()
       assertEquals(0, count())
 
-
       val accesses = listOf(
-          // Empty date ranges
-          createTestAccess(
-              allowedEmails = testEmails,
-              dateRanges = emptyList(),
-              createdDate = now
-          ),
-          createTestAccess(
-              allowedEmails = testEmails,
-              dateRanges = emptyList(),
-              createdDate = twoMonthAgo
-          ),
-
-          // Empty emails
-          createTestAccess(
-              allowedEmails = emptyList(),
-              dateRanges = listOf(DateRange(from = twoMonthAgo, to = future)),
-              createdDate = now
-          ),
-          createTestAccess(
-              allowedEmails = emptyList(),
-              dateRanges = listOf(DateRange(from = twoMonthAgo, to = future)),
-              createdDate = twoMonthAgo
-          ),
-
-
           // To Date is in the future
           createTestAccess(
               allowedEmails = testEmails,
@@ -147,8 +128,12 @@ class AutomaticDeletionTest {
       assertEquals(accesses.count().toLong(), count())
 
       runBlocking { automaticDataDeletion() }
+    }
 
-      assertEquals(3, count())
+    with(MainDatabase.getCollection<BackendAccess>()) {
+      assertEquals(1, count())
+
+      assertEquals(future, find().single().dateRanges.single().to)
     }
   }
 }
