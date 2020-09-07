@@ -31,14 +31,14 @@ interface LocationTableRowProps : RProps {
 
 interface LocationTableRowState : RState {
   var showEditLocationDialog: Boolean
-  var working: Boolean
+  var showProgress: Boolean
 }
 
 class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState>() {
 
   override fun LocationTableRowState.init() {
     showEditLocationDialog = false
-    working = false
+    showProgress = false
   }
 
   private fun RBuilder.renderEditLocationDialog() = mbMaterialDialog(
@@ -79,7 +79,7 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
       }
       mTableCell {
         routeContext.Consumer { routeContext ->
-          if (state.working) {
+          if (state.showProgress) {
             circularProgress {}
           } else {
             materialMenu(
@@ -101,14 +101,14 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
                 MenuItem(text = Strings.locations_element_download_csv.get(), icon = cloudDownloadIcon, onClick = {
                   launch {
                     setState {
-                      working = true
+                      showProgress = true
                     }
                     val visitData =
                       NetworkManager.get<LocationVisitData>("$apiBase/location/${props.config.location.id}/visitsCsv")
                         ?: return@launch
                     fileDownload(data = visitData.csvData, fileName = visitData.csvFileName)
                     setState {
-                      working = false
+                      showProgress = false
                     }
                   }
                 }),

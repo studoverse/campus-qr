@@ -232,9 +232,6 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       attrs.variant = "outlined"
       attrs.label = Strings.access_control_note.get()
       attrs.value = state.accessControlNoteTextFieldValue
-      attrs.inputProps = js {
-        maxLength = 40 // Make sure names stay printable
-      }
       attrs.onChange = { event: Event ->
         val value = event.inputValue
         setState {
@@ -251,9 +248,6 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       attrs.variant = "outlined"
       attrs.label = Strings.access_control_reason.get()
       attrs.value = state.accessControlReasonTextFieldValue
-      attrs.inputProps = js {
-        maxLength = 40 // Make sure names stay printable
-      }
       attrs.onChange = { event: Event ->
         val value = event.inputValue
         setState {
@@ -303,7 +297,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
               setState {
                 timeSlots = timeSlots.map { timeSlot ->
                   if (timeSlot == clientDateRange) {
-                    // If start is after end, update end = start + 2h
+                    // Default end date is start date + 2h
                     val from = selectedDateTime.toJSDate().getTime()
                     val to = if (from >= clientDateRange.to) {
                       selectedDateTime.toJSDate().addHours(2).getTime()
@@ -410,9 +404,6 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.variant = "outlined"
             attrs.label = Strings.email_address.get()
             attrs.value = state.personEmailTextFieldValue
-            attrs.inputProps = js {
-              maxLength = 40 // Make sure names stay printable
-            }
             attrs.onChange = { event: Event ->
               val value = event.inputValue
               setState {

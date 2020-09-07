@@ -21,20 +21,10 @@ interface AccessManagementExportTableRowProps : RProps {
   var classes: AccessManagementExportTableRowClasses
 }
 
-interface AccessManagementExportTableRowState : RState {
-  var showEditAccessManagementDialog: Boolean
-  var showDetailsAccessManagementDialog: Boolean
-  var working: Boolean
-}
+interface AccessManagementExportTableRowState : RState
 
 class AccessManagementExportTableRow :
   RComponent<AccessManagementExportTableRowProps, AccessManagementExportTableRowState>() {
-
-  override fun AccessManagementExportTableRowState.init() {
-    showEditAccessManagementDialog = false
-    showDetailsAccessManagementDialog = false
-    working = false
-  }
 
   override fun RBuilder.render() {
     mTableRow {

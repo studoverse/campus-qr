@@ -36,17 +36,17 @@ interface AccessManagementTableRowProps : RProps {
 }
 
 interface AccessManagementTableRowState : RState {
-  var showEditAccessManagementDialog: Boolean
-  var showDetailsAccessManagementDialog: Boolean
-  var working: Boolean
+  var showAccessManagementEditDialog: Boolean
+  var showAccessManagementDetailsDialog: Boolean
+  var showProgress: Boolean
 }
 
 class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, AccessManagementTableRowState>() {
 
   override fun AccessManagementTableRowState.init() {
-    showEditAccessManagementDialog = false
-    showDetailsAccessManagementDialog = false
-    working = false
+    showAccessManagementEditDialog = false
+    showAccessManagementDetailsDialog = false
+    showProgress = false
   }
 
   private fun RBuilder.renderEditAccessManagementDialog() = mbMaterialDialog(
@@ -58,14 +58,14 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
             onEdited = { success ->
               props.config.onOperationFinished(Operation.Edit, success)
               setState {
-                showEditAccessManagementDialog = false
+                showAccessManagementEditDialog = false
               }
             }))
       },
       buttons = null,
       onClose = {
         setState {
-          showEditAccessManagementDialog = false
+          showAccessManagementEditDialog = false
         }
       }
   )
@@ -83,22 +83,22 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
     buttons = null,
     onClose = {
       setState {
-        showDetailsAccessManagementDialog = false
+        showAccessManagementDetailsDialog = false
       }
     }
   )
 
   override fun RBuilder.render() {
-    if (state.showEditAccessManagementDialog) {
+    if (state.showAccessManagementEditDialog) {
       renderEditAccessManagementDialog()
     }
-    if (state.showDetailsAccessManagementDialog) {
+    if (state.showAccessManagementDetailsDialog) {
       renderDetailsAccessManagementDialog()
     }
     mTableRow {
       val tableRowClick = {
         setState {
-          showDetailsAccessManagementDialog = true
+          showAccessManagementDetailsDialog = true
         }
       }
       attrs.hover = true
@@ -135,14 +135,14 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
         +props.config.accessManagement.note
       }
       mTableCell {
-        if (state.working) {
+        if (state.showProgress) {
           circularProgress {}
         } else {
           materialMenu(
             menuItems = listOf(
               MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
                 setState {
-                  showEditAccessManagementDialog = true
+                  showAccessManagementEditDialog = true
                 }
               }),
               MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {

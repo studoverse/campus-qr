@@ -122,6 +122,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
       }
 
       if (userType == UserType.MODERATOR || userType == UserType.ADMIN) {
+        divider {}
         listSubheader {
           +UserType.MODERATOR.localizedStringAction.get()
         }
