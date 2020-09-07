@@ -110,8 +110,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
                     launch {
                       val response = NetworkManager.post<String>(
                           "$apiBase/user/delete", params = json(
-                          "userId" to props.config.user.id
-                      )
+                          "userId" to props.config.user.id)
                       )
                       props.config.onEditFinished(response)
                     }
