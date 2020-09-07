@@ -54,7 +54,7 @@ suspend fun initialDatabaseSetup() {
       insert("baseUrl", "http://127.0.0.1:8070")
       insert("appName", "Campus QR")
 
-      insert("deleteCheckInDataAfterDays", 30)
+      insert("deleteCheckInDataAfterDays", 4 * 7)
 
       insert("previousInfectionHours", 3)
       insert("nextInfectionHours", 12)

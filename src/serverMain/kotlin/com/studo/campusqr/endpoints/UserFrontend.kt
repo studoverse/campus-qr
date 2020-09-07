@@ -173,7 +173,6 @@ suspend fun ApplicationCall.userFrontend() {
                 }
               }
               div("details") {
-                //h3 { +"Details" }
                 div("row") {
                   span("datetime") {
                     +LocalizedString(" at ", " um ").get(this@userFrontend)
@@ -190,7 +189,7 @@ suspend fun ApplicationCall.userFrontend() {
           span("result fail hidden") {
             id = "result-not-allowed"
             +LocalizedString(
-              "Error! You're not allowed to check-in.",
+              "Error! You are not allowed to check-in.",
               "Fehler! Sie haben keine Berechtigung um einzuchecken."
             ).get(this@userFrontend)
           }

@@ -1,4 +1,4 @@
-package views.listLocations
+package views.locations.locationsOverview
 
 import apiBase
 import app.GlobalCss
@@ -9,10 +9,11 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
-import views.addLocation.AddLocationProps.Config
-import views.addLocation.renderAddLocation
 import views.common.genericErrorView
 import views.common.networkErrorView
+import views.common.renderLinearProgress
+import views.locations.AddLocationProps.Config
+import views.locations.renderAddLocation
 import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -43,7 +44,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     setState { loadingLocationList = true }
     val response = NetworkManager.get<Array<ClientLocation>>("$apiBase/location/list")
     setState {
-      locationList = response?.toList() ?: emptyList()
+      locationList = response?.toList()
       loadingLocationList = false
     }
   }
@@ -66,21 +67,21 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
   }
 
   private fun RBuilder.renderAddLocationDialog() = mbMaterialDialog(
-      show = state.showAddLocationDialog,
-      title = Strings.location_add.get(),
-      customContent = {
-        renderAddLocation(
-            Config.Create(onFinished = { response ->
-              handleCreateOrEditLocationResponse(response)
-            })
-        )
-      },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddLocationDialog = false
-        }
+    show = state.showAddLocationDialog,
+    title = Strings.location_add.get(),
+    customContent = {
+      renderAddLocation(
+        Config.Create(onFinished = { response ->
+          handleCreateOrEditLocationResponse(response)
+        })
+      )
+    },
+    buttons = null,
+    onClose = {
+      setState {
+        showAddLocationDialog = false
       }
+    }
   )
 
   private fun RBuilder.renderImportButtonDialog(): ReactElement {
@@ -107,9 +108,12 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
-      setState { snackbarText = "" }
-    })
+    MbSnackbarProps.Config(
+      show = state.snackbarText.isNotEmpty(),
+      message = state.snackbarText,
+      onClose = {
+        setState { snackbarText = "" }
+      })
   )
 
   override fun RBuilder.render() {
@@ -167,11 +171,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
       }
     }
 
-    div(props.classes.progressHolder) {
-      if (state.loadingLocationList) {
-        linearProgress {}
-      }
-    }
+    renderLinearProgress(state.loadingLocationList)
 
     if (state.locationList?.isNotEmpty() == true) {
       mTable {
@@ -179,6 +179,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
           mTableRow {
             mTableCell { +Strings.location_name.get() }
             mTableCell { +Strings.location_check_in_count.get() }
+            mTableCell { +Strings.location_access_type.get() }
             mTableCell { +Strings.actions.get() }
           }
         }
@@ -207,7 +208,6 @@ interface ListLocationsClasses {
   var header: String
   var button: String
   var createButton: String
-  var progressHolder: String
   // Keep in sync with ListLocationsStyle!
 }
 
@@ -225,9 +225,6 @@ private val ListLocationsStyle = { theme: dynamic ->
     }
     createButton = js {
       margin = 16
-    }
-    progressHolder = js {
-      height = 8
     }
   }
 }

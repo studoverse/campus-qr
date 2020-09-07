@@ -8,8 +8,16 @@ val apiBase = baseUrl
 enum class Url(val path: String, val title: LocalizedString, val requiresAuth: Boolean = true) {
   // Kotlin urls
   BLANK(pathBase, LocalizedString("", "")),
-  KOTLIN_LOGIN_EMAIL("$pathBase/login", LocalizedString("Log-in", "Einloggen"), requiresAuth = false),
-  LIST_LOCATIONS("$pathBase/locations", Strings.locations, requiresAuth = true),
+  LOGIN_EMAIL("$pathBase/login", LocalizedString("Log-in", "Einloggen"), requiresAuth = false),
+  ACCESS_MANAGEMENT_LIST("$pathBase/access", Strings.access_control, requiresAuth = true),
+  ACCESS_MANAGEMENT_LIST_EXPORT("$pathBase/access/export", Strings.access_control, requiresAuth = true),
+  ACCESS_MANAGEMENT_LOCATION_LIST("$pathBase/locationAccess/:id", Strings.access_control, requiresAuth = true),
+  ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT(
+    "$pathBase/locationAccess/:id/export",
+    Strings.access_control,
+    requiresAuth = true
+  ),
+  LOCATIONS_LIST("$pathBase/locations", Strings.locations, requiresAuth = true),
   REPORT("$pathBase/report", Strings.report, requiresAuth = true),
   USERS("$pathBase/users", Strings.user_management, requiresAuth = true),
   ACCOUNT_SETTINGS("$pathBase/accountSettings", Strings.account_settings, requiresAuth = true),

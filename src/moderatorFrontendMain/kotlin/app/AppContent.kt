@@ -3,16 +3,16 @@ package app
 import Url
 import com.studo.campusqr.common.UserData
 import kotlinext.js.js
-import kotlinx.browser.window
-import pathBase
 import react.*
 import react.dom.div
 import util.AppRoute
 import util.Strings
 import util.get
+import views.accessManagement.accessManagementExport.renderAccessManagementExportList
+import views.accessManagement.accessManagementOverview.renderAccessManagementList
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
-import views.listLocations.renderListLocations
+import views.locations.locationsOverview.renderListLocations
 import views.login.LoginMode
 import views.login.renderLoginView
 import views.report.renderReport
@@ -45,13 +45,16 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
   }
 
   override fun RBuilder.render() {
-    val url = props.config.currentAppRoute?.url
-    val windowPath = window.location.href.substringAfter("$pathBase/")
+    val currentAppRoute = props.config.currentAppRoute
 
-    when (url) {
-      Url.LIST_LOCATIONS -> renderListLocations()
+    when (val url = currentAppRoute?.url) {
+      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(locationId = null)
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList(locationId = currentAppRoute.pathParams["id"])
+      Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
+      Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
-      Url.USERS -> renderUsers(currentUser = props.config.userData!!.clientUser!!)
+      Url.USERS -> renderUsers(userData = props.config.userData!!)
       Url.ACCOUNT_SETTINGS -> div(classes = props.classes.container) {
         mbSnackbar(
           MbSnackbarProps.Config(
@@ -75,15 +78,15 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
               }
             }
           ),
-          currentUser = props.config.userData!!.clientUser!!
+          userData = props.config.userData!!
         )
       }
       Url.ADMIN_INFO -> renderAdminInfo()
-      Url.KOTLIN_LOGIN_EMAIL -> renderLoginView(
+      Url.LOGIN_EMAIL -> renderLoginView(
         studoUserData = props.config.userData!!,
         mode = LoginMode.EMAIL
       )
-      Url.BLANK -> window.history.replaceState(null, "Campus QR Locations", "/admin/locations")
+      Url.BLANK -> Unit
       null -> pathNotFoundView()
       else -> throw IllegalStateException("Path not found: ${url.path}")
     }

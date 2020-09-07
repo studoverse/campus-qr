@@ -1,8 +1,10 @@
-package views.addLocation
+package views.locations
 
 import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.LocationAccessType
+import com.studo.campusqr.common.accessTypeEnum
 import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
 import org.w3c.dom.events.Event
@@ -10,14 +12,13 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
-import views.addLocation.AddLocationProps.Config
+import util.localizedString
 import views.common.spacer
+import views.locations.AddLocationProps.Config
 import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
-import webcore.materialUI.muiButton
-import webcore.materialUI.textField
-import webcore.materialUI.withStyles
+import webcore.materialUI.*
 import kotlin.js.json
 
 interface AddLocationProps : RProps {
@@ -34,6 +35,7 @@ interface AddLocationState : RState {
   var locationCreationInProgress: Boolean
   var locationTextFieldValue: String
   var locationTextFieldError: String
+  var accessType: LocationAccessType
 }
 
 class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
@@ -42,13 +44,17 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     locationCreationInProgress = false
     locationTextFieldError = ""
     locationTextFieldValue = (props.config as? Config.Edit)?.location?.name ?: ""
+    accessType = (props.config as? Config.Edit)?.location?.accessTypeEnum ?: LocationAccessType.FREE
   }
 
   private fun createNewLocation() = launch {
     setState { locationCreationInProgress = true }
     val response = NetworkManager.post<String>(
-        url = "$apiBase/location/create",
-        params = json("name" to state.locationTextFieldValue)
+      url = "$apiBase/location/create",
+      params = json(
+        "name" to state.locationTextFieldValue,
+        "accessType" to state.accessType.name
+      )
     )
     setState {
       locationCreationInProgress = false
@@ -60,8 +66,11 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     setState { locationCreationInProgress = true }
     val locationId = (props.config as Config.Edit).location.id
     val response = NetworkManager.post<String>(
-        url = "$apiBase/location/$locationId/edit",
-        params = json("name" to state.locationTextFieldValue)
+      url = "$apiBase/location/$locationId/edit",
+      params = json(
+        "name" to state.locationTextFieldValue,
+        "accessType" to state.accessType.name
+      )
     )
     setState {
       locationCreationInProgress = false
@@ -99,6 +108,36 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
       }
     }
 
+    spacer(16)
+
+    div(classes = props.classes.accessTypeSwitch) {
+      formControl {
+        attrs.fullWidth = true
+        inputLabel {
+          +Strings.user_permission.get()
+        }
+        attrs.variant = "outlined"
+        muiSelect {
+          attrs.value = state.accessType.toString()
+          attrs.onChange = { event ->
+            val value = event.target.value as String
+            setState {
+              accessType = LocationAccessType.valueOf(value)
+            }
+          }
+          attrs.variant = "outlined"
+          attrs.label = Strings.location_access_type.get()
+
+          LocationAccessType.values().forEach { accessType ->
+            menuItem {
+              attrs.value = accessType.toString()
+              +accessType.localizedString.get()
+            }
+          }
+        }
+      }
+    }
+
     spacer(32)
 
     div(GlobalCss.flex) {
@@ -131,6 +170,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
 interface AddLocationClasses {
   // Keep in sync with AddLocationStyle!
   var addButton: String
+  var accessTypeSwitch: String
 }
 
 private val AddLocationStyle = { theme: dynamic ->
@@ -138,6 +178,12 @@ private val AddLocationStyle = { theme: dynamic ->
   js {
     addButton = js {
       marginBottom = 16
+    }
+    accessTypeSwitch = js {
+      display = "flex"
+      justifyContent = "center"
+      alignItems = "center"
+      fontFamily = "'Roboto', Arial, sans-serif"
     }
   }
 }

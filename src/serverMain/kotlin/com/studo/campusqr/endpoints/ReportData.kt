@@ -1,18 +1,16 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.ReportData
-import com.studo.campusqr.common.reportEmailSeparators
+import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.serverScope
-import com.studo.campusqr.utils.getSessionToken
-import com.studo.campusqr.utils.isAuthenticated
+import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.equal
 import com.studo.katerbase.greaterEquals
 import com.studo.katerbase.inArray
 import com.studo.katerbase.inRange
-import io.ktor.application.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.util.*
@@ -20,8 +18,8 @@ import java.util.*
 /**
  * This file contains the contact tracing endpoint.
  */
-suspend fun ApplicationCall.returnReportData() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.returnReportData() {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }
@@ -29,7 +27,7 @@ suspend fun ApplicationCall.returnReportData() {
   val params = receiveJsonMap()
 
   val now = Date()
-  val emails = params.getValue("email").split(*reportEmailSeparators).filter { it.isNotEmpty() }
+  val emails = params.getValue("email").split(*emailSeparators).filter { it.isNotEmpty() }
   val oldestDate = params["oldestDate"]?.toLong()?.let { Date(it) } ?: now.addDays(-14)
 
   val reportedUserCheckIns = runOnDb {

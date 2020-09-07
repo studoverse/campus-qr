@@ -3,6 +3,7 @@ package views.users
 import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.ClientUser
+import com.studo.campusqr.common.UserData
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
@@ -11,18 +12,19 @@ import react.dom.div
 import util.Strings
 import util.get
 import views.common.networkErrorView
+import views.common.renderLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
 
 interface ListUsersProps : RProps {
-  var currentUser: ClientUser
+  var userData: UserData
   var classes: ListUsersClasses
 }
 
 interface ListUsersState : RState {
-  var userList: List<ClientUser>
+  var userList: List<ClientUser>?
   var showAddUserDialog: Boolean
   var showSsoInfoDialog: Boolean
   var loadingUserList: Boolean
@@ -32,7 +34,7 @@ interface ListUsersState : RState {
 class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 
   override fun ListUsersState.init() {
-    userList = emptyList()
+    userList = null
     showAddUserDialog = false
     showSsoInfoDialog = false
     loadingUserList = false
@@ -43,7 +45,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     setState { loadingUserList = true }
     val response = NetworkManager.get<Array<ClientUser>>("$apiBase/user/list")
     setState {
-      userList = response?.toList() ?: emptyList()
+      userList = response?.toList()
       loadingUserList = false
     }
   }
@@ -72,7 +74,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     customContent = {
       renderAddUser(
         config = AddUserProps.Config.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
-        currentUser = props.currentUser
+        userData = props.userData
       )
     },
     buttons = null,
@@ -169,15 +171,19 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       +Strings.user_administration_hint1.get()
       br { }
       +Strings.user_administration_hint2.get()
+      br { }
+      +Strings.user_administration_hint3.get()
     }
 
-    div(props.classes.progressHolder) {
-      if (state.loadingUserList) {
-        linearProgress {}
+    if (props.userData.externalAuthProvider) {
+      div(classes = props.classes.info) {
+        +Strings.user_administration_external_auth_provider.get()
       }
     }
 
-    if (state.userList.isNotEmpty()) {
+    renderLinearProgress(state.loadingUserList)
+
+    if (state.userList?.isNotEmpty() == true) {
       mTable {
         mTableHead {
           mTableRow {
@@ -189,18 +195,20 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
           }
         }
         mTableBody {
-          state.userList.forEach { user ->
+          state.userList!!.forEach { user ->
             renderUserTableRow(
               UserTableRowProps.Config(user, onEditFinished = { response ->
                 handleCreateOrAddUserResponse(response)
               }),
-              currentUser = props.currentUser
+              userData = props.userData
             )
           }
         }
       }
-    } else if (!state.loadingUserList) {
+    } else if (state.userList == null && !state.loadingUserList) {
       networkErrorView()
+    } else if (!state.loadingUserList) {
+      throw Exception("At least one user must exist")
     }
   }
 }
@@ -210,8 +218,8 @@ interface ListUsersClasses {
   var subtitle: String
   var importButton: String
   var createButton: String
-  var progressHolder: String
   var dialogContent: String
+  var info: String
   // Keep in sync with ListUsersStyle!
 }
 
@@ -230,18 +238,23 @@ private val ListUsersStyle = { theme: dynamic ->
     createButton = js {
       margin = 16
     }
-    progressHolder = js {
-      height = 8
-    }
     dialogContent = js {
       color = "rgba(0, 0, 0, 0.54)"
+    }
+    info = js {
+      backgroundColor = "rgb(232, 244, 253)"
+      borderRadius = 4
+      marginLeft = 16
+      marginRight = 16
+      marginBottom = 16
+      padding = 16
     }
   }
 }
 
 private val styled = withStyles<ListUsersProps, ListUsers>(ListUsersStyle)
 
-fun RBuilder.renderUsers(currentUser: ClientUser) = styled {
-  attrs.currentUser = currentUser
+fun RBuilder.renderUsers(userData: UserData) = styled {
+  attrs.userData = userData
 }
   

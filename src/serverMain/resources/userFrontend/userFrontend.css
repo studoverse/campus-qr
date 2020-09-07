@@ -263,7 +263,6 @@ button#submit-button:active {
   text-transform: uppercase;
 }
 
-
 /* Svg animation taken from: https://codepen.io/ClaireLarsen/pen/XmVyVX */
 .result > .large > .number > svg {
   display: block;

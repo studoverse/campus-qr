@@ -6,6 +6,7 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
+import kotlin.reflect.KClass
 
 suspend fun ApplicationCall.respondOk() = respond(HttpStatusCode.OK, "ok")
 suspend fun ApplicationCall.respondForbidden() = respond(HttpStatusCode.Forbidden, "forbidden")
@@ -47,3 +48,12 @@ val ApplicationCall.language: String
  * This can be only called once per ApplicationCall
  */
 suspend fun ApplicationCall.receiveJsonMap(): Map<String, String> = JsonHandler.fromJson(receiveText())
+
+suspend fun <T : ClientPayload> ApplicationCall.receiveClientPayload(payloadClass: KClass<T>): T {
+  val json = receiveText()
+  return JsonHandler.fromJson(json, payloadClass)
+}
+
+suspend inline fun <reified T : ClientPayload> ApplicationCall.receiveClientPayload(): T {
+  return receiveClientPayload(T::class)
+}

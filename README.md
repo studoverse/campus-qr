@@ -4,6 +4,11 @@ When entering a lecture hall or seminar room, students and teachers can scan a Q
 Campus QR allows creation and management of those QR codes.
 An optimal implementation in terms of data protection and security are goals of this project.
 
+Campus QR can additionally be used as access management system: Access to locations like department buildings is only granted by explicit invite.
+Users scan the QR code attached to the entrance.
+If access is granted, a unique animation with access information is shown at the users mobile device to allow entrance by a doorman or web-hook based door unlocking systems.
+Access control or successful check-ins can also be verified by an employee during a lecutre in bulk, so lecturers can validate within seconds if hundreds of students have successfully checked in.
+
 The system is open source and can be hosted by the university itself.
 The web app is available as stand-alone application.
 The [Studo app](https://studo.com) integrates the provided Android and iOS reference implementation to allow offline dispatching of check-in events.
@@ -19,7 +24,26 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **Fully configurable**: Names, logos, links, privacy policy and text content is configurable in production without changing the source code.
 * **Exportable**: Check-ins at specific locations and check-ins from specific people can be downloaded as csv file to open them in Excel.
 * **Infection tracing**: Fast and reliable tracing of infection chains. 
-* **Automatic data deletion**: After a configurable time (default: 1 month) the check-in data will be automatically deleted to comply with the GDPR.
+* **Automatic data deletion**: After a configurable time (default: 4 weeks) the check-in data will be automatically deleted to comply with the GDPR.
+* **Multirole administration**: The moderation frontend of Campus QR can be used by thousands of employees of a university.
+* **Access management**: Creation of specific access for students or guests within selected time frame to allow a controlled reopening of university buildings.
+* **Visitor list export**: Simple doorman specific interface with upcoming access permits
+* **Scalable access verification**: Access control can be verified by one doorman or lecturer in parallel to avoid crowds around entries.
+* **External identity management**: SSO, LDAP (using JNDI) and OAuth2 are supported by Ktor authentication packages. 
+
+## Managed hosting features
+Campus QR can be hosted by the university itself or by [Studo](https://studo.com). When hosted by Studo, the following hosting features are available per default: 
+* **Horizontal application scaling**: By running several API nodes in parallel, the application infrastructure can be scaled to as many nodes as required.
+* **Zero-downtime operations**: Deployment, container restarts and upgrades are zero-downtime operations: New containers have to be available first, before stopping the old containers.
+* **Automatic security updates**: Containers apply OS and JVM security updates with zero downtime.
+* **Real time metrics and logs**: Application nodes and database nodes allow easy monitoring and auditing.
+* **Scalable database infrastructure**: The MongoDB database runs in high availability mode (replicaset) with 2 active data nodes, 1 backup node and 1 arbiter to ensure zero downtime (99.96% uptime guaranteed by SLA).
+* **Dockerized database containers**: Database servers are dedicated processes sealed in docker containers. It allows seamless database upgrades with zero downtime if more space or memory is required.
+* **Database backups**: Daily automated encrypted backups with retention policies to auto-delete old backups.
+* **Database security**: SSL connections and Encryption-at-Rest are enabled per default.
+* **Optimal database performance**: SSD-like performance on SAN-backed dedicated MongoDB processes.
+* **Dedicated expect care and support**: Your application will be manged by an expert team that handles an infrastructure with more than 10.000 requests per minute.
+* **GDPR compliant**: Hosted in the EU on ISO/IEC 27001:2013 certified datacenter infrastructure.
 
 # Screenshots
 ## User Frontend
@@ -33,7 +57,8 @@ Employees of a university can login, create locations, report infections to noti
 ![tracing](screenshots/moderation-tracing.png)
 ![userManagement](screenshots/moderation-userManagement.png)
 
-# Setup
+# Self hosting
+## Setup
 The following environment variables need to be configured:
 * `PORT` (default: `8070`): Port where the web application will listen to
 * `HOST` (default: `0.0.0.0`): By default the web application is accessible from every host. Set it to `127.0.0.1` if the web application should only be accessible from localhost.
@@ -42,7 +67,9 @@ The following environment variables need to be configured:
 Start the application by `./gradlew run` or build the application with `.gradlew stage` to run it with `java -jar build/libs/Server.jar`.
 The default admin email address is `admin@example.org` with password `admin`. Please change it immediately after your first login to the moderation frontend.
 
-# Deployment
+## Deployment
+When self-hosting Campus QR, create a setup that ensures at least weekly updates of the upstream source code to quickly react on updates.
+
 ### Deployment on generic PaaS with Procfile
 This repository provides a generic `Procfile` for easy deployment to most **PaaS** providers like [Scalingo](https://scalingo.com). 
 

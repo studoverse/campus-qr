@@ -65,7 +65,7 @@ class LdapAuth(val ldapUrl: String) : AuthProvider {
               .replace(".", " ")
               .split(" ")
               .joinToString(separator = " ", transform = { it.capitalize() }),
-            type = UserType.MODERATOR // TODO
+            type = UserType.ACCESS_MANAGER
           )
         }
       }

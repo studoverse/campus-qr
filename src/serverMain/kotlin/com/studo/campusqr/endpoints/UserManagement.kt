@@ -1,33 +1,27 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.UserType
-import com.studo.campusqr.common.UserType.ADMIN
-import com.studo.campusqr.common.UserType.MODERATOR
+import com.studo.campusqr.common.UserType.ACCESS_MANAGER
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.Algorithm
-import com.studo.campusqr.utils.getSessionToken
-import com.studo.campusqr.utils.getUser
-import com.studo.campusqr.utils.isAuthenticated
+import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.MongoDatabase
 import com.studo.katerbase.MongoMainEntry
 import com.studo.katerbase.equal
-import io.ktor.application.*
 
 /**
  * This file contains every endpoint which is used in the user management.
  */
-suspend fun ApplicationCall.createNewUser() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.createNewUser() {
+  if (sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }
 
-  val currentUser = getUser()
-
-  if (currentUser.type != ADMIN) {
+  if (!user.isAdmin) {
     respondForbidden()
     return
   }
@@ -36,13 +30,13 @@ suspend fun ApplicationCall.createNewUser() {
 
   val email = params.getValue("email").trim()
   val newUser = BackendUser(
-    userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
-    email = email,
-    name = params.getValue("name").trim(),
-    type = params["userType"]?.let { UserType.valueOf(it) } ?: MODERATOR // TODO
+      userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
+      email = email,
+      name = params.getValue("name").trim(),
+      type = params["userType"]?.let { UserType.valueOf(it) } ?: ACCESS_MANAGER
   ).apply {
     this.passwordHash = Algorithm.hashPassword(params.getValue("password"))
-    this.createdBy = currentUser._id
+    this.createdBy = user._id
   }
 
   try {
@@ -57,8 +51,8 @@ suspend fun ApplicationCall.createNewUser() {
   respondOk()
 }
 
-suspend fun ApplicationCall.deleteUser() {
-  if (!getSessionToken().isAuthenticated || getUser().type != ADMIN) {
+suspend fun AuthenticatedApplicationCall.deleteUser() {
+  if (!user.isAdmin) {
     respondForbidden()
     return
   }
@@ -74,27 +68,22 @@ suspend fun ApplicationCall.deleteUser() {
   respondOk()
 }
 
-suspend fun ApplicationCall.editUser() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.editUser() {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }
-  val currentUser = getUser()
 
   val params = receiveJsonMap()
-  val changedUserId = params["userId"] ?: currentUser._id
+  val changedUserId = params["userId"] ?: user._id
 
   val newName = params["name"]?.trim()
   val newPassword = params["password"]
   val newUserType = params["userType"]?.let { UserType.valueOf(it) }
 
   // Only ADMIN users can change the password of other users
-  if (currentUser.type != ADMIN && changedUserId != currentUser._id) {
-    respondForbidden()
-    return
-  }
-  // A MODERATOR user can't change types
-  if (currentUser.type == MODERATOR && newUserType != null) {
+  // Only ADMIN users can change user types
+  if (!user.isAdmin && (changedUserId != user._id || newUserType != null)) {
     respondForbidden()
     return
   }
@@ -116,8 +105,8 @@ suspend fun ApplicationCall.editUser() {
   respondOk()
 }
 
-suspend fun ApplicationCall.listUsers() {
-  if (!getSessionToken().isAuthenticated || getUser().type != ADMIN) {
+suspend fun AuthenticatedApplicationCall.listUsers() {
+  if (!user.isAdmin) {
     respondForbidden()
     return
   }

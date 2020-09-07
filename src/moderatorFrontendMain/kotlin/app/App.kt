@@ -51,21 +51,24 @@ interface AppState : RState {
 
 class App : RComponent<AppProps, AppState>() {
 
+  private val accessManagerSideDrawerItems = listOf(
+    SideDrawerItem(
+      label = Url.ACCESS_MANAGEMENT_LIST.title,
+      icon = listIcon,
+      url = Url.ACCESS_MANAGEMENT_LIST
+    ),
+  )
+
   private val moderatorSideDrawerItems = listOf(
     SideDrawerItem(
-      label = Url.LIST_LOCATIONS.title,
+      label = Url.LOCATIONS_LIST.title,
       icon = listIcon,
-      url = Url.LIST_LOCATIONS
+      url = Url.LOCATIONS_LIST
     ),
     SideDrawerItem(
       label = Url.REPORT.title,
       icon = contactMailIcon,
       url = Url.REPORT
-    ),
-    SideDrawerItem(
-      label = Url.ACCOUNT_SETTINGS.title,
-      icon = settingsIcon,
-      url = Url.ACCOUNT_SETTINGS
     ),
   )
 
@@ -162,9 +165,13 @@ class App : RComponent<AppProps, AppState>() {
       when {
         !state.userData!!.isAuthenticated && currentRoute?.url?.requiresAuth != false -> {
           // The user is not logged in so push him to login page
-          pushAppRoute(Url.KOTLIN_LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
+          pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }
-        window.location.pathname == "/admin/" -> pushAppRoute(Url.LIST_LOCATIONS.toRoute()!!)
+                window.location.pathname.removeSuffix("/") == "/admin" -> when (UserType.valueOf(state.userData!!.clientUser!!.type)) {
+          UserType.ACCESS_MANAGER -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
+          UserType.MODERATOR -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
+          UserType.ADMIN -> pushAppRoute(Url.USERS.toRoute()!!)
+        }
         else -> {
           // User linked directly to a sub-page
           handleHistoryChange()
@@ -257,6 +264,7 @@ class App : RComponent<AppProps, AppState>() {
                   renderAppDrawerItems(AppDrawerItemsProps.Config(
                     userData = state.userData,
                     currentAppRoute = state.currentAppRoute,
+                    accessManagerSideDrawerItems = if (state.loadingUserData) emptyList() else accessManagerSideDrawerItems,
                     moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
                     adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
                     loading = false,
@@ -290,8 +298,8 @@ private val styles = { theme: dynamic ->
 
 object ColorPalette {
   const val default = "#FFFFFF" // White
-  const val primaryColor = "#FF5252"
-  const val secondaryColor = "#009789"
+  const val primaryColor = "#5994F0"
+  const val secondaryColor = "#FF4081"
   const val gray = "#9D9D9D"
   const val textDefault = "#000000"
 }

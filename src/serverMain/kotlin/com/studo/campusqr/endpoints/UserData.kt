@@ -1,6 +1,7 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.auth.AuthProvider
+import com.studo.campusqr.auth.CampusQrAuth
 import com.studo.campusqr.authProvider
 import com.studo.campusqr.baseUrl
 import com.studo.campusqr.common.LoginResult
@@ -9,10 +10,7 @@ import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.Configuration
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
-import com.studo.campusqr.utils.Session
-import com.studo.campusqr.utils.createNewSessionToken
-import com.studo.campusqr.utils.getSessionToken
-import com.studo.campusqr.utils.validateCsrfToken
+import com.studo.campusqr.utils.*
 import com.studo.katerbase.equal
 import io.ktor.application.*
 import io.ktor.response.*
@@ -23,35 +21,29 @@ import java.util.*
  * This file contains every endpoint which is used in the user lifecycle.
  */
 
-private suspend fun getUser(id: String?): BackendUser? {
-  if (id == null) return null
-  return runOnDb { getCollection<BackendUser>().findOne(BackendUser::_id equal id) }
-}
-
 suspend fun ApplicationCall.getUserData() {
-  val sessionToken = getSessionToken() ?: createNewSessionToken()
-  val user = if (sessionToken.isAuthenticated) getUser(sessionToken.userId) else null
-
   val appName = runOnDb {
     getCollection<Configuration>().findOne(Configuration::_id equal "appName")?.stringValue ?: ""
   }
 
+  // sessionToken or user might be null when user is logged out or session expired
+  val sessionToken = getSessionToken()
+  val user = sessionToken?.let { runOnDb { getUser(it) } }
+
   respondObject(UserData().apply {
     this.appName = appName
     this.clientUser = user?.toClientClass(this@getUserData.language)
+    this.externalAuthProvider = authProvider !is CampusQrAuth
   })
 }
 
-suspend fun ApplicationCall.logout() {
-  val sessionToken = getSessionToken()
-  if (sessionToken != null) {
-    runOnDb {
-      getCollection<SessionToken>().updateOne(SessionToken::_id equal sessionToken._id) {
-        SessionToken::expiryDate setTo Date()
-      }
+suspend fun AuthenticatedApplicationCall.logout() {
+  runOnDb {
+    getCollection<SessionToken>().updateOne(SessionToken::_id equal sessionToken._id) {
+      SessionToken::expiryDate setTo Date()
     }
-    sessions.clear<Session>()
   }
+  sessions.clear<Session>()
   respondRedirect(baseUrl, permanent = false)
 }
 

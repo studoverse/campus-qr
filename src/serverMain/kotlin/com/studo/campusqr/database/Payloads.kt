@@ -1,12 +1,10 @@
 package com.studo.campusqr.database
 
-import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.ClientPayload
-import com.studo.campusqr.common.ClientUser
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.extensions.toAustrianTime
 import com.studo.katerbase.MongoMainEntry
+import com.studo.katerbase.MongoSubEntry
 import java.util.*
 
 /**
@@ -44,6 +42,9 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
     this.createdDate = Date()
     this.type = type
   }
+
+  val isAdmin get() = type == UserType.ADMIN
+  val isModerator get() = type == UserType.MODERATOR || isAdmin
 }
 
 class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
@@ -51,12 +52,26 @@ class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
   lateinit var createdBy: String // userId
   lateinit var createdDate: Date
   var checkInCount: Int = 0
+  var accessType = LocationAccessType.FREE
 
   override fun toClientClass(language: String) = ClientLocation(
     id = _id,
     name = name,
-    checkInCount = checkInCount
+    checkInCount = checkInCount,
+    accessType = accessType.name
   )
+}
+
+class BackendAccess : MongoMainEntry(), ClientPayloadable<ClientAccessManagement> {
+  lateinit var locationId: String
+  lateinit var createdBy: String // userId
+  lateinit var createdDate: Date
+  lateinit var allowedEmails: List<String>
+  lateinit var dateRanges: List<DateRange>
+  lateinit var note: String
+  lateinit var reason: String
+
+  override fun toClientClass(language: String) = throw NotImplementedError()
 }
 
 class CheckIn : MongoMainEntry() {
@@ -64,6 +79,7 @@ class CheckIn : MongoMainEntry() {
   lateinit var date: Date
   lateinit var email: String
   lateinit var userAgent: String
+  var grantAccessId: String? = null // id of BackendAccess which was used to enter, null if no BackendAccess was used
 }
 
 class SessionToken : MongoMainEntry() {
@@ -94,4 +110,11 @@ class Configuration : MongoMainEntry {
     _id = id
     intValue = if (value) 1 else 0
   }
+}
+
+class DateRange(var from: Date, var to: Date) : MongoSubEntry(), ClientPayloadable<ClientDateRange> {
+  constructor(dateRange: ClientDateRange) : this(from = Date(dateRange.from.toLong()), to = Date(dateRange.to.toLong()))
+
+  override fun toClientClass(language: String) = toClientClass()
+  fun toClientClass() = ClientDateRange(from = from.time.toDouble(), to = to.time.toDouble())
 }

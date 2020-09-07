@@ -1,16 +1,13 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.LocationVisitData
 import com.studo.campusqr.common.extensions.emailRegex
-import com.studo.campusqr.database.BackendLocation
-import com.studo.campusqr.database.CheckIn
-import com.studo.campusqr.database.MainDatabase
+import com.studo.campusqr.database.*
 import com.studo.campusqr.extensions.*
-import com.studo.campusqr.utils.getSessionToken
-import com.studo.campusqr.utils.getUser
-import com.studo.campusqr.utils.isAuthenticated
-import com.studo.katerbase.equal
+import com.studo.campusqr.utils.AuthenticatedApplicationCall
+import com.studo.katerbase.*
 import io.ktor.application.*
 import io.ktor.http.*
 import java.util.*
@@ -30,8 +27,8 @@ suspend fun getAllLocations(language: String): List<ClientLocation> {
   return runOnDb { getCollection<BackendLocation>().find().toList() }.map { it.toClientClass(language) }
 }
 
-suspend fun ApplicationCall.createLocation() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.createLocation() {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }
@@ -39,13 +36,16 @@ suspend fun ApplicationCall.createLocation() {
   val params = receiveJsonMap()
 
   val name = params["name"]?.trim() ?: throw IllegalArgumentException("No name was provided")
+  val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
+    ?: throw IllegalArgumentException("No accessType was provided")
 
   val room = BackendLocation().apply {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
     this.name = name
     this.createdDate = Date()
-    this.createdBy = getUser()._id
+    this.createdBy = user._id
     this.checkInCount = 0
+    this.accessType = accessType
   }
 
   MainDatabase.getCollection<BackendLocation>().insertOne(room, upsert = false)
@@ -53,8 +53,8 @@ suspend fun ApplicationCall.createLocation() {
   respondOk()
 }
 
-suspend fun ApplicationCall.listLocations() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.listLocations() {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }
@@ -87,6 +87,27 @@ suspend fun ApplicationCall.visitLocation() {
     respondError("email_not_valid") // At least do a very basic email validation to catch common errors
     return
   }
+  var accessId: String? = null
+
+  if (location.accessType == LocationAccessType.RESTRICTED) {
+    val access = runOnDb {
+      getCollection<BackendAccess>().findOne(
+          BackendAccess::locationId equal location._id,
+          BackendAccess::allowedEmails has email,
+          BackendAccess::dateRanges.any(
+              DateRange::from lowerEquals now,
+              DateRange::to greaterEquals now
+          )
+      )
+    }
+
+    if (access == null) {
+      respondForbidden()
+      return
+    } else {
+      accessId = access._id
+    }
+  }
 
   val checkIn = CheckIn().apply {
     this._id = randomId()
@@ -94,6 +115,7 @@ suspend fun ApplicationCall.visitLocation() {
     this.date = visitDate ?: now
     this.email = email
     this.userAgent = request.headers[HttpHeaders.UserAgent] ?: ""
+    this.grantAccessId = accessId
   }
 
   runOnDb {
@@ -107,8 +129,8 @@ suspend fun ApplicationCall.visitLocation() {
   respondOk()
 }
 
-suspend fun ApplicationCall.returnLocationVisitCsvData() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }
@@ -132,8 +154,8 @@ suspend fun ApplicationCall.returnLocationVisitCsvData() {
   )
 }
 
-suspend fun ApplicationCall.editLocation() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.editLocation() {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }
@@ -143,11 +165,15 @@ suspend fun ApplicationCall.editLocation() {
   val params = receiveJsonMap()
 
   val newName = params["name"]?.trim()
+  val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
 
   runOnDb {
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal locationId) {
       if (newName != null) {
         BackendLocation::name setTo newName
+      }
+      if (accessType != null) {
+        BackendLocation::accessType setTo accessType
       }
     }
   }
@@ -155,8 +181,8 @@ suspend fun ApplicationCall.editLocation() {
   respondOk()
 }
 
-suspend fun ApplicationCall.deleteLocation() {
-  if (!getSessionToken().isAuthenticated) {
+suspend fun AuthenticatedApplicationCall.deleteLocation() {
+  if (!user.isModerator) {
     respondForbidden()
     return
   }

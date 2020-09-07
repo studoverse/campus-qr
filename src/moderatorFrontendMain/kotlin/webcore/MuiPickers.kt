@@ -1,3 +1,4 @@
+import kotlinx.html.RP
 import react.RClass
 import react.RProps
 import kotlin.js.Date
@@ -35,3 +36,10 @@ interface MuiDatePickerProps : RProps {
 }
 
 val muiDatePicker: RClass<MuiDatePickerProps> = importedMuiPickers.DatePicker
+
+interface MuiDateTimePickerProps : MuiDatePickerProps {
+  var ampm: Boolean
+  var disablePast: Boolean
+}
+
+val muiDateTimePicker: RClass<MuiDateTimePickerProps> = importedMuiPickers.DateTimePicker

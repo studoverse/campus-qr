@@ -13,6 +13,7 @@ import react.dom.div
 import react.dom.jsStyle
 import util.AppRoute
 import util.get
+import util.localizedStringAction
 import views.common.spacer
 import views.settings.renderSettings
 import webcore.materialUI.*
@@ -29,6 +30,7 @@ interface AppDrawerItemsProps : RProps {
     val userData: UserData?,
     val currentAppRoute: AppRoute?,
     val loading: Boolean,
+    val accessManagerSideDrawerItems: List<SideDrawerItem>,
     val moderatorSideDrawerItems: List<SideDrawerItem>,
     val adminSideDrawerItems: List<SideDrawerItem>,
     val onCloseMobileNav: () -> Unit
@@ -103,21 +105,41 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
     }
 
     fun drawerItems() {
-      listSubheader {
-        +"Moderation"
+      val userType = props.config.userData?.clientUser?.type?.let { UserType.valueOf(it) }
+
+      if (userType == UserType.ACCESS_MANAGER || userType == UserType.MODERATOR || userType == UserType.ADMIN) {
+        listSubheader {
+          +UserType.ACCESS_MANAGER.localizedStringAction.get()
+        }
+        props.config.accessManagerSideDrawerItems.forEach { sideDrawerItem ->
+          drawerListItem(
+            label = sideDrawerItem.label.get(),
+            icon = sideDrawerItem.icon,
+            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+            url = sideDrawerItem.url.path
+          )
+        }
       }
-      props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
-        drawerListItem(
-          label = sideDrawerItem.label.get(),
-          icon = sideDrawerItem.icon,
-          selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-          url = sideDrawerItem.url.path
-        )
-      }
-      if (props.config.userData?.clientUser?.type?.let { UserType.valueOf(it) } == UserType.ADMIN) {
+
+      if (userType == UserType.MODERATOR || userType == UserType.ADMIN) {
         divider {}
         listSubheader {
-          +"Administration"
+          +UserType.MODERATOR.localizedStringAction.get()
+        }
+        props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
+          drawerListItem(
+            label = sideDrawerItem.label.get(),
+            icon = sideDrawerItem.icon,
+            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+            url = sideDrawerItem.url.path
+          )
+        }
+      }
+
+      if (userType == UserType.ADMIN) {
+        divider {}
+        listSubheader {
+          +UserType.ADMIN.localizedStringAction.get()
         }
         props.config.adminSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
@@ -142,7 +164,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         flex = "1"
       }
     }
-    renderSettings()
+    renderSettings(userData = props.config.userData)
     spacer(16)
   }
 }

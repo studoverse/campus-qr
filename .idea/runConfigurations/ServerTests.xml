@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ServerTests" type="JUnit" factoryName="JUnit">
+    <module name="CampusQR.serverTest" />
+    <useClassPathOnly />
+    <option name="PACKAGE_NAME" value="com.studo.campusqr" />
+    <option name="MAIN_CLASS_NAME" value="com.studo.campusqr.CampusQrTestSuite" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="class" />
+    <option name="PARAMETERS" value="" />
+    <envs>
+      <env name="MONGO_URI" value="mongodb://localhost:27017/testCampus-qr" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -3,6 +3,7 @@ package views.users
 import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.ClientUser
+import com.studo.campusqr.common.UserData
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
@@ -13,15 +14,13 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
+import util.localizedString
 import views.common.spacer
 import views.users.AddUserProps.Config
 import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
-import webcore.materialUI.muiButton
-import webcore.materialUI.switch
-import webcore.materialUI.textField
-import webcore.materialUI.withStyles
+import webcore.materialUI.*
 import kotlin.js.json
 
 interface AddUserProps : RProps {
@@ -31,7 +30,7 @@ interface AddUserProps : RProps {
   }
 
   var config: Config
-  var currentUser: ClientUser
+  var userData: UserData
   var classes: AddUserClasses
 }
 
@@ -64,7 +63,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userType = (props.config as? Config.Edit)?.user?.type?.let { UserType.valueOf(it) } ?: UserType.MODERATOR
+    userType = (props.config as? Config.Edit)?.user?.type?.let { UserType.valueOf(it) } ?: UserType.ACCESS_MANAGER
   }
 
   private fun createNewUser() = launch {
@@ -178,29 +177,30 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     spacer(16)
 
-    textField {
-      attrs.error = state.userPasswordTextFieldError.isNotEmpty()
-      attrs.helperText = state.userPasswordTextFieldError
-      attrs.fullWidth = true
-      attrs.type = "password"
-      attrs.variant = "outlined"
-      if (props.config is Config.Create) {
-        attrs.label = Strings.login_email_form_pw_label.get()
-      } else {
-        attrs.label = Strings.login_email_form_new_pw_label.get()
-        attrs.autoComplete = "new-password"
-      }
-      attrs.value = state.userPasswordTextFieldValue
-      attrs.onChange = { event: Event ->
-        val value = event.inputValue
-        setState {
-          userPasswordTextFieldValue = value
-          userPasswordTextFieldError = ""
+    if (!props.userData.externalAuthProvider) {
+      textField {
+        attrs.error = state.userPasswordTextFieldError.isNotEmpty()
+        attrs.helperText = state.userPasswordTextFieldError
+        attrs.fullWidth = true
+        attrs.type = "password"
+        attrs.variant = "outlined"
+        if (props.config is Config.Create) {
+          attrs.label = Strings.login_email_form_pw_label.get()
+        } else {
+          attrs.label = Strings.login_email_form_new_pw_label.get()
+          attrs.autoComplete = "new-password"
+        }
+        attrs.value = state.userPasswordTextFieldValue
+        attrs.onChange = { event: Event ->
+          val value = event.inputValue
+          setState {
+            userPasswordTextFieldValue = value
+            userPasswordTextFieldError = ""
+          }
         }
       }
+      spacer(16)
     }
-
-    spacer(16)
 
     textField {
       attrs.error = state.userNameTextFieldError.isNotEmpty()
@@ -221,19 +221,35 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     spacer(16)
 
-    if (UserType.valueOf(props.currentUser.type) == UserType.ADMIN) {
+    if (UserType.valueOf(props.userData.clientUser!!.type) == UserType.ADMIN) {
       div(classes = props.classes.userTypeSwitch) {
-        +Strings.user_type_moderator.get()
-        switch {
-          attrs.checked = state.userType == UserType.ADMIN
-          attrs.color = "default"
-          attrs.onChange = { _, checked ->
-            setState { userType = if (checked) UserType.ADMIN else UserType.MODERATOR }
+        formControl {
+          attrs.fullWidth = true
+          inputLabel {
+            +Strings.user_permission.get()
           }
-          // Don't allow setting own user to moderator for better UX
-          attrs.disabled = (props.config as? Config.Edit)?.user?.id == props.currentUser.id
+          attrs.variant = "outlined"
+          muiSelect {
+            attrs.value = state.userType.toString()
+            attrs.onChange = { event ->
+              val value = event.target.value as String
+              setState {
+                userType = UserType.valueOf(value)
+              }
+            }
+            attrs.variant = "outlined"
+            attrs.label = Strings.user_permission.get()
+
+            UserType.values().forEach { userType ->
+              menuItem {
+                attrs.value = userType.toString()
+                attrs.disabled = userType != UserType.ADMIN &&
+                    (props.config as? Config.Edit)?.user?.id == props.userData.clientUser!!.id
+                +userType.localizedString.get()
+              }
+            }
+          }
         }
-        +Strings.user_type_admin.get()
       }
     }
 
@@ -289,8 +305,8 @@ private val AddUserStyle = { theme: dynamic ->
 
 private val styled = withStyles<AddUserProps, AddUser>(AddUserStyle)
 
-fun RBuilder.renderAddUser(config: Config, currentUser: ClientUser) = styled {
+fun RBuilder.renderAddUser(config: Config, userData: UserData) = styled {
   attrs.config = config
-  attrs.currentUser = currentUser
+  attrs.userData = userData
 }
   

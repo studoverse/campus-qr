@@ -8,7 +8,12 @@ enum class LoginResult {
 
 enum class UserType {
   ADMIN, // Can add/delete users + all moderator features
-  MODERATOR // Can create new rooms, and manage check-in data
+  MODERATOR, // Can create new locations, and manage check-in data
+  ACCESS_MANAGER, // Can give access to existing locations
 }
 
-val reportEmailSeparators = arrayOf(" ", ",", ";")
+val emailSeparators = arrayOf(" ", ",", ";")
+
+enum class LocationAccessType {
+  FREE, RESTRICTED
+}
