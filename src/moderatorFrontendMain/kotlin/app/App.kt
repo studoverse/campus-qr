@@ -4,6 +4,7 @@ import MuiPickersUtilsProvider
 import Url
 import apiBase
 import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.isAuthenticated
 import kotlinext.js.js
@@ -167,11 +168,12 @@ class App : RComponent<AppProps, AppState>() {
           // The user is not logged in so push him to login page
           pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }
-                window.location.pathname.removeSuffix("/") == "/admin" -> when (UserType.valueOf(state.userData!!.clientUser!!.type)) {
-          UserType.ACCESS_MANAGER -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
-          UserType.MODERATOR -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
-          UserType.ADMIN -> pushAppRoute(Url.USERS.toRoute()!!)
-        }
+        window.location.pathname.removeSuffix("/") == "/admin" ->
+          when (UserType.valueOf(state.userData!!.clientUser!!.type)) {
+            UserType.ACCESS_MANAGER -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
+            UserType.MODERATOR -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
+            UserType.ADMIN -> pushAppRoute(Url.USERS.toRoute()!!)
+          }
         else -> {
           // User linked directly to a sub-page
           handleHistoryChange()
