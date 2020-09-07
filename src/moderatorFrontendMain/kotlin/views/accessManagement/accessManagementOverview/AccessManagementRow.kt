@@ -12,7 +12,8 @@ import react.dom.strong
 import util.Strings
 import util.get
 import views.accessManagement.AccessManagementDetailsProps
-import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.*
+import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Config
+import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Operation
 import views.accessManagement.renderAccessManagementDetails
 import webcore.NetworkManager
 import webcore.extensions.launch
@@ -145,20 +146,20 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
                   showAccessManagementEditDialog = true
                 }
               }),
-              MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
-                if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
-                  launch {
-                    val response =
-                        NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
-                    props.config.onOperationFinished(Operation.Delete, response == "ok")
-                  }
-                }
-              }),
               MenuItem(text = Strings.duplicate.get(), icon = fileCopyOutlinedIcon, onClick = {
                 launch {
                   val response =
                     NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
                   props.config.onOperationFinished(Operation.Duplicate, response == "ok")
+                }
+              }),
+              MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
+                if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
+                  launch {
+                    val response =
+                      NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
+                    props.config.onOperationFinished(Operation.Delete, response == "ok")
+                  }
                 }
               }),
             )
