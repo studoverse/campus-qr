@@ -12,7 +12,7 @@ function onLoad() {
     // If present, remove "just scanned" parameter from url and replace history state so the user cannot check in again by just reloading
     let url = window.location.href.split(window.location.search)[0];
     window.history.replaceState(null, null, url + "?l=" + locationId);
-    window.localStorage.removeItem("checkin");
+    window.localStorage.removeItem("checkin-" + locationId);
     justScanned = true;
   }
 
@@ -25,6 +25,8 @@ function onLoad() {
     onShowNewCheckin: normalStartup,
     onCheckinExpired: checkinExpired,
   })
+
+  deleteExpiredCheckins();
 }
 
 function normalStartup() {
@@ -83,7 +85,7 @@ function normalStartup() {
               // Success
               setDatetimeElement(Date.now())
               window.localStorage.setItem("email", email);
-              window.localStorage.setItem("checkin", `${btoa(email)}::${locationId}::${Date.now().toString()}`);
+              window.localStorage.setItem("checkin-" + locationId, `${btoa(email)}::${Date.now().toString()}`);
               showCheckin(email)
 
             } else if (this.status === 403) {
@@ -145,22 +147,16 @@ function showCheckin(email, time = null) {
 }
 
 function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, onCheckinExpired = null}) {
-  let lastCheckin = window.localStorage.getItem("checkin")
+  let lastCheckin = window.localStorage.getItem("checkin-" + locationId)
   if (lastCheckin) {
     let email = atob(lastCheckin.split("::")[0])
-    let lastLocationId = lastCheckin.split("::")[1]
-    let lastDateLong = parseInt(lastCheckin.split("::")[2])
-    if (lastLocationId === locationId) {
-      if (Date.now() - lastDateLong < 1000 * 60 * 60) {
-        // All okay: same location and checkin not expired
-        if (onShowLastCheckin) onShowLastCheckin(lastDateLong, email);
-      } else {
-        // Same location but checkin expired
-        if (onCheckinExpired) onCheckinExpired();
-        if (onShowNewCheckin) onShowNewCheckin();
-      }
+    let lastDateLong = parseInt(lastCheckin.split("::")[1])
+    if (Date.now() - lastDateLong < 1000 * 60 * 60) {
+      // Checkin not expired
+      if (onShowLastCheckin) onShowLastCheckin(lastDateLong, email);
     } else {
-      // Different location
+      // Checkin expired
+      if (onCheckinExpired) onCheckinExpired();
       if (onShowNewCheckin) onShowNewCheckin();
     }
   } else {
@@ -185,6 +181,21 @@ function checkinExpired() {
   overlayRetry.className = overlayRetry.className.replace("hidden", "") + "hidden"; // Hide default text
   overlayExpired.className = overlayExpired.className.replace("hidden", ""); // Show expired text
   overlay.className = overlay.className.replace("hidden", ""); // show overlay
+}
+
+// Deletes expired checkins from other locations that are older than 24 hours
+function deleteExpiredCheckins() {
+  for (let i = 0; i < window.localStorage.length; i++) {
+    let key = window.localStorage.key(i);
+
+    // Only remove checkins from different locations
+    if (key.startsWith("checkin-") && key.split("checkin-")[1] !== locationId) {
+      let checkinDate = new Date(window.localStorage.getItem(key).split("::")[1]);
+      if (new Date() - checkinDate > 1000 * 60 * 60 * 24) { // Only remove checkins older than 24 hours
+        window.localStorage.removeItem(key);
+      }
+    }
+  }
 }
 
 if (document.readyState === "loading") {
