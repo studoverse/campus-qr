@@ -69,20 +69,20 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 
   private fun RBuilder.renderAddUserDialog() = mbMaterialDialog(
-      show = state.showAddUserDialog,
-      title = Strings.user_add.get(),
-      customContent = {
-        renderAddUser(
-            config = AddUserProps.Config.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
-            userData = props.userData
-        )
-      },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddUserDialog = false
-        }
+    show = state.showAddUserDialog,
+    title = Strings.user_add.get(),
+    customContent = {
+      renderAddUser(
+        config = AddUserProps.Config.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
+        userData = props.userData
+      )
+    },
+    buttons = null,
+    onClose = {
+      setState {
+        showAddUserDialog = false
       }
+    }
   )
 
 
@@ -95,32 +95,32 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     }
 
     return mbMaterialDialog(
-        show = state.showSsoInfoDialog,
-        title = Strings.user_sso_info.get(),
-        customContent = {
-          typography {
-            attrs.className = props.classes.dialogContent
-            attrs.variant = "body1"
-            +Strings.user_sso_info_details1.get()
-            spacer(16)
-            +Strings.user_sso_info_details2.get()
-          }
-        },
-        buttons = listOf(
-            DialogButton(Strings.more_about_studo.get(), onClick = {
-              closeDialog()
-              window.open("https://studo.com", "_blank")
-            }),
-            DialogButton("OK", onClick = ::closeDialog)
-        ),
-        onClose = ::closeDialog
+      show = state.showSsoInfoDialog,
+      title = Strings.user_sso_info.get(),
+      customContent = {
+        typography {
+          attrs.className = props.classes.dialogContent
+          attrs.variant = "body1"
+          +Strings.user_sso_info_details1.get()
+          spacer(16)
+          +Strings.user_sso_info_details2.get()
+        }
+      },
+      buttons = listOf(
+        DialogButton(Strings.more_about_studo.get(), onClick = {
+          closeDialog()
+          window.open("https://studo.com", "_blank")
+        }),
+        DialogButton("OK", onClick = ::closeDialog)
+      ),
+      onClose = ::closeDialog
     )
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-      MbSnackbarProps.Config(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
-        setState { snackbarText = "" }
-      })
+    MbSnackbarProps.Config(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
+      setState { snackbarText = "" }
+    })
   )
 
   override fun RBuilder.render() {
@@ -197,10 +197,10 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         mTableBody {
           state.userList!!.forEach { user ->
             renderUserTableRow(
-                UserTableRowProps.Config(user, onEditFinished = { response ->
-                  handleCreateOrAddUserResponse(response)
-                }),
-                userData = props.userData
+              UserTableRowProps.Config(user, onEditFinished = { response ->
+                handleCreateOrAddUserResponse(response)
+              }),
+              userData = props.userData
             )
           }
         }

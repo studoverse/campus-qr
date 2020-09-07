@@ -67,21 +67,21 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
   }
 
   private fun RBuilder.renderAddLocationDialog() = mbMaterialDialog(
-      show = state.showAddLocationDialog,
-      title = Strings.location_add.get(),
-      customContent = {
-        renderAddLocation(
-            Config.Create(onFinished = { response ->
-              handleCreateOrEditLocationResponse(response)
-            })
-        )
-      },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddLocationDialog = false
-        }
+    show = state.showAddLocationDialog,
+    title = Strings.location_add.get(),
+    customContent = {
+      renderAddLocation(
+        Config.Create(onFinished = { response ->
+          handleCreateOrEditLocationResponse(response)
+        })
+      )
+    },
+    buttons = null,
+    onClose = {
+      setState {
+        showAddLocationDialog = false
       }
+    }
   )
 
   private fun RBuilder.renderImportButtonDialog(): ReactElement {
@@ -93,27 +93,27 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     }
 
     return mbMaterialDialog(
-        show = state.showImportLocationDialog,
-        title = Strings.location_import.get(),
-        textContent = Strings.location_import_details.get(),
-        buttons = listOf(
-            DialogButton(Strings.more_about_studo.get(), onClick = {
-              closeDialog()
-              window.open("https://studo.com", "_blank")
-            }),
-            DialogButton("OK", onClick = ::closeDialog)
-        ),
-        onClose = ::closeDialog
+      show = state.showImportLocationDialog,
+      title = Strings.location_import.get(),
+      textContent = Strings.location_import_details.get(),
+      buttons = listOf(
+        DialogButton(Strings.more_about_studo.get(), onClick = {
+          closeDialog()
+          window.open("https://studo.com", "_blank")
+        }),
+        DialogButton("OK", onClick = ::closeDialog)
+      ),
+      onClose = ::closeDialog
     )
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-      MbSnackbarProps.Config(
-          show = state.snackbarText.isNotEmpty(),
-          message = state.snackbarText,
-          onClose = {
-            setState { snackbarText = "" }
-          })
+    MbSnackbarProps.Config(
+      show = state.snackbarText.isNotEmpty(),
+      message = state.snackbarText,
+      onClose = {
+        setState { snackbarText = "" }
+      })
   )
 
   override fun RBuilder.render() {
@@ -186,9 +186,9 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
         mTableBody {
           state.locationList!!.forEach { location ->
             renderLocationTableRow(
-                LocationTableRowProps.Config(location, onEditFinished = { response ->
-                  handleCreateOrEditLocationResponse(response)
-                })
+              LocationTableRowProps.Config(location, onEditFinished = { response ->
+                handleCreateOrEditLocationResponse(response)
+              })
             )
           }
         }
@@ -197,8 +197,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
       networkErrorView()
     } else if (!state.loadingLocationList) {
       genericErrorView(
-          Strings.location_no_locations_title.get(),
-          Strings.location_no_locations_subtitle.get()
+        Strings.location_no_locations_title.get(),
+        Strings.location_no_locations_subtitle.get()
       )
     }
   }

@@ -24,15 +24,15 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
   var firstLoginDate: Date? = null
   var type = UserType.MODERATOR
   override fun toClientClass(language: String) = ClientUser(
-      id = _id,
-      email = email,
-      name = name,
-      type = type.name,
-      firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
-          ?: LocalizedString(
-              "Not logged in yet",
-              "Noch nicht eingeloggt"
-          ).get(language)
+    id = _id,
+    email = email,
+    name = name,
+    type = type.name,
+    firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
+      ?: LocalizedString(
+        "Not logged in yet",
+        "Noch nicht eingeloggt"
+      ).get(language)
   )
 
   constructor(userId: String, email: String, name: String, type: UserType) : this() {
