@@ -22,13 +22,13 @@ object Strings {
   )
 
   val duplicate = LocalizedString(
-      "Duplicate",
-      "Duplizieren"
+    "Duplicate",
+    "Duplizieren"
   )
 
   val locations_element_download_qr_code = LocalizedString(
-      "Print / download QR code",
-      "QR-Code drucken / herunterladen"
+    "Print / download QR code",
+    "QR-Code drucken / herunterladen"
   )
 
   val locations_element_simulate_scan = LocalizedString(
@@ -375,13 +375,13 @@ object Strings {
   )
 
   val user_update = LocalizedString(
-      "Save user",
-      "User speichern"
+    "Save user",
+    "User speichern"
   )
 
   val user_delete = LocalizedString(
-      "Delete user",
-      "User löschen"
+    "Delete user",
+    "User löschen"
   )
 
   val user_created = LocalizedString(
@@ -440,8 +440,8 @@ object Strings {
   )
 
   val access_control_save = LocalizedString(
-      "Save access control",
-      "Zugangskontrolle speichern"
+    "Save access control",
+    "Zugangskontrolle speichern"
   )
 
   val access_control_not_configured_yet = LocalizedString(
@@ -540,13 +540,13 @@ object Strings {
   )
 
   val access_control_please_select_location = LocalizedString(
-    "Please select a location!",
-    "Bitte wählen Sie einen Ort!"
+    "Please select a location",
+    "Bitte wählen Sie einen Ort"
   )
 
   val access_control_end_date_before_start_date = LocalizedString(
-    "End date cannot be before start date!",
-    "Das Enddatum kann nicht vor dem Anfangsdatum liegen!"
+    "End date cannot be before start date",
+    "Das Enddatum kann nicht vor dem Anfangsdatum liegen"
   )
 
   val user_sso_info = LocalizedString(

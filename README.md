@@ -68,6 +68,8 @@ Start the application by `./gradlew run` or build the application with `.gradlew
 The default admin email address is `admin@example.org` with password `admin`. Please change it immediately after your first login to the moderation frontend.
 
 ## Deployment
+When self-hosting Campus QR, create a setup that ensures at least weekly updates of the upstream source code to quickly react on updates.
+
 ### Deployment on generic PaaS with Procfile
 This repository provides a generic `Procfile` for easy deployment to most **PaaS** providers like [Scalingo](https://scalingo.com). 
 
