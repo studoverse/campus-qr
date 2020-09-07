@@ -16,7 +16,7 @@ import com.studo.katerbase.equal
  * This file contains every endpoint which is used in the user management.
  */
 suspend fun AuthenticatedApplicationCall.createNewUser() {
-  if (sessionToken.isAuthenticated) {
+  if (!sessionToken.isAuthenticated) {
     respondForbidden()
     return
   }
