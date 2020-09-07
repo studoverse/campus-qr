@@ -4,8 +4,8 @@ import ch.qos.logback.classic.Level
 import com.studo.campusqr.auth.AuthProvider
 import com.studo.campusqr.auth.getAuthProvider
 import com.studo.campusqr.database.MainDatabase
-import com.studo.campusqr.database.automaticDataDeletion
 import com.studo.campusqr.database.initialDatabaseSetup
+import com.studo.campusqr.database.startAutomaticDataDeletion
 import com.studo.campusqr.endpoints.*
 import com.studo.campusqr.utils.Session
 import com.studo.campusqr.utils.getAuthenticatedCall
@@ -36,7 +36,7 @@ suspend fun main() {
 
   authProvider = getAuthProvider()
 
-  automaticDataDeletion()
+  startAutomaticDataDeletion()
 
   setLogLevel("io.netty", Level.INFO)
 
