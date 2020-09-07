@@ -192,6 +192,7 @@ suspend fun AuthenticatedApplicationCall.deleteLocation() {
   runOnDb {
     getCollection<BackendLocation>().deleteOne(BackendLocation::_id equal locationId)
     getCollection<CheckIn>().deleteMany(CheckIn::locationId equal locationId)
+    getCollection<BackendAccess>().deleteMany(BackendAccess::locationId equal locationId)
   }
 
   respondOk()
