@@ -219,7 +219,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           attrs.fullWidth = params.fullWidth
           attrs.fullWidth = true
           attrs.variant = "outlined"
-          attrs.label = "Location"
+          attrs.label = Strings.location_name.get()
         }
       }
     }
