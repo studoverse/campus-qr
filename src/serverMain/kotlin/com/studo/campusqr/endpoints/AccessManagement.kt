@@ -18,13 +18,13 @@ suspend fun getAccess(id: String): BackendAccess? = runOnDb {
 }
 
 private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAccessManagement(
-  id = _id,
-  locationName = location.name,
-  locationId = location._id,
-  allowedEmails = allowedEmails.toTypedArray(),
-  dateRanges = dateRanges.map { it.toClientClass("") }.toTypedArray(), // TODO @zs
-  note = note,
-  reason = reason
+    id = _id,
+    locationName = location.name,
+    locationId = location._id,
+    allowedEmails = allowedEmails.toTypedArray(),
+    dateRanges = dateRanges.map { it.toClientClass() }.toTypedArray(),
+    note = note,
+    reason = reason
 )
 
 private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocation> = runOnDb {
