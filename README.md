@@ -34,7 +34,7 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 ## Managed hosting features
 Campus QR can be hosted by the university itself or by [Studo](https://studo.com). When hosted by Studo, the following hosting features are available per default: 
 * **Horizontal application scaling**: By running several API nodes in parallel, the application infrastructure can be scaled to as many nodes as required.
-* **Zero-downtime operations**: Deployment, container restarts and upgrades are zero-downtime operations: New containers have to be available at first before stopping the old containers.
+* **Zero-downtime operations**: Deployment, container restarts and upgrades are zero-downtime operations: New containers have to be available first, before stopping the old containers.
 * **Automatic security updates**: Containers apply OS and JVM security updates with zero downtime.
 * **Real time metrics and logs**: Application nodes and database nodes allow easy monitoring and auditing.
 * **Scalable database infrastructure**: The MongoDB database runs in high availability mode (replicaset) with 2 active data nodes, 1 backup node and 1 arbiter to ensure zero downtime (99.96% uptime guaranteed by SLA).
