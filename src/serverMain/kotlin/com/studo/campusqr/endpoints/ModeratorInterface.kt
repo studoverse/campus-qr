@@ -1,6 +1,5 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.baseUrl
 import com.studo.campusqr.extensions.getResourceAsStream
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.utils.getCsrfToken
@@ -74,7 +73,7 @@ private fun HTML.moderatorIndex(call: ApplicationCall, csrfToken: String) {
       rel = "icon"
       type = "image/png"
       sizes = "64x64"
-      href = "$baseUrl/static/images/favicon.png"
+      href = "/static/images/favicon.png"
     }
   }
   body {
@@ -85,7 +84,7 @@ private fun HTML.moderatorIndex(call: ApplicationCall, csrfToken: String) {
       id = "root"
     }
     script {
-      src = "$baseUrl/admin/campusqr-admin.js"
+      src = "/admin/campusqr-admin.js"
     }
   }
 }
