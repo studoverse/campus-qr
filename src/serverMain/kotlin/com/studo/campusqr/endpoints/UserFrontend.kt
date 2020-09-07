@@ -173,16 +173,15 @@ suspend fun ApplicationCall.userFrontend() {
                 }
               }
               div("details") {
-                //h3 { +"Details" }
-                span("datetime") {
-                  // TODO calendar icon
-                  //+(SimpleDateFormat("dd.MM.yyyy").format(now)
-                  +LocalizedString(" at ", " um ").get(this@userFrontend) //+
-                  //SimpleDateFormat("HH:mm").format(now))
+                div("row") {
+                  span("datetime") {
+                    +LocalizedString(" at ", " um ").get(this@userFrontend)
+                  }
                 }
-                span("identification") {
-                  id = "result-ok-id"
-                  // TODO user icon
+                div("row") {
+                  span("identification") {
+                    id = "result-ok-id"
+                  }
                 }
               }
             }
@@ -198,7 +197,7 @@ suspend fun ApplicationCall.userFrontend() {
             id = "result-net-err"
             +LocalizedString(
               "Error! Please try again.",
-              "Fehler! Bitte versuche es erneut."
+              "Fehler! Bitte versuchen Sie es erneut."
             ).get(this@userFrontend)
           }
         }
