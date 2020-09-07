@@ -4,41 +4,37 @@ function pad(num, size) {
 
 let locationId = new URLSearchParams(window.location.search).get("l")
 
+// True if the page was opened directly from the QR code and not reloaded / bookmarked
+let justScanned = false;
+
 function onLoad() {
-  let lastCheckin = window.localStorage.getItem("checkin")
-  if (lastCheckin) {
-    let email = atob(lastCheckin.split("::")[0])
-    let lastLocationId = lastCheckin.split("::")[1]
-    let lastDateLong = parseInt(lastCheckin.split("::")[2])
-    if (lastLocationId === locationId) {
-      if (Date.now() - lastDateLong < 1000 * 60 * 60) { // same location && less than an hour ago
-        // All okay, use old checkin. Need to set time from lastCheckin
-        setDatetimeElement(lastDateLong)
-        showCheckin(email)
-      } else {
-        // Expired, delete
-        window.localStorage.removeItem("checkin");
-      }
-    } else {
-      normalStartup()
-    }
-  } else {
-    normalStartup();
+  if (window.location.search.includes("s=1")) {
+    // If present, remove "just scanned" parameter from url and replace history state so the user cannot check in again by just reloading
+    let url = window.location.href.split(window.location.search)[0];
+    window.history.replaceState(null, null, url + "?l=" + locationId);
+    window.localStorage.removeItem("checkin");
+    justScanned = true;
   }
+
+  handleOldCheckin({
+    onShowLastCheckin: function (lastDateLong, email) {
+      // All okay, use old checkin. Need to set displayed check-in time from last checkin
+      setDatetimeElement(lastDateLong);
+      showCheckin(email);
+    },
+    onShowNewCheckin: normalStartup,
+    onCheckinExpired: checkinExpired,
+  })
 }
 
 function normalStartup() {
-    if (window.location.search.includes("s=1")) { // If "just scanned"
-      // Remove "just scanned" parameter from url and replace state so the user cannot check in again by just reloading or going back
-      let url = window.location.href.split(window.location.search)[0];
-      window.history.replaceState(null, null, url + "?l=" + locationId);
-    } else {
-      let overlay = document.getElementById("overlay");
-      overlay.className = overlay.className.replace("hidden", "");
-    }
+  let overlay = document.getElementById("overlay");
+  if (!justScanned) {
+    overlay.className = overlay.className.replace("hidden", "");
+    return;
+  }
 
   if (!locationId) {
-    let overlay = document.getElementById("overlay");
     overlay.className = overlay.className.replace("hidden", "");
 
   } else {
@@ -110,6 +106,7 @@ function normalStartup() {
   }
 }
 
+// Sets the correct checkin time, either from lastCheckin (loaded) or from current time
 function setDatetimeElement(dateLong) {
   // datetimeElement contains only localized "at" / "um"
   let datetimeElement = document.getElementsByClassName("datetime")[0];
@@ -123,6 +120,7 @@ function setDatetimeElement(dateLong) {
   }
 }
 
+// Hides the form and shows the checkin / verification view
 function showCheckin(email, time = null) {
   let form = document.getElementById("form");
   let resultOk = document.getElementById("result-ok");
@@ -132,6 +130,61 @@ function showCheckin(email, time = null) {
   document.getElementById("result-ok-id").innerText = email
   resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "");
   resultOk.className = resultOk.className.replace("hidden", "");
+
+  // Check if checkin has expired every four seconds
+  let interval = setInterval(function () {
+    handleOldCheckin(
+        {
+          onCheckinExpired: function () {
+            clearInterval(interval);
+            checkinExpired();
+          }
+        }
+    );
+  }, 4000);
+}
+
+function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, onCheckinExpired = null}) {
+  let lastCheckin = window.localStorage.getItem("checkin")
+  if (lastCheckin) {
+    let email = atob(lastCheckin.split("::")[0])
+    let lastLocationId = lastCheckin.split("::")[1]
+    let lastDateLong = parseInt(lastCheckin.split("::")[2])
+    if (lastLocationId === locationId) {
+      if (Date.now() - lastDateLong < 1000 * 60 * 60) {
+        // All okay: same location and checkin not expired
+        if (onShowLastCheckin) onShowLastCheckin(lastDateLong, email);
+      } else {
+        // Same location but checkin expired
+        if (onCheckinExpired) onCheckinExpired();
+        if (onShowNewCheckin) onShowNewCheckin();
+      }
+    } else {
+      // Different location
+      if (onShowNewCheckin) onShowNewCheckin();
+    }
+  } else {
+    // No saved checkin
+    if (onShowNewCheckin) onShowNewCheckin();
+  }
+}
+
+function checkinExpired() {
+  let overlay = document.getElementById("overlay");
+  let overlayExpired = document.getElementById("overlay-expired");
+  let overlayRetry = document.getElementById("overlay-retry");
+  let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
+  let resultNotAllowed = document.getElementById("result-not-allowed");
+  let resultNetErr = document.getElementById("result-net-err");
+
+  // Hide results
+  resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
+  resultNotAllowed.className = resultNotAllowed.className.replace("hidden", "") + " hidden";
+  resultNetErr.className = resultNetErr.className.replace("hidden", "") + " hidden";
+
+  overlayRetry.className = overlayRetry.className.replace("hidden", "") + "hidden"; // Hide default text
+  overlayExpired.className = overlayExpired.className.replace("hidden", ""); // Show expired text
+  overlay.className = overlay.className.replace("hidden", ""); // show overlay
 }
 
 if (document.readyState === "loading") {
