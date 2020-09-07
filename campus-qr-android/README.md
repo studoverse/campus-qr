@@ -14,11 +14,3 @@ With this solution, you can provide the email address, that you store on your ap
 can just scan the code, without the need to input it. 
 
 You can use a dispatching strategy to enable an offline check-in, in this case you should add a `date` field to the request. 
-
-
-
-
-
-
-
-
