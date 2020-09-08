@@ -57,8 +57,8 @@ object Strings {
   )
 
   val location_delete_are_you_sure = LocalizedString(
-      "Are you sure you want to delete this location? This will also delete all the Access controls, linked with this location.",
-      "Sind Sie sicher, dass Sie diesen Ort löschen möchten? Dadurch werden auch alle Zugangskontrollen gelöscht, die mit diesem Standort verknüpft sind."
+      "Are you sure you want to delete this location? This will also delete all the access permissions linked with this location.",
+      "Sind Sie sicher, dass Sie diesen Ort löschen möchten? Dadurch werden auch alle Zugangsberechtigungen gelöscht, die mit diesem Ort verknüpft sind."
   )
 
   val location_import = LocalizedString(
