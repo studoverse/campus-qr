@@ -390,8 +390,8 @@ object Strings {
   )
 
   val user_delete_are_you_sure = LocalizedString(
-      "Are you sure you want to delete this user?",
-      "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?"
+      "Are you sure you want to delete this user? This will not delete locations or access permissions created by this user.",
+      "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Dies löscht keine vom Benutzer erstellen Orte oder Zugangsberechtigungen."
   )
 
   val user_created = LocalizedString(
