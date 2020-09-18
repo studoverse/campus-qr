@@ -25,7 +25,9 @@ import kotlinx.coroutines.SupervisorJob
 import java.net.URL
 import java.time.Duration
 
-object Server
+object Server {
+  val demoMode: Boolean by lazy { MainDatabase.getConfig("demoMode") }
+}
 
 val serverScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 val baseUrl: String get() = MainDatabase.getConfig("baseUrl")

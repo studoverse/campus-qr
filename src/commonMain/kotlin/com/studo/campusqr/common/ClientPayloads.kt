@@ -13,11 +13,12 @@ class ClientLocation(
 val ClientLocation.accessTypeEnum get() = LocationAccessType.valueOf(accessType)
 
 
-class UserData : ClientPayload {
-  lateinit var appName: String
-  var clientUser: ClientUser? = null // Null when unauthenticated
-  var externalAuthProvider: Boolean = false
-}
+class UserData(
+  val appName: String,
+  val clientUser: ClientUser? = null, // Null when unauthenticated
+  val externalAuthProvider: Boolean = false,
+  val demoMode: Boolean,
+) : ClientPayload
 
 val UserData.isAuthenticated get() = clientUser != null
 

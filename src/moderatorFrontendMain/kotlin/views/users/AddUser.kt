@@ -163,9 +163,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
       attrs.autoComplete = "username"
       attrs.label = Strings.email_address.get()
       attrs.type = "email"
-      if (props.config is Config.Edit) {
-        attrs.disabled = true
-      }
+      attrs.disabled = props.config is Config.Edit || props.userData.demoMode // Disallow changing email if in demo mode
       attrs.onChange = { event: Event ->
         val value = event.inputValue
         setState {
@@ -184,6 +182,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
         attrs.fullWidth = true
         attrs.type = "password"
         attrs.variant = "outlined"
+        attrs.disabled = props.userData.demoMode // Disallow changing password if in demo mode
         if (props.config is Config.Create) {
           attrs.label = Strings.login_email_form_pw_label.get()
         } else {
@@ -209,6 +208,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
       attrs.variant = "outlined"
       attrs.label = Strings.user_name.get()
       attrs.value = state.userNameTextFieldValue
+      attrs.disabled = props.userData.demoMode // Disallow changing name if in demo mode
       attrs.autoComplete = "off"
       attrs.onChange = { event: Event ->
         val value = event.inputValue

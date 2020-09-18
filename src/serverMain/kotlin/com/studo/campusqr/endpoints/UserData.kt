@@ -1,5 +1,6 @@
 package com.studo.campusqr.endpoints
 
+import com.studo.campusqr.Server
 import com.studo.campusqr.auth.AuthProvider
 import com.studo.campusqr.auth.CampusQrAuth
 import com.studo.campusqr.authProvider
@@ -30,11 +31,14 @@ suspend fun ApplicationCall.getUserData() {
   val sessionToken = getSessionToken()
   val user = sessionToken?.let { runOnDb { getUser(it) } }
 
-  respondObject(UserData().apply {
-    this.appName = appName
-    this.clientUser = user?.toClientClass(this@getUserData.language)
-    this.externalAuthProvider = authProvider !is CampusQrAuth
-  })
+  respondObject(
+    UserData(
+      appName = appName,
+      clientUser = user?.toClientClass(this@getUserData.language),
+      externalAuthProvider = authProvider !is CampusQrAuth,
+      demoMode = Server.demoMode
+    )
+  )
 }
 
 suspend fun AuthenticatedApplicationCall.logout() {

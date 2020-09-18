@@ -52,7 +52,7 @@ class LoginView : RComponent<LoginViewProps, LoginViewState>() {
       muiCardContent {
         div {
           when (props.loginMode) {
-            EMAIL -> renderMailLogin()
+            EMAIL -> renderMailLogin(props.userData.demoMode)
           }
         }
       }

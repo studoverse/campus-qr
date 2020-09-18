@@ -1,5 +1,6 @@
 package com.studo.campusqr.endpoints
 
+import com.studo.campusqr.Server.demoMode
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.UserType.ACCESS_MANAGER
 import com.studo.campusqr.database.BackendUser
@@ -83,7 +84,8 @@ suspend fun AuthenticatedApplicationCall.editUser() {
 
   // Only ADMIN users can change the password of other users
   // Only ADMIN users can change user types
-  if (!user.isAdmin && (changedUserId != user._id || newUserType != null)) {
+  // Disallow changing editing user in demo mode
+  if ((!user.isAdmin && (changedUserId != user._id || newUserType != null)) || demoMode) {
     respondForbidden()
     return
   }

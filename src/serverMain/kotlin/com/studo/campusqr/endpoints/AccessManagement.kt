@@ -18,13 +18,13 @@ suspend fun getAccess(id: String): BackendAccess? = runOnDb {
 }
 
 private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAccessManagement(
-    id = _id,
-    locationName = location.name,
-    locationId = location._id,
-    allowedEmails = allowedEmails.toTypedArray(),
-    dateRanges = dateRanges.map { it.toClientClass() }.toTypedArray(),
-    note = note,
-    reason = reason
+  id = _id,
+  locationName = location.name,
+  locationId = location._id,
+  allowedEmails = allowedEmails.toTypedArray(),
+  dateRanges = dateRanges.map { it.toClientClass() }.toTypedArray(),
+  note = note,
+  reason = reason
 )
 
 private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocation> = runOnDb {
@@ -149,6 +149,11 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
 
   runOnDb {
     getCollection<BackendAccess>().insertOne(newAccess, upsert = false)
+
+    // Set location to restricted, otherwise the access control doesn't make sense
+    getCollection<BackendLocation>().updateOne(BackendLocation::_id equal newAccessPayload.locationId) {
+      BackendLocation::accessType setTo LocationAccessType.RESTRICTED
+    }
   }
 
   respondOk()

@@ -2,15 +2,23 @@ package com.studo.campusqr.database
 
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.extensions.runOnDb
+import com.studo.campusqr.serverScope
 import com.studo.campusqr.utils.Algorithm
+import com.studo.katerbase.equal
 import com.studo.katerbase.sha256
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.streams.toList
+
+const val DEMO_MODE = 1
 
 /**
  * Add configuration default values, but keep values if they are already in the database
  */
 suspend fun initialDatabaseSetup() {
+  val now = Date()
+
   runOnDb {
     with(getCollection<Configuration>()) {
       fun insert(id: String, value: String) {
@@ -53,6 +61,7 @@ suspend fun initialDatabaseSetup() {
 
       insert("baseUrl", "http://127.0.0.1:8070")
       insert("appName", "Campus QR")
+      insertOne(Configuration("demoMode", DEMO_MODE), upsert = true)
 
       insert("deleteCheckInDataAfterDays", 4 * 7)
 
@@ -68,19 +77,86 @@ suspend fun initialDatabaseSetup() {
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
     }
 
-    // Create root user
+
+    // Create root or demo user
     with(getCollection<BackendUser>()) {
-      val rootUser = BackendUser().apply {
-        _id = "rootUser"
-        email = "admin@example.org"
-        passwordHash = Algorithm.hashPassword("admin")
-        name = "Root User"
-        createdDate = Date()
-        createdBy = _id
-        type = UserType.ADMIN
+      if (DEMO_MODE == 1) {
+        // Delete root user so there is no other way to log in
+        // TODO decide if we should just drop all users if in demo mode?
+        deleteOne(BackendUser::_id equal "rootUser")
+        val user =
+          BackendUser().apply {
+            _id = "demoUser"
+            email = "demo@example.org"
+            passwordHash = Algorithm.hashPassword("demo")
+            name = "Demo User"
+            createdDate = now
+            createdBy = _id
+            type = UserType.MODERATOR
+          }
+        insertOne(user, upsert = true)
+      } else {
+        deleteOne(BackendUser::_id equal "demoUser")
+        if (count() == 0L) {
+          val user =
+            BackendUser().apply {
+              _id = "rootUser"
+              email = "admin@example.org"
+              passwordHash = Algorithm.hashPassword("admin")
+              name = "Root User"
+              createdDate = now
+              createdBy = _id
+              type = UserType.ADMIN
+            }
+          insertOne(user, onDuplicateKey = { })
+        }
       }
-      if (count() == 0L) {
-        insertOne(rootUser, onDuplicateKey = { })
+
+      if (DEMO_MODE == 1) {
+        resetLocationsPeriodic()
+      }
+    }
+  }
+}
+
+// Resets locations db on start and every 24 hours
+suspend fun resetLocationsPeriodic() = serverScope.launch {
+  suspend fun resetLocations() {
+    val now = Date()
+
+    runOnDb {
+      with(getCollection<BackendLocation>()) {
+        drop()
+
+        fun createLocation(name: String): BackendLocation {
+          return BackendLocation().apply {
+            _id = name
+            this.name = name
+            createdBy = ""
+            createdDate = now
+          }
+        }
+
+        (300..320).map { createLocation("Room $it") }.forEach {
+          insertOne(it, onDuplicateKey = {})
+        }
+      }
+    }
+  }
+
+  var errors = 0
+
+  while (true) {
+    try {
+      resetLocations()
+      delay(timeMillis = 24 * 60 * 60 * 1000L) // 24 hours
+      errors = 0
+    } catch (e: Exception) {
+      println("ERROR resetting locations database. E: $e") // Don't crash on short-term database connection problems
+
+      errors += 1
+      if (errors >= 2) {
+        Exception("Could not reset database for two days in a row.")
       }
     }
   }

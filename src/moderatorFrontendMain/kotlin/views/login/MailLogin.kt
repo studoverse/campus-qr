@@ -4,6 +4,7 @@ import apiBase
 import com.studo.campusqr.common.LoginResult
 import kotlinext.js.js
 import kotlinx.browser.document
+import kotlinx.coroutines.delay
 import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.events.Event
 import react.RBuilder
@@ -25,6 +26,7 @@ import kotlin.js.json
 
 interface MailLoginProps : RProps {
   var classes: MailLoginClasses
+  var demoMode: Boolean
 }
 
 interface MailLoginState : RState {
@@ -34,16 +36,28 @@ interface MailLoginState : RState {
   var errorMessage: String?
 }
 
-class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
-  override fun MailLoginState.init() {
+class MailLogin(props: MailLoginProps) : LoginDetailComponent<MailLoginProps, MailLoginState>(props) {
+  override fun MailLoginState.init(props: MailLoginProps) {
     email = ""
     password = ""
     networkRequestInProgress = false
     errorMessage = null
+
+    // Autologin if in demo mode
+    if (props.demoMode) {
+      email = "demo@example.org"
+      password = "demo"
+      launch {
+        delay(1500L)
+        login()
+      }
+    }
   }
 
   private fun login() {
-    setState { networkRequestInProgress = true }
+    setState {
+      networkRequestInProgress = true
+    }
     launch {
       val response: LoginResult? = NetworkManager.post<String>(
         url = "$apiBase/user/login",
@@ -54,7 +68,9 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
         headers = json(
           "csrfToken" to document.querySelector("meta[name='csrfToken']")!!.getAttribute("content")!!
         )
-      )?.let { result -> LoginResult.values().find { it.name == result } ?: LoginResult.UNKNOWN_ERROR }
+      )?.let { result ->
+        LoginResult.values().find { it.name == result } ?: LoginResult.UNKNOWN_ERROR
+      }
 
       setState {
         networkRequestInProgress = false
@@ -150,7 +166,7 @@ interface MailLoginClasses {
   var logo: String
 }
 
-private val MailLoginStyle = { theme: dynamic ->
+private val MailLoginStyle = { _: dynamic ->
   // Keep in sync with MailLoginClasses!
   js {
     inputWrapper = js {
@@ -173,6 +189,7 @@ private val MailLoginStyle = { theme: dynamic ->
 
 private val styled = withStyles<MailLoginProps, MailLogin>(MailLoginStyle)
 
-fun RBuilder.renderMailLogin() = styled {
+fun RBuilder.renderMailLogin(demoMode: Boolean) = styled {
+  attrs.demoMode = demoMode
 }
   

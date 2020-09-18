@@ -53,13 +53,13 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     fetchLocationList()
   }
 
-  private fun handleCreateOrEditLocationResponse(response: String?) {
+  private fun handleCreateOrEditLocationResponse(response: String?, message: String) {
     setState {
       snackbarText = when (response) {
         "ok" -> {
           fetchLocationList()
           showAddLocationDialog = false
-          Strings.location_created.get()
+          message
         }
         else -> Strings.error_try_again.get()
       }
@@ -72,7 +72,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     customContent = {
       renderAddLocation(
         Config.Create(onFinished = { response ->
-          handleCreateOrEditLocationResponse(response)
+          handleCreateOrEditLocationResponse(response, Strings.location_created.get())
         })
       )
     },
@@ -186,8 +186,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
         mTableBody {
           state.locationList!!.forEach { location ->
             renderLocationTableRow(
-              LocationTableRowProps.Config(location, onEditFinished = { response ->
-                handleCreateOrEditLocationResponse(response)
+              LocationTableRowProps.Config(location, onEditFinished = { response, message ->
+                handleCreateOrEditLocationResponse(response, message)
               })
             )
           }
