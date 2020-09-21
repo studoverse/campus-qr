@@ -11,6 +11,7 @@ import com.studo.katerbase.equal
 import com.studo.katerbase.greaterEquals
 import com.studo.katerbase.inArray
 import com.studo.katerbase.inRange
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.util.*
@@ -30,14 +31,14 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
   val emails = params.getValue("email").split(*emailSeparators).filter { it.isNotEmpty() }
   val oldestDate = params["oldestDate"]?.toLong()?.let { Date(it) } ?: now.addDays(-14)
 
-  val reportedUserCheckIns = runOnDb {
+  val reportedUserCheckIns: List<CheckIn> = runOnDb {
     getCollection<CheckIn>()
         .find(CheckIn::email inArray emails, CheckIn::date greaterEquals oldestDate)
         .sortByDescending(CheckIn::date)
         .toList()
   }
 
-  val locationMapTask = serverScope.async(Dispatchers.IO) {
+  val locationMapTask: Deferred<Map<String, String>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       getCollection<BackendLocation>()
           .find(BackendLocation::_id inArray reportedUserCheckIns.map { it.locationId }.distinct())
@@ -45,7 +46,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     }
   }
 
-  val impactedUserCheckInsTask = serverScope.async(Dispatchers.IO) {
+  val impactedUserCheckInsTask: Deferred<List<CheckIn>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       val previousInfectionHours: Int = getConfig("previousInfectionHours")
       val nextInfectionHours: Int = getConfig("nextInfectionHours")
@@ -78,12 +79,12 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
           impactedUsersCount = impactedUsersEmails.count(),
           impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(";"),
           impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
-          reportedUserLocations = reportedUserCheckIns.map {
+          reportedUserLocations = reportedUserCheckIns.map { checkIn ->
             ReportData.UserLocation(
-                email = it.email,
-                date = it.date.toAustrianTime(yearAtBeginning = false),
-                locationName = locationMap.getValue(it.locationId),
-                seat = it.seat
+                email = checkIn.email,
+                date = checkIn.date.toAustrianTime(yearAtBeginning = false),
+                locationName = locationMap.getValue(checkIn.locationId),
+                seat = checkIn.seat,
             )
           }.toTypedArray(),
           reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
