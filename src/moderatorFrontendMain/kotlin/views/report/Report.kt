@@ -12,7 +12,6 @@ import muiDatePicker
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
-import react.dom.tr
 import util.Strings
 import util.fileDownload
 import util.get
@@ -216,7 +215,7 @@ class Report : RComponent<ReportProps, ReportState>() {
                 if (showEmailAddress) mTableCell { +Strings.report_checkin_email.get() }
                 mTableCell { +Strings.report_checkin_date.get() }
                 mTableCell { +Strings.report_checkin_location.get() }
-                if (state.reportData?.reportedUserLocations?.any { it.locationSeatNumber != null } == true) {
+                if (state.reportData?.reportedUserLocations?.any { it.seat != null } == true) {
                   mTableCell { +Strings.report_checkin_seat.get() }
                 }
               }

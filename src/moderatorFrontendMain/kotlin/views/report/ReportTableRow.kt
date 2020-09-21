@@ -36,7 +36,7 @@ class ReportTableRow : RComponent<ReportTableRowProps, ReportTableRowState>() {
       mTableCell {
         +props.config.userLocation.locationName
       }
-      props.config.userLocation.locationSeatNumber?.let { locationSeatNumber ->
+      props.config.userLocation.seat?.let { locationSeatNumber ->
         mTableCell {
           +locationSeatNumber.toString()
         }
