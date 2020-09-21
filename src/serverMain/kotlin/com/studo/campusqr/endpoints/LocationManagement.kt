@@ -37,10 +37,10 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
 
   val params = receiveJsonMap()
 
-  val name = (params["name"] as? String)?.trim() ?: throw IllegalArgumentException("No name was provided")
-  val accessType = (params["accessType"] as? String)?.let { LocationAccessType.valueOf(it) }
-      ?: throw IllegalArgumentException("No accessType was provided")
-  val seatCount = (params["seatCount"] as? Int)?.coerceIn(1, 10_000)
+  val name = params["name"]?.trim() ?: throw IllegalArgumentException("No name was provided")
+  val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
+    ?: throw IllegalArgumentException("No accessType was provided")
+  val seatCount = params["seatCount"]?.toIntOrNull()?.coerceIn(1, 10_000)
 
   val room = BackendLocation().apply {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
@@ -87,6 +87,7 @@ suspend fun ApplicationCall.visitLocation() {
     throw IllegalArgumentException("Seat provided but location has no seats defined")
   }
 
+
   val email = params["email"]?.trim() ?: throw IllegalArgumentException("No email was provided")
   val now = Date()
 
@@ -110,12 +111,12 @@ suspend fun ApplicationCall.visitLocation() {
   if (location.accessType == LocationAccessType.RESTRICTED) {
     val access = runOnDb {
       getCollection<BackendAccess>().findOne(
-          BackendAccess::locationId equal location._id,
-          BackendAccess::allowedEmails has email,
-          BackendAccess::dateRanges.any(
-              DateRange::from lowerEquals now,
-              DateRange::to greaterEquals now
-          )
+        BackendAccess::locationId equal location._id,
+        BackendAccess::allowedEmails has email,
+        BackendAccess::dateRanges.any(
+          DateRange::from lowerEquals now,
+          DateRange::to greaterEquals now
+        )
       )
     }
 
@@ -161,9 +162,9 @@ suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
 
   val checkIns = runOnDb {
     getCollection<CheckIn>()
-      .find(CheckIn::locationId equal locationId)
-      .sortByDescending(CheckIn::date)
-      .toList()
+        .find(CheckIn::locationId equal locationId)
+        .sortByDescending(CheckIn::date)
+        .toList()
   }
 
   respondObject(
