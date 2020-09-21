@@ -61,7 +61,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
         params = json(
             "name" to state.locationTextFieldValue,
             "accessType" to state.locationAccessType.name,
-            "seatCount" to state.locationSeatCount.toString()
+            "seatCount" to state.locationSeatCount
         )
     )
     setState {
@@ -132,31 +132,17 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
 
     spacer(16)
 
-    if (state.locationSeatCount == null) {
-      muiButton {
-        attrs.onClick = {
-          setState {
-            locationSeatCount = 50
-          }
-        }
-        attrs.variant = "outlined"
-        attrs.size = "small"
-        attrs.color = "primary"
-        +Strings.location_add_number_of_seats.get()
-      }
-    } else {
-      textField {
-        attrs.helperText = ""
-        attrs.fullWidth = true
-        attrs.variant = "outlined"
-        attrs.type = "number"
-        attrs.label = Strings.location_number_of_seats_hint.get()
-        attrs.value = state.locationSeatCount
-        attrs.onChange = { event: Event ->
-          val value = event.inputValue
-          setState {
-            locationSeatCount = value.toIntOrNull()?.coerceIn(1, 10_000)
-          }
+    textField {
+      attrs.placeholder = Strings.undefined.get()
+      attrs.fullWidth = true
+      attrs.variant = "outlined"
+      attrs.type = "number"
+      attrs.label = Strings.location_number_of_seats_hint.get()
+      attrs.value = state.locationSeatCount?.toString() ?: ""
+      attrs.onChange = { event: Event ->
+        val value = event.inputValue
+        setState {
+          locationSeatCount = value.toIntOrNull()?.coerceIn(1, 10_000)
         }
       }
     }

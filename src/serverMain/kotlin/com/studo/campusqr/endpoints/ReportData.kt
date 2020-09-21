@@ -46,7 +46,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     }
   }
 
-  val impactedUserCheckInsTask: Deferred<List<CheckIn>> = serverScope.async(Dispatchers.IO) {
+  val impactedUsersEmailsTask: Deferred<List<String>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       val previousInfectionHours: Int = getConfig("previousInfectionHours")
       val nextInfectionHours: Int = getConfig("nextInfectionHours")
@@ -59,14 +59,13 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
         ).toList()
       }
 
-      otherCheckIns.distinctBy { it.email }.filter { it.email !in emails }
+      otherCheckIns.map { it.email }.distinct().minus(emails)
     }
   }
 
   // locationId -> location name
   val locationMap: Map<String, String> = locationMapTask.await()
-  val impactedUserCheckIns = impactedUserCheckInsTask.await()
-  val impactedUsersEmails = impactedUserCheckIns.map { it.email }
+  val impactedUsersEmails = impactedUsersEmailsTask.await()
 
   val csvFilePrefix = emails
       .firstOrNull()

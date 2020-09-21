@@ -27,8 +27,8 @@ object Strings {
   )
 
   val undefined = LocalizedString(
-      "Undefined",
-      "Undefiniert"
+      "Not set",
+      "Nicht angegeben"
   )
 
   val locations_element_download_qr_code = LocalizedString(
@@ -161,18 +161,18 @@ object Strings {
   )
 
   val location_number_of_seats = LocalizedString(
-      "Number of seats",
-      "Anzahl der Sitze"
+      "Seat count",
+      "Anzahl der Sitzplätze"
   )
 
   val location_add_number_of_seats = LocalizedString(
-      "Add number of seats",
-      "Anzahl der Sitze hinzufügen"
+      "Add seat count",
+      "Anzahl der Sitzplätze hinzufügen"
   )
 
   val location_number_of_seats_hint = LocalizedString(
-      "Number of seats at this location",
-      "Anzahl der Sitze an diesem Ort"
+      "Seat count at this location",
+      "Anzahl der Sitzplätze an diesem Ort"
   )
 
   val name = LocalizedString(
