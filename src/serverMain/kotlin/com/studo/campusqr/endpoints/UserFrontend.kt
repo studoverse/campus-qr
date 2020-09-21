@@ -1,11 +1,9 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.utils.LocalizedString
-import com.studo.campusqr.database.Configuration
-import com.studo.campusqr.database.MainDatabase
+import com.studo.campusqr.database.getConfigs
 import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
-import com.studo.campusqr.extensions.runOnDb
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.http.*
@@ -14,17 +12,15 @@ import java.util.*
 
 
 suspend fun ApplicationCall.userFrontend() {
-  val locationId = parameters["l"]
-  val locationName = locationId?.let { id -> getLocationOrNull(id)?.name }
-  val language = this.language
+  val fullLocationId = parameters["l"]
+  var seatNr: Int? = null
+  val locationId = if (fullLocationId?.contains("-") == true) {
+    seatNr = fullLocationId.substringAfterLast("-", "").trimStart('0').toIntOrNull()
+    fullLocationId.substringBeforeLast("-")
+  } else null
+  val location = locationId?.let { id -> getLocationOrNull(id) }
 
-  val configs = runOnDb {
-    MainDatabase.getCollection<Configuration>().find()
-      .filter { it.stringValue != null }
-      .associateBy(
-        keySelector = { it._id.substringBefore("_$language") },
-        valueTransform = { it.stringValue!! })
-  }
+  val configs = getConfigs(language)
 
   val now = Date()
 
@@ -36,21 +32,23 @@ suspend fun ApplicationCall.userFrontend() {
         +"You need to enable JavaScript to run this app."
       }
 
-      if (locationName == null) {
+      if (location == null) {
         // Location not found
-        div {
+        div("overlay") {
           id = "overlay"
           img {
             src = "/static/userFrontend/reload.svg"
           }
-          p {
+          span {
+            id = "overlay-retry"
             +LocalizedString(
-              "Please scan the QR code again.",
-              "Bitte scannen Sie den QR Code erneut."
+              "Please close this page and scan the QR code again.",
+              "Bitte schließen Sie diese Seite und scannen Sie den QR Code erneut."
             ).get(this@userFrontend)
           }
         }
       } else {
+        val locationNameWithSeat = (location.name + if (location.seatCount != null && seatNr != null) " #$seatNr" else "")
         div("overlay hidden") {
           id = "overlay"
           img {
@@ -94,7 +92,7 @@ suspend fun ApplicationCall.userFrontend() {
                   "Location: ",
                   "Ort: "
                 ).get(this@userFrontend)
-                b { +locationName }
+                b { +locationNameWithSeat }
               }
             }
 
@@ -110,7 +108,7 @@ suspend fun ApplicationCall.userFrontend() {
             button(classes = "submit") {
               id = "submit-button"
               type = ButtonType.button
-              +LocalizedString("Check in at $locationName", "Check in bei $locationName").get(this@userFrontend)
+              +LocalizedString("Check in at ${location.name}", "Check in bei ${location.name}").get(this@userFrontend)
             }
             div("form-acceptTos") {
               checkBoxInput {
@@ -154,7 +152,7 @@ suspend fun ApplicationCall.userFrontend() {
                     src = "/static/userFrontend/locationIcon.svg"
                   }
                   span {
-                    +locationName
+                    +locationNameWithSeat
                   }
                 }
                 div("number") {

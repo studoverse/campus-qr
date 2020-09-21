@@ -28,8 +28,8 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
       if (location == null) {
         p {
           +LocalizedString(
-              "This location does not exist. Please go back and try again.",
-              "Diese Location existiert nicht, bitte gehe zurück und versuche es erneut.").get(this@viewSingleQrCode)
+            "This location does not exist. Please go back and try again.",
+            "Diese Location existiert nicht, bitte gehe zurück und versuche es erneut.").get(this@viewSingleQrCode)
         }
       } else {
         noScript {
@@ -46,7 +46,10 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
             ).get(this@viewSingleQrCode)
           }
         }
-        renderLocation(location, configs)
+        div {
+          id = "allcodes"
+          renderLocation(location, configs)
+        }
         script {
           src = "/static/viewQR/generate.js"
         }
@@ -72,8 +75,8 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
       if (locations.isEmpty()) {
         p {
           +LocalizedString(
-              "You have no locations yet. Go back and add some!",
-              "Es sind noch keine Locations eingetragen. Geh zurück und erstelle ein paar!"
+            "You have no locations yet. Go back and add some!",
+            "Es sind noch keine Locations eingetragen. Geh zurück und erstelle ein paar!"
           ).get(this@viewAllQrCodes)
         }
       } else {
@@ -86,15 +89,22 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
           }
           p {
             +LocalizedString(
-                "This website is suited for printing. " +
-                    "The QR codes will be put on separate pages and this hint will not be printed.",
-                "Diese Website ist zum Drucken geeignet. " +
-                    "Die QR Codes werden auf verschiedene Seiten aufgeteilt und dieser Hinweis wird nicht mitgedruckt.")
+              "This website is suited for printing. " +
+                  "The QR codes will be put on separate pages and this hint will not be printed.",
+              "Diese Website ist zum Drucken geeignet. " +
+                  "Die QR Codes werden auf verschiedene Seiten aufgeteilt und dieser Hinweis wird nicht mitgedruckt.")
                 .get(this@viewAllQrCodes)
           }
+          p {
+            id = "loading-text"
+            +LocalizedString("Loading... ", "Lädt... ").get(this@viewAllQrCodes)
+          }
         }
-        for (location in locations) {
-          renderLocation(location, configs)
+        div("hidden") {
+          id = "allcodes"
+          for (location in locations) {
+            renderLocation(location, configs)
+          }
         }
         script {
           src = "/static/viewQR/generate.js"
@@ -104,29 +114,38 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
   }
 }
 
-fun BODY.renderLocation(location: ClientLocation, configs: Map<String, String>) {
-  div("page") {
-    div("header") {
-      p {
-        span {
-          +location.name
+fun DIV.renderLocation(location: ClientLocation, configs: Map<String, String>) {
+  fun renderLocationInternal(name: String) {
+    div("page") {
+      div("header") {
+        h1 {
+          +name
+        }
+        p {
+          +"Check In"
         }
       }
-      p {
-        +"Check In"
+      div("qrcode") {
+        id = location.id
+      }
+      div("footer") {
+        p {
+          +configs.getValue("scanSubtext1")
+        }
+        p {
+          +configs.getValue("scanSubtext2")
+        }
       }
     }
-    div("qrcode") {
-      id = location.id
-    }
-    div("footer") {
-      p {
-        +configs.getValue("scanSubtext1")
-      }
-      p {
-        +configs.getValue("scanSubtext2")
-      }
-    }
+    div("break") {}
   }
-  div("break") {}
+
+  if (location.seatCount != null) {
+    for (seat in 1..location.seatCount) {
+      val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
+      renderLocationInternal("${location.name} #$paddedSeat")
+    }
+  } else {
+    renderLocationInternal(location.name)
+  }
 }
