@@ -2,7 +2,7 @@ function pad(num, size) {
   return ('000' + num).substr(-size)
 }
 
-let locationId = new URLSearchParams(window.location.search).get("l")
+let fullLocationId = new URLSearchParams(window.location.search).get("l")
 
 // True if the page was opened directly from the QR code and not reloaded / bookmarked
 let justScanned = false;
@@ -11,8 +11,8 @@ function onLoad() {
   if (window.location.search.includes("s=1")) {
     // If present, remove "just scanned" parameter from url and replace history state so the user cannot check in again by just reloading
     let url = window.location.href.split(window.location.search)[0];
-    window.history.replaceState(null, null, url + "?l=" + locationId);
-    window.localStorage.removeItem("checkin-" + locationId);
+    window.history.replaceState(null, null, url + "?l=" + fullLocationId);
+    window.localStorage.removeItem("checkin-" + fullLocationId);
     justScanned = true;
   }
 
@@ -36,7 +36,7 @@ function normalStartup() {
     return;
   }
 
-  if (!locationId) {
+  if (!fullLocationId) {
     overlay.className = overlay.className.replace("hidden", "");
 
   } else {
@@ -85,7 +85,7 @@ function normalStartup() {
               // Success
               setDatetimeElement(Date.now())
               window.localStorage.setItem("email", email);
-              window.localStorage.setItem("checkin-" + locationId, `${btoa(email)}::${Date.now().toString()}`);
+              window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}`);
               showCheckin(email)
 
             } else if (this.status === 403) {
@@ -98,7 +98,7 @@ function normalStartup() {
           }, 700)
         }
       }
-      xhttp.open("POST", "/location/" + locationId + "/visit");
+      xhttp.open("POST", "/location/" + fullLocationId + "/visit");
       xhttp.send(JSON.stringify({email: email}));
       submitButtonText = submitButton.innerText
       submitButton.innerText = "..."
@@ -146,7 +146,7 @@ function showCheckin(email, time = null) {
 }
 
 function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, onCheckinExpired = null}) {
-  let lastCheckin = window.localStorage.getItem("checkin-" + locationId)
+  let lastCheckin = window.localStorage.getItem("checkin-" + fullLocationId)
   if (lastCheckin) {
     let email = atob(lastCheckin.split("::")[0])
     let lastDateLong = parseInt(lastCheckin.split("::")[1])
@@ -188,7 +188,7 @@ function deleteExpiredCheckins() {
     let key = window.localStorage.key(i);
 
     // Only remove checkins from different locations
-    if (key.startsWith("checkin-") && key.split("checkin-")[1] !== locationId) {
+    if (key.startsWith("checkin-") && key.split("checkin-")[1] !== fullLocationId) {
       let checkinDate = new Date(window.localStorage.getItem(key).split("::")[1]);
       if (new Date() - checkinDate > 1000 * 60 * 60 * 24) { // Only remove checkins older than 24 hours
         window.localStorage.removeItem(key);
