@@ -76,6 +76,21 @@ class BackendAccess : MongoMainEntry(), ClientPayloadable<ClientAccessManagement
   override fun toClientClass(language: String) = throw NotImplementedError()
 }
 
+class BackendSeatFilter : MongoMainEntry(), ClientPayloadable<ClientSeatFilter> {
+  lateinit var locationId: String
+  lateinit var editedBy: String // userId
+  lateinit var lastEditDate: Date
+  var seat: Int = 0
+  lateinit var filteredSeats: List<Int>
+
+  override fun toClientClass(language: String) = ClientSeatFilter(
+      id = _id,
+      locationId = locationId,
+      seat = seat,
+      filteredSeats = filteredSeats.toTypedArray()
+  )
+}
+
 class CheckIn : MongoMainEntry() {
   lateinit var locationId: String
   lateinit var date: Date
