@@ -34,8 +34,8 @@ function generateNext(index) {
     }
 
     // Show codes
-    let allcodesWrapper = document.getElementById("allcodes")
-    allcodesWrapper.className = allcodesWrapper.className.replace("hidden", "")
+    let allCodesWrapper = document.getElementById("all-codes")
+    allCodesWrapper.className = allCodesWrapper.className.replace("hidden", "")
   }
 }
 

@@ -13,11 +13,13 @@ import java.util.*
 
 suspend fun ApplicationCall.userFrontend() {
   val fullLocationId = parameters["l"]
-  var seatNr: Int? = null
+  var seat: Int? = null
   val locationId = if (fullLocationId?.contains("-") == true) {
-    seatNr = fullLocationId.substringAfterLast("-", "").trimStart('0').toIntOrNull()
+    seat = fullLocationId.substringAfterLast("-", "").trimStart('0').toIntOrNull()
     fullLocationId.substringBeforeLast("-")
-  } else null
+  } else {
+    fullLocationId
+  }
   val location = locationId?.let { id -> getLocationOrNull(id) }
 
   val configs = getConfigs(language)
@@ -48,7 +50,11 @@ suspend fun ApplicationCall.userFrontend() {
           }
         }
       } else {
-        val locationNameWithSeat = (location.name + if (location.seatCount != null && seatNr != null) " #$seatNr" else "")
+        val locationNameWithSeat = (
+            location.name + if (location.seatCount != null && seat != null) {
+              " #${seat.toString().padStart(location.seatCount.toString().length, '0')}"
+            } else "")
+
         div("overlay hidden") {
           id = "overlay"
           img {

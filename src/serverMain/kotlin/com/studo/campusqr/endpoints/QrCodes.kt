@@ -32,27 +32,7 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
             "Diese Location existiert nicht, bitte gehe zurück und versuche es erneut.").get(this@viewSingleQrCode)
         }
       } else {
-        noScript {
-          +"You need to enable JavaScript to run this app."
-        }
-        header("noprint") {
-          h2 {
-            +"QR Code"
-          }
-          p {
-            +LocalizedString(
-              "This website is suited for printing. This hint will not be printed.",
-              "Diese Website ist zum Drucken geeignet. Dieser Hinweis wird nicht gedruckt."
-            ).get(this@viewSingleQrCode)
-          }
-        }
-        div {
-          id = "allcodes"
-          renderLocation(location, configs)
-        }
-        script {
-          src = "/static/viewQR/generate.js"
-        }
+        viewQrCodes(listOf(location), configs, language)
       }
     }
   }
@@ -75,47 +55,52 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
       if (locations.isEmpty()) {
         p {
           +LocalizedString(
-            "You have no locations yet. Go back and add some!",
-            "Es sind noch keine Locations eingetragen. Geh zurück und erstelle ein paar!"
+            "No locations have been added yet. Go back to create some.",
+            "Es sind noch keine Orte eingetragen. Gehen Sie zurück um welche zu erstellen."
           ).get(this@viewAllQrCodes)
         }
       } else {
-        noScript {
-          +"You need to enable JavaScript to run this app."
-        }
-        header("noprint") {
-          h2 {
-            +"QR Codes"
-          }
-          p {
-            +LocalizedString(
-              "This website is suited for printing. " +
-                  "The QR codes will be put on separate pages and this hint will not be printed.",
-              "Diese Website ist zum Drucken geeignet. " +
-                  "Die QR Codes werden auf verschiedene Seiten aufgeteilt und dieser Hinweis wird nicht mitgedruckt.")
-                .get(this@viewAllQrCodes)
-          }
-          p {
-            id = "loading-text"
-            +LocalizedString("Loading... ", "Lädt... ").get(this@viewAllQrCodes)
-          }
-        }
-        div("hidden") {
-          id = "allcodes"
-          for (location in locations) {
-            renderLocation(location, configs)
-          }
-        }
-        script {
-          src = "/static/viewQR/generate.js"
-        }
+        viewQrCodes(locations, configs, language)
       }
     }
   }
 }
 
+fun BODY.viewQrCodes(locations: List<ClientLocation>, configs: Map<String, String>, language: String) {
+  noScript {
+    +"You need to enable JavaScript to run this app."
+  }
+  header("noprint") {
+    h2 {
+      +"QR Codes"
+    }
+    p {
+      +LocalizedString(
+        "This website is suited for printing. " +
+            "The QR codes will be put on separate pages and this hint will not be printed.",
+        "Diese Website ist zum Drucken geeignet. " +
+            "Die QR Codes werden auf verschiedene Seiten aufgeteilt und dieser Hinweis wird nicht mitgedruckt.")
+          .get(language)
+    }
+    p {
+      id = "loading-text"
+      +LocalizedString("Loading... ", "Lädt... ").get(language)
+    }
+  }
+  div("hidden") {
+    id = "all-codes"
+    for (location in locations) {
+      renderLocation(location, configs)
+    }
+  }
+  script {
+    src = "/static/viewQR/generate.js"
+  }
+}
+
+
 fun DIV.renderLocation(location: ClientLocation, configs: Map<String, String>) {
-  fun renderLocationInternal(name: String) {
+  fun renderLocationInternal(name: String, id: String) {
     div("page") {
       div("header") {
         h1 {
@@ -126,7 +111,7 @@ fun DIV.renderLocation(location: ClientLocation, configs: Map<String, String>) {
         }
       }
       div("qrcode") {
-        id = location.id
+        this.id = id
       }
       div("footer") {
         p {
@@ -143,9 +128,9 @@ fun DIV.renderLocation(location: ClientLocation, configs: Map<String, String>) {
   if (location.seatCount != null) {
     for (seat in 1..location.seatCount) {
       val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
-      renderLocationInternal("${location.name} #$paddedSeat")
+      renderLocationInternal("${location.name} #$paddedSeat", "${location.id}-$seat")
     }
   } else {
-    renderLocationInternal(location.name)
+    renderLocationInternal(location.name, location.id)
   }
 }
