@@ -32,7 +32,7 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
             "Diese Location existiert nicht, bitte gehe zurück und versuche es erneut.").get(this@viewSingleQrCode)
         }
       } else {
-        viewQrCodes(listOf(location), configs, language)
+        renderQrCodes(listOf(location), configs, language)
       }
     }
   }
@@ -60,13 +60,13 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
           ).get(this@viewAllQrCodes)
         }
       } else {
-        viewQrCodes(locations, configs, language)
+        renderQrCodes(locations, configs, language)
       }
     }
   }
 }
 
-fun BODY.viewQrCodes(locations: List<ClientLocation>, configs: Map<String, String>, language: String) {
+fun BODY.renderQrCodes(locations: List<ClientLocation>, configs: Map<String, String>, language: String) {
   noScript {
     +"You need to enable JavaScript to run this app."
   }
