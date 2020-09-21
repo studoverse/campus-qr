@@ -4,6 +4,7 @@ import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.LocationVisitData
 import com.studo.campusqr.common.extensions.emailRegex
+import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.database.*
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
@@ -37,7 +38,8 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
 
   val name = params["name"]?.trim() ?: throw IllegalArgumentException("No name was provided")
   val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
-    ?: throw IllegalArgumentException("No accessType was provided")
+      ?: throw IllegalArgumentException("No accessType was provided")
+  val seatCount = params["seatCount"]?.toIntOrNull()?.coerceIn(1, 10_000)
 
   val room = BackendLocation().apply {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
@@ -46,6 +48,7 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
     this.createdBy = user._id
     this.checkInCount = 0
     this.accessType = accessType
+    this.seatCount = seatCount
   }
 
   MainDatabase.getCollection<BackendLocation>().insertOne(room, upsert = false)
@@ -66,8 +69,22 @@ suspend fun AuthenticatedApplicationCall.listLocations() {
 suspend fun ApplicationCall.visitLocation() {
   val params = receiveJsonMap()
 
-  val location = parameters["id"]?.let { getLocation(it) }
-      ?: throw IllegalArgumentException("No locationId was provided")
+  // id-parameter is either "$locationId" or "$locationId-$seat" (depending if location has seatCount defined or not)
+  val fullLocationId = parameters["id"] ?: throw IllegalArgumentException("No locationId was provided")
+  val locationId = fullLocationId.substringBefore("-")
+  val seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
+  val location = getLocation(locationId)
+
+  // Validate seat argument
+  if (seat == null && location.seatCount != null) {
+    throw IllegalArgumentException("No seat provided but location has seats defined")
+  } else if (seat != null && location.seatCount == null) {
+    throw IllegalArgumentException("Seat provided but location has no seats defined")
+  } else if (seat!! <= 0) {
+    throw IllegalArgumentException("Seat must be > 0")
+  } else if (seat > location.seatCount!!) {
+    throw IllegalArgumentException("Seat must be <= location.seatCount")
+  }
 
   val email = params["email"]?.trim() ?: throw IllegalArgumentException("No email was provided")
   val now = Date()
@@ -116,6 +133,7 @@ suspend fun ApplicationCall.visitLocation() {
     this.email = email
     this.userAgent = request.headers[HttpHeaders.UserAgent] ?: ""
     this.grantAccessId = accessId
+    this.seat = seat
   }
 
   runOnDb {
@@ -164,17 +182,15 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
 
   val params = receiveJsonMap()
 
-  val newName = params["name"]?.trim()
-  val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
+  val newName = params.getValue("name").trim()
+  val accessType = params.getValue("accessType").let { LocationAccessType.valueOf(it) }
+  val seatCount = params["seatCount"]?.toIntOrNull()?.coerceIn(1, 10_000)
 
   runOnDb {
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal locationId) {
-      if (newName != null) {
-        BackendLocation::name setTo newName
-      }
-      if (accessType != null) {
-        BackendLocation::accessType setTo accessType
-      }
+      BackendLocation::name setTo newName
+      BackendLocation::accessType setTo accessType
+      BackendLocation::seatCount setTo seatCount
     }
   }
 

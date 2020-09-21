@@ -55,6 +55,7 @@ class AutomaticDeletionTest {
       this.date = date
       email = "test@test.com"
       userAgent = ""
+      seat = null
     }
 
     val now = Date()

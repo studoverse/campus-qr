@@ -24,15 +24,15 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
   var firstLoginDate: Date? = null
   var type = UserType.MODERATOR
   override fun toClientClass(language: String) = ClientUser(
-    id = _id,
-    email = email,
-    name = name,
-    type = type.name,
-    firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
-      ?: LocalizedString(
-        "Not logged in yet",
-        "Noch nicht eingeloggt"
-      ).get(language)
+      id = _id,
+      email = email,
+      name = name,
+      type = type.name,
+      firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
+          ?: LocalizedString(
+              "Not logged in yet",
+              "Noch nicht eingeloggt"
+          ).get(language)
   )
 
   constructor(userId: String, email: String, name: String, type: UserType) : this() {
@@ -53,12 +53,14 @@ class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
   lateinit var createdDate: Date
   var checkInCount: Int = 0
   var accessType = LocationAccessType.FREE
+  var seatCount: Int? = null // If != null, then valid seats on CheckIn are 1 to seatCount
 
   override fun toClientClass(language: String) = ClientLocation(
-    id = _id,
-    name = name,
-    checkInCount = checkInCount,
-    accessType = accessType.name
+      id = _id,
+      name = name,
+      checkInCount = checkInCount,
+      accessType = accessType.name,
+      seatCount = seatCount
   )
 }
 
@@ -80,6 +82,7 @@ class CheckIn : MongoMainEntry() {
   lateinit var email: String
   lateinit var userAgent: String
   var grantAccessId: String? = null // id of BackendAccess which was used to enter, null if no BackendAccess was used
+  var seat: Int? = null // null if Location has no seatCount defined
 }
 
 class SessionToken : MongoMainEntry() {
