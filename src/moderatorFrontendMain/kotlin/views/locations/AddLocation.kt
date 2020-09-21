@@ -66,11 +66,12 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     setState { locationCreationInProgress = true }
     val locationId = (props.config as Config.Edit).location.id
     val response = NetworkManager.post<String>(
-      url = "$apiBase/location/$locationId/edit",
-      params = json(
-        "name" to state.locationTextFieldValue,
-        "accessType" to state.accessType.name
-      )
+        url = "$apiBase/location/$locationId/edit",
+        params = json(
+            "name" to state.locationTextFieldValue,
+            "accessType" to state.accessType.name,
+            "seatCount" to null // TODO state.seatCount
+        )
     )
     setState {
       locationCreationInProgress = false
