@@ -80,7 +80,8 @@ class CheckIn : MongoMainEntry() {
   lateinit var locationId: String
   lateinit var date: Date
   lateinit var email: String
-  lateinit var userAgent: String
+  var userAgent: String? = null // Only stored if storeCheckInUserAgent is set
+  var ipAddress: String? = null // Only stored if storeCheckInIpAddress is set
   var grantAccessId: String? = null // id of BackendAccess which was used to enter, null if no BackendAccess was used
   var seat: Int? = null // null if Location has no seatCount defined
 }

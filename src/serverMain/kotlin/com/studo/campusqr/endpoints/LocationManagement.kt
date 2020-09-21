@@ -6,6 +6,7 @@ import com.studo.campusqr.common.LocationVisitData
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.database.*
+import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.*
@@ -131,7 +132,8 @@ suspend fun ApplicationCall.visitLocation() {
     this.locationId = location._id
     this.date = visitDate ?: now
     this.email = email
-    this.userAgent = request.headers[HttpHeaders.UserAgent] ?: ""
+    this.userAgent = if (getConfig("storeCheckInUserAgent")) request.headers[HttpHeaders.UserAgent] ?: "" else null
+    this.ipAddress = getConfig<String>("checkInIpAddressHeader").emptyToNull()?.let { request.headers[it] }
     this.grantAccessId = accessId
     this.seat = seat
   }
