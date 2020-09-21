@@ -165,11 +165,6 @@ object Strings {
       "Anzahl der Sitzplätze"
   )
 
-  val location_add_number_of_seats = LocalizedString(
-      "Add seat count",
-      "Anzahl der Sitzplätze hinzufügen"
-  )
-
   val location_number_of_seats_hint = LocalizedString(
       "Seat count at this location",
       "Anzahl der Sitzplätze an diesem Ort"
