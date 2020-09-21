@@ -50,7 +50,7 @@ suspend fun AuthenticatedApplicationCall.logout() {
 suspend fun ApplicationCall.login() {
   validateCsrfToken()
 
-  val params = receiveJsonMap()
+  val params = receiveJsonStringMap()
   val email = params["email"] ?: run {
     respondEnum(LoginResult.LOGIN_FAILED)
     return

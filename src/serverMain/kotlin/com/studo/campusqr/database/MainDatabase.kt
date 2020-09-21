@@ -27,6 +27,9 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
         index(CheckIn::email.ascending(), CheckIn::date.descending())
         index(CheckIn::locationId.ascending(), CheckIn::date.descending())
     }
+    collection<BackendSeatFilter>("seatFilters") {
+        index(BackendSeatFilter::locationId.ascending(), BackendSeatFilter::seat.ascending())
+    }
 }) {
     fun <T : Any> getConfig(id: String, valueType: KClass<T>): T {
         val configEntry = getCollection<Configuration>().findOne(Configuration::_id equal id)
