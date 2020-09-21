@@ -26,7 +26,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
     return
   }
 
-  val params = receiveJsonMap()
+  val params = receiveJsonStringMap()
 
   val email = params.getValue("email").trim()
   val newUser = BackendUser(
@@ -57,7 +57,7 @@ suspend fun AuthenticatedApplicationCall.deleteUser() {
     return
   }
 
-  val params = receiveJsonMap()
+  val params = receiveJsonStringMap()
   val userId = params.getValue("userId")
 
   runOnDb {
@@ -74,7 +74,7 @@ suspend fun AuthenticatedApplicationCall.editUser() {
     return
   }
 
-  val params = receiveJsonMap()
+  val params = receiveJsonStringMap()
   val changedUserId = params["userId"] ?: user._id
 
   val newName = params["name"]?.trim()

@@ -109,6 +109,8 @@ suspend fun main() {
           post("edit") { call.getAuthenticatedCall()?.editLocation() }
           get("qr-code") { call.getAuthenticatedCall()?.viewSingleQrCode() }
           get("delete") { call.getAuthenticatedCall()?.deleteLocation() }
+          get("editSeatFilter") { call.getAuthenticatedCall()?.editSeatFilter() }
+          get("deleteSeatFilter") { call.getAuthenticatedCall()?.deleteSeatFilter() }
         }
       }
       route("access") {

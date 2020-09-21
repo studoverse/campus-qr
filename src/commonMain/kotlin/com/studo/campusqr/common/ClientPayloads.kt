@@ -72,17 +72,24 @@ class ClientDateRange(
 ) : ClientPayload
 
 class NewAccess(
-  val locationId: String,
-  val allowedEmails: Array<String>,
-  val dateRanges: Array<ClientDateRange>,
-  val note: String,
-  val reason: String
+    val locationId: String,
+    val allowedEmails: Array<String>,
+    val dateRanges: Array<ClientDateRange>,
+    val note: String,
+    val reason: String
 ) : ClientPayload
 
 class EditAccess(
-  val locationId: String? = null,
-  val allowedEmails: Array<String>? = null,
-  val dateRanges: Array<ClientDateRange>? = null,
-  val note: String? = null,
-  val reason: String? = null
+    val locationId: String? = null,
+    val allowedEmails: Array<String>? = null,
+    val dateRanges: Array<ClientDateRange>? = null,
+    val note: String? = null,
+    val reason: String? = null
+) : ClientPayload
+
+class ClientSeatFilter(
+    val id: String,
+    val locationId: String,
+    val seat: Int,
+    val filteredSeats: Array<Int>,
 ) : ClientPayload

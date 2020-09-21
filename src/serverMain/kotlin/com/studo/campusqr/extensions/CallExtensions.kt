@@ -47,7 +47,11 @@ val ApplicationCall.language: String
  * Loads the request body, and converts from JSON to a map,
  * This can be only called once per ApplicationCall
  */
-suspend fun ApplicationCall.receiveJsonMap(): Map<String, String> = JsonHandler.fromJson(receiveText())
+@Deprecated("Use receiveClientPayload to statically type the request params", ReplaceWith("receiveClientPayload<>()"))
+suspend fun ApplicationCall.receiveJsonStringMap(): Map<String, String> = JsonHandler.fromJson(receiveText())
+
+@Deprecated("Use receiveClientPayload to statically type the request params", ReplaceWith("receiveClientPayload<>()"))
+suspend fun ApplicationCall.receiveJsonMap(): Map<String, Any?> = JsonHandler.fromJson(receiveText())
 
 suspend fun <T : ClientPayload> ApplicationCall.receiveClientPayload(payloadClass: KClass<T>): T {
   val json = receiveText()

@@ -24,7 +24,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     return
   }
 
-  val params = receiveJsonMap()
+  val params = receiveJsonStringMap()
 
   val now = Date()
   val emails = params.getValue("email").split(*emailSeparators).filter { it.isNotEmpty() }

@@ -68,7 +68,7 @@ suspend fun AuthenticatedApplicationCall.listLocations() {
 }
 
 suspend fun ApplicationCall.visitLocation() {
-  val params = receiveJsonMap()
+  val params = receiveJsonStringMap()
 
   // id-parameter is either "$locationId" or "$locationId-$seat" (depending if location has seatCount defined or not)
   val fullLocationId = parameters["id"] ?: throw IllegalArgumentException("No locationId was provided")
@@ -186,18 +186,25 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
   }
 
   val locationId = parameters["id"]!!
+  val location = getLocation(locationId)
 
   val params = receiveJsonMap()
 
-  val newName = params.getValue("name").trim()
-  val accessType = params.getValue("accessType").let { LocationAccessType.valueOf(it) }
-  val seatCount = params["seatCount"]?.toIntOrNull()?.coerceIn(1, 10_000)
+  val name = (params["name"] as? String)?.trim() ?: throw IllegalArgumentException("No name was provided")
+  val accessType = (params["accessType"] as? String)?.let { LocationAccessType.valueOf(it) }
+      ?: throw IllegalArgumentException("No accessType was provided")
+  val seatCount = (params["seatCount"] as? Int)?.coerceIn(1, 10_000)
 
   runOnDb {
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal locationId) {
-      BackendLocation::name setTo newName
+      BackendLocation::name setTo name
       BackendLocation::accessType setTo accessType
       BackendLocation::seatCount setTo seatCount
+    }
+
+    // In case we change the seatCount, delete previous seatCounts of this location as the seating-plan might have changed
+    if (location.seatCount != seatCount) {
+      getCollection<BackendSeatFilter>().deleteMany(BackendAccess::locationId equal locationId)
     }
   }
 
@@ -216,6 +223,7 @@ suspend fun AuthenticatedApplicationCall.deleteLocation() {
     getCollection<BackendLocation>().deleteOne(BackendLocation::_id equal locationId)
     getCollection<CheckIn>().deleteMany(CheckIn::locationId equal locationId)
     getCollection<BackendAccess>().deleteMany(BackendAccess::locationId equal locationId)
+    getCollection<BackendSeatFilter>().deleteMany(BackendSeatFilter::locationId equal locationId)
   }
 
   respondOk()
