@@ -215,11 +215,6 @@ object Strings {
       "Kontakte zurückverfolgen"
   )
 
-  val report_checkins = LocalizedString(
-      "Check ins of the person",
-      "Check-Ins der Person"
-  )
-
   val report_checkin_email = LocalizedString(
       "E-mail Address",
       "E-Mail Adresse"

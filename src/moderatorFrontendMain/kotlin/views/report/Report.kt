@@ -50,14 +50,14 @@ class Report : RComponent<ReportProps, ReportState>() {
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-      MbSnackbarProps.Config(
-          show = state.snackbarText.isNotEmpty(),
-          message = state.snackbarText,
-          onClose = {
-            setState {
-              snackbarText = ""
-            }
-          })
+    MbSnackbarProps.Config(
+      show = state.snackbarText.isNotEmpty(),
+      message = state.snackbarText,
+      onClose = {
+        setState {
+          snackbarText = ""
+        }
+      })
   )
 
   private fun validateInput(): Boolean {
@@ -72,7 +72,7 @@ class Report : RComponent<ReportProps, ReportState>() {
 
   override fun RBuilder.render() {
     val showEmailAddress =
-        state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
+      state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
     renderSnackbar()
     typography {
@@ -127,10 +127,10 @@ class Report : RComponent<ReportProps, ReportState>() {
                 launch {
                   setState { loadingList = true }
                   val response = NetworkManager.post<ReportData>(
-                      "$apiBase/report/list", params = json(
+                    "$apiBase/report/list", params = json(
                       "email" to state.emailTextFieldValue,
                       "oldestDate" to state.infectionDate.getTime().toString()
-                  )
+                    )
                   )
                   setState {
                     loadingList = false
@@ -157,7 +157,33 @@ class Report : RComponent<ReportProps, ReportState>() {
           typography {
             attrs.variant = "h6"
             +Strings.report_affected_people.get()
-                .format(reportData.impactedUsersCount.toString(), reportData.startDate, reportData.endDate)
+              .format(reportData.impactedUsersCount.toString(), reportData.startDate, reportData.endDate)
+          }
+
+          spacer(32)
+
+          mTable {
+            mTableHead {
+              mTableRow {
+                if (showEmailAddress) mTableCell { +Strings.report_checkin_email.get() }
+                mTableCell { +Strings.report_checkin_date.get() }
+                mTableCell { +Strings.report_checkin_location.get() }
+                if (state.reportData?.reportedUserLocations?.any { it.seat != null } == true) {
+                  mTableCell { +Strings.report_checkin_seat.get() }
+                  mTableCell { +"Filter" }
+                }
+              }
+            }
+            mTableBody {
+              reportData.reportedUserLocations.forEach { userLocation ->
+                renderReportTableRow(
+                  ReportTableRowProps.Config(
+                    userLocation = userLocation,
+                    showEmailAddress = showEmailAddress
+                  )
+                )
+              }
+            }
           }
 
           spacer(32)
@@ -184,51 +210,16 @@ class Report : RComponent<ReportProps, ReportState>() {
             }
             spacer()
           }
-        }
-
-        if (reportData.reportedUserLocations.isNotEmpty()) {
-          div(GlobalCss.flex) {
-            typography {
-              attrs.className = props.classes.content
-              attrs.variant = "h6"
-              +Strings.report_checkins.get()
-            }
-          }
 
           if (reportData.reportedUserLocations.isNotEmpty()) {
-            div(props.classes.content) {
-              muiButton {
-                attrs.size = "small"
-                attrs.color = "primary"
-                attrs.variant = "outlined"
-                attrs.onClick = {
-                  fileDownload(reportData.reportedUserLocationsCsv, reportData.reportedUserLocationsCsvFileName)
-                }
-                +Strings.report_export_infected_user_checkins_csv.get()
+            muiButton {
+              attrs.size = "small"
+              attrs.color = "primary"
+              attrs.variant = "outlined"
+              attrs.onClick = {
+                fileDownload(reportData.reportedUserLocationsCsv, reportData.reportedUserLocationsCsvFileName)
               }
-            }
-          }
-
-          mTable {
-            mTableHead {
-              mTableRow {
-                if (showEmailAddress) mTableCell { +Strings.report_checkin_email.get() }
-                mTableCell { +Strings.report_checkin_date.get() }
-                mTableCell { +Strings.report_checkin_location.get() }
-                if (state.reportData?.reportedUserLocations?.any { it.seat != null } == true) {
-                  mTableCell { +Strings.report_checkin_seat.get() }
-                }
-              }
-            }
-            mTableBody {
-              reportData.reportedUserLocations.forEach { userLocation ->
-                renderReportTableRow(
-                    ReportTableRowProps.Config(
-                        userLocation = userLocation,
-                        showEmailAddress = showEmailAddress
-                    )
-                )
-              }
+              +Strings.report_export_infected_user_checkins_csv.get()
             }
           }
         }
