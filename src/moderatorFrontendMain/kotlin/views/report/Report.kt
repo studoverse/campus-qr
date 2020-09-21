@@ -217,6 +217,7 @@ class Report : RComponent<ReportProps, ReportState>() {
                 if (showEmailAddress) mTableCell { +Strings.report_checkin_email.get() }
                 mTableCell { +Strings.report_checkin_date.get() }
                 mTableCell { +Strings.report_checkin_location.get() }
+                mTableCell { +Strings.report_checkin_seat.get() }
               }
             }
             mTableBody {

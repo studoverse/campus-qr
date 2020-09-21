@@ -81,7 +81,8 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
             ReportData.UserLocation(
                 email = it.email,
                 date = it.date.toAustrianTime(yearAtBeginning = false),
-                locationName = locationMap.getValue(it.locationId)
+                locationName = locationMap.getValue(it.locationId),
+                locationSeatNumber = null // TODO: Infected seat number
             )
           }.toTypedArray(),
           reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {

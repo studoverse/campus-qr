@@ -26,6 +26,11 @@ object Strings {
       "Duplizieren"
   )
 
+  val undefined = LocalizedString(
+      "Undefined",
+      "Undefiniert"
+  )
+
   val locations_element_download_qr_code = LocalizedString(
       "Print / download QR code",
       "QR-Code drucken / herunterladen"
@@ -154,6 +159,22 @@ object Strings {
       "Name cannot be empty",
       "Name kann nicht leer sein"
   )
+
+  val location_number_of_seats = LocalizedString(
+      "Number of seats",
+      "Anzahl der Sitze"
+  )
+
+  val location_add_number_of_seats = LocalizedString(
+      "Add number of seats",
+      "Anzahl der Sitze hinzufügen"
+  )
+
+  val location_number_of_seats_hint = LocalizedString(
+      "Number of seats at this location",
+      "Anzahl der Sitze an diesem Ort"
+  )
+
   val name = LocalizedString(
       "Name",
       "Name"
@@ -212,6 +233,11 @@ object Strings {
   val report_checkin_location = LocalizedString(
       "Location",
       "Ort"
+  )
+
+  val report_checkin_seat = LocalizedString(
+      "Seat",
+      "Sitzplatz",
   )
 
   val report_affected_people = LocalizedString(

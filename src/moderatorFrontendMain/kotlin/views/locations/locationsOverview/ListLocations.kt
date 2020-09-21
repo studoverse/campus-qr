@@ -180,6 +180,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
             mTableCell { +Strings.location_name.get() }
             mTableCell { +Strings.location_check_in_count.get() }
             mTableCell { +Strings.location_access_type.get() }
+            mTableCell { +Strings.location_number_of_seats.get() }
             mTableCell { +Strings.actions.get() }
           }
         }
