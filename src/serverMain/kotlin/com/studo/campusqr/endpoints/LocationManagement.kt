@@ -77,14 +77,14 @@ suspend fun ApplicationCall.visitLocation() {
   val location = getLocation(locationId)
 
   // Validate seat argument
-  if (seat == null && location.seatCount != null) {
-    throw IllegalArgumentException("No seat provided but location has seats defined")
-  } else if (seat != null && location.seatCount == null) {
+  if (location.seatCount != null) {
+    when {
+      seat == null -> throw IllegalArgumentException("No seat provided but location has seats defined")
+      seat <= 0 -> throw IllegalArgumentException("Seat must be > 0")
+      seat > location.seatCount!! -> throw IllegalArgumentException("Seat must be <= location.seatCount")
+    }
+  } else if (seat != null) {
     throw IllegalArgumentException("Seat provided but location has no seats defined")
-  } else if (seat!! <= 0) {
-    throw IllegalArgumentException("Seat must be > 0")
-  } else if (seat > location.seatCount!!) {
-    throw IllegalArgumentException("Seat must be <= location.seatCount")
   }
 
   val email = params["email"]?.trim() ?: throw IllegalArgumentException("No email was provided")

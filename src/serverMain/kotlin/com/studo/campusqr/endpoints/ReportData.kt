@@ -45,7 +45,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     }
   }
 
-  val impactedUsersEmailsTask = serverScope.async(Dispatchers.IO) {
+  val impactedUsersTask = serverScope.async(Dispatchers.IO) {
     runOnDb {
       val previousInfectionHours: Int = getConfig("previousInfectionHours")
       val nextInfectionHours: Int = getConfig("nextInfectionHours")
@@ -58,13 +58,14 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
         ).toList()
       }
 
-      otherCheckIns.map { it.email }.distinct().minus(emails)
+      otherCheckIns.distinctBy { it.email }.filter { it.email !in emails }
     }
   }
 
   // locationId -> location name
   val locationMap: Map<String, String> = locationMapTask.await()
-  val impactedUsersEmails = impactedUsersEmailsTask.await()
+  val impactedUserCheckIns = impactedUsersTask.await()
+  val impactedUsersEmails = impactedUserCheckIns.map { it.email }
 
   val csvFilePrefix = emails
       .firstOrNull()
@@ -82,7 +83,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
                 email = it.email,
                 date = it.date.toAustrianTime(yearAtBeginning = false),
                 locationName = locationMap.getValue(it.locationId),
-                locationSeatNumber = null // TODO: Infected seat number
+                locationSeatNumber = it.seat
             )
           }.toTypedArray(),
           reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
