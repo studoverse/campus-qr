@@ -19,6 +19,7 @@ import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
+import kotlin.coroutines.CoroutineContext
 import kotlin.js.json
 
 interface AddLocationProps : RProps {
@@ -35,7 +36,8 @@ interface AddLocationState : RState {
   var locationCreationInProgress: Boolean
   var locationTextFieldValue: String
   var locationTextFieldError: String
-  var accessType: LocationAccessType
+  var locationAccessType: LocationAccessType
+  var locationSeatCount: Int?
 }
 
 class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
@@ -44,34 +46,22 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     locationCreationInProgress = false
     locationTextFieldError = ""
     locationTextFieldValue = (props.config as? Config.Edit)?.location?.name ?: ""
-    accessType = (props.config as? Config.Edit)?.location?.accessTypeEnum ?: LocationAccessType.FREE
+    locationAccessType = (props.config as? Config.Edit)?.location?.accessTypeEnum ?: LocationAccessType.FREE
+    locationSeatCount = (props.config as? Config.Edit)?.location?.seatCount
   }
 
-  private fun createNewLocation() = launch {
+  private fun createOrUpdateLocation() = launch {
     setState { locationCreationInProgress = true }
-    val response = NetworkManager.post<String>(
-        url = "$apiBase/location/create",
-        params = json(
-            "name" to state.locationTextFieldValue,
-            "accessType" to state.accessType.name,
-            "seatCount" to null // TODO state.seatCount
-        )
-    )
-    setState {
-      locationCreationInProgress = false
+    val url = when (val config = props.config) {
+      is Config.Create -> "$apiBase/location/create"
+      is Config.Edit -> "$apiBase/location/${config.location.id}/edit"
     }
-    props.config.onFinished(response)
-  }
-
-  private fun editLocation() = launch {
-    setState { locationCreationInProgress = true }
-    val locationId = (props.config as Config.Edit).location.id
     val response = NetworkManager.post<String>(
-        url = "$apiBase/location/$locationId/edit",
+        url = url,
         params = json(
             "name" to state.locationTextFieldValue,
-            "accessType" to state.accessType.name,
-            "seatCount" to null // TODO state.seatCount
+            "accessType" to state.locationAccessType.name,
+            "seatCount" to state.locationSeatCount
         )
     )
     setState {
@@ -120,11 +110,11 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
         }
         attrs.variant = "outlined"
         muiSelect {
-          attrs.value = state.accessType.toString()
+          attrs.value = state.locationAccessType.toString()
           attrs.onChange = { event ->
             val value = event.target.value as String
             setState {
-              accessType = LocationAccessType.valueOf(value)
+              locationAccessType = LocationAccessType.valueOf(value)
             }
           }
           attrs.variant = "outlined"
@@ -136,6 +126,23 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
               +accessType.localizedString.get()
             }
           }
+        }
+      }
+    }
+
+    spacer(16)
+
+    textField {
+      attrs.placeholder = Strings.undefined.get()
+      attrs.fullWidth = true
+      attrs.variant = "outlined"
+      attrs.type = "number"
+      attrs.label = Strings.location_number_of_seats_hint.get()
+      attrs.value = state.locationSeatCount?.toString() ?: ""
+      attrs.onChange = { event: Event ->
+        val value = event.inputValue
+        setState {
+          locationSeatCount = value.toIntOrNull()?.coerceIn(1, 10_000)
         }
       }
     }
@@ -152,10 +159,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
           attrs.color = "primary"
           attrs.onClick = {
             if (validateInput()) {
-              when (props.config) {
-                is Config.Edit -> editLocation()
-                is Config.Create -> createNewLocation()
-              }
+              createOrUpdateLocation()
             }
           }
           +if (props.config is Config.Create) {

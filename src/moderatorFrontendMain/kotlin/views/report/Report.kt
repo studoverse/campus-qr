@@ -17,13 +17,11 @@ import util.fileDownload
 import util.get
 import views.common.centeredProgress
 import views.common.spacer
-import webcore.MbSnackbarProps
-import webcore.NetworkManager
+import webcore.*
 import webcore.extensions.addDays
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
-import webcore.mbSnackbar
 import kotlin.js.Date
 import kotlin.js.json
 
@@ -52,14 +50,14 @@ class Report : RComponent<ReportProps, ReportState>() {
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(
-      show = state.snackbarText.isNotEmpty(),
-      message = state.snackbarText,
-      onClose = {
-        setState {
-          snackbarText = ""
-        }
-      })
+      MbSnackbarProps.Config(
+          show = state.snackbarText.isNotEmpty(),
+          message = state.snackbarText,
+          onClose = {
+            setState {
+              snackbarText = ""
+            }
+          })
   )
 
   private fun validateInput(): Boolean {
@@ -74,7 +72,7 @@ class Report : RComponent<ReportProps, ReportState>() {
 
   override fun RBuilder.render() {
     val showEmailAddress =
-      state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
+        state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
     renderSnackbar()
     typography {
@@ -83,71 +81,71 @@ class Report : RComponent<ReportProps, ReportState>() {
       +Strings.report.get()
     }
 
-    div("${GlobalCss.flex} ${props.classes.inputForm}") {
-      div(props.classes.inputHolder) {
-        muiDatePicker {
-          attrs.format = "dd.MM.yyyy"
-          attrs.inputVariant = "outlined"
-          attrs.label = Strings.report_infection_date.get()
-          attrs.value = state.infectionDate
-          attrs.onChange = {
-            setState {
-              infectionDate = it.toJSDate()
+    div(props.classes.inputForm) {
+      gridContainer(GridDirection.ROW, alignItems = "end") {
+        gridItem(GridSize(xs = 12, sm = 3)) {
+          muiDatePicker {
+            attrs.fullWidth = true
+            attrs.format = "dd.MM.yyyy"
+            attrs.inputVariant = "outlined"
+            attrs.label = Strings.report_infection_date.get()
+            attrs.value = state.infectionDate
+            attrs.onChange = {
+              setState {
+                infectionDate = it.toJSDate()
+              }
             }
           }
         }
-      }
-
-      div(props.classes.inputHolder) {
-        textField {
-          attrs.className = props.classes.emailTextField
-          attrs.fullWidth = true
-          attrs.variant = "outlined"
-          attrs.label = Strings.report_email.get()
-          attrs.type = "email"
-          attrs.value = state.emailTextFieldValue
-          attrs.error = state.emailTextFieldError.isNotEmpty()
-          attrs.helperText = state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()
-          attrs.onChange = { event: Event ->
-            val value = event.inputValue
-            setState {
-              emailTextFieldValue = value
-              emailTextFieldError = ""
+        gridItem(GridSize(xs = 12, sm = 6)) {
+          textField {
+            attrs.fullWidth = true
+            attrs.variant = "outlined"
+            attrs.label = Strings.report_email.get()
+            attrs.type = "email"
+            attrs.value = state.emailTextFieldValue
+            attrs.error = state.emailTextFieldError.isNotEmpty()
+            attrs.helperText = state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()
+            attrs.onChange = { event: Event ->
+              val value = event.inputValue
+              setState {
+                emailTextFieldValue = value
+                emailTextFieldError = ""
+              }
             }
           }
         }
-      }
-
-      div {
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.searchButton
-          }
-          attrs.variant = "contained"
-          attrs.color = "primary"
-          attrs.onClick = {
-            if (validateInput()) {
-              launch {
-                setState { loadingList = true }
-                val response = NetworkManager.post<ReportData>(
-                  "$apiBase/report/list", params = json(
-                    "email" to state.emailTextFieldValue,
-                    "oldestDate" to state.infectionDate.getTime().toString()
+        gridItem(GridSize(xs = 12, sm = 3)) {
+          muiButton {
+            attrs.classes = js {
+              root = props.classes.searchButton
+            }
+            attrs.variant = "contained"
+            attrs.color = "primary"
+            attrs.onClick = {
+              if (validateInput()) {
+                launch {
+                  setState { loadingList = true }
+                  val response = NetworkManager.post<ReportData>(
+                      "$apiBase/report/list", params = json(
+                      "email" to state.emailTextFieldValue,
+                      "oldestDate" to state.infectionDate.getTime().toString()
                   )
-                )
-                setState {
-                  loadingList = false
-                  if (response == null) {
-                    snackbarText = Strings.error_try_again.get()
-                    reportData = null
-                  } else {
-                    reportData = response
+                  )
+                  setState {
+                    loadingList = false
+                    if (response == null) {
+                      snackbarText = Strings.error_try_again.get()
+                      reportData = null
+                    } else {
+                      reportData = response
+                    }
                   }
                 }
               }
             }
+            +Strings.report_search.get()
           }
-          +Strings.report_search.get()
         }
       }
     }
@@ -159,7 +157,7 @@ class Report : RComponent<ReportProps, ReportState>() {
           typography {
             attrs.variant = "h6"
             +Strings.report_affected_people.get()
-              .format(reportData.impactedUsersCount.toString(), reportData.startDate, reportData.endDate)
+                .format(reportData.impactedUsersCount.toString(), reportData.startDate, reportData.endDate)
           }
 
           spacer(32)
@@ -217,15 +215,18 @@ class Report : RComponent<ReportProps, ReportState>() {
                 if (showEmailAddress) mTableCell { +Strings.report_checkin_email.get() }
                 mTableCell { +Strings.report_checkin_date.get() }
                 mTableCell { +Strings.report_checkin_location.get() }
+                if (state.reportData?.reportedUserLocations?.any { it.seat != null } == true) {
+                  mTableCell { +Strings.report_checkin_seat.get() }
+                }
               }
             }
             mTableBody {
               reportData.reportedUserLocations.forEach { userLocation ->
                 renderReportTableRow(
-                  ReportTableRowProps.Config(
-                    userLocation = userLocation,
-                    showEmailAddress = showEmailAddress
-                  )
+                    ReportTableRowProps.Config(
+                        userLocation = userLocation,
+                        showEmailAddress = showEmailAddress
+                    )
                 )
               }
             }

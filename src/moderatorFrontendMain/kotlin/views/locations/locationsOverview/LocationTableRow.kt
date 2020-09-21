@@ -78,6 +78,9 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
         +props.config.location.accessTypeEnum.localizedString.get()
       }
       mTableCell {
+        +(props.config.location.seatCount?.toString() ?: Strings.undefined.get())
+      }
+      mTableCell {
         routeContext.Consumer { routeContext ->
           if (state.showProgress) {
             circularProgress {}
