@@ -70,6 +70,25 @@ class Report : RComponent<ReportProps, ReportState>() {
     return true
   }
 
+  private fun traceContacts() = launch {
+    setState { loadingList = true }
+    val response = NetworkManager.post<ReportData>(
+      "$apiBase/report/list", params = json(
+        "email" to state.emailTextFieldValue,
+        "oldestDate" to state.infectionDate.getTime().toString()
+      )
+    )
+    setState {
+      loadingList = false
+      if (response == null) {
+        snackbarText = Strings.error_try_again.get()
+        reportData = null
+      } else {
+        reportData = response
+      }
+    }
+  }
+
   override fun RBuilder.render() {
     val showEmailAddress =
       state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
@@ -124,24 +143,7 @@ class Report : RComponent<ReportProps, ReportState>() {
             attrs.color = "primary"
             attrs.onClick = {
               if (validateInput()) {
-                launch {
-                  setState { loadingList = true }
-                  val response = NetworkManager.post<ReportData>(
-                    "$apiBase/report/list", params = json(
-                      "email" to state.emailTextFieldValue,
-                      "oldestDate" to state.infectionDate.getTime().toString()
-                    )
-                  )
-                  setState {
-                    loadingList = false
-                    if (response == null) {
-                      snackbarText = Strings.error_try_again.get()
-                      reportData = null
-                    } else {
-                      reportData = response
-                    }
-                  }
-                }
+                traceContacts()
               }
             }
             +Strings.report_search.get()

@@ -33,16 +33,16 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
 
   val reportedUserCheckIns: List<CheckIn> = runOnDb {
     getCollection<CheckIn>()
-        .find(CheckIn::email inArray emails, CheckIn::date greaterEquals oldestDate)
-        .sortByDescending(CheckIn::date)
-        .toList()
+      .find(CheckIn::email inArray emails, CheckIn::date greaterEquals oldestDate)
+      .sortByDescending(CheckIn::date)
+      .toList()
   }
 
   val locationMapTask: Deferred<Map<String, String>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       getCollection<BackendLocation>()
-          .find(BackendLocation::_id inArray reportedUserCheckIns.map { it.locationId }.distinct())
-          .associateBy(keySelector = { it._id }, valueTransform = { it.name })
+        .find(BackendLocation::_id inArray reportedUserCheckIns.map { it.locationId }.distinct())
+        .associateBy(keySelector = { it._id }, valueTransform = { it.name })
     }
   }
 
@@ -54,8 +54,11 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
       // We need to probably optimize performance here in the future
       val otherCheckIns = reportedUserCheckIns.flatMap { checkIn ->
         getCollection<CheckIn>().find(
-            CheckIn::locationId equal checkIn.locationId,
-            CheckIn::date.inRange(checkIn.date.addHours(-previousInfectionHours), checkIn.date.addHours(nextInfectionHours))
+          CheckIn::locationId equal checkIn.locationId,
+          CheckIn::date.inRange(
+            checkIn.date.addHours(-previousInfectionHours),
+            checkIn.date.addHours(nextInfectionHours)
+          )
         ).toList()
       }
 
@@ -68,31 +71,32 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
   val impactedUsersEmails = impactedUsersEmailsTask.await()
 
   val csvFilePrefix = emails
-      .firstOrNull()
-      ?.map { if (it.isLetterOrDigit()) it else '-' }
-      ?.joinToString(separator = "")
-      ?.take(20)
+    .firstOrNull()
+    ?.map { if (it.isLetterOrDigit()) it else '-' }
+    ?.joinToString(separator = "")
+    ?.take(20)
 
   respondObject(
-      ReportData(
-          impactedUsersCount = impactedUsersEmails.count(),
-          impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(";"),
-          impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
-          reportedUserLocations = reportedUserCheckIns.map { checkIn ->
-            ReportData.UserLocation(
-                email = checkIn.email,
-                date = checkIn.date.toAustrianTime(yearAtBeginning = false),
-                locationName = locationMap.getValue(checkIn.locationId),
-                seat = checkIn.seat,
-            )
-          }.toTypedArray(),
-          reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
-            "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationMap.getValue(it.locationId)}"
-          },
-          reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
-          startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
-          endDate = now.toAustrianTime("dd.MM.yyyy"),
-          impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv"
-      )
+    ReportData(
+      impactedUsersCount = impactedUsersEmails.count(),
+      impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(";"),
+      impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
+      reportedUserLocations = reportedUserCheckIns.map { checkIn ->
+        ReportData.UserLocation(
+          email = checkIn.email,
+          date = checkIn.date.toAustrianTime(yearAtBeginning = false),
+          locationName = locationMap.getValue(checkIn.locationId),
+          seat = checkIn.seat,
+          seatFilter = null
+        )
+      }.toTypedArray(),
+      reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
+        "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationMap.getValue(it.locationId)}"
+      },
+      reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
+      startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
+      endDate = now.toAustrianTime("dd.MM.yyyy"),
+      impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv"
+    )
   )
 }

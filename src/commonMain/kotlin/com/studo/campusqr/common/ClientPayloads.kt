@@ -33,7 +33,13 @@ class ReportData(
   val endDate: String,
   val impactedUsersEmailsCsvFileName: String
 ) : ClientPayload {
-  class UserLocation(val email: String, val date: String, val locationName: String, val seat: Int?)
+  class UserLocation(
+    val email: String,
+    val date: String,
+    val locationName: String,
+    val seat: Int?,
+    seatFilter: ClientSeatFilter?
+  )
 }
 
 class LocationVisitData(
