@@ -38,11 +38,11 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
       .toList()
   }
 
-  val locationMapTask: Deferred<Map<String, String>> = serverScope.async(Dispatchers.IO) {
+  val locationMapTask: Deferred<Map<String, BackendLocation>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       getCollection<BackendLocation>()
         .find(BackendLocation::_id inArray reportedUserCheckIns.map { it.locationId }.distinct())
-        .associateBy(keySelector = { it._id }, valueTransform = { it.name })
+        .associateBy { it._id }
     }
   }
 
@@ -66,8 +66,8 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     }
   }
 
-  // locationId -> location name
-  val locationMap: Map<String, String> = locationMapTask.await()
+  // locationId -> location
+  val locationMap: Map<String, BackendLocation> = locationMapTask.await()
   val impactedUsersEmails = impactedUsersEmailsTask.await()
 
   val csvFilePrefix = emails
@@ -82,12 +82,14 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
       impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(";"),
       impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
       reportedUserLocations = reportedUserCheckIns.map { checkIn ->
+        val location = locationMap.getValue(checkIn.locationId)
         ReportData.UserLocation(
+          locationId = location._id,
+          locationName = location.name,
+          locationSeatCount = location.seatCount,
           email = checkIn.email,
           date = checkIn.date.toAustrianTime(yearAtBeginning = false),
-          locationName = locationMap.getValue(checkIn.locationId),
           seat = checkIn.seat,
-          seatFilter = null
         )
       }.toTypedArray(),
       reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {

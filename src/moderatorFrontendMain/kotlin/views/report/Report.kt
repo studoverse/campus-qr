@@ -172,6 +172,8 @@ class Report : RComponent<ReportProps, ReportState>() {
                 mTableCell { +Strings.report_checkin_location.get() }
                 if (state.reportData?.reportedUserLocations?.any { it.seat != null } == true) {
                   mTableCell { +Strings.report_checkin_seat.get() }
+                }
+                if (state.reportData?.reportedUserLocations?.any { it.locationSeatCount != null } == true) {
                   mTableCell { +"Filter" }
                 }
               }
@@ -181,7 +183,11 @@ class Report : RComponent<ReportProps, ReportState>() {
                 renderReportTableRow(
                   ReportTableRowProps.Config(
                     userLocation = userLocation,
-                    showEmailAddress = showEmailAddress
+                    showEmailAddress = showEmailAddress,
+                    onFilterChanged = {
+                      // Update results
+                      traceContacts()
+                    }
                   )
                 )
               }
@@ -194,7 +200,6 @@ class Report : RComponent<ReportProps, ReportState>() {
             muiButton {
               attrs.size = "small"
               attrs.color = "primary"
-              attrs.variant = "outlined"
               attrs.onClick = {
                 window.open(reportData.impactedUsersMailtoLink, target = "_blank")
               }
@@ -204,7 +209,6 @@ class Report : RComponent<ReportProps, ReportState>() {
             muiButton {
               attrs.size = "small"
               attrs.color = "primary"
-              attrs.variant = "outlined"
               attrs.onClick = {
                 fileDownload(reportData.impactedUsersEmailsCsvData, reportData.impactedUsersEmailsCsvFileName)
               }
@@ -217,7 +221,6 @@ class Report : RComponent<ReportProps, ReportState>() {
             muiButton {
               attrs.size = "small"
               attrs.color = "primary"
-              attrs.variant = "outlined"
               attrs.onClick = {
                 fileDownload(reportData.reportedUserLocationsCsv, reportData.reportedUserLocationsCsvFileName)
               }

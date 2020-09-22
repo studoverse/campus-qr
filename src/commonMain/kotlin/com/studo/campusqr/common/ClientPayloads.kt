@@ -34,11 +34,12 @@ class ReportData(
   val impactedUsersEmailsCsvFileName: String
 ) : ClientPayload {
   class UserLocation(
+    val locationId: String,
+    val locationName: String,
+    val locationSeatCount: Int?,
     val email: String,
     val date: String,
-    val locationName: String,
-    val seat: Int?,
-    seatFilter: ClientSeatFilter?
+    val seat: Int?
   )
 }
 

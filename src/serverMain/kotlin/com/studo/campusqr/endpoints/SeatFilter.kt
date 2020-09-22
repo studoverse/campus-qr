@@ -28,7 +28,7 @@ suspend fun AuthenticatedApplicationCall.editSeatFilter() {
   val seat = params.getValue("seat") as Int
   val filteredSeats = params.getValue("filteredSeats") as List<*>
 
-  if (filteredSeats.any { it != Int }) throw IllegalArgumentException("filteredSeats must be [Int]")
+  if (filteredSeats.any { it !is Int }) throw IllegalArgumentException("filteredSeats must be [Int]")
   @Suppress("UNCHECKED_CAST") // Checked in the line above
   filteredSeats as List<Int>
 
