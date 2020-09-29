@@ -67,8 +67,8 @@ suspend fun initialDatabaseSetup() {
       insert("ldapApplicationUserCredentials", "password") // For user disabling via lookup
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
 
-      insert("storeCheckInUserAgent", 1) // Set to 0 if no UserAgent should be stored on checkIn
-      insert("checkInIpAddressHeader", "X-Forwarded-For") // Set to "" if no IP address should be stored on checkIn
+      insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
+      insert("checkInIpAddressHeader", "") // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
     }
 
     // Create root user
