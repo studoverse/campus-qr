@@ -1,7 +1,6 @@
 package com.studo.campusqr.utils
 
 import com.studo.campusqr.common.UserType
-import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -57,14 +56,21 @@ suspend fun ApplicationCall.createNewSessionToken(): SessionToken {
 }
 
 suspend fun ApplicationCall.getSessionToken(): SessionToken? {
-  // Special handling for shared secret auth
-  request.headers["Authorization"]?.emptyToNull()?.let { authorizationHeader ->
-    if (MainDatabase.getConfig<String>("authSharedSecret") == authorizationHeader)
-      return getOrCreateSharedSecretSessionToken()
-  }
+  val authorizationHeader = request.headers["X-Authorization"]
 
-  val webSession = sessions.get<Session>() ?: return null
-  return runOnDb { getCollection<SessionToken>().findOne(SessionToken::_id equal webSession.token) }
+  return when {
+    // Server-to-server auth via shared secret
+    authorizationHeader?.isNotBlank() == true -> when (authorizationHeader) {
+      MainDatabase.getConfig<String>("authSharedSecret") -> getOrCreateSharedSecretSessionToken()
+      else -> null
+    }
+
+    // Default auth with session cookie
+    else -> {
+      val webSession = sessions.get<Session>() ?: return null
+      runOnDb { getCollection<SessionToken>().findOne(SessionToken::_id equal webSession.token) }
+    }
+  }
 }
 
 val SessionToken?.isAuthenticated get() = this?.isAuthenticated ?: false
