@@ -30,8 +30,9 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
       if (location == null) {
         p {
           +LocalizedString(
-              "This location does not exist. Please go back and try again.",
-              "Diese Location existiert nicht, bitte gehe zurück und versuche es erneut.").get(this@viewSingleQrCode)
+            "This location does not exist. Please go back and try again.",
+            "Diese Location existiert nicht, bitte gehe zurück und versuche es erneut."
+          ).get(this@viewSingleQrCode)
         }
       } else {
         renderQrCodes(listOf(location), configs, language)
@@ -59,8 +60,8 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
       if (locations.isEmpty()) {
         p {
           +LocalizedString(
-              "No locations have been added yet. Go back to create some.",
-              "Es sind noch keine Orte eingetragen. Gehen Sie zurück um welche zu erstellen."
+            "No locations have been added yet. Go back to create some.",
+            "Es sind noch keine Orte eingetragen. Gehen Sie zurück um welche zu erstellen."
           ).get(this@viewAllQrCodes)
         }
       } else {
@@ -83,8 +84,9 @@ fun BODY.renderQrCodes(locations: List<ClientLocation>, configs: Map<String, Str
         "This website is suited for printing. " +
             "The QR codes will be put on separate pages and this hint will not be printed.",
         "Diese Website ist zum Drucken geeignet. " +
-            "Die QR Codes werden auf verschiedene Seiten aufgeteilt und dieser Hinweis wird nicht mitgedruckt.")
-          .get(language)
+            "Die QR Codes werden auf verschiedene Seiten aufgeteilt und dieser Hinweis wird nicht mitgedruckt."
+      )
+        .get(language)
     }
     p {
       id = "loading-text"
