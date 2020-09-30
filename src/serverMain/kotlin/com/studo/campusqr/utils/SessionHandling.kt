@@ -83,7 +83,7 @@ private suspend fun getOrCreateSharedSecretSessionToken(): SessionToken = runOnD
     SessionToken().apply {
       val now = Date()
       creationDate = now
-      expiryDate = now.addYears(999)
+      expiryDate = now.addYears(1000)
       userId = sharedSecretUserId
     }
   }
