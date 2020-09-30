@@ -70,7 +70,7 @@ suspend fun initialDatabaseSetup() {
       insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
       insert("checkInIpAddressHeader", "") // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
 
-      insert("authSharedSecret", "") // If empty, no shared secret access is possible
+      insert("authSharedSecret", "") // Auth via X-Authorization header. If empty, no shared secret access is possible.
     }
 
     // Create root user
