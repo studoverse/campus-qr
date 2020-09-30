@@ -46,6 +46,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
 
   val impactedUsersEmailsTask: Deferred<List<String>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
+      // Keep logic in sync with listAllActiveCheckIns()
       val previousInfectionHours: Int = getConfig("previousInfectionHours")
       val nextInfectionHours: Int = getConfig("nextInfectionHours")
 
@@ -95,6 +96,10 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
   )
 }
 
+/**
+ * This endpoint returns all active check-ins of one single user.
+ * Might be useful for direct API access.
+ */
 suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
   if (!user.isModerator) {
     respondForbidden()
@@ -105,6 +110,7 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
   val emailAddress = params.getValue("emailAddress")
 
   val checkIns = runOnDb {
+    // Keep logic in sync with returnReportData()
     val nextInfectionHours: Int = getConfig("nextInfectionHours")
     getCollection<CheckIn>()
         .find(CheckIn::email equal emailAddress, CheckIn::date greater Date().addHours(-nextInfectionHours))
@@ -122,7 +128,9 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
       checkIns.map { checkIn ->
         ActiveCheckIn(
             id = checkIn._id,
+            locationId = checkIn.locationId,
             locationName = locationMap.getValue(checkIn.locationId),
+            seat = checkIn.seat,
             checkInDate = checkIn.date.time.toDouble()
         )
       }
