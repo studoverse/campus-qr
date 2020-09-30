@@ -85,8 +85,7 @@ fun BODY.renderQrCodes(locations: List<ClientLocation>, configs: Map<String, Str
             "The QR codes will be put on separate pages and this hint will not be printed.",
         "Diese Website ist zum Drucken geeignet. " +
             "Die QR Codes werden auf verschiedene Seiten aufgeteilt und dieser Hinweis wird nicht mitgedruckt."
-      )
-        .get(language)
+      ).get(language)
     }
     p {
       id = "loading-text"
