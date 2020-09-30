@@ -35,7 +35,7 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
     return
   }
 
-  val params = receiveJsonMap()
+  val params = receiveJsonStringMap()
 
   val name = params["name"]?.trim() ?: throw IllegalArgumentException("No name was provided")
   val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
