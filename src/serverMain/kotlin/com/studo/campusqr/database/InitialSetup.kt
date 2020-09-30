@@ -69,10 +69,7 @@ suspend fun initialDatabaseSetup() {
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
 
       insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
-      insert(
-        "checkInIpAddressHeader",
-        ""
-      ) // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
+      insert("checkInIpAddressHeader", "") // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
 
       insert("authSharedSecret", "") // Auth via X-Authorization header. If empty, no shared secret access is possible.
     }

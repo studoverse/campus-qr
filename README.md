@@ -104,4 +104,4 @@ The native Android reference implementation to scan QR codes is provided in the 
 The native iOS reference implementation to scan QR codes is provided in the subfolder *campus-qr-ios* and might be used by iOS applications to allow scanning the QR codes while being offline and dispatching the check-in event when being online again.
 
 ## Code Style Guide
-The project follows the official [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html) with two additions: Line wrap is 140 characters, and indentation is 2 instead of 4 spaces (continuation indent is 4 instead of 8 spaces) on all file types. Please follow these conventions when creating a pull request.
+The project follows the official [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html) with two additions: Line wrap is 140 characters, and indentation is 2 instead of 4 spaces (continuation indent is 4 instead of 8 spaces) on all file types. Please follow these conventions when creating a pull request. Pull requests are welcome!
