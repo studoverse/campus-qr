@@ -201,10 +201,17 @@ suspend fun ApplicationCall.userFrontend() {
             }
           }
           span("result fail hidden") {
-            id = "result-not-allowed"
+            id = "result-forbidden-access-restricted"
             +LocalizedString(
               "Error! You are not allowed to check-in.",
               "Fehler! Sie haben keine Berechtigung um einzuchecken."
+            ).get(this@userFrontend)
+          }
+          span("result fail hidden") {
+            id = "result-forbidden-email"
+            +LocalizedString(
+              "Error! Please use your university e-mail address to check-in.",
+              "Fehler! Bitte benutzen Sie ihre Hochschul E-Mail Adresse um einzuchecken."
             ).get(this@userFrontend)
           }
           span("result fail hidden") {

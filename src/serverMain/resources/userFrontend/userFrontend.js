@@ -44,7 +44,8 @@ function normalStartup() {
     let acceptTosCheckbox = document.getElementById("accept-tos-checkbox");
     let submitButton = document.getElementById("submit-button");
     let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
-    let resultNotAllowed = document.getElementById("result-not-allowed");
+    let resultForbiddenAccessRestricted = document.getElementById("result-forbidden-access-restricted");
+    let resultForbiddenEmail = document.getElementById("result-forbidden-email");
     let resultNetErr = document.getElementById("result-net-err");
 
     let email = window.localStorage.getItem("email");
@@ -72,7 +73,8 @@ function normalStartup() {
 
       // Reset result visibility (hide)
       resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
-      resultNotAllowed.className = resultNotAllowed.className.replace("hidden", "") + " hidden";
+      resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "") + " hidden";
+      resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "") + " hidden";
       resultNetErr.className = resultNetErr.className.replace("hidden", "") + " hidden";
 
       let submitButtonText = submitButton.innerText;
@@ -82,15 +84,19 @@ function normalStartup() {
           setTimeout(() => {
             submitButton.innerText = submitButtonText
             if (this.status === 200) {
-              // Success
-              setDatetimeElement(Date.now())
-              window.localStorage.setItem("email", email);
-              window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}`);
-              showCheckin(email)
-
-            } else if (this.status === 403) {
-              resultNotAllowed.className = resultNotAllowed.className.replace("hidden", "");
-
+              if (this.responseText === "ok") {
+                // Success
+                setDatetimeElement(Date.now())
+                window.localStorage.setItem("email", email);
+                window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}`);
+                showCheckin(email)
+              } else if (this.responseText === "forbidden_access_restricted") {
+                // E-Mail address not found in restricted access email list
+                resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "");
+              } else if (this.responseText === "forbidden_email") {
+                // E-Mail address does not match allowed email-regex
+                resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "");
+              }
             } else {
               // Network or internal error
               resultNetErr.className = resultNetErr.className.replace("hidden", "");
