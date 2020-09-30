@@ -96,6 +96,8 @@ class ClientSeatFilter(
 
 class ActiveCheckIn(
     val id: String,
+    val locationId: String,
     val locationName: String,
+    val seat: Int?,
     val checkInDate: Double
 ) : ClientPayload
