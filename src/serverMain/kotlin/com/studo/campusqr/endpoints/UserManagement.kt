@@ -28,12 +28,12 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 
   val params = receiveJsonStringMap()
 
-  val email = params.getValue("email").trim()
+  val email = params.getValue("email").trim().toLowerCase()
   val newUser = BackendUser(
-      userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
-      email = email,
-      name = params.getValue("name").trim(),
-      type = params["userType"]?.let { UserType.valueOf(it) } ?: ACCESS_MANAGER
+    userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
+    email = email,
+    name = params.getValue("name").trim(),
+    type = params["userType"]?.let { UserType.valueOf(it) } ?: ACCESS_MANAGER
   ).apply {
     this.passwordHash = Algorithm.hashPassword(params.getValue("password"))
     this.createdBy = user._id

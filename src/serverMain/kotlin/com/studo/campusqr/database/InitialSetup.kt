@@ -42,6 +42,7 @@ suspend fun initialDatabaseSetup() {
       insert("userFooterAdditionalInfoText_de", "")
       insert("emailPlaceholder_en", "Your university email address")
       insert("emailPlaceholder_de", "Deine Hochschul E-Mail Adresse")
+      insert("emailAccessRegex", "") // Set to e.g. ".+@(student\.)?example\.org" to allow asdf@student.example.org and asdf@example.org
       insert(
         "scanSubtext1",
         "Bitte scannen Sie diesen QR Code beim Betreten des Raumes mit der Kamera-App Ihres Smartphones oder einer QR Code App. Folgen Sie dann den Anweisungen auf der gescannten Website."

@@ -51,7 +51,7 @@ suspend fun ApplicationCall.login() {
   validateCsrfToken()
 
   val params = receiveJsonStringMap()
-  val email = params["email"] ?: run {
+  val email = params["email"]?.trim()?.toLowerCase() ?: run {
     respondEnum(LoginResult.LOGIN_FAILED)
     return
   }

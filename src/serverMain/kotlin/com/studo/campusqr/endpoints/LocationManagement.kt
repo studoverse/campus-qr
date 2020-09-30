@@ -37,7 +37,7 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
 
   val params = receiveJsonStringMap()
 
-  val name = params["name"]?.trim() ?: throw IllegalArgumentException("No name was provided")
+  val name = params["name"]?.trim()?.toLowerCase() ?: throw IllegalArgumentException("No name was provided")
   val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
     ?: throw IllegalArgumentException("No accessType was provided")
   val seatCount = params["seatCount"]?.toIntOrNull()?.coerceIn(1, 10_000)
@@ -88,7 +88,7 @@ suspend fun ApplicationCall.visitLocation() {
   }
 
 
-  val email = params["email"]?.trim() ?: throw IllegalArgumentException("No email was provided")
+  val email = params["email"]?.trim()?.toLowerCase() ?: throw IllegalArgumentException("No email was provided")
   val now = Date()
 
   // Clients can send a custom visit date
@@ -103,9 +103,14 @@ suspend fun ApplicationCall.visitLocation() {
   }
 
   if (!email.matches(emailRegex) || email.count() > 100) {
-    respondError("email_not_valid") // At least do a very basic email validation to catch common errors
+    respondError("forbidden_email") // At least do a very basic email validation to catch common errors
     return
   }
+  if (runOnDb { getConfig("emailAccessRegex") as String }.emptyToNull()?.let { email.matches(Regex(it)) } == false) {
+    respondError("forbidden_email") // E-Mail did not match specified regex (e.g. not a university email address)
+    return
+  }
+
   var accessId: String? = null
 
   if (location.accessType == LocationAccessType.RESTRICTED) {
@@ -121,7 +126,7 @@ suspend fun ApplicationCall.visitLocation() {
     }
 
     if (access == null) {
-      respondForbidden()
+      respondError("forbidden_access_restricted")
       return
     } else {
       accessId = access._id
