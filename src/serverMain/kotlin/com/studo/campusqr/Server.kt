@@ -125,7 +125,10 @@ suspend fun main() {
           post("edit") { call.getAuthenticatedCall()?.editAccess() }
         }
       }
-      post("report/list") { call.getAuthenticatedCall()?.returnReportData() }
+      route("report") {
+        post("list") { call.getAuthenticatedCall()?.returnReportData() }
+        post("listActiveCheckIns") { call.getAuthenticatedCall()?.listAllActiveCheckIns() }
+      }
       route("admin") {
         get("campusqr-admin.js") { call.returnModeratorJs() }
         get("/{...}") { call.returnModeratorIndexHtml() }

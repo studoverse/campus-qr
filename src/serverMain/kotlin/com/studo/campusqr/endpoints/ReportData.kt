@@ -1,5 +1,6 @@
 package com.studo.campusqr.endpoints
 
+import com.studo.campusqr.common.ActiveCheckIn
 import com.studo.campusqr.common.ReportData
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.database.BackendLocation
@@ -7,10 +8,7 @@ import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.serverScope
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.katerbase.equal
-import com.studo.katerbase.greaterEquals
-import com.studo.katerbase.inArray
-import com.studo.katerbase.inRange
+import com.studo.katerbase.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -94,5 +92,39 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
           endDate = now.toAustrianTime("dd.MM.yyyy"),
           impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv"
       )
+  )
+}
+
+suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
+  if (!user.isModerator) {
+    respondForbidden()
+    return
+  }
+
+  val params = receiveJsonStringMap()
+  val emailAddress = params.getValue("emailAddress")
+
+  val checkIns = runOnDb {
+    val nextInfectionHours: Int = getConfig("nextInfectionHours")
+    getCollection<CheckIn>()
+        .find(CheckIn::email equal emailAddress, CheckIn::date greater Date().addHours(-nextInfectionHours))
+        .sortByDescending(CheckIn::date)
+        .toList()
+  }
+
+  val locationMap = runOnDb {
+    getCollection<BackendLocation>()
+        .find(BackendLocation::_id inArray checkIns.map { it.locationId }.distinct())
+        .associateBy(keySelector = { it._id }, valueTransform = { it.name })
+  }
+
+  respondObject(
+      checkIns.map { checkIn ->
+        ActiveCheckIn(
+            id = checkIn._id,
+            locationName = locationMap.getValue(checkIn.locationId),
+            checkInDate = checkIn.date.time.toDouble()
+        )
+      }
   )
 }

@@ -93,3 +93,9 @@ class ClientSeatFilter(
     val seat: Int,
     val filteredSeats: Array<Int>,
 ) : ClientPayload
+
+class ActiveCheckIn(
+    val id: String,
+    val locationName: String,
+    val checkInDate: Double
+) : ClientPayload
