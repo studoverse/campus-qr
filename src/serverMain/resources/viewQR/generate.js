@@ -1,5 +1,4 @@
-let href = window.location.href;
-let baseUrl = href.substring(0, href.lastIndexOf("/location/"))
+let baseUrl = document.querySelector('meta[name="qrCodeBaseUrl"]').content
 
 function generateQrCode(element) {
   let locationId = element.id;
