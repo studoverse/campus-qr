@@ -73,7 +73,7 @@ suspend fun main() {
       host(URL(baseUrl).host, schemes = listOf("https", "http"))
       allowNonSimpleContentTypes = true
       allowCredentials = true
-      maxAgeInSeconds = Duration.ofDays(1).toSeconds()
+      maxAgeInSeconds = Duration.ofDays(1).seconds
     }
 
     routing {
