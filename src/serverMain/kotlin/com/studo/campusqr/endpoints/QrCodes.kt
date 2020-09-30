@@ -22,14 +22,16 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
 
   respondHtml(HttpStatusCode.OK) {
     lang = language
-    headTemplate("View Code", js = "viewQR/qrcode.min.js", css = "viewQR/styles.css", async = false)
+    headTemplate("View Code", js = "viewQR/qrcode.min.js", css = "viewQR/styles.css", async = false) {
+      meta(name = "qrCodeBaseUrl", content = configs.getValue("qrCodeBaseUrl"))
+    }
 
     body {
       if (location == null) {
         p {
           +LocalizedString(
-            "This location does not exist. Please go back and try again.",
-            "Diese Location existiert nicht, bitte gehe zurück und versuche es erneut.").get(this@viewSingleQrCode)
+              "This location does not exist. Please go back and try again.",
+              "Diese Location existiert nicht, bitte gehe zurück und versuche es erneut.").get(this@viewSingleQrCode)
         }
       } else {
         renderQrCodes(listOf(location), configs, language)
@@ -49,14 +51,16 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
 
   respondHtml(HttpStatusCode.OK) {
     lang = language
-    headTemplate("View Code", js = "viewQR/qrcode.min.js", css = "viewQR/styles.css", async = false)
+    headTemplate("View Code", js = "viewQR/qrcode.min.js", css = "viewQR/styles.css", async = false) {
+      meta(name = "qrCodeBaseUrl", content = configs.getValue("qrCodeBaseUrl"))
+    }
 
     body {
       if (locations.isEmpty()) {
         p {
           +LocalizedString(
-            "No locations have been added yet. Go back to create some.",
-            "Es sind noch keine Orte eingetragen. Gehen Sie zurück um welche zu erstellen."
+              "No locations have been added yet. Go back to create some.",
+              "Es sind noch keine Orte eingetragen. Gehen Sie zurück um welche zu erstellen."
           ).get(this@viewAllQrCodes)
         }
       } else {

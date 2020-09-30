@@ -43,15 +43,16 @@ suspend fun initialDatabaseSetup() {
       insert("emailPlaceholder_en", "Your university email address")
       insert("emailPlaceholder_de", "Deine Hochschul E-Mail Adresse")
       insert(
-        "scanSubtext1",
-        "Bitte scannen Sie diesen QR Code beim Betreten des Raumes mit der Kamera-App Ihres Smartphones oder einer QR Code App. Folgen Sie dann den Anweisungen auf der gescannten Website."
+          "scanSubtext1",
+          "Bitte scannen Sie diesen QR Code beim Betreten des Raumes mit der Kamera-App Ihres Smartphones oder einer QR Code App. Folgen Sie dann den Anweisungen auf der gescannten Website."
       )
       insert(
-        "scanSubtext2",
-        "Please scan this QR Code when entering the room with the camera app of your smartphone or a QR Code app. Follow then the instructions on the scanned website."
+          "scanSubtext2",
+          "Please scan this QR Code when entering the room with the camera app of your smartphone or a QR Code app. Follow then the instructions on the scanned website."
       )
 
       insert("baseUrl", "http://127.0.0.1:8070")
+      insert("qrCodeBaseUrl", "http://127.0.0.1:8070") // Used for qr code generation
       insert("appName", "Campus QR")
 
       insert("deleteCheckInDataAfterDays", 4 * 7)
