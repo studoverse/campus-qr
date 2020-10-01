@@ -51,6 +51,7 @@ suspend fun initialDatabaseSetup() {
         "scanSubtext2",
         "Please scan this QR Code when entering the room with the camera app of your smartphone or a QR Code app. Follow then the instructions on the scanned website."
       )
+      insert("showVerificationAnimation", 1)
 
       insert("baseUrl", "http://127.0.0.1:8070")
       insert("qrCodeBaseUrl", "http://127.0.0.1:8070") // Used for qr code generation
