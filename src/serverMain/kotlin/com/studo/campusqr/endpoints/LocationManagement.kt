@@ -1,8 +1,6 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.LocationVisitData
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.database.*
@@ -35,21 +33,16 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
     return
   }
 
-  val params = receiveJsonStringMap()
-
-  val name = params["name"]?.trim()?.toLowerCase() ?: throw IllegalArgumentException("No name was provided")
-  val accessType = params["accessType"]?.let { LocationAccessType.valueOf(it) }
-    ?: throw IllegalArgumentException("No accessType was provided")
-  val seatCount = params["seatCount"]?.toIntOrNull()?.coerceIn(1, 10_000)
+  val params: CreateLocation = receiveClientPayload()
 
   val room = BackendLocation().apply {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
-    this.name = name
+    this.name = params.name.trim()
     this.createdDate = Date()
     this.createdBy = user._id
     this.checkInCount = 0
-    this.accessType = accessType
-    this.seatCount = seatCount
+    this.accessType = params.accessType
+    this.seatCount = params.seatCount?.coerceIn(1, 10_000)
   }
 
   MainDatabase.getCollection<BackendLocation>().insertOne(room, upsert = false)
@@ -189,22 +182,17 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
   val locationId = parameters["id"]!!
   val location = getLocation(locationId)
 
-  val params = receiveJsonMap()
-
-  val name = (params["name"] as? String)?.trim() ?: throw IllegalArgumentException("No name was provided")
-  val accessType = (params["accessType"] as? String)?.let { LocationAccessType.valueOf(it) }
-      ?: throw IllegalArgumentException("No accessType was provided")
-  val seatCount = (params["seatCount"] as? Int)?.coerceIn(1, 10_000)
+  val params: EditLocation = receiveClientPayload()
 
   runOnDb {
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal locationId) {
-      BackendLocation::name setTo name
-      BackendLocation::accessType setTo accessType
-      BackendLocation::seatCount setTo seatCount
+      BackendLocation::name setTo params.name
+      BackendLocation::accessType setTo params.accessType
+      BackendLocation::seatCount setTo params.seatCount?.coerceIn(1, 10_000)
     }
 
     // In case we change the seatCount, delete previous seatCounts of this location as the seating-plan might have changed
-    if (location.seatCount != seatCount) {
+    if (location.seatCount != params.seatCount) {
       getCollection<BackendSeatFilter>().deleteMany(BackendAccess::locationId equal locationId)
     }
   }
