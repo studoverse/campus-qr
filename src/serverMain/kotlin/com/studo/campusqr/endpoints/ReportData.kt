@@ -14,9 +14,36 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.util.*
 
+//@formatter:off
 /**
- * This file contains the contact tracing endpoint.
- */
+  Contact tracing:
+
+                checkIn               checkOut
+                  +       infected      +
+                  +---------------------+
+                  +                     +
+
+                      +     a     +  +    b
+                      +-----------+  +---------->
+                      +           +  +
+
+               +    c    +    +        d        +
+               +---------+    +-----------------+
+               +         +    +                 +
+
+      +   e   +                             +    f    +
+      +-------+                             +---------+
+      +       +                             +         +
+
+  We treat the following cases as k1 contact person:
+  - a, c and d because their time range intersect the infected persons time range
+  - b because his time range intersects the infected persons time range, although not having a [CheckIn.checkOutDate]
+  We do NOT treat the following cases as k1 contact person:
+  - e and f because their time range doesn't intersect the infected persons time range
+
+ Note that infected checkIn and checkOut timestamp get extened by [transitThresholdSeconds]
+*/
+//@formatter:on
 suspend fun AuthenticatedApplicationCall.returnReportData() {
   if (!user.isModerator) {
     respondForbidden()
