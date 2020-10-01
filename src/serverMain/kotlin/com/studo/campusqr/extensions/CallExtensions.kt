@@ -1,8 +1,10 @@
 package com.studo.campusqr.extensions
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.studo.campusqr.common.ClientPayload
 import com.studo.katerbase.JsonHandler
 import io.ktor.application.*
+import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -55,7 +57,11 @@ suspend fun ApplicationCall.receiveJsonMap(): Map<String, Any?> = JsonHandler.fr
 
 suspend fun <T : ClientPayload> ApplicationCall.receiveClientPayload(payloadClass: KClass<T>): T {
   val json = receiveText()
-  return JsonHandler.fromJson(json, payloadClass)
+  return try {
+    JsonHandler.fromJson(json, payloadClass)
+  } catch (e: JsonProcessingException) {
+    throw BadRequestException(json, e)
+  }
 }
 
 suspend inline fun <reified T : ClientPayload> ApplicationCall.receiveClientPayload(): T {

@@ -72,32 +72,44 @@ class ClientDateRange(
 ) : ClientPayload
 
 class NewAccess(
-    val locationId: String,
-    val allowedEmails: Array<String>,
-    val dateRanges: Array<ClientDateRange>,
-    val note: String,
-    val reason: String
+  val locationId: String,
+  val allowedEmails: Array<String>,
+  val dateRanges: Array<ClientDateRange>,
+  val note: String,
+  val reason: String
 ) : ClientPayload
 
 class EditAccess(
-    val locationId: String? = null,
-    val allowedEmails: Array<String>? = null,
-    val dateRanges: Array<ClientDateRange>? = null,
-    val note: String? = null,
-    val reason: String? = null
+  val locationId: String? = null,
+  val allowedEmails: Array<String>? = null,
+  val dateRanges: Array<ClientDateRange>? = null,
+  val note: String? = null,
+  val reason: String? = null
+) : ClientPayload
+
+class CreateLocation(
+  val name: String,
+  val accessType: LocationAccessType,
+  val seatCount: Int?,
+) : ClientPayload
+
+class EditLocation(
+  val name: String,
+  val accessType: LocationAccessType,
+  val seatCount: Int?,
 ) : ClientPayload
 
 class ClientSeatFilter(
-    val id: String,
-    val locationId: String,
-    val seat: Int,
-    val filteredSeats: Array<Int>,
+  val id: String,
+  val locationId: String,
+  val seat: Int,
+  val filteredSeats: Array<Int>,
 ) : ClientPayload
 
 class ActiveCheckIn(
-    val id: String,
-    val locationId: String,
-    val locationName: String,
-    val seat: Int?,
-    val checkInDate: Double
+  val id: String,
+  val locationId: String,
+  val locationName: String,
+  val seat: Int?,
+  val checkInDate: Double
 ) : ClientPayload
