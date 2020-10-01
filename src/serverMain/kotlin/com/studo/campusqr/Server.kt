@@ -105,6 +105,7 @@ suspend fun main() {
 
         route("{id}") {
           post("visit") { call.visitLocation() }
+          post("checkOut") { call.checkOutLocation() }
           get("visitsCsv") { call.getAuthenticatedCall()?.returnLocationVisitCsvData() }
           post("edit") { call.getAuthenticatedCall()?.editLocation() }
           get("qr-code") { call.getAuthenticatedCall()?.viewSingleQrCode() }
