@@ -85,10 +85,14 @@ function normalStartup() {
             submitButton.innerText = submitButtonText
             if (this.status === 200) {
               if (this.responseText === "ok") {
+                let locationName = document.head.querySelector("[name~=location-name][content]").content;
+                if (fullLocationId.includes("-")) {
+                  locationName += ` #${fullLocationId.split("-")[1]}`;
+                }
                 // Success
                 setDatetimeElement(Date.now())
                 window.localStorage.setItem("email", email);
-                window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}`);
+                window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}::${locationName}`);
                 showCheckin(email)
               } else if (this.responseText === "forbidden_access_restricted") {
                 // E-Mail address not found in restricted access email list
@@ -106,7 +110,6 @@ function normalStartup() {
       }
       xhttp.open("POST", "/location/" + fullLocationId + "/visit");
       xhttp.send(JSON.stringify({email: email}));
-      submitButtonText = submitButton.innerText
       submitButton.innerText = "..."
     }
 
@@ -151,7 +154,60 @@ function showCheckin(email, time = null) {
   }, 4000);
 }
 
+function checkOut(checkinKey, buttonElement) {
+  return function () {
+
+    let buttonText = buttonElement.innerText;
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState === 4) {
+        setTimeout(() => {
+          buttonElement.innerText = buttonText;
+          if (fullLocationId === checkinKey.split("checkin-")[1]) {
+            checkinExpired();
+          }
+          if (this.status === 200 && this.responseText === "ok") {
+            window.alert("locationId checkout: " + checkinKey);
+          } else {
+            console.log(xhttp);
+            window.alert("fail locationId checkout");
+          }
+          handleOldCheckin({});
+        }, 700);
+      }
+    }
+    buttonElement.innerText = "...";
+    xhttp.open("POST", `/location/${checkinKey.split("checkin-")[1]}/checkout`);
+    xhttp.send(JSON.stringify({email: atob(window.localStorage[checkinKey].split("::")[0])}));
+    window.localStorage.removeItem(checkinKey); // Check out locally in any case, even if the checkout call fails
+  }
+}
+
 function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, onCheckinExpired = null}) {
+  let checkinsWrapper = document.getElementById("checkins-wrapper");
+  for (let i = 2; i < checkinsWrapper.children.length; i++) {
+    checkinsWrapper.removeChild(checkinsWrapper.children[i]);
+  }
+
+  for (let i = 0; i < window.localStorage.length; i++) {
+    let key = window.localStorage.key(i);
+    let value = window.localStorage.getItem(key);
+
+    if (key.startsWith("checkin-")) { // is an old checkin
+      if (value.split("::")[1]) {
+        // Show checkins wrapper if at least one checkin is present
+        checkinsWrapper.className = checkinsWrapper.className.replace("hidden", "");
+
+        let checkinNode = checkinsWrapper.children[1].cloneNode(true);
+        checkinNode.className = checkinNode.className.replace("hidden", "");
+        checkinNode.childNodes[0].innerText = value.split("::")[2];
+        checkinNode.childNodes[1].onclick = checkOut(key, checkinNode.childNodes[1]);
+
+        checkinsWrapper.appendChild(checkinNode);
+      }
+    }
+  }
+
   let lastCheckin = window.localStorage.getItem("checkin-" + fullLocationId)
   if (lastCheckin) {
     let email = atob(lastCheckin.split("::")[0])
@@ -174,14 +230,6 @@ function checkinExpired() {
   let overlay = document.getElementById("overlay");
   let overlayExpired = document.getElementById("overlay-expired");
   let overlayRetry = document.getElementById("overlay-retry");
-  let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
-  let resultNotAllowed = document.getElementById("result-not-allowed");
-  let resultNetErr = document.getElementById("result-net-err");
-
-  // Hide results
-  resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
-  resultNotAllowed.className = resultNotAllowed.className.replace("hidden", "") + " hidden";
-  resultNetErr.className = resultNetErr.className.replace("hidden", "") + " hidden";
 
   overlayRetry.className = overlayRetry.className.replace("hidden", "") + "hidden"; // Hide default text
   overlayExpired.className = overlayExpired.className.replace("hidden", ""); // Show expired text
@@ -194,7 +242,7 @@ function deleteExpiredCheckins() {
     let key = window.localStorage.key(i);
 
     // Only remove checkins from different locations
-    if (key.startsWith("checkin-") && key.split("checkin-")[1] !== fullLocationId) {
+    if (key.startsWith("checkin-") && key !== "checkin-" + fullLocationId) {
       let checkinDate = new Date(window.localStorage.getItem(key).split("::")[1]);
       if (new Date() - checkinDate > 1000 * 60 * 60 * 24) { // Only remove checkins older than 24 hours
         window.localStorage.removeItem(key);
