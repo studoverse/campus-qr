@@ -113,3 +113,12 @@ class ActiveCheckIn(
   val seat: Int?,
   val checkInDate: Double
 ) : ClientPayload
+
+class EditSeatFilter(
+  val seat: Int,
+  val filteredSeats: List<Int>,
+) : ClientPayload
+
+class DeleteSeatFilter(
+  val seat: Int,
+) : ClientPayload
