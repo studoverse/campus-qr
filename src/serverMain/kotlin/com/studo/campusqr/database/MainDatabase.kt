@@ -24,9 +24,15 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
     collection<Configuration>("configurations")
     collection<SessionToken>("sessionTokens")
     collection<CheckIn>("checkIns") {
-        index(CheckIn::email.ascending(), CheckIn::date.descending())
-        index(CheckIn::email.ascending(), CheckIn::checkOutDate.descending())
-        index(CheckIn::locationId.ascending(), CheckIn::date.descending())
+        index(CheckIn::email.ascending(), CheckIn::checkOutDate.descending()) // Checkout api & list of current check-ins
+        index(CheckIn::locationId.ascending(), CheckIn::date.descending()) // Contact tracing
+
+        // Automatic check-out
+        // Compound index of 2 dates makes sense here because the index is partial, the first date is always null.
+        index(
+            CheckIn::checkOutDate.descending(), CheckIn::date.descending(),
+            partialIndex = arrayOf(CheckIn::checkOutDate equal null)
+        )
     }
     collection<BackendSeatFilter>("seatFilters") {
         index(BackendSeatFilter::locationId.ascending(), BackendSeatFilter::seat.ascending())

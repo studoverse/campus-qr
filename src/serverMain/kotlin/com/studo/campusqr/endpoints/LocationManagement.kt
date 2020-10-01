@@ -158,6 +158,7 @@ suspend fun ApplicationCall.visitLocation() {
   }
 
   runOnDb {
+    // Maybe ensure that user with email can check-in only once?
     getCollection<CheckIn>().insertOne(checkIn, upsert = false)
 
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal location._id) {
@@ -180,7 +181,12 @@ suspend fun ApplicationCall.checkOutLocation() {
   val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
 
   runOnDb {
-    getCollection<CheckIn>().updateOne(CheckIn::email equal email, CheckIn::checkOutDate equal null) {
+    // Use updateMany here, user could check-in multiple times
+    getCollection<CheckIn>().updateMany(
+        CheckIn::email equal email,
+        CheckIn::locationId equal locationId,
+        CheckIn::checkOutDate equal null
+    ) {
       CheckIn::checkOutDate setTo Date()
     }
   }

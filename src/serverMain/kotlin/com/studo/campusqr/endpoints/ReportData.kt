@@ -46,15 +46,18 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
 
   val impactedUsersEmailsTask: Deferred<List<String>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
-      // Keep logic in sync with listAllActiveCheckIns()
-      val previousInfectionHours: Int = getConfig("previousInfectionHours")
-      val nextInfectionHours: Int = getConfig("nextInfectionHours")
+      val transitThresholdSeconds: Int = getConfig("transitThresholdSeconds")
 
       // We need to probably optimize performance here in the future
-      val otherCheckIns = reportedUserCheckIns.flatMap { checkIn ->
+      // TODO testcases
+      val otherCheckIns = reportedUserCheckIns.flatMap { reportedUserCheckin ->
         getCollection<CheckIn>().find(
-            CheckIn::locationId equal checkIn.locationId,
-            CheckIn::date.inRange(checkIn.date.addHours(-previousInfectionHours), checkIn.date.addHours(nextInfectionHours))
+            CheckIn::locationId equal reportedUserCheckin.locationId,
+            CheckIn::date lowerEquals (reportedUserCheckin.checkOutDate ?: Date()).addSeconds(transitThresholdSeconds),
+            or(
+                CheckIn::checkOutDate greaterEquals reportedUserCheckin.date.addSeconds(-transitThresholdSeconds),
+                CheckIn::checkOutDate equal null // Other user has not checked out yet
+            )
         ).toList()
       }
 
@@ -110,11 +113,9 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
   val emailAddress = params.getValue("emailAddress")
 
   val checkIns = runOnDb {
-    // Keep logic in sync with returnReportData()
-    val nextInfectionHours: Int = getConfig("nextInfectionHours")
     getCollection<CheckIn>()
-        .find(CheckIn::email equal emailAddress, CheckIn::date greater Date().addHours(-nextInfectionHours))
-        .sortByDescending(CheckIn::date)
+        .find(CheckIn::email equal emailAddress, CheckIn::checkOutDate equal null)
+        .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
         .toList()
   }
 
