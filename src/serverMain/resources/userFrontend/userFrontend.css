@@ -334,6 +334,21 @@ button#submit-button:active {
   margin-right: 18px;
 }
 
+#checkins-wrapper {
+  margin-top: 32px;
+}
+
+#checkins-wrapper > .current-check-in {
+  margin-bottom: 8px;
+  color: #5d5d5d;
+  display: flex;
+  justify-content: space-between;
+}
+
+#checkins-wrapper > .current-check-in > button {
+  flex-shrink: 0;
+}
+
 div.icon.wrap {
   height: 64px;
   width: 64px;
