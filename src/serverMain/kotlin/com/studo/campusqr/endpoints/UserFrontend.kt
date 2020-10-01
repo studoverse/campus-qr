@@ -4,6 +4,7 @@ import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.database.getConfigs
 import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
+import com.studo.campusqr.extensions.runOnDb
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.http.*
@@ -23,6 +24,7 @@ suspend fun ApplicationCall.userFrontend() {
   val location = locationId?.let { id -> getLocationOrNull(id) }
 
   val configs = getConfigs(language)
+  val showVerificationAnimation = runOnDb { getConfig<Int>("showVerificationAnimation") } == 1
 
   val now = Date()
 
@@ -161,28 +163,30 @@ suspend fun ApplicationCall.userFrontend() {
                     +locationNameWithSeat
                   }
                 }
-                div("number") {
-                  unsafe {
-                    +"""
-                  <svg>
-                  	<symbol id="s-text">
-                  		<text text-anchor="middle" x="50%" y="90%">${now.date.toString().padStart(2, '0')}</text>
-                  	</symbol>
-
-                  	<g class = "g-ants">
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  	</g>
-                  </svg>
-                """.trimIndent()
+                if (showVerificationAnimation) {
+                  div("number") {
+                    unsafe {
+                      +"""
+                      <svg>
+                        <symbol id="s-text">
+                          <text text-anchor="middle" x="50%" y="90%">${now.date.toString().padStart(2, '0')}</text>
+                        </symbol>
+    
+                        <g class = "g-ants">
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                        </g>
+                      </svg>
+                    """.trimIndent()
+                    }
                   }
-                }
-                div("verification") {
-                  span {
-                    +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)
+                  div("verification") {
+                    span {
+                      +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)
+                    }
                   }
                 }
               }
