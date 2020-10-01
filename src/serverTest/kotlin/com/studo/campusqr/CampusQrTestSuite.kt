@@ -9,7 +9,8 @@ import org.junit.runners.Suite
 @RunWith(Suite::class)
 
 @Suite.SuiteClasses(
-    AutomaticDeletionTest::class
+    AutomaticDeletionTest::class,
+    AutomaticCheckOutTest::class,
 )
 
 object CampusQrTestSuite {
