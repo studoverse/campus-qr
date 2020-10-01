@@ -11,6 +11,7 @@ import com.studo.katerbase.any
 import com.studo.katerbase.equal
 import com.studo.katerbase.greater
 import com.studo.katerbase.inArray
+import io.ktor.features.*
 import java.util.*
 
 suspend fun getAccess(id: String): BackendAccess? = runOnDb {
@@ -121,9 +122,9 @@ suspend fun AuthenticatedApplicationCall.getAccess() {
     respondForbidden(); return
   }
 
-  val accessId = parameters["id"]!!
+  val accessId = parameters["id"] ?: throw BadRequestException("No accessId provided")
 
-  val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+  val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
   val location = getLocationsMap(listOf(access.locationId)).getValue(access.locationId)
 
   respondObject(access.toClientClass(location))
@@ -159,9 +160,9 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
     respondForbidden(); return
   }
 
-  val accessId = parameters["id"]!!
+  val accessId = parameters["id"] ?: throw BadRequestException("No accessId provided")
 
-  val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+  val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
   if (user._id != access.createdBy && !user.isModerator) {
     respondForbidden(); return
@@ -179,9 +180,9 @@ suspend fun AuthenticatedApplicationCall.duplicateAccess() {
     respondForbidden(); return
   }
 
-  val accessId = parameters["id"]!!
+  val accessId = parameters["id"] ?: throw BadRequestException("No accessId provided")
 
-  val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+  val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
   access._id = randomId()
 
   runOnDb {
@@ -196,8 +197,9 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
     respondForbidden(); return
   }
 
-  val accessId = parameters["id"]!!
-  val access = getAccess(accessId) ?: throw IllegalArgumentException("Access doesn't exist")
+  val accessId = parameters["id"] ?: throw BadRequestException("No accessId provided")
+
+  val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
   if (user._id != access.createdBy && !user.isModerator) {
     respondForbidden(); return

@@ -9,6 +9,7 @@ import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.*
 import io.ktor.application.*
+import io.ktor.features.*
 import io.ktor.http.*
 import java.util.*
 
@@ -16,7 +17,7 @@ import java.util.*
  * This file contains every endpoint which is used in the location management.
  */
 suspend fun getLocation(id: String): BackendLocation {
-  return getLocationOrNull(id) ?: throw IllegalArgumentException("No location for id")
+  return getLocationOrNull(id) ?: throw BadRequestException("No location for id")
 }
 
 suspend fun getLocationOrNull(id: String): BackendLocation? {
@@ -64,7 +65,7 @@ suspend fun ApplicationCall.visitLocation() {
   val params = receiveJsonStringMap()
 
   // id-parameter is either "$locationId" or "$locationId-$seat" (depending if location has seatCount defined or not)
-  val fullLocationId = parameters["id"] ?: throw IllegalArgumentException("No locationId was provided")
+  val fullLocationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
   val locationId = fullLocationId.substringBefore("-")
   val seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
   val location = getLocation(locationId)
@@ -72,16 +73,16 @@ suspend fun ApplicationCall.visitLocation() {
   // Validate seat argument
   if (location.seatCount != null) {
     when {
-      seat == null -> throw IllegalArgumentException("No seat provided but location has seats defined")
-      seat <= 0 -> throw IllegalArgumentException("Seat must be > 0")
-      seat > location.seatCount!! -> throw IllegalArgumentException("Seat must be <= location.seatCount")
+      seat == null -> throw BadRequestException("No seat provided but location has seats defined")
+      seat <= 0 -> throw BadRequestException("Seat must be > 0")
+      seat > location.seatCount!! -> throw BadRequestException("Seat must be <= location.seatCount")
     }
   } else if (seat != null) {
-    throw IllegalArgumentException("Seat provided but location has no seats defined")
+    throw BadRequestException("Seat provided but location has no seats defined")
   }
 
 
-  val email = params["email"]?.trim()?.toLowerCase() ?: throw IllegalArgumentException("No email was provided")
+  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
   val now = Date()
 
   // Clients can send a custom visit date
@@ -154,7 +155,7 @@ suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
     return
   }
 
-  val locationId = parameters["id"]!!
+  val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
 
   val location = runOnDb { getLocation(locationId) }
 
@@ -179,7 +180,7 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
     return
   }
 
-  val locationId = parameters["id"]!!
+  val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
   val location = getLocation(locationId)
 
   val params: EditLocation = receiveClientPayload()
@@ -206,7 +207,7 @@ suspend fun AuthenticatedApplicationCall.deleteLocation() {
     return
   }
 
-  val locationId = parameters["id"]!!
+  val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
 
   runOnDb {
     getCollection<BackendLocation>().deleteOne(BackendLocation::_id equal locationId)
