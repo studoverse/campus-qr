@@ -25,6 +25,7 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
     collection<SessionToken>("sessionTokens")
     collection<CheckIn>("checkIns") {
         index(CheckIn::email.ascending(), CheckIn::date.descending())
+        index(CheckIn::email.ascending(), CheckIn::checkOutDate.descending())
         index(CheckIn::locationId.ascending(), CheckIn::date.descending())
     }
     collection<BackendSeatFilter>("seatFilters") {

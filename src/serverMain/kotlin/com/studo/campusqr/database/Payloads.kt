@@ -94,6 +94,7 @@ class BackendSeatFilter : MongoMainEntry(), ClientPayloadable<ClientSeatFilter> 
 class CheckIn : MongoMainEntry() {
   lateinit var locationId: String
   lateinit var date: Date
+  var checkOutDate: Date? = null
   lateinit var email: String
   var userAgent: String? = null // Only stored if storeCheckInUserAgent is set
   var ipAddress: String? = null // Only stored if checkInIpAddressHeader is set

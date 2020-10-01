@@ -11,6 +11,7 @@ import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.*
 import io.ktor.application.*
+import io.ktor.features.*
 import io.ktor.http.*
 import java.util.*
 
@@ -67,28 +68,40 @@ suspend fun AuthenticatedApplicationCall.listLocations() {
   respondObject(locations)
 }
 
+private data class UserLocation(val locationId: String, val seat: Int?)
+
+private fun ApplicationCall.getUserLocation(): UserLocation {
+  // id-parameter is either "$locationId" or "$locationId-$seat" (depending if location has seatCount defined or not)
+  val fullLocationId = parameters["id"] ?: throw BadRequestException("No locationId was provided")
+  return UserLocation(
+      locationId = fullLocationId.substringBefore("-"),
+      seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
+  )
+}
+
+private fun validateSeatForLocation(location: BackendLocation, seat: Int?) {
+  if (location.seatCount != null) {
+    when {
+      seat == null -> throw BadRequestException("No seat provided but location has seats defined")
+      seat <= 0 -> throw BadRequestException("Seat must be > 0")
+      seat > location.seatCount!! -> throw BadRequestException("Seat must be <= location.seatCount")
+    }
+  } else if (seat != null) {
+    throw BadRequestException("Seat provided but location has no seats defined")
+  }
+}
+
 suspend fun ApplicationCall.visitLocation() {
   val params = receiveJsonStringMap()
 
-  // id-parameter is either "$locationId" or "$locationId-$seat" (depending if location has seatCount defined or not)
-  val fullLocationId = parameters["id"] ?: throw IllegalArgumentException("No locationId was provided")
-  val locationId = fullLocationId.substringBefore("-")
-  val seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
+  val (locationId, seat) = getUserLocation()
+
   val location = getLocation(locationId)
 
   // Validate seat argument
-  if (location.seatCount != null) {
-    when {
-      seat == null -> throw IllegalArgumentException("No seat provided but location has seats defined")
-      seat <= 0 -> throw IllegalArgumentException("Seat must be > 0")
-      seat > location.seatCount!! -> throw IllegalArgumentException("Seat must be <= location.seatCount")
-    }
-  } else if (seat != null) {
-    throw IllegalArgumentException("Seat provided but location has no seats defined")
-  }
+  validateSeatForLocation(location, seat)
 
-
-  val email = params["email"]?.trim()?.toLowerCase() ?: throw IllegalArgumentException("No email was provided")
+  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
   val now = Date()
 
   // Clients can send a custom visit date
@@ -153,6 +166,24 @@ suspend fun ApplicationCall.visitLocation() {
   }
 
   respondOk()
+}
+
+suspend fun ApplicationCall.checkOutLocation() {
+  val params = receiveJsonStringMap()
+  val (locationId, seat) = getUserLocation()
+
+  val location = getLocation(locationId)
+
+  // Validate seat argument
+  validateSeatForLocation(location, seat)
+
+  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
+
+  runOnDb {
+    getCollection<CheckIn>().updateOne(CheckIn::email equal email, CheckIn::checkOutDate equal null) {
+      CheckIn::checkOutDate setTo Date()
+    }
+  }
 }
 
 suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
