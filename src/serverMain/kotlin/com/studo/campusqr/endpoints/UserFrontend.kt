@@ -4,6 +4,7 @@ import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.database.getConfigs
 import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
+import com.studo.campusqr.extensions.runOnDb
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.http.*
@@ -23,6 +24,7 @@ suspend fun ApplicationCall.userFrontend() {
   val location = locationId?.let { id -> getLocationOrNull(id) }
 
   val configs = getConfigs(language)
+  val showVerificationAnimation = runOnDb { getConfig<Int>("showVerificationAnimation") } == 1
 
   val now = Date()
 
@@ -167,7 +169,7 @@ suspend fun ApplicationCall.userFrontend() {
                         +locationNameWithSeat
                       }
                     }
-                    div("number") {
+                    if (showVerificationAnimation) {div("number") {
                       unsafe {
                         +"""
                           <svg>
@@ -188,7 +190,7 @@ suspend fun ApplicationCall.userFrontend() {
                     }
                     div("verification") {
                       span {
-                        +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)
+                        +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)}
                       }
                     }
                   }
