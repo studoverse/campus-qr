@@ -176,7 +176,7 @@ function checkOut(checkinKey, buttonElement) {
       }
     }
     buttonElement.innerText = "...";
-    xhttp.open("POST", `/location/${checkinKey.split("checkin-")[1]}/checkOut`);
+    xhttp.open("POST", `/location/${checkinKey.split("checkin-")[1]}/checkout`);
     xhttp.send(JSON.stringify({email: atob(window.localStorage[checkinKey].split("::")[0])}));
     window.localStorage.removeItem(checkinKey); // Check out locally in any case, even if the checkout call fails
   }
