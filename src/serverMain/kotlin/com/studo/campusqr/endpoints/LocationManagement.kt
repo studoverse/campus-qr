@@ -176,13 +176,15 @@ suspend fun ApplicationCall.checkOutLocation() {
   runOnDb {
     // Use updateMany here, user could check-in multiple times
     getCollection<CheckIn>().updateMany(
-        CheckIn::email equal email,
-        CheckIn::locationId equal locationId,
-        CheckIn::checkOutDate equal null
+      CheckIn::email equal email,
+      CheckIn::locationId equal locationId,
+      CheckIn::checkOutDate equal null
     ) {
       CheckIn::checkOutDate setTo Date()
     }
   }
+
+  respondOk()
 }
 
 suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {

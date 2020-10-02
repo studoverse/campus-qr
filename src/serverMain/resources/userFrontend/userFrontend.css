@@ -3,7 +3,7 @@
   box-sizing: border-box;
 }
 
-body {
+#all-content-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,7 +33,7 @@ body {
   opacity: 0.5;
 }
 
-body > .header {
+#all-content-wrapper > .header {
   height: 64px;
   display: flex;
   flex-direction: row;
@@ -44,13 +44,13 @@ body > .header {
   width: 100%;
 }
 
-body > .header > img {
+#all-content-wrapper > .header > img {
   height: 24px;
   width: 32px;
   margin-right: 16px;
 }
 
-body > .header > h2 {
+#all-content-wrapper > .header > h2 {
   font-size: 20px;
   color: #424242;
 }
@@ -339,14 +339,27 @@ button#submit-button:active {
 }
 
 #checkins-wrapper > .current-check-in {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   color: #5d5d5d;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 #checkins-wrapper > .current-check-in > button {
   flex-shrink: 0;
+  padding: 8px 12px;
+  background: none;
+  border: 2px solid gray;
+  border-radius: 4px;
+}
+
+#checkins-wrapper > .current-check-in > button:hover {
+  background-color: #b5b5b540;
+}
+
+#checkins-wrapper > .current-check-in > button:focus {
+  background-color: #b5b5b570;
 }
 
 div.icon.wrap {
@@ -393,6 +406,7 @@ a, a:visited {
   color: #2196F3;
   margin-top: auto;
   margin-bottom: 16px;
+  cursor: pointer;
 }
 
 
