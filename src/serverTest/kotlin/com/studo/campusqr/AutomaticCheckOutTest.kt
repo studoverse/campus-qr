@@ -11,13 +11,6 @@ import java.util.*
 import kotlin.test.assertEquals
 
 class AutomaticCheckOutTest {
-  private fun createTestCheckIn(checkInDate: Date, checkOutDate: Date?) = CheckIn().apply {
-    _id = randomId()
-    locationId = "testLocation"
-    date = checkInDate
-    this.checkOutDate = checkOutDate
-    email = "test@test.com"
-  }
 
   @Test
   fun checkOutTest() {
