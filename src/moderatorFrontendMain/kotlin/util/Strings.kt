@@ -624,7 +624,7 @@ object Strings {
         "Those flags are persisted in the database even across application restarts and updates of this application. " +
         "Examples for configuration flags are the imprint URL, the base URL for scanning the QR codes " +
         "or the number of days after the check-in data is automatically deleted. " +
-        "Please contact the Studo team for further assistance or if you need more configration parameters.",
+        "Please contact the Studo team for further assistance or if you need more configuration parameters.",
     "Alle Konfigurationsflags die in der MongoDB-Datenbank in Collection \"configuration\" " +
         "gelistet sind können vom Administrator geändert werden. " +
         "Diese Flags bleiben auch bei Neustarts und Aktualisierungen dieser Applikation in der Datenbank erhalten. " +
