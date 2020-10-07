@@ -1,8 +1,8 @@
 function pad(num, size) {
-  return ('000' + num).substr(-size)
+  return ('000' + num).substr(-size);
 }
 
-let fullLocationId = new URLSearchParams(window.location.search).get("l")
+let fullLocationId = new URLSearchParams(window.location.search).get("l");
 
 // True if the page was opened directly from the QR code and not reloaded / bookmarked
 let justScanned = false;
@@ -25,9 +25,76 @@ function onLoad() {
     },
     onShowNewCheckin: normalStartup,
     onCheckinExpired: checkinExpired,
-  })
+  });
 
   deleteExpiredCheckins();
+}
+
+function onSubmit() {
+  let emailInput = document.getElementById("email-input");
+  let acceptTosCheckbox = document.getElementById("accept-tos-checkbox");
+  let submitButton = document.getElementById("submit-button");
+  let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
+  let resultForbiddenAccessRestricted = document.getElementById("result-forbidden-access-restricted");
+  let resultForbiddenEmail = document.getElementById("result-forbidden-email");
+  let resultNetErr = document.getElementById("result-net-err");
+
+  let emailWrapper = emailInput.parentElement;
+  let email = emailInput.value.replace(" ", "")
+  if (email.length < 5 || !email.includes("@") || !email.includes(".")) {
+    emailWrapper.className = emailWrapper.className.replace("highlighted", "") + " highlighted";
+    return;
+  } else {
+    emailWrapper.className = emailWrapper.className.replace("highlighted", "");
+  }
+  let acceptTosCheckboxWrapper = acceptTosCheckbox.parentElement;
+  if (acceptTosCheckbox.checked !== true) {
+    acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "") + " highlighted";
+    return;
+  } else {
+    acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "");
+  }
+
+  // Reset result visibility (hide)
+  resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
+  resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "") + " hidden";
+  resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "") + " hidden";
+  resultNetErr.className = resultNetErr.className.replace("hidden", "") + " hidden";
+
+  let submitButtonText = submitButton.innerText;
+  let xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState === 4) {
+      setTimeout(() => {
+        submitButton.innerText = submitButtonText
+        if (this.status === 200) {
+          if (this.responseText === "ok") {
+            let locationName = document.head.querySelector("[name~=location-name][content]").content;
+            if (fullLocationId.includes("-")) {
+              locationName += ` #${fullLocationId.split("-")[1]}`;
+            }
+            // Success
+            setDatetimeElement(Date.now());
+            window.localStorage.setItem("email", email);
+            window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}::${locationName}`);
+            showCheckin(email);
+          } else if (this.responseText === "forbidden_access_restricted") {
+            // E-Mail address not found in restricted access email list
+            resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "");
+          } else if (this.responseText === "forbidden_email") {
+            // E-Mail address does not match allowed email-regex
+            resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "");
+          }
+        } else {
+          // Network or internal error
+          resultNetErr.className = resultNetErr.className.replace("hidden", "");
+        }
+      }, 700)
+    }
+  }
+  xhttp.open("POST", "/location/" + fullLocationId + "/visit");
+  xhttp.send(JSON.stringify({email: email}));
+  submitButton.innerText = "..."
 }
 
 function normalStartup() {
@@ -47,74 +114,11 @@ function normalStartup() {
     let emailInput = document.getElementById("email-input");
     let acceptTosCheckbox = document.getElementById("accept-tos-checkbox");
     let submitButton = document.getElementById("submit-button");
-    let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
-    let resultForbiddenAccessRestricted = document.getElementById("result-forbidden-access-restricted");
-    let resultForbiddenEmail = document.getElementById("result-forbidden-email");
-    let resultNetErr = document.getElementById("result-net-err");
 
     let email = window.localStorage.getItem("email");
     if (email) {
       emailInput.value = email;
       acceptTosCheckbox.checked = true;
-    }
-
-    function onSubmit() {
-      let emailWrapper = emailInput.parentElement;
-      let email = emailInput.value.replace(" ", "")
-      if (email.length < 5 || !email.includes("@") || !email.includes(".")) {
-        emailWrapper.className = emailWrapper.className.replace("highlighted", "") + " highlighted";
-        return;
-      } else {
-        emailWrapper.className = emailWrapper.className.replace("highlighted", "");
-      }
-      let acceptTosCheckboxWrapper = acceptTosCheckbox.parentElement;
-      if (acceptTosCheckbox.checked !== true) {
-        acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "") + " highlighted";
-        return;
-      } else {
-        acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "");
-      }
-
-      // Reset result visibility (hide)
-      resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
-      resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "") + " hidden";
-      resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "") + " hidden";
-      resultNetErr.className = resultNetErr.className.replace("hidden", "") + " hidden";
-
-      let submitButtonText = submitButton.innerText;
-      let xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-          setTimeout(() => {
-            submitButton.innerText = submitButtonText
-            if (this.status === 200) {
-              if (this.responseText === "ok") {
-                let locationName = document.head.querySelector("[name~=location-name][content]").content;
-                if (fullLocationId.includes("-")) {
-                  locationName += ` #${fullLocationId.split("-")[1]}`;
-                }
-                // Success
-                setDatetimeElement(Date.now())
-                window.localStorage.setItem("email", email);
-                window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}::${locationName}`);
-                showCheckin(email)
-              } else if (this.responseText === "forbidden_access_restricted") {
-                // E-Mail address not found in restricted access email list
-                resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "");
-              } else if (this.responseText === "forbidden_email") {
-                // E-Mail address does not match allowed email-regex
-                resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "");
-              }
-            } else {
-              // Network or internal error
-              resultNetErr.className = resultNetErr.className.replace("hidden", "");
-            }
-          }, 700)
-        }
-      }
-      xhttp.open("POST", "/location/" + fullLocationId + "/visit");
-      xhttp.send(JSON.stringify({email: email}));
-      submitButton.innerText = "..."
     }
 
     submitButton.onclick = onSubmit;
