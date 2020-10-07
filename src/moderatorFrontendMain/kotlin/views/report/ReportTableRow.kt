@@ -156,11 +156,6 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
         }
       }
       mTableCell {
-        props.config.userLocation.seat?.let { locationSeatNumber ->
-          +locationSeatNumber.toString()
-        }
-      }
-      mTableCell {
         props.config.userLocation.locationSeatCount?.let {
           if (state.filteredSeats.isNotEmpty()) {
             muiTooltip {

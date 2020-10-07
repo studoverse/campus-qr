@@ -4,6 +4,7 @@ import com.studo.campusqr.common.ActiveCheckIn
 import com.studo.campusqr.common.ReportData
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.database.BackendLocation
+import com.studo.campusqr.database.BackendSeatFilter
 import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.serverScope
@@ -40,7 +41,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
       .toList()
   }
 
-  val locationMapTask: Deferred<Map<String, String>> = serverScope.async(Dispatchers.IO) {
+  val locationMapTask: Deferred<Map<String, BackendLocation>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       getCollection<BackendLocation>()
         .find(BackendLocation::_id inArray reportedUserCheckIns.map { it.locationId }.distinct())
@@ -69,9 +70,28 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     }
   }
 
+  val seatFilterTask: Deferred<Map<String, BackendSeatFilter>> = serverScope.async(Dispatchers.IO) {
+    runOnDb {
+      reportedUserCheckIns.mapNotNull { checkIn ->
+        checkIn.seat?.let { seat ->
+          getCollection<BackendSeatFilter>()
+            .findOne(
+              BackendSeatFilter::locationId equal checkIn.locationId,
+              BackendSeatFilter::seat equal seat
+            )
+        }
+      }.associateBy { it._id }
+    }
+  }
+
   // locationId -> location
-  val locationMap: Map<String, BackendLocation> = locationMapTask.await()
+  val locationMap = locationMapTask.await()
   val impactedUsersEmails = impactedUsersEmailsTask.await()
+  val seatFilterMap = seatFilterTask.await()
+
+  if (seatFilterMap.isNotEmpty()) {
+
+  }
 
   val csvFilePrefix = emails
     .firstOrNull()
@@ -82,8 +102,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
   respondObject(
     ReportData(
       impactedUsersCount = impactedUsersEmails.count(),
-      impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(";"),
-      impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
+      impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(","),
       reportedUserLocations = reportedUserCheckIns.map { checkIn ->
         val location = locationMap.getValue(checkIn.locationId)
         ReportData.UserLocation(
@@ -95,13 +114,14 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
           seat = checkIn.seat,
         )
       }.toTypedArray(),
+      impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
+      impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv",
       reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
-        "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationMap.getValue(it.locationId)}"
+        "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationMap.getValue(it.locationId).name}"
       },
       reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
       startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
       endDate = now.toAustrianTime("dd.MM.yyyy"),
-      impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv"
     )
   )
 }
