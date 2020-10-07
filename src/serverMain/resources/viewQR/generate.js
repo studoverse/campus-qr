@@ -2,8 +2,9 @@ let baseUrl = document.querySelector('meta[name="qrCodeBaseUrl"]').content
 
 function generateQrCode(element) {
   let locationId = element.id;
+  let subUrl = locationId === "checkout" ? "/checkout" : ("?s=1&l=" + locationId);
   new QRCode(element, {
-    text: baseUrl + "/campus-qr?s=1&l=" + locationId,
+    text: baseUrl + "/campus-qr" + subUrl,
     width: 512,
     height: 512
   });

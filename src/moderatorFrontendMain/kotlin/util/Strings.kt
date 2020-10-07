@@ -57,32 +57,37 @@ object Strings {
   )
 
   val location_delete = LocalizedString(
-      "Delete location",
-      "Ort löschen"
+    "Delete location",
+    "Ort löschen"
   )
 
   val location_delete_are_you_sure = LocalizedString(
-      "Are you sure you want to delete this location? This will also delete all the access permissions linked with this location.",
-      "Sind Sie sicher, dass Sie diesen Ort löschen möchten? Dadurch werden auch alle Zugangsberechtigungen gelöscht, die mit diesem Ort verknüpft sind."
+    "Are you sure you want to delete this location? This will also delete all the access permissions linked with this location.",
+    "Sind Sie sicher, dass Sie diesen Ort löschen möchten? Dadurch werden auch alle Zugangsberechtigungen gelöscht, die mit diesem Ort verknüpft sind."
   )
 
   val location_import = LocalizedString(
-      "Import locations",
-      "Orte importieren"
+    "Import locations",
+    "Orte importieren"
+  )
+
+  val print_checkout_code = LocalizedString(
+    "Print check out QR Code",
+    "Check-out QR Code drucken"
   )
 
   val print_all_qrcodes = LocalizedString(
-      "Print all QR Codes",
-      "Alle QR Codes drucken"
+    "Print all QR Codes",
+    "Alle QR Codes drucken"
   )
 
   val location_import_details = LocalizedString(
-      "If locations are accessible from the Campus Management System or are available as Excel list, " +
-          "they can be added automatically as mass import by Studo. " +
-          "Please contact the Studo team for more information.",
-      "Sofern Orte vom Campus Management System abrufbar sind oder als Excel-Liste verfügbar sind, " +
-          "können diese automatisch als Massenimport von Studo hinzugefügt werden. " +
-          "Bitte kontaktieren Sie dazu das Studo Team für mehr Informationen."
+    "If locations are accessible from the Campus Management System or are available as Excel list, " +
+        "they can be added automatically as mass import by Studo. " +
+        "Please contact the Studo team for more information.",
+    "Sofern Orte vom Campus Management System abrufbar sind oder als Excel-Liste verfügbar sind, " +
+        "können diese automatisch als Massenimport von Studo hinzugefügt werden. " +
+        "Bitte kontaktieren Sie dazu das Studo Team für mehr Informationen."
   )
 
   val more_about_studo = LocalizedString(

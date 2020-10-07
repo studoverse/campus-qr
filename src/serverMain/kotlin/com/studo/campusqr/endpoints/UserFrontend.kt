@@ -83,15 +83,7 @@ suspend fun ApplicationCall.userFrontend() {
         }
         div {
           id = "all-content-wrapper"
-          div("header") {
-            img {
-              src = configs.getValue("logoUrl")
-              alt = "Logo"
-            }
-            h2 {
-              +"Campus Check-in"
-            }
-          }
+          campusHeader(configs.getValue("logoUrl"))
           div("content") {
             div {
               id = "form"
@@ -169,9 +161,10 @@ suspend fun ApplicationCall.userFrontend() {
                         +locationNameWithSeat
                       }
                     }
-                    if (showVerificationAnimation) {div("number") {
-                      unsafe {
-                        +"""
+                    if (showVerificationAnimation) {
+                      div("number") {
+                        unsafe {
+                          +"""
                           <svg>
                             <symbol id="s-text">
                               <text text-anchor="middle" x="50%" y="90%">${now.date.toString().padStart(2, '0')}</text>
@@ -186,11 +179,12 @@ suspend fun ApplicationCall.userFrontend() {
                             </g>
                           </svg>
                         """.trimIndent()
+                        }
                       }
-                    }
-                    div("verification") {
-                      span {
-                        +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)}
+                      div("verification") {
+                        span {
+                          +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)
+                        }
                       }
                     }
                   }
@@ -230,20 +224,7 @@ suspend fun ApplicationCall.userFrontend() {
                 ).get(this@userFrontend)
               }
             }
-            div("hidden") {
-              id = "checkins-wrapper"
-              h3 {
-                +LocalizedString("Active check-ins", "Aktive check-ins").get(this@userFrontend)
-              }
-              div("current-check-in hidden") {
-                span {
-                  +""
-                }
-                button {
-                  +LocalizedString("Check out", "Auschecken").get(this@userFrontend)
-                }
-              }
-            }
+            campusCheckins(language, hidden = true)
           }
         }
         footer {
@@ -274,6 +255,59 @@ suspend fun ApplicationCall.userFrontend() {
           }
         }
       }
+    }
+  }
+}
+
+suspend fun ApplicationCall.checkOutView() {
+  val configs = getConfigs(language)
+  respondHtml(HttpStatusCode.OK) {
+    lang = language
+    headTemplate("Check In", css = "userFrontend/userFrontend.css", js = "userFrontend/checkoutView.js")
+    body {
+      noScript {
+        +"You need to enable JavaScript to run this app."
+      }
+      div {
+        id = "all-content-wrapper"
+        campusHeader(configs.getValue("logoUrl"))
+        div("content") {
+          campusCheckins(language, hidden = false)
+        }
+      }
+    }
+  }
+}
+
+fun FlowContent.campusCheckins(language: String, hidden: Boolean) {
+  div(if (hidden) "hidden" else "") {
+    id = "checkins-wrapper"
+    script(src = "/static/userFrontend/checkoutCommon.js") {}
+    h3 {
+      +LocalizedString("Active check-ins", "Aktive check-ins").get(language)
+    }
+    div("current-check-in hidden") {
+      span {
+        +""
+      }
+      button {
+        +LocalizedString("Check out", "Auschecken").get(language)
+      }
+    }
+    p {
+      +LocalizedString("- No active check-ins -", "- Keine aktiven check-ins -").get(language)
+    }
+  }
+}
+
+fun FlowContent.campusHeader(logoUrl: String) {
+  div("header") {
+    img {
+      src = logoUrl
+      alt = "Logo"
+    }
+    h2 {
+      +"Campus Check-in"
     }
   }
 }

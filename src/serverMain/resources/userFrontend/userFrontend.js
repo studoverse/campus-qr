@@ -8,12 +8,11 @@ let fullLocationId = new URLSearchParams(window.location.search).get("l")
 let justScanned = false;
 
 function onLoad() {
+  document.getElementById("lang-select").addEventListener("click", changeLanguageTo);
+
   if (window.location.search.includes("s=1")) {
     // If present, remove "just scanned" parameter from url and replace history state so the user cannot check in again by just reloading
     let url = window.location.href.split(window.location.search)[0];
-    if (!window.location.search.includes("clang=1")) {
-      window.localStorage.removeItem("checkin-" + fullLocationId);
-    }
     window.history.replaceState(null, null, url + "?l=" + fullLocationId);
     justScanned = true;
   }
@@ -146,66 +145,26 @@ function showCheckin(email) {
   resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "");
   resultOk.className = resultOk.className.replace("hidden", "");
 
-  // Check if checkin has expired every four seconds
+  // Check if checkin has expired every second
   let interval = setInterval(function () {
-    handleOldCheckin(
-        {
-          onCheckinExpired: function () {
-            clearInterval(interval);
-            checkinExpired();
-          }
-        }
-    );
-  }, 4000);
+    handleOldCheckin({
+      onCheckinExpired: function () {
+        clearInterval(interval);
+        checkinExpired();
+      }
+    });
+  }, 1000);
 }
 
-function checkOut(checkinKey, buttonElement) {
-  return function () {
-
-    let buttonText = buttonElement.innerText;
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-      if (this.readyState === 4) {
-        setTimeout(() => {
-          buttonElement.innerText = buttonText;
-          if (fullLocationId === checkinKey.split("checkin-")[1]) {
-            checkinExpired();
-          }
-          handleOldCheckin({});
-        }, 700);
-      }
-    }
-    buttonElement.innerText = "...";
-    xhttp.open("POST", `/location/${checkinKey.split("checkin-")[1]}/checkout`);
-    xhttp.send(JSON.stringify({email: atob(window.localStorage[checkinKey].split("::")[0])}));
-    window.localStorage.removeItem(checkinKey); // Check out locally in any case, even if the checkout call fails
-  }
+function hideVerification() {
+  let resultOk = document.getElementById("result-ok");
+  let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
+  resultOk.className = resultOk.className.replace("hidden", "") + " hidden";
+  resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
 }
 
 function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, onCheckinExpired = null}) {
-  let checkinsWrapper = document.getElementById("checkins-wrapper");
-  // Remove previous elements
-  for (let i = checkinsWrapper.childElementCount - 1; i >= 2; i--) {
-    checkinsWrapper.removeChild(checkinsWrapper.children[i]);
-  }
-
-  for (let i = 0; i < window.localStorage.length; i++) {
-    let key = window.localStorage.key(i);
-    let value = window.localStorage.getItem(key);
-
-    if (key.startsWith("checkin-")) { // is a saved checkin
-      // Show checkins wrapper if at least one checkin is present
-      checkinsWrapper.className = checkinsWrapper.className.replace("hidden", "");
-
-      let checkinNode = checkinsWrapper.children[1].cloneNode(true);
-      checkinNode.className = checkinNode.className.replace("hidden", "");
-      checkinNode.childNodes[0].innerText = value.split("::")[2];
-      checkinNode.childNodes[1].onclick = checkOut(key, checkinNode.childNodes[1]);
-
-      checkinsWrapper.appendChild(checkinNode);
-
-    }
-  }
+  regenerateCheckoutView()
 
   let lastCheckin = window.localStorage.getItem("checkin-" + fullLocationId)
   if (lastCheckin) {
@@ -254,19 +213,12 @@ function deleteExpiredCheckins() {
   }
 }
 
-if (document.readyState === "loading") {
-  document.onload = onLoad
-} else {
-  onLoad();
-}
-
 function changeLanguageTo() {
   let lang = document.getElementById("lang-select").value;
   document.cookie = "MbLang=" + lang
   // Reload page with added s=1 parameter to prevent overlay from showing.
-  // Normally we would delete this check-in from localstorage so we add clang=1 which indicates that the language was changed and the
-  //  current check-in should not be deleted.
-  window.location.href = window.location.href.replace("&s=1", "") + "&s=1&clang=1";
+  window.location.href = window.location.href.replace("&s=1", "") + "&s=1";
 }
 
-document.getElementById("lang-select").onclick = changeLanguageTo;
+document.addEventListener('DOMContentLoaded', onLoad, false);
+

@@ -136,7 +136,20 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
           attrs.color = "primary"
           attrs.onClick = {
             setState {
-              window.open("/location/list/qr-codes", target = "_blank")
+              window.open("/location/qr-codes/checkout", target = "_blank")
+            }
+          }
+          +Strings.print_checkout_code.get()
+        }
+        muiButton {
+          attrs.classes = js {
+            root = props.classes.button
+          }
+          attrs.variant = "outlined"
+          attrs.color = "primary"
+          attrs.onClick = {
+            setState {
+              window.open("/location/qr-codes", target = "_blank")
             }
           }
           +Strings.print_all_qrcodes.get()

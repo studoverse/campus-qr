@@ -79,6 +79,7 @@ suspend fun main() {
       get("robots.txt") { call.robotsTxt() }
       get("/") { call.index() }
       get("campus-qr") { call.userFrontend() }
+      get("campus-qr/checkout") { call.checkOutView() }
       route("user") {
         get("data") { call.getUserData() }
         get("logout") { call.getAuthenticatedCall()?.logout() }
@@ -92,10 +93,11 @@ suspend fun main() {
       }
       route("location") {
         post("create") { call.getAuthenticatedCall()?.createLocation() }
-        route("list") {
-          get { call.getAuthenticatedCall()?.listLocations() }
-          get("qr-codes") { call.getAuthenticatedCall()?.viewAllQrCodes() }
+        route("qr-codes") {
+          get { call.getAuthenticatedCall()?.viewAllQrCodes() }
+          get("checkout") { call.getAuthenticatedCall()?.viewCheckoutCode() }
         }
+        get("list") { call.getAuthenticatedCall()?.listLocations() }
 
         route("{id}") {
           post("visit") { call.visitLocation() }

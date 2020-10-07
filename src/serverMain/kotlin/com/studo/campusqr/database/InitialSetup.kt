@@ -48,8 +48,16 @@ suspend fun initialDatabaseSetup() {
         "Bitte scannen Sie diesen QR Code beim Betreten des Raumes mit der Kamera-App Ihres Smartphones oder einer QR Code App. Folgen Sie dann den Anweisungen auf der gescannten Website."
       )
       insert(
-          "scanSubtext2",
-          "Please scan this QR Code when entering the room with the camera app of your smartphone or a QR Code app. Follow then the instructions on the scanned website."
+        "scanSubtext2",
+        "Please scan this QR Code when entering the room with the camera app of your smartphone or a QR Code app. Follow then the instructions on the scanned website."
+      )
+      insert(
+        "scanCheckoutSubtext1",
+        "Bitte scannen Sie diesen QR Code beim Verlassen des Raumes mit der Kamera-App Ihres Smartphones oder einer QR Code App. Wählen Sie dann \"Auschecken\" auf der gescannten Website."
+      )
+      insert(
+        "scanCheckoutSubtext2",
+        "Please scan this QR Code when leaving the room with the camera app of your smartphone or a QR Code app. Then select \"Check out\" on the scanned website."
       )
       insert("showVerificationAnimation", 1)
 
