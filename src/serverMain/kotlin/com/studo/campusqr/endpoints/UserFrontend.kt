@@ -295,7 +295,7 @@ fun FlowContent.campusCheckins(language: String, hidden: Boolean) {
       }
     }
     p {
-      +LocalizedString("- You are checked out at every location -", "- Sie sind überall ausgecheckt -").get(language) //TODO wording
+      +LocalizedString("Successfully checked out at every location.", "Erfolgreich an allen Orten ausgecheckt.").get(language)
     }
   }
 }

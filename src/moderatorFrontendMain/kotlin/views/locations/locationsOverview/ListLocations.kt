@@ -134,11 +134,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
           }
           attrs.variant = "outlined"
           attrs.color = "primary"
-          attrs.onClick = {
-            setState {
-              window.open("/location/qr-codes/checkout", target = "_blank")
-            }
-          }
+          attrs.href = "/location/qr-codes/checkout"
+          attrs.target = "_blank"
           +Strings.print_checkout_code.get()
         }
         muiButton {
@@ -147,11 +144,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
           }
           attrs.variant = "outlined"
           attrs.color = "primary"
-          attrs.onClick = {
-            setState {
-              window.open("/location/qr-codes", target = "_blank")
-            }
-          }
+          attrs.href = "/location/qr-codes"
+          attrs.target = "_blank"
           +Strings.print_all_qrcodes.get()
         }
         muiButton {
