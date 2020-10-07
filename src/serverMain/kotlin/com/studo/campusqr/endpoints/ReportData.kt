@@ -49,7 +49,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     }
   }
 
-  val impactedUsersEmailsTask: Deferred<List<String>> = serverScope.async(Dispatchers.IO) {
+  val impactedCheckInsTask: Deferred<List<CheckIn>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       // Keep logic in sync with listAllActiveCheckIns()
       val previousInfectionHours: Int = getConfig("previousInfectionHours")
@@ -66,7 +66,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
         ).toList()
       }
 
-      otherCheckIns.map { it.email }.distinct().minus(emails)
+      otherCheckIns.distinctBy { it.email }.filter { it.email !in emails }
     }
   }
 
@@ -80,18 +80,23 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
               BackendSeatFilter::seat equal seat
             )
         }
-      }.associateBy { it._id }
+      }.associateBy { it.locationId }
     }
   }
 
-  // locationId -> location
-  val locationMap = locationMapTask.await()
-  val impactedUsersEmails = impactedUsersEmailsTask.await()
-  val seatFilterMap = seatFilterTask.await()
+  val locationIdToLocationMap = locationMapTask.await()
+  var impactedCheckIns = impactedCheckInsTask.await()
+  val locationIdToSeatFilterMap = seatFilterTask.await()
 
-  if (seatFilterMap.isNotEmpty()) {
-
+  if (locationIdToSeatFilterMap.isNotEmpty()) {
+    impactedCheckIns = impactedCheckIns.filter {
+      locationIdToSeatFilterMap[it.locationId]?.let { seatFilter ->
+        it.seat in seatFilter.filteredSeats
+      } ?: true // checkIn is impacted by default, if filter doesn't exist
+    }
   }
+
+  val impactedUsersEmails = impactedCheckIns.map { it.email }
 
   val csvFilePrefix = emails
     .firstOrNull()
@@ -104,7 +109,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
       impactedUsersCount = impactedUsersEmails.count(),
       impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(","),
       reportedUserLocations = reportedUserCheckIns.map { checkIn ->
-        val location = locationMap.getValue(checkIn.locationId)
+        val location = locationIdToLocationMap.getValue(checkIn.locationId)
         ReportData.UserLocation(
           locationId = location._id,
           locationName = location.name,
@@ -112,12 +117,13 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
           email = checkIn.email,
           date = checkIn.date.toAustrianTime(yearAtBeginning = false),
           seat = checkIn.seat,
+          filteredSeats = locationIdToSeatFilterMap[location._id]?.filteredSeats?.toTypedArray()
         )
       }.toTypedArray(),
       impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
       impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv",
       reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
-        "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationMap.getValue(it.locationId).name}"
+        "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationIdToLocationMap.getValue(it.locationId).name}"
       },
       reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
       startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),

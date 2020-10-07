@@ -39,7 +39,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
     filterOptions = props.config.userLocation.locationSeatCount?.let { seatCount ->
       (1..seatCount).map { it.toString() }.toTypedArray()
     } ?: emptyArray()
-    filteredSeats = emptyList()
+    filteredSeats = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
   }
 
   private fun saveFilterAndCloseDialog() = launch {
