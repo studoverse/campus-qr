@@ -28,12 +28,16 @@ internal suspend fun automaticCheckOut() {
   runOnDb {
     val autoCheckOutMinutes: Int = getConfig("autoCheckOutMinutes")
 
-    getCollection<CheckIn>().updateMany(
+    val updateResult = getCollection<CheckIn>().updateMany(
         CheckIn::checkOutDate equal null,
         CheckIn::date lower now.addMinutes(-autoCheckOutMinutes)
     ) {
       CheckIn::checkOutDate setTo now
       CheckIn::autoCheckOut setTo true
+    }
+
+    if (updateResult.modifiedCount > 0) {
+      println("Used auto check-out on ${updateResult.modifiedCount} check-ins that were older than $autoCheckOutMinutes minutes.")
     }
   }
 }

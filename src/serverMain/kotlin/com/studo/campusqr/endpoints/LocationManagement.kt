@@ -151,7 +151,6 @@ suspend fun ApplicationCall.visitLocation() {
   }
 
   runOnDb {
-    // Maybe ensure that user with email can check-in only once?
     getCollection<CheckIn>().insertOne(checkIn, upsert = false)
 
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal location._id) {

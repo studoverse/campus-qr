@@ -67,12 +67,13 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
   val impactedUsersEmailsTask: Deferred<List<String>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       val transitThresholdSeconds: Int = getConfig("transitThresholdSeconds")
+      val now = Date()
 
       // We need to probably optimize performance here in the future
       val otherCheckIns = reportedUserCheckIns.flatMap { reportedUserCheckin ->
         getCollection<CheckIn>().find(
             CheckIn::locationId equal reportedUserCheckin.locationId,
-            CheckIn::date lowerEquals (reportedUserCheckin.checkOutDate ?: Date()).addSeconds(transitThresholdSeconds),
+            CheckIn::date lowerEquals (reportedUserCheckin.checkOutDate ?: now).addSeconds(transitThresholdSeconds),
             or(
                 CheckIn::checkOutDate greaterEquals reportedUserCheckin.date.addSeconds(-transitThresholdSeconds),
                 CheckIn::checkOutDate equal null // Other user has not checked out yet
