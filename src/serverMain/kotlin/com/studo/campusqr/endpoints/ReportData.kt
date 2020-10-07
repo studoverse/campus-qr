@@ -49,6 +49,8 @@ import java.util.*
 */
 //@formatter:on
 internal suspend fun generateContactTracingReport(emails: List<String>, oldestDate: Date): ReportData {
+  val now = Date()
+
   val reportedUserCheckIns: List<CheckIn> = runOnDb {
     getCollection<CheckIn>()
         .find(CheckIn::email inArray emails, CheckIn::date greaterEquals oldestDate)
@@ -67,7 +69,6 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
   val impactedUsersEmailsTask: Deferred<List<String>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       val transitThresholdSeconds: Int = getConfig("transitThresholdSeconds")
-      val now = Date()
 
       // We need to probably optimize performance here in the future
       val otherCheckIns = reportedUserCheckIns.flatMap { reportedUserCheckin ->
@@ -113,7 +114,7 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
       },
       reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
       startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
-      endDate = Date().toAustrianTime("dd.MM.yyyy"),
+      endDate = now.toAustrianTime("dd.MM.yyyy"),
       impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv"
   )
 }
