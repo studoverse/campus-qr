@@ -244,6 +244,7 @@ button#submit-button:active {
 }
 
 .result > .large > .number {
+  font-size: 60vw;
   font-size: min(60vw, 240px);
   width: 100%;
   height: 240px;
