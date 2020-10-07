@@ -164,7 +164,12 @@ function hideVerification() {
 }
 
 function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, onCheckinExpired = null}) {
-  regenerateCheckoutView()
+  regenerateCheckoutView({
+    locationId: fullLocationId,
+    onCurrentLocationRemoved: function () {
+      hideVerification();
+    }
+  });
 
   let lastCheckin = window.localStorage.getItem("checkin-" + fullLocationId)
   if (lastCheckin) {
@@ -220,5 +225,9 @@ function changeLanguageTo() {
   window.location.href = window.location.href.replace("&s=1", "") + "&s=1";
 }
 
-document.addEventListener('DOMContentLoaded', onLoad, false);
+if (/complete|interactive|loaded/.test(document.readyState)) {
+  onLoad();
+} else {
+  document.addEventListener('DOMContentLoaded', onLoad, false);
+}
 

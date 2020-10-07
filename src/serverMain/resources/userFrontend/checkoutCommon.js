@@ -7,10 +7,10 @@ function checkOut(checkinKey, buttonElement) {
       if (this.readyState === 4) {
         setTimeout(() => {
           buttonElement.innerText = buttonText;
-          if (fullLocationId === checkinKey.split("checkin-")[1]) {
+          if (typeof fullLocationId !== 'undefined' && fullLocationId === checkinKey.split("checkin-")[1]) {
             hideVerification();
           }
-          handleOldCheckin({});
+          regenerateCheckoutView();
         }, 700);
       }
     }
@@ -21,13 +21,15 @@ function checkOut(checkinKey, buttonElement) {
   }
 }
 
-function regenerateCheckoutView() {
+function regenerateCheckoutView({locationId = "", onCurrentLocationRemoved = null} = {}) {
   let savedCheckins = 0;
   let checkinsWrapper = document.getElementById("checkins-wrapper");
   // Remove previous elements
-  for (let i = checkinsWrapper.childElementCount - 1; i >= 3; i--) {
+  for (let i = checkinsWrapper.childElementCount - 1; i >= 4; i--) {
     checkinsWrapper.removeChild(checkinsWrapper.children[i]);
   }
+
+  let foundCurrentLocation = false;
 
   for (let i = 0; i < window.localStorage.length; i++) {
     let key = window.localStorage.key(i);
@@ -35,6 +37,11 @@ function regenerateCheckoutView() {
 
     if (key.startsWith("checkin-")) { // Is a saved checkin
       savedCheckins += 1;
+
+      if (key.split("checkin-")[1] === locationId) {
+        foundCurrentLocation = true;
+      }
+
       // Show checkins wrapper if at least one checkin is present
       checkinsWrapper.className = checkinsWrapper.className.replace("hidden", "");
 
@@ -47,7 +54,11 @@ function regenerateCheckoutView() {
     }
   }
 
+  if (!foundCurrentLocation && onCurrentLocationRemoved) {
+    onCurrentLocationRemoved();
+  }
+
   // Hide / show "no checkins" text if checkins were added / not added
   let noCheckinsClass = savedCheckins > 0 ? " hidden" : "";
-  checkinsWrapper.children[2].className = checkinsWrapper.children[2].className.replace("hidden", "") + noCheckinsClass;
+  checkinsWrapper.children[3].className = checkinsWrapper.children[3].className.replace("hidden", "") + noCheckinsClass;
 }

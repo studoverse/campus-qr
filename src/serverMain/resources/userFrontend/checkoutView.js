@@ -3,9 +3,8 @@ function onLoad() {
   setInterval(regenerateCheckoutView, 1000);
 }
 
-if (document.readyState === "loading") {
-  document.onload = onLoad
-} else {
+if (/complete|interactive|loaded/.test(document.readyState)) {
   onLoad();
+} else {
+  document.addEventListener('DOMContentLoaded', onLoad, false);
 }
-

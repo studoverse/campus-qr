@@ -295,7 +295,7 @@ fun FlowContent.campusCheckins(language: String, hidden: Boolean) {
       }
     }
     p {
-      +LocalizedString("- No active check-ins -", "- Keine aktiven check-ins -").get(language)
+      +LocalizedString("- You are checked out at every location -", "- Sie sind überall ausgecheckt -").get(language) //TODO wording
     }
   }
 }
