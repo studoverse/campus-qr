@@ -1,8 +1,6 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.LocationVisitData
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.database.*
@@ -11,6 +9,7 @@ import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.*
 import io.ktor.application.*
+import io.ktor.features.*
 import io.ktor.http.*
 import java.util.*
 
@@ -18,7 +17,7 @@ import java.util.*
  * This file contains every endpoint which is used in the location management.
  */
 suspend fun getLocation(id: String): BackendLocation {
-  return getLocationOrNull(id) ?: throw IllegalArgumentException("No location for id")
+  return getLocationOrNull(id) ?: throw BadRequestException("No location for id")
 }
 
 suspend fun getLocationOrNull(id: String): BackendLocation? {
@@ -35,21 +34,16 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
     return
   }
 
-  val params = receiveJsonMap()
-
-  val name = (params["name"] as? String)?.trim() ?: throw IllegalArgumentException("No name was provided")
-  val accessType = (params["accessType"] as? String)?.let { LocationAccessType.valueOf(it) }
-      ?: throw IllegalArgumentException("No accessType was provided")
-  val seatCount = (params["seatCount"] as? Int)?.coerceIn(1, 10_000)
+  val params: CreateLocation = receiveClientPayload()
 
   val room = BackendLocation().apply {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
-    this.name = name
+    this.name = params.name.trim()
     this.createdDate = Date()
     this.createdBy = user._id
     this.checkInCount = 0
-    this.accessType = accessType
-    this.seatCount = seatCount
+    this.accessType = params.accessType
+    this.seatCount = params.seatCount?.coerceIn(1, 10_000)
   }
 
   MainDatabase.getCollection<BackendLocation>().insertOne(room, upsert = false)
@@ -71,7 +65,7 @@ suspend fun ApplicationCall.visitLocation() {
   val params = receiveJsonStringMap()
 
   // id-parameter is either "$locationId" or "$locationId-$seat" (depending if location has seatCount defined or not)
-  val fullLocationId = parameters["id"] ?: throw IllegalArgumentException("No locationId was provided")
+  val fullLocationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
   val locationId = fullLocationId.substringBefore("-")
   val seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
   val location = getLocation(locationId)
@@ -79,15 +73,16 @@ suspend fun ApplicationCall.visitLocation() {
   // Validate seat argument
   if (location.seatCount != null) {
     when {
-      seat == null -> throw IllegalArgumentException("No seat provided but location has seats defined")
-      seat <= 0 -> throw IllegalArgumentException("Seat must be > 0")
-      seat > location.seatCount!! -> throw IllegalArgumentException("Seat must be <= location.seatCount")
+      seat == null -> throw BadRequestException("No seat provided but location has seats defined")
+      seat <= 0 -> throw BadRequestException("Seat must be > 0")
+      seat > location.seatCount!! -> throw BadRequestException("Seat must be <= location.seatCount")
     }
   } else if (seat != null) {
-    throw IllegalArgumentException("Seat provided but location has no seats defined")
+    throw BadRequestException("Seat provided but location has no seats defined")
   }
 
-  val email = params["email"]?.trim() ?: throw IllegalArgumentException("No email was provided")
+
+  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
   val now = Date()
 
   // Clients can send a custom visit date
@@ -102,25 +97,30 @@ suspend fun ApplicationCall.visitLocation() {
   }
 
   if (!email.matches(emailRegex) || email.count() > 100) {
-    respondError("email_not_valid") // At least do a very basic email validation to catch common errors
+    respondError("forbidden_email") // At least do a very basic email validation to catch common errors
     return
   }
+  if (runOnDb { getConfig("emailAccessRegex") as String }.emptyToNull()?.let { email.matches(Regex(it)) } == false) {
+    respondError("forbidden_email") // E-Mail did not match specified regex (e.g. not a university email address)
+    return
+  }
+
   var accessId: String? = null
 
   if (location.accessType == LocationAccessType.RESTRICTED) {
     val access = runOnDb {
       getCollection<BackendAccess>().findOne(
-          BackendAccess::locationId equal location._id,
-          BackendAccess::allowedEmails has email,
-          BackendAccess::dateRanges.any(
-              DateRange::from lowerEquals now,
-              DateRange::to greaterEquals now
-          )
+        BackendAccess::locationId equal location._id,
+        BackendAccess::allowedEmails has email,
+        BackendAccess::dateRanges.any(
+          DateRange::from lowerEquals now,
+          DateRange::to greaterEquals now
+        )
       )
     }
 
     if (access == null) {
-      respondForbidden()
+      respondError("forbidden_access_restricted")
       return
     } else {
       accessId = access._id
@@ -155,15 +155,15 @@ suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
     return
   }
 
-  val locationId = parameters["id"]!!
+  val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
 
   val location = runOnDb { getLocation(locationId) }
 
   val checkIns = runOnDb {
     getCollection<CheckIn>()
-      .find(CheckIn::locationId equal locationId)
-      .sortByDescending(CheckIn::date)
-      .toList()
+        .find(CheckIn::locationId equal locationId)
+        .sortByDescending(CheckIn::date)
+        .toList()
   }
 
   respondObject(
@@ -180,25 +180,20 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
     return
   }
 
-  val locationId = parameters["id"]!!
+  val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
   val location = getLocation(locationId)
 
-  val params = receiveJsonMap()
-
-  val name = (params["name"] as? String)?.trim() ?: throw IllegalArgumentException("No name was provided")
-  val accessType = (params["accessType"] as? String)?.let { LocationAccessType.valueOf(it) }
-      ?: throw IllegalArgumentException("No accessType was provided")
-  val seatCount = (params["seatCount"] as? Int)?.coerceIn(1, 10_000)
+  val params: EditLocation = receiveClientPayload()
 
   runOnDb {
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal locationId) {
-      BackendLocation::name setTo name
-      BackendLocation::accessType setTo accessType
-      BackendLocation::seatCount setTo seatCount
+      BackendLocation::name setTo params.name
+      BackendLocation::accessType setTo params.accessType
+      BackendLocation::seatCount setTo params.seatCount?.coerceIn(1, 10_000)
     }
 
     // In case we change the seatCount, delete previous seatCounts of this location as the seating-plan might have changed
-    if (location.seatCount != seatCount) {
+    if (location.seatCount != params.seatCount) {
       getCollection<BackendSeatFilter>().deleteMany(BackendAccess::locationId equal locationId)
     }
   }
@@ -212,7 +207,7 @@ suspend fun AuthenticatedApplicationCall.deleteLocation() {
     return
   }
 
-  val locationId = parameters["id"]!!
+  val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
 
   runOnDb {
     getCollection<BackendLocation>().deleteOne(BackendLocation::_id equal locationId)

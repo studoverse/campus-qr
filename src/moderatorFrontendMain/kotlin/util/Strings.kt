@@ -165,11 +165,6 @@ object Strings {
       "Anzahl der Sitzplätze"
   )
 
-  val location_add_number_of_seats = LocalizedString(
-      "Add seat count",
-      "Anzahl der Sitzplätze hinzufügen"
-  )
-
   val location_number_of_seats_hint = LocalizedString(
       "Seat count at this location",
       "Anzahl der Sitzplätze an diesem Ort"
@@ -619,19 +614,19 @@ object Strings {
   )
 
   val admin_info_configuration_details = LocalizedString(
-      "All configration flags that are in the MongoDB database listed in collection \"configuration\" " +
-          "can be changed by the administrator. " +
-          "Those flags are persisted in the database even across application restarts and updates of this application. " +
-          "Examples for configuration flags are the imprint URL, the base URL for scanning the QR codes " +
-          "or the number of days after the check-in data is automatically deleted. " +
-          "Please contact the Studo team for further assistance or if you need more configration parameters.",
-      "Alle Konfigurationsflags die in der MongoDB-Datenbank in Collection \"configuration\" " +
-          "gelistet sind können vom Administrator geändert werden. " +
-          "Diese Flags bleiben auch bei Neustarts und Aktualisierungen dieser Applikation in der Datenbank erhalten. " +
-          "Beispiele für Konfigurationsflags sind die Impressums-URL, die Basis-URL für das Einscannen der QR Codes " +
-          "oder die Anzahl der Tage nachdem die Check-In Daten automatisch gelöscht werden. " +
-          "Bitte kontaktieren Sie das Studo Team für weitere Unterstützung oder falls Sie weitere " +
-          "Konfigurationsparameter wünschen."
+    "All configuration flags that are in the MongoDB database listed in collection \"configuration\" " +
+        "can be changed by the administrator. " +
+        "Those flags are persisted in the database even across application restarts and updates of this application. " +
+        "Examples for configuration flags are the imprint URL, the base URL for scanning the QR codes " +
+        "or the number of days after the check-in data is automatically deleted. " +
+        "Please contact the Studo team for further assistance or if you need more configuration parameters.",
+    "Alle Konfigurationsflags die in der MongoDB-Datenbank in Collection \"configuration\" " +
+        "gelistet sind können vom Administrator geändert werden. " +
+        "Diese Flags bleiben auch bei Neustarts und Aktualisierungen dieser Applikation in der Datenbank erhalten. " +
+        "Beispiele für Konfigurationsflags sind die Impressums-URL, die Basis-URL für das Einscannen der QR Codes " +
+        "oder die Anzahl der Tage nachdem die Check-In Daten automatisch gelöscht werden. " +
+        "Bitte kontaktieren Sie das Studo Team für weitere Unterstützung oder falls Sie weitere " +
+        "Konfigurationsparameter wünschen."
   )
 }
 

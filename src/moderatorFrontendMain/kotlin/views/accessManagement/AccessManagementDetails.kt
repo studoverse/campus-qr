@@ -188,7 +188,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 
   private fun AccessManagementDetailsState.getPermittedEmailsFromTextField() =
-      personEmailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
+      personEmailTextFieldValue.toLowerCase().split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
 
   private fun submitPermittedPeopleToState() = setState {
     permittedPeopleList += getPermittedEmailsFromTextField()

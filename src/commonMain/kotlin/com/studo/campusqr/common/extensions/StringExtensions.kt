@@ -1,5 +1,9 @@
 package com.studo.campusqr.common.extensions
 
+/**
+ * Basic regexes to validate a broad plausibility of certain string types.
+ */
+
 val emailRegex: Regex = Regex("[^,;:<>(){}\\[\\]\"'\\s@]+@[^,;:<>(){}\\[\\]\"'\\s@]+\\.[^,;:<>(){}\\[\\]\"'\\s@]+")
 
 val nameRegex: Regex = Regex("[^a-z0-9.].{1,20} [^a-z0-9.].{1,20}")

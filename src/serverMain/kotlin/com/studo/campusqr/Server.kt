@@ -12,9 +12,7 @@ import com.studo.campusqr.utils.getAuthenticatedCall
 import com.studo.katerbase.setLogLevel
 import io.ktor.application.*
 import io.ktor.features.*
-import io.ktor.http.*
 import io.ktor.http.content.*
-import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -73,16 +71,12 @@ suspend fun main() {
       host(URL(baseUrl).host, schemes = listOf("https", "http"))
       allowNonSimpleContentTypes = true
       allowCredentials = true
-      maxAgeInSeconds = Duration.ofDays(1).toSeconds()
+      maxAgeInSeconds = Duration.ofDays(1).seconds
     }
 
     routing {
-      route("favicon.ico") {
-        handle {
-          call.response.status(HttpStatusCode.NotFound)
-          call.respond(HttpStatusCode.NotFound.description)
-        }
-      }
+      get("favicon.ico") { call.favicon() }
+      get("robots.txt") { call.robotsTxt() }
       get("/") { call.index() }
       get("campus-qr") { call.userFrontend() }
       route("user") {
@@ -125,7 +119,10 @@ suspend fun main() {
           post("edit") { call.getAuthenticatedCall()?.editAccess() }
         }
       }
-      post("report/list") { call.getAuthenticatedCall()?.returnReportData() }
+      route("report") {
+        post("list") { call.getAuthenticatedCall()?.returnReportData() }
+        post("listActiveCheckIns") { call.getAuthenticatedCall()?.listAllActiveCheckIns() }
+      }
       route("admin") {
         get("campusqr-admin.js") { call.returnModeratorJs() }
         get("/{...}") { call.returnModeratorIndexHtml() }

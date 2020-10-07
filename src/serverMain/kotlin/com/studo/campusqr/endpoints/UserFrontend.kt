@@ -1,8 +1,7 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.utils.LocalizedString
-import com.studo.campusqr.database.Configuration
-import com.studo.campusqr.database.MainDatabase
+import com.studo.campusqr.database.getConfigs
 import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.extensions.runOnDb
@@ -14,17 +13,18 @@ import java.util.*
 
 
 suspend fun ApplicationCall.userFrontend() {
-  val locationId = parameters["l"]
-  val locationName = locationId?.let { id -> getLocationOrNull(id)?.name }
-  val language = this.language
-
-  val configs = runOnDb {
-    MainDatabase.getCollection<Configuration>().find()
-      .filter { it.stringValue != null }
-      .associateBy(
-        keySelector = { it._id.substringBefore("_$language") },
-        valueTransform = { it.stringValue!! })
+  val fullLocationId = parameters["l"]
+  var seat: Int? = null
+  val locationId = if (fullLocationId?.contains("-") == true) {
+    seat = fullLocationId.substringAfterLast("-", "").trimStart('0').toIntOrNull()
+    fullLocationId.substringBeforeLast("-")
+  } else {
+    fullLocationId
   }
+  val location = locationId?.let { id -> getLocationOrNull(id) }
+
+  val configs = getConfigs(language)
+  val showVerificationAnimation = runOnDb { getConfig<Int>("showVerificationAnimation") } == 1
 
   val now = Date()
 
@@ -36,21 +36,27 @@ suspend fun ApplicationCall.userFrontend() {
         +"You need to enable JavaScript to run this app."
       }
 
-      if (locationName == null) {
+      if (location == null) {
         // Location not found
-        div {
+        div("overlay") {
           id = "overlay"
           img {
             src = "/static/userFrontend/reload.svg"
           }
-          p {
+          span {
+            id = "overlay-retry"
             +LocalizedString(
-              "Please scan the QR code again.",
-              "Bitte scannen Sie den QR Code erneut."
+              "Please close this page and scan the QR code again.",
+              "Bitte schließen Sie diese Seite und scannen Sie den QR Code erneut."
             ).get(this@userFrontend)
           }
         }
       } else {
+        val locationNameWithSeat = (
+            location.name + if (location.seatCount != null && seat != null) {
+              " #${seat.toString().padStart(location.seatCount.toString().length, '0')}"
+            } else "")
+
         div("overlay hidden") {
           id = "overlay"
           img {
@@ -94,7 +100,7 @@ suspend fun ApplicationCall.userFrontend() {
                   "Location: ",
                   "Ort: "
                 ).get(this@userFrontend)
-                b { +locationName }
+                b { +locationNameWithSeat }
               }
             }
 
@@ -110,7 +116,7 @@ suspend fun ApplicationCall.userFrontend() {
             button(classes = "submit") {
               id = "submit-button"
               type = ButtonType.button
-              +LocalizedString("Check in at $locationName", "Check in bei $locationName").get(this@userFrontend)
+              +LocalizedString("Check in at ${location.name}", "Check in bei ${location.name}").get(this@userFrontend)
             }
             div("form-acceptTos") {
               checkBoxInput {
@@ -154,31 +160,33 @@ suspend fun ApplicationCall.userFrontend() {
                     src = "/static/userFrontend/locationIcon.svg"
                   }
                   span {
-                    +locationName
+                    +locationNameWithSeat
                   }
                 }
-                div("number") {
-                  unsafe {
-                    +"""
-                  <svg>
-                  	<symbol id="s-text">
-                  		<text text-anchor="middle" x="50%" y="90%">${now.date.toString().padStart(2, '0')}</text>
-                  	</symbol>
-
-                  	<g class = "g-ants">
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  		<use xlink:href="#s-text" class="text-copy"></use>
-                  	</g>
-                  </svg>
-                """.trimIndent()
+                if (showVerificationAnimation) {
+                  div("number") {
+                    unsafe {
+                      +"""
+                      <svg>
+                        <symbol id="s-text">
+                          <text text-anchor="middle" x="50%" y="90%">${now.date.toString().padStart(2, '0')}</text>
+                        </symbol>
+    
+                        <g class = "g-ants">
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                          <use xlink:href="#s-text" class="text-copy"></use>
+                        </g>
+                      </svg>
+                    """.trimIndent()
+                    }
                   }
-                }
-                div("verification") {
-                  span {
-                    +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)
+                  div("verification") {
+                    span {
+                      +LocalizedString("Verification", "Verifizierung").get(this@userFrontend)
+                    }
                   }
                 }
               }
@@ -197,10 +205,17 @@ suspend fun ApplicationCall.userFrontend() {
             }
           }
           span("result fail hidden") {
-            id = "result-not-allowed"
+            id = "result-forbidden-access-restricted"
             +LocalizedString(
               "Error! You are not allowed to check-in.",
               "Fehler! Sie haben keine Berechtigung um einzuchecken."
+            ).get(this@userFrontend)
+          }
+          span("result fail hidden") {
+            id = "result-forbidden-email"
+            +LocalizedString(
+              "Error! Please use your university e-mail address to check-in.",
+              "Fehler! Bitte benutzen Sie ihre Hochschul E-Mail Adresse um einzuchecken."
             ).get(this@userFrontend)
           }
           span("result fail hidden") {

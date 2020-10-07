@@ -30,6 +30,9 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **Visitor list export**: Simple doorman specific interface with upcoming access permits
 * **Scalable access verification**: Access control can be verified by one doorman or lecturer in parallel to avoid crowds around entries.
 * **External identity management**: SSO, LDAP (using JNDI) and OAuth2 are supported by Ktor authentication packages. 
+* **Logging**: Optional User-Agent and IP address logging for auditing. (Disabled by default - privacy by default)
+* **API Access**: A *shared key* can be optionally defined to grant admin access to external services.
+* **E-Mail restriction**: Definition which e-mail addresses can be entered on check-in to force university email addresses.
 
 ## Managed hosting features
 Campus QR can be hosted by the university itself or by [Studo](https://studo.com). When hosted by Studo, the following hosting features are available per default: 
@@ -102,4 +105,4 @@ The native Android reference implementation to scan QR codes is provided in the 
 The native iOS reference implementation to scan QR codes is provided in the subfolder *campus-qr-ios* and might be used by iOS applications to allow scanning the QR codes while being offline and dispatching the check-in event when being online again.
 
 ## Code Style Guide
-The project follows the official [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html) with two additions: Line wrap is 140 characters, and indentation is 2 instead of 4 spaces (continuation indent is 4 instead of 8 spaces) on all file types. Please follow these conventions when creating a pull request.
+The project follows the official [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html) with two additions: Line wrap is 140 characters, and indentation is 2 instead of 4 spaces (continuation indent is 4 instead of 8 spaces) on all file types. Please follow these conventions when creating a pull request. Pull requests are welcome!

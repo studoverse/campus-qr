@@ -1,5 +1,6 @@
 package com.studo.campusqr.utils
 
+import com.studo.campusqr.common.UserType
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -55,15 +56,54 @@ suspend fun ApplicationCall.createNewSessionToken(): SessionToken {
 }
 
 suspend fun ApplicationCall.getSessionToken(): SessionToken? {
-  val webSession = sessions.get<Session>() ?: return null
-  return runOnDb { getCollection<SessionToken>().findOne(SessionToken::_id equal webSession.token) }
+  val authorizationHeader = request.headers["X-Authorization"]
+
+  return when {
+    // Server-to-server auth via shared secret
+    authorizationHeader?.isNotBlank() == true -> when (authorizationHeader) {
+      MainDatabase.getConfig<String>("authSharedSecret") -> getOrCreateSharedSecretSessionToken()
+      else -> null
+    }
+
+    // Default auth with session cookie
+    else -> {
+      val webSession = sessions.get<Session>() ?: return null
+      runOnDb { getCollection<SessionToken>().findOne(SessionToken::_id equal webSession.token) }
+    }
+  }
 }
 
 val SessionToken?.isAuthenticated get() = this?.isAuthenticated ?: false
 
-suspend fun getUser(sessionToken: SessionToken): BackendUser? {
-  if (!sessionToken.isAuthenticated) return null
-  return runOnDb { getCollection<BackendUser>().findOne(BackendUser::_id equal sessionToken.userId!!) }
+suspend fun getUser(sessionToken: SessionToken): BackendUser? = when {
+  !sessionToken.isAuthenticated -> null
+  sessionToken._id == sharedSecretSessionId -> getOrCreateSharedSecretUser()
+  else -> runOnDb { getCollection<BackendUser>().findOne(BackendUser::_id equal sessionToken.userId!!) }
+}
+
+private const val sharedSecretUserId = "sharedSecretUser"
+private const val sharedSecretSessionId = "sharedSecretSessionToken"
+
+private suspend fun getOrCreateSharedSecretSessionToken(): SessionToken = runOnDb {
+  getCollection<SessionToken>().findOneOrInsert(SessionToken::_id equal sharedSecretSessionId) {
+    SessionToken().apply {
+      val now = Date()
+      creationDate = now
+      expiryDate = now.addYears(1000)
+      userId = sharedSecretUserId
+    }
+  }
+}
+
+private suspend fun getOrCreateSharedSecretUser(): BackendUser = runOnDb {
+  getCollection<BackendUser>().findOneOrInsert(BackendUser::_id equal sharedSecretUserId) {
+    BackendUser().apply {
+      email = sharedSecretUserId
+      createdDate = Date()
+      name = "Shared Secret User"
+      type = UserType.ADMIN
+    }
+  }
 }
 
 private val csrfHashSecret: String = MainDatabase.getConfig("csrfHashSecret")

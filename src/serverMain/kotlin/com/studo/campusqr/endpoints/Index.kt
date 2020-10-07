@@ -64,7 +64,7 @@ suspend fun ApplicationCall.index() {
   }
 }
 
-fun HTML.headTemplate(subtitle: String?, js: String, css: String, async: Boolean = true) {
+fun HTML.headTemplate(subtitle: String?, js: String, css: String, async: Boolean = true, block: HEAD.() -> Unit = {}) {
   head {
     meta {
       charset = "utf-8"
@@ -91,7 +91,8 @@ fun HTML.headTemplate(subtitle: String?, js: String, css: String, async: Boolean
       rel = "icon"
       type = "image/png"
       sizes = "64x64"
-      href = "static/images/favicon.png"
+      href = "/static/images/favicon.png"
     }
+    block()
   }
 }

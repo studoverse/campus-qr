@@ -42,6 +42,7 @@ suspend fun initialDatabaseSetup() {
       insert("userFooterAdditionalInfoText_de", "")
       insert("emailPlaceholder_en", "Your university email address")
       insert("emailPlaceholder_de", "Deine Hochschul E-Mail Adresse")
+      insert("emailAccessRegex", "") // Set to e.g. ".+@(student\.)?example\.org" to allow asdf@student.example.org and asdf@example.org
       insert(
         "scanSubtext1",
         "Bitte scannen Sie diesen QR Code beim Betreten des Raumes mit der Kamera-App Ihres Smartphones oder einer QR Code App. Folgen Sie dann den Anweisungen auf der gescannten Website."
@@ -50,8 +51,10 @@ suspend fun initialDatabaseSetup() {
         "scanSubtext2",
         "Please scan this QR Code when entering the room with the camera app of your smartphone or a QR Code app. Follow then the instructions on the scanned website."
       )
+      insert("showVerificationAnimation", 1)
 
       insert("baseUrl", "http://127.0.0.1:8070")
+      insert("qrCodeBaseUrl", "http://127.0.0.1:8070") // Used for qr code generation
       insert("appName", "Campus QR")
 
       insert("deleteCheckInDataAfterDays", 4 * 7)
@@ -67,8 +70,10 @@ suspend fun initialDatabaseSetup() {
       insert("ldapApplicationUserCredentials", "password") // For user disabling via lookup
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
 
-      insert("storeCheckInUserAgent", 1) // Set to 0 if no UserAgent should be stored on checkIn
-      insert("checkInIpAddressHeader", "X-Forwarded-For") // Set to "" if no IP address should be stored on checkIn
+      insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
+      insert("checkInIpAddressHeader", "") // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
+
+      insert("authSharedSecret", "") // Auth via X-Authorization header. If empty, no shared secret access is possible.
     }
 
     // Create root user

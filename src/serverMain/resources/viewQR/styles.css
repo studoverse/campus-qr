@@ -8,6 +8,10 @@
   margin: 0;
 }
 
+.hidden {
+  display: none;
+}
+
 html, body {
   width: 210mm;
 }
@@ -51,9 +55,8 @@ div.break {
   margin-bottom: 12px;
 }
 
-.page > .header > p {
+.page > .header > * {
   font-size: 48px;
-  font-weight: normal;
   margin: 12px 64px 0;
   overflow: hidden;
   word-break: break-all;
@@ -61,7 +64,7 @@ div.break {
   text-align: center;
 }
 
-.page > .header > p > span {
+.page > .header > h1 {
   font-weight: bold;
 }
 
