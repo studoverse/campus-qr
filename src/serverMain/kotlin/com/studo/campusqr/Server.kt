@@ -5,6 +5,7 @@ import com.studo.campusqr.auth.AuthProvider
 import com.studo.campusqr.auth.getAuthProvider
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.initialDatabaseSetup
+import com.studo.campusqr.database.startAutomaticCheckOut
 import com.studo.campusqr.database.startAutomaticDataDeletion
 import com.studo.campusqr.endpoints.*
 import com.studo.campusqr.utils.Session
@@ -35,6 +36,7 @@ suspend fun main() {
   authProvider = getAuthProvider()
 
   startAutomaticDataDeletion()
+  startAutomaticCheckOut()
 
   setLogLevel("io.netty", Level.INFO)
 
@@ -79,6 +81,7 @@ suspend fun main() {
       get("robots.txt") { call.robotsTxt() }
       get("/") { call.index() }
       get("campus-qr") { call.userFrontend() }
+      get("campus-qr/checkout") { call.checkOutView() }
       route("user") {
         get("data") { call.getUserData() }
         get("logout") { call.getAuthenticatedCall()?.logout() }
@@ -92,13 +95,15 @@ suspend fun main() {
       }
       route("location") {
         post("create") { call.getAuthenticatedCall()?.createLocation() }
-        route("list") {
-          get { call.getAuthenticatedCall()?.listLocations() }
-          get("qr-codes") { call.getAuthenticatedCall()?.viewAllQrCodes() }
+        route("qr-codes") {
+          get { call.getAuthenticatedCall()?.viewAllQrCodes() }
+          get("checkout") { call.getAuthenticatedCall()?.viewCheckoutCode() }
         }
+        get("list") { call.getAuthenticatedCall()?.listLocations() }
 
         route("{id}") {
           post("visit") { call.visitLocation() }
+          post("checkout") { call.checkOutLocation() }
           get("visitsCsv") { call.getAuthenticatedCall()?.returnLocationVisitCsvData() }
           post("edit") { call.getAuthenticatedCall()?.editLocation() }
           get("qr-code") { call.getAuthenticatedCall()?.viewSingleQrCode() }

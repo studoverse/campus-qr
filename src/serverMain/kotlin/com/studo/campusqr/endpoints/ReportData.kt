@@ -14,20 +14,42 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.util.*
 
+//@formatter:off
 /**
- * This file contains the contact tracing endpoint.
- */
-suspend fun AuthenticatedApplicationCall.returnReportData() {
-  if (!user.isModerator) {
-    respondForbidden()
-    return
-  }
+  Contact tracing:
 
-  val params = receiveJsonStringMap()
+                checkIn               checkOut
+                  +       infected      +
+                  +---------------------+
+                  +                     +
 
+                    +     a     +  +    b
+                    +-----------+  +---------->
+                    +           +  +
+
+             +    c    +           +    d    +
+             +---------+           +---------+
+             +         +           +         +
+
+     +   e   +                               +    f    +
+     +-------+                               +---------+
+     +       +                               +         +
+
+              +               g               +
+              +-------------------------------+
+              +                               +
+
+  We treat the following cases as k1 contact person:
+  - a, c, d and g because their time range intersect the infected persons time range
+  - b because his time range intersects the infected persons time range, although not having a [CheckIn.checkOutDate]
+  We do NOT treat the following cases as k1 contact person:
+  - e and f because their time range doesn't intersect the infected persons time range
+
+ Note that infected checkIn and checkOut timestamp get extened by [transitThresholdSeconds]
+*/
+//@formatter:on
+internal suspend fun generateContactTracingReport(emails: List<String>, oldestDate: Date): ReportData {
   val now = Date()
-  val emails = params.getValue("email").split(*emailSeparators).filter { it.isNotEmpty() }
-  val oldestDate = params["oldestDate"]?.toLong()?.let { Date(it) } ?: now.addDays(-14)
 
   val reportedUserCheckIns: List<CheckIn> = runOnDb {
     getCollection<CheckIn>()
@@ -46,15 +68,17 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
 
   val impactedUsersEmailsTask: Deferred<List<String>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
-      // Keep logic in sync with listAllActiveCheckIns()
-      val previousInfectionHours: Int = getConfig("previousInfectionHours")
-      val nextInfectionHours: Int = getConfig("nextInfectionHours")
+      val transitThresholdSeconds: Int = getConfig("transitThresholdSeconds")
 
       // We need to probably optimize performance here in the future
-      val otherCheckIns = reportedUserCheckIns.flatMap { checkIn ->
+      val otherCheckIns = reportedUserCheckIns.flatMap { reportedUserCheckin ->
         getCollection<CheckIn>().find(
-            CheckIn::locationId equal checkIn.locationId,
-            CheckIn::date.inRange(checkIn.date.addHours(-previousInfectionHours), checkIn.date.addHours(nextInfectionHours))
+            CheckIn::locationId equal reportedUserCheckin.locationId,
+            CheckIn::date lowerEquals (reportedUserCheckin.checkOutDate ?: now).addSeconds(transitThresholdSeconds),
+            or(
+                CheckIn::checkOutDate greaterEquals reportedUserCheckin.date.addSeconds(-transitThresholdSeconds),
+                CheckIn::checkOutDate equal null // Other user has not checked out yet
+            )
         ).toList()
       }
 
@@ -72,28 +96,42 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
       ?.joinToString(separator = "")
       ?.take(20)
 
-  respondObject(
-      ReportData(
-          impactedUsersCount = impactedUsersEmails.count(),
-          impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(";"),
-          impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
-          reportedUserLocations = reportedUserCheckIns.map { checkIn ->
-            ReportData.UserLocation(
-                email = checkIn.email,
-                date = checkIn.date.toAustrianTime(yearAtBeginning = false),
-                locationName = locationMap.getValue(checkIn.locationId),
-                seat = checkIn.seat,
-            )
-          }.toTypedArray(),
-          reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
-            "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationMap.getValue(it.locationId)}"
-          },
-          reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
-          startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
-          endDate = now.toAustrianTime("dd.MM.yyyy"),
-          impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv"
-      )
+  return ReportData(
+      impactedUsersCount = impactedUsersEmails.count(),
+      impactedUsersEmails = impactedUsersEmails.toTypedArray(),
+      impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(";"),
+      impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
+      reportedUserLocations = reportedUserCheckIns.map { checkIn ->
+        ReportData.UserLocation(
+            email = checkIn.email,
+            date = checkIn.date.toAustrianTime(yearAtBeginning = false),
+            locationName = locationMap.getValue(checkIn.locationId),
+            seat = checkIn.seat,
+        )
+      }.toTypedArray(),
+      reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
+        "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationMap.getValue(it.locationId)}"
+      },
+      reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
+      startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
+      endDate = now.toAustrianTime("dd.MM.yyyy"),
+      impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv"
   )
+}
+
+suspend fun AuthenticatedApplicationCall.returnReportData() {
+  if (!user.isModerator) {
+    respondForbidden()
+    return
+  }
+
+  val params = receiveJsonStringMap()
+
+  val now = Date()
+  val emails = params.getValue("email").split(*emailSeparators).filter { it.isNotEmpty() }
+  val oldestDate = params["oldestDate"]?.toLong()?.let { Date(it) } ?: now.addDays(-14)
+
+  respondObject(generateContactTracingReport(emails, oldestDate))
 }
 
 /**
@@ -110,11 +148,9 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
   val emailAddress = params.getValue("emailAddress")
 
   val checkIns = runOnDb {
-    // Keep logic in sync with returnReportData()
-    val nextInfectionHours: Int = getConfig("nextInfectionHours")
     getCollection<CheckIn>()
-        .find(CheckIn::email equal emailAddress, CheckIn::date greater Date().addHours(-nextInfectionHours))
-        .sortByDescending(CheckIn::date)
+        .find(CheckIn::email equal emailAddress, CheckIn::checkOutDate equal null)
+        .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
         .toList()
   }
 

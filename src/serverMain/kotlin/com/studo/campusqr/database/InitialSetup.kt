@@ -51,6 +51,14 @@ suspend fun initialDatabaseSetup() {
         "scanSubtext2",
         "Please scan this QR Code when entering the room with the camera app of your smartphone or a QR Code app. Follow then the instructions on the scanned website."
       )
+      insert(
+        "scanCheckoutSubtext1",
+        "Bitte scannen Sie diesen QR Code beim Verlassen des Raumes mit der Kamera-App Ihres Smartphones oder einer QR Code App. Wählen Sie dann \"Auschecken\" auf der gescannten Website."
+      )
+      insert(
+        "scanCheckoutSubtext2",
+        "Please scan this QR Code when leaving the room with the camera app of your smartphone or a QR Code app. Then select \"Check out\" on the scanned website."
+      )
       insert("showVerificationAnimation", 1)
 
       insert("baseUrl", "http://127.0.0.1:8070")
@@ -59,8 +67,8 @@ suspend fun initialDatabaseSetup() {
 
       insert("deleteCheckInDataAfterDays", 4 * 7)
 
-      insert("previousInfectionHours", 3)
-      insert("nextInfectionHours", 12)
+      insert("autoCheckOutMinutes", 3 * 60) // 3 Hours
+      insert("transitThresholdSeconds", 2 * 60) // 2 Minutes
 
       insert("csrfHashSecret", Algorithm.secureRandom.longs(64).toList().joinToString().sha256())
 
