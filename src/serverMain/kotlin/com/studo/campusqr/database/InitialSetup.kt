@@ -84,6 +84,7 @@ suspend fun initialDatabaseSetup() {
       insert("ldapPrintDebugLogs", 0)
       insert("ldapTimeoutMs", 10_000)
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
+      insert("ldapDefaultUserType", UserType.ACCESS_MANAGER.toString()) // For users who sign up via ldap
 
       insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
       insert("checkInIpAddressHeader", "") // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn

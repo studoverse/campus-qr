@@ -28,6 +28,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
   private lateinit var ldapGroupRegex: String
   private var ldapPrintDebugLogs: Boolean = false
   private var ldapTimeoutMs: Int = 0
+  private lateinit var ldapDefaultUserType: UserType
 
   override suspend fun init() {
     runOnDb {
@@ -39,6 +40,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
       ldapGroupRegex = getConfig("ldapGroupRegex")
       ldapPrintDebugLogs = getConfig("ldapPrintDebugLogs")
       ldapTimeoutMs = getConfig("ldapTimeoutMs")
+      ldapDefaultUserType = UserType.valueOf(getConfig("ldapDefaultUserType"))
     }
 
     automaticUserDisabling()
@@ -128,7 +130,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
               .replace(".", " ")
               .split(" ")
               .joinToString(separator = " ", transform = { it.capitalize() }),
-            type = UserType.ACCESS_MANAGER
+            type = ldapDefaultUserType
           )
         }
       }
