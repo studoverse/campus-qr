@@ -1,5 +1,7 @@
 package com.studo.campusqr.database
 
+import com.studo.campusqr.auth.CampusQrAuth
+import com.studo.campusqr.auth.getAuthProvider
 import com.studo.campusqr.common.UserType
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.utils.Algorithm
@@ -100,7 +102,8 @@ suspend fun initialDatabaseSetup() {
         createdBy = _id
         type = UserType.ADMIN
       }
-      if (count() == 0L) {
+      // Only create new user when we have no user yet, and only if we use built-in username/password auth and no thirdparty-auth provider
+      if (count() == 0L && getAuthProvider() is CampusQrAuth) {
         insertOne(rootUser, onDuplicateKey = { })
       }
     }
