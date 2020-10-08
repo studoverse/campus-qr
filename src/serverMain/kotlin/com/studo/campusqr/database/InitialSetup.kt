@@ -75,7 +75,7 @@ suspend fun initialDatabaseSetup() {
       insert("csrfHashSecret", Algorithm.secureRandom.longs(64).toList().joinToString().sha256())
 
       insert("ldapUrl", "") // "" = ldap disabled. E.g. "ldap://ldap.forumsys.com:389"
-      insert("ldapSearchFilter", "(uid=%s,dc=example,dc=com)") // For user authentication
+      insert("ldapSearchFilter", "(uid=%s,dc=example,dc=com)") // For user authentication. ";"-separated
       insert("ldapApplicationUserPrincipal", "cn=read-only-admin,dc=example,dc=com") // For user disabling via lookup
       insert("ldapApplicationUserCredentials", "password") // For user disabling via lookup
       insert("ldapGroupAttributeName", "memberOf") // LDAP attribute-name of the user

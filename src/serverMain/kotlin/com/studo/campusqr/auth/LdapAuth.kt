@@ -20,7 +20,7 @@ import javax.naming.directory.SearchControls
 import javax.naming.directory.SearchResult
 
 class LdapAuth(private val ldapUrl: String) : AuthProvider {
-  private lateinit var ldapSearchFilter: String
+  private lateinit var ldapSearchFilterList: List<String>
   private lateinit var ldapApplicationUserPrincipal: String
   private lateinit var ldapApplicationUserCredentials: String
   private lateinit var ldapGroupAttributeName: String
@@ -32,7 +32,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
 
   override suspend fun init() {
     runOnDb {
-      ldapSearchFilter = getConfig("ldapSearchFilter")
+      ldapSearchFilterList = (getConfig("ldapSearchFilter") as String).split(";")
       ldapApplicationUserPrincipal = getConfig("ldapApplicationUserPrincipal")
       ldapApplicationUserCredentials = getConfig("ldapApplicationUserCredentials")
       ldapGroupAttributeName = getConfig("ldapGroupAttributeName")
@@ -42,6 +42,8 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
       ldapTimeoutMs = getConfig("ldapTimeoutMs")
       ldapDefaultUserType = UserType.valueOf(getConfig("ldapDefaultUserType"))
     }
+
+    debugLog("Search filters: $ldapSearchFilterList")
 
     automaticUserDisabling()
   }
@@ -73,7 +75,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
 
     try {
       val answer: NamingEnumeration<*> = context.search(userPrincipal, ldapGroupFilter, controls)
-      debugLog("Search groups for $userPrincipal with filter $ldapGroupFilter")
+      debugLog("Username $userPrincipal found. Search groups with filter $ldapGroupFilter")
 
       var userIsInGroup = false
 
@@ -83,7 +85,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
         val groups: List<*> = result.attributes.get(ldapGroupAttributeName).all.toList()
         debugLog("Groups: $groups")
         if (groups.any { (it as? String)?.contains(ldapGroupRegex) == true }) {
-          debugLog("Found group --> Allow access")
+          debugLog("Found group --> Allow login")
           userIsInGroup = true
         }
       }
@@ -94,31 +96,41 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
 
       return userIsInGroup
     } catch (e: NameNotFoundException) {
-      debugLog("Username not found")
+      debugLog("Username $userPrincipal not found")
       return false // Username not found
     }
   }
 
   override suspend fun login(email: String, password: String): AuthProvider.Result {
-    val userPrincipal = ldapSearchFilter.format(ldapEscape(email))
+    // Find user by one ldapSearchFilter
+    var valid = false
+    for (ldapSearchFilter in ldapSearchFilterList) {
+      val userPrincipal = ldapSearchFilter.format(ldapEscape(email))
 
-    val valid = try {
-      // Use provided user to authenticate
-      val context = InitialDirContext(getContextEnvironment(userPrincipal, password))
+      valid = try {
+        // Use provided user to authenticate
+        val context = InitialDirContext(getContextEnvironment(userPrincipal, password))
 
-      val userFound = findUser(userPrincipal, context)
-      context.close()
-      userFound
+        val userFound = findUser(userPrincipal, context)
+        context.close()
+        userFound
 
-    } catch (e: AuthenticationException) {
-      debugLog("Wrong username or password")
-      false // Wrong username or password
+      } catch (e: AuthenticationException) {
+        debugLog("Wrong username or password for $userPrincipal")
+        false // Wrong username or password
+      }
+
+      if (valid) {
+        break // We found the user in one ldapSearchFilter
+      }
     }
 
     return if (!valid) {
+      debugLog("Username/Password invalid for $email --> Don't allow login")
       AuthProvider.Result.InvalidCredentials
     } else {
       // Insert user if not yet created
+      debugLog("Username/Password valid for $email --> Allow login")
       val userId = MongoMainEntry.generateId(email)
       val user = runOnDb {
         getCollection<BackendUser>().findOneOrInsert(BackendUser::_id equal userId) {
@@ -150,9 +162,19 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
         try {
           runOnDb {
             getCollection<BackendUser>().find().forEach { user ->
-              val userPrincipal = ldapSearchFilter.format(ldapEscape(user.email))
 
-              if (findUser(userPrincipal, context)) {
+              // Find user by one ldapSearchFilter
+              var valid = false
+              for (ldapSearchFilter in ldapSearchFilterList) {
+                val userPrincipal = ldapSearchFilter.format(ldapEscape(user.email))
+                valid = findUser(userPrincipal, context)
+
+                if (valid) {
+                  break // We found the user in one ldapSearchFilter
+                }
+              }
+
+              if (valid) {
                 stillEnabledUsers++
               } else {
                 // User does not exist any more or has not the given group any more -> Delete sessions and user
