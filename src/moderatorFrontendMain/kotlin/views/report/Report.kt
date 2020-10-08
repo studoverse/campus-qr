@@ -1,21 +1,23 @@
 package views.report
 
 import apiBase
-import app.GlobalCss
 import com.studo.campusqr.common.ReportData
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
 import kotlinx.browser.window
+import kotlinx.html.js.onSubmitFunction
 import muiDatePicker
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
+import react.dom.form
 import util.Strings
 import util.fileDownload
 import util.get
 import views.common.centeredProgress
+import views.common.renderLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.addDays
@@ -33,7 +35,7 @@ interface ReportState : RState {
   var emailTextFieldValue: String
   var emailTextFieldError: String
   var reportData: ReportData?
-  var loadingList: Boolean
+  var showProgress: Boolean
   var snackbarText: String
   var infectionDate: Date
 }
@@ -44,7 +46,7 @@ class Report : RComponent<ReportProps, ReportState>() {
     emailTextFieldValue = ""
     emailTextFieldError = ""
     reportData = null
-    loadingList = false
+    showProgress = false
     snackbarText = ""
     infectionDate = Date().addDays(-14)
   }
@@ -70,8 +72,45 @@ class Report : RComponent<ReportProps, ReportState>() {
     return true
   }
 
+  private fun applyFilter(userLocation: ReportData.UserLocation, filteredSeats: List<Int>) = launch {
+    setState { showProgress = true }
+    val response = NetworkManager.post<String>(
+      "$apiBase/location/${userLocation.locationId}/editSeatFilter", params = json(
+        "seat" to userLocation.seat,
+        "filteredSeats" to filteredSeats
+      )
+    )
+    setState {
+      if (response == "ok") {
+        // re-trace contacts
+        traceContacts()
+      } else {
+        snackbarText = Strings.error_try_again.get()
+        showProgress = false
+      }
+    }
+  }
+
+  private fun deleteFilter(userLocation: ReportData.UserLocation) = launch {
+    setState { showProgress = true }
+    val response = NetworkManager.post<String>(
+      "$apiBase/location/${userLocation.locationId}/deleteSeatFilter", params = json(
+        "seat" to userLocation.seat
+      )
+    )
+    setState {
+      if (response == "ok") {
+        // re-trace contacts
+        traceContacts()
+      } else {
+        snackbarText = Strings.error_try_again.get()
+        showProgress = false
+      }
+    }
+  }
+
   private fun traceContacts() = launch {
-    setState { loadingList = true }
+    setState { showProgress = true }
     val response = NetworkManager.post<ReportData>(
       "$apiBase/report/list", params = json(
         "email" to state.emailTextFieldValue,
@@ -79,7 +118,7 @@ class Report : RComponent<ReportProps, ReportState>() {
       )
     )
     setState {
-      loadingList = false
+      showProgress = false
       if (response == null) {
         snackbarText = Strings.error_try_again.get()
         reportData = null
@@ -116,19 +155,28 @@ class Report : RComponent<ReportProps, ReportState>() {
           }
         }
         gridItem(GridSize(xs = 12, sm = 6)) {
-          textField {
-            attrs.fullWidth = true
-            attrs.variant = "outlined"
-            attrs.label = Strings.report_email.get()
-            attrs.type = "email"
-            attrs.value = state.emailTextFieldValue
-            attrs.error = state.emailTextFieldError.isNotEmpty()
-            attrs.helperText = state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()
-            attrs.onChange = { event: Event ->
-              val value = event.inputValue
-              setState {
-                emailTextFieldValue = value
-                emailTextFieldError = ""
+          form {
+            attrs.onSubmitFunction = { event ->
+              event.preventDefault()
+              event.stopPropagation()
+              if (validateInput()) {
+                traceContacts()
+              }
+            }
+            textField {
+              attrs.fullWidth = true
+              attrs.variant = "outlined"
+              attrs.label = Strings.report_email.get()
+              attrs.type = "email"
+              attrs.value = state.emailTextFieldValue
+              attrs.error = state.emailTextFieldError.isNotEmpty()
+              attrs.helperText = state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()
+              attrs.onChange = { event: Event ->
+                val value = event.inputValue
+                setState {
+                  emailTextFieldValue = value
+                  emailTextFieldError = ""
+                }
               }
             }
           }
@@ -151,8 +199,8 @@ class Report : RComponent<ReportProps, ReportState>() {
       }
     }
     when {
-      state.loadingList -> centeredProgress()
       state.reportData != null -> {
+        renderLinearProgress(state.showProgress)
         val reportData = state.reportData!!
         div(props.classes.content) {
           typography {
@@ -183,10 +231,8 @@ class Report : RComponent<ReportProps, ReportState>() {
                   ReportTableRowProps.Config(
                     userLocation = userLocation,
                     showEmailAddress = showEmailAddress,
-                    onFilterChanged = {
-                      // Update results
-                      traceContacts()
-                    }
+                    onApplyFilterChange = this@Report::applyFilter,
+                    onDeleteFilter = this@Report::deleteFilter
                   )
                 )
               }
@@ -225,6 +271,7 @@ class Report : RComponent<ReportProps, ReportState>() {
           }
         }
       }
+      state.showProgress -> centeredProgress()
     }
   }
 }

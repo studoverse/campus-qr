@@ -4,7 +4,10 @@ import apiBase
 import com.studo.campusqr.common.ReportData
 import kotlinext.js.js
 import kotlinx.browser.window
+import kotlinx.coroutines.withContext
 import react.*
+import react.dom.option
+import views.common.renderLinearProgress
 import views.common.spacer
 import webcore.DialogButton
 import webcore.NetworkManager
@@ -17,7 +20,8 @@ interface ReportTableRowProps : RProps {
   class Config(
     val userLocation: ReportData.UserLocation,
     val showEmailAddress: Boolean,
-    val onFilterChanged: () -> Unit
+    val onApplyFilterChange: (userLocation: ReportData.UserLocation, filteredSeats: List<Int>) -> Unit,
+    val onDeleteFilter: (userLocation: ReportData.UserLocation) -> Unit
   )
 
   var config: Config
@@ -42,46 +46,8 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
     filteredSeats = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
   }
 
-  private fun saveFilterAndCloseDialog() = launch {
-    setState { showProgress = true }
-    val response = NetworkManager.post<String>(
-      "$apiBase/location/${props.config.userLocation.locationId}/editSeatFilter", params = json(
-        "seat" to props.config.userLocation.seat,
-        "filteredSeats" to state.filteredSeats
-      )
-    )
-    setState {
-      if (response == "ok") {
-        showProgress = false
-        showApplyFilterDialog = false
-        props.config.onFilterChanged()
-      } else {
-        // TODO: Snackbar
-        window.alert("Failed")
-        console.log(response)
-      }
-    }
-  }
-
-  private fun deleteFilter() = launch {
-    setState { showProgress = true }
-    val response = NetworkManager.post<String>(
-      "$apiBase/location/${props.config.userLocation.locationId}/deleteSeatFilter", params = json(
-        "seat" to props.config.userLocation.seat
-      )
-    )
-    setState {
-      if (response == "ok") {
-        showProgress = false
-        showApplyFilterDialog = false
-        filteredSeats = emptyList()
-        props.config.onFilterChanged()
-      } else {
-        // TODO: Snackbar
-        window.alert("Failed")
-        console.log(response)
-      }
-    }
+  override fun componentWillReceiveProps(nextProps: ReportTableRowProps) {
+    setState { init(nextProps) }
   }
 
   private fun RBuilder.renderApplyFilterDialog() {
@@ -114,6 +80,15 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
             attrs.options = state.filterOptions
             attrs.value = state.filteredSeats.map { it.toString() }.toTypedArray()
             attrs.getOptionLabel = { it }
+            attrs.renderOption = { option, state ->
+              Fragment {
+                mCheckbox {
+                  attrs.color = "primary"
+                  attrs.checked = state.selected as Boolean
+                }
+                +(option as String)
+              }
+            }
             attrs.renderInput = { params: dynamic ->
               textField {
                 attrs.id = params.id
@@ -128,8 +103,11 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
           }
         },
         buttons = listOf(
-          DialogButton("Save", onClick = {
-            saveFilterAndCloseDialog()
+          DialogButton("Apply", onClick = {
+            setState { showApplyFilterDialog = false }
+            with(props.config) {
+              onApplyFilterChange(userLocation, state.filteredSeats)
+            }
           })
         )
       )
@@ -157,20 +135,20 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
       }
       mTableCell {
         props.config.userLocation.locationSeatCount?.let {
-          if (state.filteredSeats.isNotEmpty()) {
-            muiTooltip {
-              attrs.title = "Selected seats: ${state.filteredSeats.joinToString()}"
-              mChip {
-                attrs.color = "primary"
-                attrs.variant = "outlined"
-                attrs.label = "Filter active"
-                attrs.onDelete = {
-                  deleteFilter()
+          val currentFilteredSeats = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
+          if (currentFilteredSeats.isNotEmpty()) {
+            mChip {
+              attrs.color = "primary"
+              attrs.variant = "outlined"
+              attrs.label = "Seat filter: ${currentFilteredSeats.joinToString()}"
+              attrs.onDelete = {
+                with(props.config) {
+                  onDeleteFilter(userLocation)
                 }
-                attrs.onClick = {
-                  setState {
-                    showApplyFilterDialog = true
-                  }
+              }
+              attrs.onClick = {
+                setState {
+                  showApplyFilterDialog = true
                 }
               }
             }
