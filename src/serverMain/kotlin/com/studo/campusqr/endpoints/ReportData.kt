@@ -125,31 +125,30 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
     ?.joinToString(separator = "")
     ?.take(20)
 
-  respondObject(
-    ReportData(
-      impactedUsersCount = impactedUsersEmails.count(),
-      impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(","),
-      reportedUserLocations = reportedUserCheckIns.map { checkIn ->
-        val location = locationIdToLocationMap.getValue(checkIn.locationId)
-        ReportData.UserLocation(
-          locationId = location._id,
-          locationName = location.name,
-          locationSeatCount = location.seatCount,
-          email = checkIn.email,
-          date = checkIn.date.toAustrianTime(yearAtBeginning = false),
-          seat = checkIn.seat,
-          filteredSeats = locationIdToSeatFilterMap[location._id]?.filteredSeats?.toTypedArray()
-        )
-      }.toTypedArray(),
-      impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
-      impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv",
-      reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
-        "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationIdToLocationMap.getValue(it.locationId).name}"
-      },
-      reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
-      startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
-      endDate = now.toAustrianTime("dd.MM.yyyy"),
-    )
+  return ReportData(
+    impactedUsersEmails = impactedUsersEmails.toTypedArray(),
+    impactedUsersCount = impactedUsersEmails.count(),
+    impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(","),
+    reportedUserLocations = reportedUserCheckIns.map { checkIn ->
+      val location = locationIdToLocationMap.getValue(checkIn.locationId)
+      ReportData.UserLocation(
+        locationId = location._id,
+        locationName = location.name,
+        locationSeatCount = location.seatCount,
+        email = checkIn.email,
+        date = checkIn.date.toAustrianTime(yearAtBeginning = false),
+        seat = checkIn.seat,
+        filteredSeats = locationIdToSeatFilterMap[location._id]?.filteredSeats?.toTypedArray()
+      )
+    }.toTypedArray(),
+    impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
+    impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv",
+    reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
+      "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationIdToLocationMap.getValue(it.locationId).name}"
+    },
+    reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
+    startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
+    endDate = now.toAustrianTime("dd.MM.yyyy"),
   )
 }
 
@@ -183,26 +182,26 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
 
   val checkIns = runOnDb {
     getCollection<CheckIn>()
-        .find(CheckIn::email equal emailAddress, CheckIn::checkOutDate equal null)
-        .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
-        .toList()
+      .find(CheckIn::email equal emailAddress, CheckIn::checkOutDate equal null)
+      .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
+      .toList()
   }
 
   val locationMap = runOnDb {
     getCollection<BackendLocation>()
-        .find(BackendLocation::_id inArray checkIns.map { it.locationId }.distinct())
-        .associateBy(keySelector = { it._id }, valueTransform = { it.name })
+      .find(BackendLocation::_id inArray checkIns.map { it.locationId }.distinct())
+      .associateBy(keySelector = { it._id }, valueTransform = { it.name })
   }
 
   respondObject(
-      checkIns.map { checkIn ->
-        ActiveCheckIn(
-            id = checkIn._id,
-            locationId = checkIn.locationId,
-            locationName = locationMap.getValue(checkIn.locationId),
-            seat = checkIn.seat,
-            checkInDate = checkIn.date.time.toDouble()
-        )
-      }
+    checkIns.map { checkIn ->
+      ActiveCheckIn(
+        id = checkIn._id,
+        locationId = checkIn.locationId,
+        locationName = locationMap.getValue(checkIn.locationId),
+        seat = checkIn.seat,
+        checkInDate = checkIn.date.time.toDouble()
+      )
+    }
   )
 }
