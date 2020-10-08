@@ -14,44 +14,43 @@ import kotlinx.coroutines.Deferred
 import com.studo.katerbase.equal
 import com.studo.katerbase.greaterEquals
 import com.studo.katerbase.inArray
-import com.studo.katerbase.inRange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.util.*
 
 //@formatter:off
 /**
-  Contact tracing:
+Contact tracing:
 
-                checkIn               checkOut
-                  +       infected      +
-                  +---------------------+
-                  +                     +
+checkIn               checkOut
++       infected      +
++---------------------+
++                     +
 
-                    +     a     +  +    b
-                    +-----------+  +---------->
-                    +           +  +
++     a     +  +    b
++-----------+  +---------->
++           +  +
 
-             +    c    +           +    d    +
-             +---------+           +---------+
-             +         +           +         +
++    c    +           +    d    +
++---------+           +---------+
++         +           +         +
 
-     +   e   +                               +    f    +
-     +-------+                               +---------+
-     +       +                               +         +
++   e   +                               +    f    +
++-------+                               +---------+
++       +                               +         +
 
-              +               g               +
-              +-------------------------------+
-              +                               +
++               g               +
++-------------------------------+
++                               +
 
-  We treat the following cases as k1 contact person:
-  - a, c, d and g because their time range intersect the infected persons time range
-  - b because his time range intersects the infected persons time range, although not having a [CheckIn.checkOutDate]
-  We do NOT treat the following cases as k1 contact person:
-  - e and f because their time range doesn't intersect the infected persons time range
+We treat the following cases as k1 contact person:
+- a, c, d and g because their time range intersect the infected persons time range
+- b because his time range intersects the infected persons time range, although not having a [CheckIn.checkOutDate]
+We do NOT treat the following cases as k1 contact person:
+- e and f because their time range doesn't intersect the infected persons time range
 
- Note that infected checkIn and checkOut timestamp get extened by [transitThresholdSeconds]
-*/
+Note that infected checkIn and checkOut timestamp get extened by [transitThresholdSeconds]
+ */
 //@formatter:on
 internal suspend fun generateContactTracingReport(emails: List<String>, oldestDate: Date): ReportData {
   val now = Date()
@@ -101,19 +100,27 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
               BackendSeatFilter::seat equal seat
             )
         }
-      }.associateBy { it.locationId }
+      }.associateBy { "${it.locationId}-${it.seat}" }
     }
   }
 
-  val locationIdToLocationMap = locationMapTask.await()
-  var impactedCheckIns = impactedCheckInsTask.await()
-  val locationIdToSeatFilterMap = seatFilterTask.await()
+  fun Map<String, BackendSeatFilter>.getFor(locationId: String, seat: Int?) = this["$locationId-$seat"]
 
-  if (locationIdToSeatFilterMap.isNotEmpty()) {
-    impactedCheckIns = impactedCheckIns.filter {
-      locationIdToSeatFilterMap[it.locationId]?.let { seatFilter ->
-        it.seat in seatFilter.filteredSeats
-      } ?: true // checkIn is impacted by default, if filter doesn't exist
+  val locationIdToLocationMap = locationMapTask.await()
+  val impactedCheckIns = impactedCheckInsTask.await().toMutableList()
+  val seatFilterMap = seatFilterTask.await()
+
+  if (seatFilterMap.isNotEmpty()) {
+    // Apply seat filters
+    reportedUserCheckIns.forEach { reportedCheckIn ->
+      seatFilterMap.getFor(reportedCheckIn.locationId, reportedCheckIn.seat)?.let { seatFilter ->
+        impactedCheckIns.removeIf { impactedCheckin ->
+          impactedCheckin.seat != null &&
+              impactedCheckin.date.day == reportedCheckIn.date.day && // TODO: something soimilar
+              impactedCheckin.locationId == reportedCheckIn.locationId &&
+              impactedCheckin.seat !in seatFilter.filteredSeats
+        }
+      }
     }
   }
 
@@ -138,7 +145,7 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
         email = checkIn.email,
         date = checkIn.date.toAustrianTime(yearAtBeginning = false),
         seat = checkIn.seat,
-        filteredSeats = locationIdToSeatFilterMap[location._id]?.filteredSeats?.toTypedArray()
+        filteredSeats = seatFilterMap.getFor(checkIn.locationId, checkIn.seat)?.filteredSeats?.toTypedArray()
       )
     }.toTypedArray(),
     impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
