@@ -61,16 +61,18 @@ suspend fun AuthenticatedApplicationCall.listLocations() {
   respondObject(locations)
 }
 
-suspend fun ApplicationCall.visitLocation() {
-  val params = receiveJsonStringMap()
+private data class UserLocation(val locationId: String, val seat: Int?)
 
+private fun ApplicationCall.getUserLocation(): UserLocation {
   // id-parameter is either "$locationId" or "$locationId-$seat" (depending if location has seatCount defined or not)
-  val fullLocationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
-  val locationId = fullLocationId.substringBefore("-")
-  val seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
-  val location = getLocation(locationId)
+  val fullLocationId = parameters["id"] ?: throw BadRequestException("No locationId was provided")
+  return UserLocation(
+      locationId = fullLocationId.substringBefore("-"),
+      seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
+  )
+}
 
-  // Validate seat argument
+private fun validateSeatForLocation(location: BackendLocation, seat: Int?) {
   if (location.seatCount != null) {
     when {
       seat == null -> throw BadRequestException("No seat provided but location has seats defined")
@@ -80,7 +82,17 @@ suspend fun ApplicationCall.visitLocation() {
   } else if (seat != null) {
     throw BadRequestException("Seat provided but location has no seats defined")
   }
+}
 
+suspend fun ApplicationCall.visitLocation() {
+  val params = receiveJsonStringMap()
+
+  val (locationId, seat) = getUserLocation()
+
+  val location = getLocation(locationId)
+
+  // Validate seat argument
+  validateSeatForLocation(location, seat)
 
   val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
   val now = Date()
@@ -143,6 +155,31 @@ suspend fun ApplicationCall.visitLocation() {
 
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal location._id) {
       BackendLocation::checkInCount incrementBy 1
+    }
+  }
+
+  respondOk()
+}
+
+suspend fun ApplicationCall.checkOutLocation() {
+  val params = receiveJsonStringMap()
+  val (locationId, seat) = getUserLocation()
+
+  val location = getLocation(locationId)
+
+  // Validate seat argument
+  validateSeatForLocation(location, seat)
+
+  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
+
+  runOnDb {
+    // Use updateMany here, user could check-in multiple times
+    getCollection<CheckIn>().updateMany(
+      CheckIn::email equal email,
+      CheckIn::locationId equal locationId,
+      CheckIn::checkOutDate equal null
+    ) {
+      CheckIn::checkOutDate setTo Date()
     }
   }
 

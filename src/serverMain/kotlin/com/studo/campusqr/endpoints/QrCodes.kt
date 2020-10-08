@@ -35,7 +35,37 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
           ).get(this@viewSingleQrCode)
         }
       } else {
-        renderQrCodes(listOf(location), configs, language)
+        renderPrintPage(language) {
+          renderLocation(location, configs)
+        }
+      }
+    }
+  }
+}
+
+suspend fun AuthenticatedApplicationCall.viewCheckoutCode() {
+  if (!sessionToken.isAuthenticated) {
+    respondForbidden()
+    return
+  }
+  val configs = getConfigs(language)
+
+  respondHtml(HttpStatusCode.OK) {
+    lang = language
+    headTemplate("View Code", js = "viewQR/qrcode.min.js", css = "viewQR/styles.css", async = false) {
+      meta(name = "qrCodeBaseUrl", content = configs.getValue("qrCodeBaseUrl"))
+    }
+
+    body {
+      renderPrintPage(language) {
+        renderQrCodePage(
+          "Check Out",
+          "checkout",
+          configs,
+          subtext1 = configs.getValue("scanCheckoutSubtext1"),
+          subtext2 = configs.getValue("scanCheckoutSubtext1"),
+          subtitle = ""
+        )
       }
     }
   }
@@ -65,13 +95,17 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
           ).get(this@viewAllQrCodes)
         }
       } else {
-        renderQrCodes(locations, configs, language)
+        renderPrintPage(language) {
+          for (location in locations) {
+            renderLocation(location, configs)
+          }
+        }
       }
     }
   }
 }
 
-fun BODY.renderQrCodes(locations: List<ClientLocation>, configs: Map<String, String>, language: String) {
+fun FlowContent.renderPrintPage(language: String, block: FlowContent.() -> Unit) {
   noScript {
     +"You need to enable JavaScript to run this app."
   }
@@ -94,48 +128,52 @@ fun BODY.renderQrCodes(locations: List<ClientLocation>, configs: Map<String, Str
   }
   div("hidden") {
     id = "all-codes"
-    for (location in locations) {
-      renderLocation(location, configs)
-    }
+    block()
   }
   script {
     src = "/static/viewQR/generate.js"
   }
 }
 
-
-fun DIV.renderLocation(location: ClientLocation, configs: Map<String, String>) {
-  fun renderLocationInternal(name: String, id: String) {
-    div("page") {
-      div("header") {
-        h1 {
-          +name
-        }
-        p {
-          +"Check In"
-        }
-      }
-      div("qrcode") {
-        this.id = id
-      }
-      div("footer") {
-        p {
-          +configs.getValue("scanSubtext1")
-        }
-        p {
-          +configs.getValue("scanSubtext2")
-        }
-      }
-    }
-    div("break") {}
-  }
-
+fun FlowContent.renderLocation(location: ClientLocation, configs: Map<String, String>) {
   if (location.seatCount != null) {
     for (seat in 1..location.seatCount) {
       val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
-      renderLocationInternal("${location.name} #$paddedSeat", "${location.id}-$seat")
+      renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs)
     }
   } else {
-    renderLocationInternal(location.name, location.id)
+    renderQrCodePage(location.name, location.id, configs)
   }
+}
+
+fun FlowContent.renderQrCodePage(
+  name: String,
+  id: String,
+  configs: Map<String, String>,
+  subtext1: String = configs.getValue("scanSubtext1"),
+  subtext2: String = configs.getValue("scanSubtext2"),
+  subtitle: String = "Check In"
+) {
+  div("page") {
+    div("header") {
+      h1 {
+        +name
+      }
+      p {
+        +subtitle
+      }
+    }
+    div("qrcode") {
+      this.id = id
+    }
+    div("footer") {
+      p {
+        +subtext1
+      }
+      p {
+        +subtext2
+      }
+    }
+  }
+  div("break") {}
 }

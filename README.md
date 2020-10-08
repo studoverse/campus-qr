@@ -31,7 +31,7 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **Scalable access verification**: Access control can be verified by one doorman or lecturer in parallel to avoid crowds around entries.
 * **External identity management**: SSO, LDAP (using JNDI) and OAuth2 are supported by Ktor authentication packages. 
 * **Logging**: Optional User-Agent and IP address logging for auditing. (Disabled by default - privacy by default)
-* **API Access**: A *shared key* can be optionally defined to grant admin access to external services.
+* **API Access**: A *shared key* can be optionally defined to grant admin access to external services: Add the `X-Authorization: [authSharedSecret]` header to the request to authenticate as administrator (sharedSecretUser).
 * **E-Mail restriction**: Definition which e-mail addresses can be entered on check-in to force university email addresses.
 
 ## Managed hosting features

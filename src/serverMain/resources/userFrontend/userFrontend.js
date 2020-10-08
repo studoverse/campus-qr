@@ -1,18 +1,19 @@
 function pad(num, size) {
-  return ('000' + num).substr(-size)
+  return ('000' + num).substr(-size);
 }
 
-let fullLocationId = new URLSearchParams(window.location.search).get("l")
+let fullLocationId = new URLSearchParams(window.location.search).get("l");
 
 // True if the page was opened directly from the QR code and not reloaded / bookmarked
 let justScanned = false;
 
 function onLoad() {
+  document.getElementById("lang-select").addEventListener("click", changeLanguageTo);
+
   if (window.location.search.includes("s=1")) {
     // If present, remove "just scanned" parameter from url and replace history state so the user cannot check in again by just reloading
     let url = window.location.href.split(window.location.search)[0];
     window.history.replaceState(null, null, url + "?l=" + fullLocationId);
-    window.localStorage.removeItem("checkin-" + fullLocationId);
     justScanned = true;
   }
 
@@ -24,90 +25,100 @@ function onLoad() {
     },
     onShowNewCheckin: normalStartup,
     onCheckinExpired: checkinExpired,
-  })
+  });
 
   deleteExpiredCheckins();
 }
 
+function onSubmit() {
+  let emailInput = document.getElementById("email-input");
+  let acceptTosCheckbox = document.getElementById("accept-tos-checkbox");
+  let submitButton = document.getElementById("submit-button");
+  let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
+  let resultForbiddenAccessRestricted = document.getElementById("result-forbidden-access-restricted");
+  let resultForbiddenEmail = document.getElementById("result-forbidden-email");
+  let resultNetErr = document.getElementById("result-net-err");
+
+  let emailWrapper = emailInput.parentElement;
+  let email = emailInput.value.replace(" ", "")
+  if (email.length < 5 || !email.includes("@") || !email.includes(".")) {
+    emailWrapper.className = emailWrapper.className.replace("highlighted", "") + " highlighted";
+    return;
+  } else {
+    emailWrapper.className = emailWrapper.className.replace("highlighted", "");
+  }
+  let acceptTosCheckboxWrapper = acceptTosCheckbox.parentElement;
+  if (acceptTosCheckbox.checked !== true) {
+    acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "") + " highlighted";
+    return;
+  } else {
+    acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "");
+  }
+
+  // Reset result visibility (hide)
+  resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
+  resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "") + " hidden";
+  resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "") + " hidden";
+  resultNetErr.className = resultNetErr.className.replace("hidden", "") + " hidden";
+
+  let submitButtonText = submitButton.innerText;
+  let xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState === 4) {
+      setTimeout(() => {
+        submitButton.innerText = submitButtonText
+        if (this.status === 200) {
+          if (this.responseText === "ok") {
+            let locationName = document.head.querySelector("[name~=location-name][content]").content;
+            if (fullLocationId.includes("-")) {
+              locationName += ` #${fullLocationId.split("-")[1]}`;
+            }
+            // Success
+            setDatetimeElement(Date.now());
+            window.localStorage.setItem("email", email);
+            window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}::${locationName}`);
+            showCheckin(email);
+          } else if (this.responseText === "forbidden_access_restricted") {
+            // E-Mail address not found in restricted access email list
+            resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "");
+          } else if (this.responseText === "forbidden_email") {
+            // E-Mail address does not match allowed email-regex
+            resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "");
+          }
+        } else {
+          // Network or internal error
+          resultNetErr.className = resultNetErr.className.replace("hidden", "");
+        }
+      }, 700)
+    }
+  }
+  xhttp.open("POST", "/location/" + fullLocationId + "/visit");
+  xhttp.send(JSON.stringify({email: email}));
+  submitButton.innerText = "..."
+}
+
 function normalStartup() {
   let overlay = document.getElementById("overlay");
+  let contentWrapper = document.getElementById("all-content-wrapper");
   if (!justScanned) {
     overlay.className = overlay.className.replace("hidden", "");
+    contentWrapper.className = contentWrapper.className.replace("hidden", "") + "hidden"; // Hide page content
     return;
   }
 
   if (!fullLocationId) {
     overlay.className = overlay.className.replace("hidden", "");
+    contentWrapper.className = contentWrapper.className.replace("hidden", "") + "hidden"; // Hide page content
 
   } else {
     let emailInput = document.getElementById("email-input");
     let acceptTosCheckbox = document.getElementById("accept-tos-checkbox");
     let submitButton = document.getElementById("submit-button");
-    let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
-    let resultForbiddenAccessRestricted = document.getElementById("result-forbidden-access-restricted");
-    let resultForbiddenEmail = document.getElementById("result-forbidden-email");
-    let resultNetErr = document.getElementById("result-net-err");
 
     let email = window.localStorage.getItem("email");
     if (email) {
       emailInput.value = email;
       acceptTosCheckbox.checked = true;
-    }
-
-    function onSubmit() {
-      let emailWrapper = emailInput.parentElement;
-      let email = emailInput.value.replace(" ", "")
-      if (email.length < 5 || !email.includes("@") || !email.includes(".")) {
-        emailWrapper.className = emailWrapper.className.replace("highlighted", "") + " highlighted";
-        return;
-      } else {
-        emailWrapper.className = emailWrapper.className.replace("highlighted", "");
-      }
-      let acceptTosCheckboxWrapper = acceptTosCheckbox.parentElement;
-      if (acceptTosCheckbox.checked !== true) {
-        acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "") + " highlighted";
-        return;
-      } else {
-        acceptTosCheckboxWrapper.className = acceptTosCheckboxWrapper.className.replace("highlighted", "");
-      }
-
-      // Reset result visibility (hide)
-      resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
-      resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "") + " hidden";
-      resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "") + " hidden";
-      resultNetErr.className = resultNetErr.className.replace("hidden", "") + " hidden";
-
-      let submitButtonText = submitButton.innerText;
-      let xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-          setTimeout(() => {
-            submitButton.innerText = submitButtonText
-            if (this.status === 200) {
-              if (this.responseText === "ok") {
-                // Success
-                setDatetimeElement(Date.now())
-                window.localStorage.setItem("email", email);
-                window.localStorage.setItem("checkin-" + fullLocationId, `${btoa(email)}::${Date.now().toString()}`);
-                showCheckin(email)
-              } else if (this.responseText === "forbidden_access_restricted") {
-                // E-Mail address not found in restricted access email list
-                resultForbiddenAccessRestricted.className = resultForbiddenAccessRestricted.className.replace("hidden", "");
-              } else if (this.responseText === "forbidden_email") {
-                // E-Mail address does not match allowed email-regex
-                resultForbiddenEmail.className = resultForbiddenEmail.className.replace("hidden", "");
-              }
-            } else {
-              // Network or internal error
-              resultNetErr.className = resultNetErr.className.replace("hidden", "");
-            }
-          }, 700)
-        }
-      }
-      xhttp.open("POST", "/location/" + fullLocationId + "/visit");
-      xhttp.send(JSON.stringify({email: email}));
-      submitButtonText = submitButton.innerText
-      submitButton.innerText = "..."
     }
 
     submitButton.onclick = onSubmit;
@@ -128,7 +139,7 @@ function setDatetimeElement(dateLong) {
 }
 
 // Hides the form and shows the checkin / verification view
-function showCheckin(email, time = null) {
+function showCheckin(email) {
   let form = document.getElementById("form");
   let resultOk = document.getElementById("result-ok");
   let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
@@ -138,20 +149,32 @@ function showCheckin(email, time = null) {
   resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "");
   resultOk.className = resultOk.className.replace("hidden", "");
 
-  // Check if checkin has expired every four seconds
+  // Check if checkin has expired every second
   let interval = setInterval(function () {
-    handleOldCheckin(
-        {
-          onCheckinExpired: function () {
-            clearInterval(interval);
-            checkinExpired();
-          }
-        }
-    );
-  }, 4000);
+    handleOldCheckin({
+      onCheckinExpired: function () {
+        clearInterval(interval);
+        checkinExpired();
+      }
+    });
+  }, 1000);
+}
+
+function hideVerification() {
+  let resultOk = document.getElementById("result-ok");
+  let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
+  resultOk.className = resultOk.className.replace("hidden", "") + " hidden";
+  resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
 }
 
 function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, onCheckinExpired = null}) {
+  regenerateCheckoutView({
+    locationId: fullLocationId,
+    onCurrentLocationRemoved: function () {
+      hideVerification();
+    }
+  });
+
   let lastCheckin = window.localStorage.getItem("checkin-" + fullLocationId)
   if (lastCheckin) {
     let email = atob(lastCheckin.split("::")[0])
@@ -172,20 +195,16 @@ function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, on
 
 function checkinExpired() {
   let overlay = document.getElementById("overlay");
-  let overlayExpired = document.getElementById("overlay-expired");
-  let overlayRetry = document.getElementById("overlay-retry");
-  let resultOkWrapper = document.getElementsByClassName("result-wrapper")[0];
-  let resultNotAllowed = document.getElementById("result-not-allowed");
-  let resultNetErr = document.getElementById("result-net-err");
-
-  // Hide results
-  resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
-  resultNotAllowed.className = resultNotAllowed.className.replace("hidden", "") + " hidden";
-  resultNetErr.className = resultNetErr.className.replace("hidden", "") + " hidden";
-
-  overlayRetry.className = overlayRetry.className.replace("hidden", "") + "hidden"; // Hide default text
-  overlayExpired.className = overlayExpired.className.replace("hidden", ""); // Show expired text
   overlay.className = overlay.className.replace("hidden", ""); // show overlay
+
+  let overlayExpired = document.getElementById("overlay-expired");
+  overlayExpired.className = overlayExpired.className.replace("hidden", ""); // Show expired text
+
+  let overlayRetry = document.getElementById("overlay-retry");
+  overlayRetry.className = overlayRetry.className.replace("hidden", "") + "hidden"; // Hide default text
+
+  let contentWrapper = document.getElementById("all-content-wrapper");
+  contentWrapper.className = contentWrapper.className.replace("hidden", "") + "hidden"; // Hide page content
 }
 
 // Deletes expired checkins from other locations that are older than 24 hours
@@ -194,7 +213,7 @@ function deleteExpiredCheckins() {
     let key = window.localStorage.key(i);
 
     // Only remove checkins from different locations
-    if (key.startsWith("checkin-") && key.split("checkin-")[1] !== fullLocationId) {
+    if (key.startsWith("checkin-") && key !== "checkin-" + fullLocationId) {
       let checkinDate = new Date(window.localStorage.getItem(key).split("::")[1]);
       if (new Date() - checkinDate > 1000 * 60 * 60 * 24) { // Only remove checkins older than 24 hours
         window.localStorage.removeItem(key);
@@ -203,16 +222,16 @@ function deleteExpiredCheckins() {
   }
 }
 
-if (document.readyState === "loading") {
-  document.onload = onLoad
-} else {
-  onLoad();
-}
-
 function changeLanguageTo() {
   let lang = document.getElementById("lang-select").value;
   document.cookie = "MbLang=" + lang
-  window.location.href = window.location.href.replace("&s=1", "") + "&s=1"
+  // Reload page with added s=1 parameter to prevent overlay from showing.
+  window.location.href = window.location.href.replace("&s=1", "") + "&s=1";
 }
 
-document.getElementById("lang-select").onclick = changeLanguageTo;
+if (/complete|interactive|loaded/.test(document.readyState)) {
+  onLoad();
+} else {
+  document.addEventListener('DOMContentLoaded', onLoad, false);
+}
+
