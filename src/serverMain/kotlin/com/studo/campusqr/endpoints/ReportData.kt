@@ -70,25 +70,35 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
     }
   }
 
-  val impactedCheckInsTask: Deferred<List<CheckIn>> = serverScope.async(Dispatchers.IO) {
+  data class Contact(val reportedCheckIn: CheckIn, val impactedCheckIns: List<CheckIn>)
+
+  val contactsTask: Deferred<List<Contact>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
       val transitThresholdSeconds: Int = getConfig("transitThresholdSeconds")
 
       // We need to probably optimize performance here in the future
-      val otherCheckIns = reportedUserCheckIns.flatMap { reportedUserCheckin ->
-        getCollection<CheckIn>().find(
-          CheckIn::locationId equal reportedUserCheckin.locationId,
-          CheckIn::date lowerEquals (reportedUserCheckin.checkOutDate ?: now).addSeconds(transitThresholdSeconds),
-          or(
-            CheckIn::checkOutDate greaterEquals reportedUserCheckin.date.addSeconds(-transitThresholdSeconds),
-            CheckIn::checkOutDate equal null // Other user has not checked out yet
+      val impactedCheckIns = reportedUserCheckIns.map { reportedUserCheckin ->
+        val impactedCheckIns = getCollection<CheckIn>()
+          .find(
+            CheckIn::locationId equal reportedUserCheckin.locationId,
+            CheckIn::date lowerEquals (reportedUserCheckin.checkOutDate ?: now).addSeconds(transitThresholdSeconds),
+            or(
+              CheckIn::checkOutDate greaterEquals reportedUserCheckin.date.addSeconds(-transitThresholdSeconds),
+              CheckIn::checkOutDate equal null // Other user has not checked out yet
+            )
           )
-        ).toList()
+          .distinctBy { it.email }
+          .filter { it.email !in emails }
+
+        return@map Contact(reportedUserCheckin, impactedCheckIns)
       }
 
-      otherCheckIns.distinctBy { it.email }.filter { it.email !in emails }
+      impactedCheckIns
     }
   }
+
+  fun BackendSeatFilter.mapId() = "$locationId-$seat"
+  fun CheckIn.mapId() = "$locationId-$seat"
 
   val seatFilterTask: Deferred<Map<String, BackendSeatFilter>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
@@ -100,31 +110,34 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
               BackendSeatFilter::seat equal seat
             )
         }
-      }.associateBy { "${it.locationId}-${it.seat}" }
+      }.associateBy { it.mapId() }
     }
   }
 
-  fun Map<String, BackendSeatFilter>.getFor(locationId: String, seat: Int?) = this["$locationId-$seat"]
+  val locationIdToLocationMap: Map<String, BackendLocation> = locationMapTask.await()
+  var contacts: List<Contact> = contactsTask.await()
+  val seatFilterMap: Map<String, BackendSeatFilter> = seatFilterTask.await()
 
-  val locationIdToLocationMap = locationMapTask.await()
-  val impactedCheckIns = impactedCheckInsTask.await().toMutableList()
-  val seatFilterMap = seatFilterTask.await()
-
+  // Seat filters
   if (seatFilterMap.isNotEmpty()) {
-    // Apply seat filters
-    reportedUserCheckIns.forEach { reportedCheckIn ->
-      seatFilterMap.getFor(reportedCheckIn.locationId, reportedCheckIn.seat)?.let { seatFilter ->
-        impactedCheckIns.removeIf { impactedCheckin ->
-          impactedCheckin.seat != null &&
-              impactedCheckin.date.day == reportedCheckIn.date.day && // TODO: something soimilar
-              impactedCheckin.locationId == reportedCheckIn.locationId &&
-              impactedCheckin.seat !in seatFilter.filteredSeats
-        }
+    contacts = contacts.map { contact ->
+      val seatFilter = seatFilterMap[contact.reportedCheckIn.mapId()]
+      if (seatFilter == null) {
+        contact // No change
+      } else {
+        // Apply seat filter
+        Contact(contact.reportedCheckIn, contact.impactedCheckIns.filter { impactedCheckIn ->
+          impactedCheckIn.seat in seatFilter.filteredSeats
+        })
       }
     }
   }
 
-  val impactedUsersEmails = impactedCheckIns.map { it.email }
+  val impactedUsers = contacts
+    .flatMap { it.impactedCheckIns }
+    .distinctBy { it.email }
+
+  val impactedUsersEmails = impactedUsers.map { it.email }
 
   val csvFilePrefix = emails
     .firstOrNull()
@@ -134,24 +147,25 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
 
   return ReportData(
     impactedUsersEmails = impactedUsersEmails.toTypedArray(),
-    impactedUsersCount = impactedUsersEmails.count(),
-    impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(","),
-    reportedUserLocations = reportedUserCheckIns.map { checkIn ->
-      val location = locationIdToLocationMap.getValue(checkIn.locationId)
+    impactedUsersCount = impactedUsers.count(),
+    impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(","), // TODO move to frontend
+    reportedUserLocations = contacts.map { (reportedCheckIn, impactedCheckIns) ->
+      val location = locationIdToLocationMap.getValue(reportedCheckIn.locationId)
       ReportData.UserLocation(
         locationId = location._id,
         locationName = location.name,
         locationSeatCount = location.seatCount,
-        email = checkIn.email,
-        date = checkIn.date.toAustrianTime(yearAtBeginning = false),
-        seat = checkIn.seat,
-        filteredSeats = seatFilterMap.getFor(checkIn.locationId, checkIn.seat)?.filteredSeats?.toTypedArray()
+        email = reportedCheckIn.email,
+        date = reportedCheckIn.date.toAustrianTime(yearAtBeginning = false),
+        seat = reportedCheckIn.seat,
+        filteredSeats = seatFilterMap[reportedCheckIn.mapId()]?.filteredSeats?.toTypedArray(),
+        impactedPeople = impactedCheckIns.count()
       )
     }.toTypedArray(),
     impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
     impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv",
     reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
-      "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationIdToLocationMap.getValue(it.locationId).name}"
+      "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationIdToLocationMap.getValue(it.locationId).name};${it.seat ?: "-"}"
     },
     reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
     startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),

@@ -40,7 +40,8 @@ class ReportData(
     val email: String,
     val date: String,
     val seat: Int?,
-    val filteredSeats: Array<Int>?
+    val filteredSeats: Array<Int>?,
+    val impactedPeople: Int,
   )
 }
 

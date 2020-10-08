@@ -247,22 +247,27 @@ object Strings {
 
   val report_checkin_seat_filter = LocalizedString(
     "Seat filter",
-    "Sitzfilter",
+    "Sitzplatzfilter",
   )
 
   val report_checkin_add_filter_title = LocalizedString(
     "Add seat filter",
-    "Sitzfilter hinzufügen"
+    "Sitzplatzfilter hinzufügen"
   )
 
   val report_checkin_add_filter_content = LocalizedString(
-    "Please select seats, that were close enough or in contact with the infected person.",
-    "Bitte wählen Sie Plätze aus, die nahe genug an oder in Kontakt mit der infizierten Person waren."
+    "Please select seats, that were close enough with the infected person.",
+    "Bitte wählen Sie Sitzplätze aus, die nahe genug der infizierten Person waren."
+  )
+
+  val report_impacted_people = LocalizedString(
+    "Potential contacts",
+    "Potentielle Kontakte"
   )
 
   val report_affected_people = LocalizedString(
-      "%s people between %s and %s were potentially in contact with the infected person.",
-      "%s Personen zwischen %s und %s waren potentiell in Kontakt mit der infizierten Person."
+      "%s people (%s contacts) between %s and %s were potentially in contact with the infected person.",
+      "%s Personen (%s Kontakte) zwischen %s und %s waren potentiell in Kontakt mit der infizierten Person."
   )
 
   val report_export_via_mail = LocalizedString(

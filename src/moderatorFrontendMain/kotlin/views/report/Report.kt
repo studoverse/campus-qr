@@ -206,7 +206,12 @@ class Report : RComponent<ReportProps, ReportState>() {
           typography {
             attrs.variant = "h6"
             +Strings.report_affected_people.get()
-              .format(reportData.impactedUsersCount.toString(), reportData.startDate, reportData.endDate)
+              .format(
+                reportData.impactedUsersCount.toString(),
+                reportData.reportedUserLocations.sumBy { it.impactedPeople }.toString(),
+                reportData.startDate,
+                reportData.endDate
+              )
           }
 
           spacer(32)
@@ -223,6 +228,7 @@ class Report : RComponent<ReportProps, ReportState>() {
                 if (state.reportData?.reportedUserLocations?.any { it.locationSeatCount != null } == true) {
                   mTableCell { +Strings.report_checkin_filter.get() }
                 }
+                mTableCell { +Strings.report_impacted_people.get() }
               }
             }
             mTableBody {

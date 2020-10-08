@@ -67,6 +67,17 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
                 filteredSeats = target?.map { it.toInt() } ?: emptyList()
               }
             }
+            attrs.onInputChange = { event, value, _ ->
+              // Add values after user pressed a " " or "," for fast input
+              if (value.endsWith(" ") || value.endsWith(",")) {
+                val seatNumber = value.trim().removeSuffix(",").toIntOrNull()
+                if (seatNumber != null && seatNumber.toString() in state.filterOptions && seatNumber !in state.filteredSeats) {
+                  setState {
+                    filteredSeats += seatNumber
+                  }
+                }
+              }
+            }
             attrs.disableCloseOnSelect = true
             attrs.fullWidth = true
             attrs.multiple = true
@@ -158,6 +169,9 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
             }
           }
         }
+      }
+      mTableCell {
+        +props.config.userLocation.impactedPeople.toString()
       }
     }
   }
