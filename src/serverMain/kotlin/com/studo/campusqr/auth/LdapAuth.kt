@@ -14,40 +14,103 @@ import java.util.*
 import javax.naming.AuthenticationException
 import javax.naming.Context
 import javax.naming.NameNotFoundException
+import javax.naming.NamingEnumeration
 import javax.naming.directory.InitialDirContext
+import javax.naming.directory.SearchControls
+import javax.naming.directory.SearchResult
 
-
-class LdapAuth(val ldapUrl: String) : AuthProvider {
-  lateinit var ldapSearchFilter: String
-  lateinit var ldapApplicationUserPrincipal: String
-  lateinit var ldapApplicationUserCredentials: String
+class LdapAuth(private val ldapUrl: String) : AuthProvider {
+  private lateinit var ldapSearchFilter: String
+  private lateinit var ldapApplicationUserPrincipal: String
+  private lateinit var ldapApplicationUserCredentials: String
+  private lateinit var ldapGroupAttributeName: String
+  private lateinit var ldapGroupFilter: String
+  private lateinit var ldapGroupRegex: String
+  private var ldapPrintDebugLogs: Boolean = false
+  private var ldapTimeoutMs: Int = 0
 
   override suspend fun init() {
     runOnDb {
       ldapSearchFilter = getConfig("ldapSearchFilter")
       ldapApplicationUserPrincipal = getConfig("ldapApplicationUserPrincipal")
       ldapApplicationUserCredentials = getConfig("ldapApplicationUserCredentials")
+      ldapGroupAttributeName = getConfig("ldapGroupAttributeName")
+      ldapGroupFilter = getConfig("ldapGroupFilter")
+      ldapGroupRegex = getConfig("ldapGroupRegex")
+      ldapPrintDebugLogs = getConfig("ldapPrintDebugLogs")
+      ldapTimeoutMs = getConfig("ldapTimeoutMs")
     }
+
     automaticUserDisabling()
   }
 
+  private fun debugLog(message: String) {
+    if (ldapPrintDebugLogs) {
+      println("LDAP debug log: $message")
+    }
+  }
+
+  private fun getContextEnvironment(userPrincipal: String, password: String): Hashtable<String, Any?> {
+    debugLog("Create context for $userPrincipal")
+
+    return Hashtable<String, Any?>().apply {
+      this[Context.INITIAL_CONTEXT_FACTORY] = "com.sun.jndi.ldap.LdapCtxFactory"
+      this[Context.PROVIDER_URL] = ldapUrl
+      this[Context.SECURITY_AUTHENTICATION] = "simple"
+      this[Context.SECURITY_PRINCIPAL] = userPrincipal
+      this[Context.SECURITY_CREDENTIALS] = password
+      this["com.sun.jndi.ldap.read.timeout"] = ldapTimeoutMs.toString()
+    }
+  }
+
+  private fun findUser(userPrincipal: String, context: InitialDirContext): Boolean {
+    val controls = SearchControls().apply {
+      returningAttributes = arrayOf(ldapGroupAttributeName)
+      searchScope = SearchControls.OBJECT_SCOPE
+    }
+
+    try {
+      val answer: NamingEnumeration<*> = context.search(userPrincipal, ldapGroupFilter, controls)
+      debugLog("Search groups for $userPrincipal with filter $ldapGroupFilter")
+
+      var userIsInGroup = false
+
+      while (answer.hasMore()) {
+        val result = answer.next() as SearchResult
+        debugLog("User found. Got group search result: $result")
+        val groups: List<*> = result.attributes.get(ldapGroupAttributeName).all.toList()
+        debugLog("Groups: $groups")
+        if (groups.any { (it as? String)?.contains(ldapGroupRegex) == true }) {
+          debugLog("Found group --> Allow access")
+          userIsInGroup = true
+        }
+      }
+
+      if (!userIsInGroup) {
+        debugLog("No matching group found")
+      }
+
+      return userIsInGroup
+    } catch (e: NameNotFoundException) {
+      debugLog("Username not found")
+      return false // Username not found
+    }
+  }
+
   override suspend fun login(email: String, password: String): AuthProvider.Result {
-    // Use provided user to authenticate
-    val env = Hashtable<String, Any?>()
-    env[Context.INITIAL_CONTEXT_FACTORY] = "com.sun.jndi.ldap.LdapCtxFactory"
-    env[Context.PROVIDER_URL] = ldapUrl
-    env[Context.SECURITY_AUTHENTICATION] = "simple"
-    env[Context.SECURITY_PRINCIPAL] = ldapSearchFilter.format(ldapEscape(email))
-    env[Context.SECURITY_CREDENTIALS] = password
+    val userPrincipal = ldapSearchFilter.format(ldapEscape(email))
 
     val valid = try {
-      val context = InitialDirContext(env)
+      // Use provided user to authenticate
+      val context = InitialDirContext(getContextEnvironment(userPrincipal, password))
+
+      val userFound = findUser(userPrincipal, context)
       context.close()
-      true
-    } catch (e: NameNotFoundException) {
-      false // Username not found
+      userFound
+
     } catch (e: AuthenticationException) {
-      false // Password wrong
+      debugLog("Wrong username or password")
+      false // Wrong username or password
     }
 
     return if (!valid) {
@@ -78,24 +141,19 @@ class LdapAuth(val ldapUrl: String) : AuthProvider {
     while (true) {
       try {
         // Use the service user to authenticate
-        val env = Hashtable<String, Any?>()
-        env[Context.INITIAL_CONTEXT_FACTORY] = "com.sun.jndi.ldap.LdapCtxFactory"
-        env[Context.PROVIDER_URL] = ldapUrl
-        env[Context.SECURITY_AUTHENTICATION] = "simple"
-        env[Context.SECURITY_PRINCIPAL] = ldapApplicationUserPrincipal
-        env[Context.SECURITY_CREDENTIALS] = ldapApplicationUserCredentials
+        val context = InitialDirContext(getContextEnvironment(ldapApplicationUserPrincipal, ldapApplicationUserCredentials))
 
-        val context = InitialDirContext(env)
         var stillEnabledUsers = 0
         val disabledUsers = mutableListOf<String>()
         try {
           runOnDb {
             getCollection<BackendUser>().find().forEach { user ->
-              try {
-                context.lookup(ldapSearchFilter.format(ldapEscape(user.email)))
+              val userPrincipal = ldapSearchFilter.format(ldapEscape(user.email))
+
+              if (findUser(userPrincipal, context)) {
                 stillEnabledUsers++
-              } catch (e: NameNotFoundException) {
-                // Delete sessions and user
+              } else {
+                // User does not exist any more or has not the given group any more -> Delete sessions and user
                 MainDatabase.getCollection<SessionToken>().deleteMany(SessionToken::userId equal user._id)
                 getCollection<BackendUser>().deleteOne(BackendUser::_id equal user._id)
 

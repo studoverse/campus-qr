@@ -76,6 +76,11 @@ suspend fun initialDatabaseSetup() {
       insert("ldapSearchFilter", "(uid=%s,dc=example,dc=com)") // For user authentication
       insert("ldapApplicationUserPrincipal", "cn=read-only-admin,dc=example,dc=com") // For user disabling via lookup
       insert("ldapApplicationUserCredentials", "password") // For user disabling via lookup
+      insert("ldapGroupAttributeName", "memberOf") // LDAP attribute-name of the user
+      insert("ldapGroupFilter", "(objectclass=user)")
+      insert("ldapGroupRegex", "CN=CampusQR,") // At least one attribute must match this regex to authenticate with success
+      insert("ldapPrintDebugLogs", 0)
+      insert("ldapTimeoutMs", 10_000)
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
 
       insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
