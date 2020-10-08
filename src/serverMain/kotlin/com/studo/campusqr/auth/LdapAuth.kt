@@ -243,7 +243,7 @@ private fun Char.shouldEscape(): Boolean = this.toInt().let { codepoint ->
     in 0x3f..0x7e -> codepoint == 0x5c // the only forbidden character is backslash
     in 0x2d..0x3a -> false // minus, point, slash (allowed), digits + colon :
     in 0x24..0x2a -> false // $%&'()*
-    0x21 -> false // exclamation
+    0x21, 0x20 -> false // exclamation and space
     else -> true
   }
 }

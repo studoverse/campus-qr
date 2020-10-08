@@ -91,7 +91,7 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
           attrs.fullWidth = true
           attrs.label = Strings.email_address.get()
           attrs.onChange = { event: Event ->
-            val value = event.inputValue.filter { !it.isWhitespace() }
+            val value = event.inputValue
             setState {
               email = value
               errorMessage = null
