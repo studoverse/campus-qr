@@ -1,20 +1,14 @@
 package views.report
 
-import apiBase
 import com.studo.campusqr.common.ReportData
 import kotlinext.js.js
-import kotlinx.browser.window
-import kotlinx.coroutines.withContext
 import react.*
-import react.dom.option
-import views.common.renderLinearProgress
+import util.Strings
+import util.get
 import views.common.spacer
 import webcore.DialogButton
-import webcore.NetworkManager
-import webcore.extensions.launch
 import webcore.materialUI.*
 import webcore.mbMaterialDialog
-import kotlin.js.json
 
 interface ReportTableRowProps : RProps {
   class Config(
@@ -59,10 +53,10 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
           }
         },
         show = true,
-        title = "Add seat filter",
+        title = Strings.report_checkin_add_filter_title.get(),
         customContent = {
           typography {
-            +"Please select seats, that were close enough or in contact with the infected person."
+            +Strings.report_checkin_add_filter_content.get()
           }
 
           spacer(16)
@@ -97,7 +91,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
                 attrs.disabled = params.disabled
                 attrs.fullWidth = params.fullWidth
                 attrs.variant = "outlined"
-                attrs.label = "Seat filter"
+                attrs.label = Strings.report_checkin_seat_filter.get()
               }
             }
           }
@@ -140,7 +134,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
             mChip {
               attrs.color = "primary"
               attrs.variant = "outlined"
-              attrs.label = "Seat filter: ${currentFilteredSeats.joinToString()}"
+              attrs.label = "${Strings.report_checkin_seat_filter.get()}: ${currentFilteredSeats.joinToString()}"
               attrs.onDelete = {
                 with(props.config) {
                   onDeleteFilter(userLocation)
@@ -155,7 +149,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
           } else {
             mChip {
               attrs.variant = "outlined"
-              attrs.label = "Add seat filter"
+              attrs.label = Strings.report_checkin_add_filter_title.get()
               attrs.onClick = {
                 setState {
                   showApplyFilterDialog = true

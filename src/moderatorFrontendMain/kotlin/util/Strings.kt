@@ -31,6 +31,11 @@ object Strings {
       "Nicht angegeben"
   )
 
+  val apply = LocalizedString(
+    "Apply",
+    "Anwenden",
+  )
+
   val locations_element_download_qr_code = LocalizedString(
       "Print / download QR code",
       "QR-Code drucken / herunterladen"
@@ -233,6 +238,26 @@ object Strings {
   val report_checkin_seat = LocalizedString(
       "Seat",
       "Sitzplatz",
+  )
+
+  val report_checkin_filter = LocalizedString(
+    "Filter",
+    "Filter"
+  )
+
+  val report_checkin_seat_filter = LocalizedString(
+    "Seat filter",
+    "Sitzfilter",
+  )
+
+  val report_checkin_add_filter_title = LocalizedString(
+    "Add seat filter",
+    "Sitzfilter hinzufügen"
+  )
+
+  val report_checkin_add_filter_content = LocalizedString(
+    "Please select seats, that were close enough or in contact with the infected person.",
+    "Bitte wählen Sie Plätze aus, die nahe genug an oder in Kontakt mit der infizierten Person waren."
   )
 
   val report_affected_people = LocalizedString(

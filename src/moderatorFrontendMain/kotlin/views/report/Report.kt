@@ -221,7 +221,7 @@ class Report : RComponent<ReportProps, ReportState>() {
                   mTableCell { +Strings.report_checkin_seat.get() }
                 }
                 if (state.reportData?.reportedUserLocations?.any { it.locationSeatCount != null } == true) {
-                  mTableCell { +"Filter" }
+                  mTableCell { +Strings.report_checkin_filter.get() }
                 }
               }
             }
