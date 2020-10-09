@@ -36,7 +36,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
     showProgress = false
     showApplyFilterDialog = false
     filterOptions = props.config.userLocation.locationSeatCount?.let { seatCount ->
-      (1..seatCount).map { it }
+      (1..seatCount).map { it }.filter { it != props.config.userLocation.seat }
     } ?: emptyList()
     filteredSeats = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
   }

@@ -28,11 +28,18 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **Multirole administration**: The moderation frontend of Campus QR can be used by thousands of employees of a university.
 * **Access management**: Creation of specific access for students or guests within selected time frame to allow a controlled reopening of university buildings.
 * **Visitor list export**: Simple doorman specific interface with upcoming access permits
-* **Scalable access verification**: Access control can be verified by one doorman or lecturer in parallel to avoid crowds around entries.
-* **External identity management**: SSO, LDAP (using JNDI) and OAuth2 are supported by Ktor authentication packages. 
+* **Scalable access verification**: Access control can be verified by a doorman or lecturer in parallel to avoid crowds around entries. A unique access verification code is generated daily for easy parallel verification.
+* **External identity management**: SSO, LDAP (using JNDI) and OAuth2 are supported by Ktor authentication packages and fully configurable LDAP integration.
 * **Logging**: Optional User-Agent and IP address logging for auditing. (Disabled by default - privacy by default)
-* **API Access**: A *shared key* can be optionally defined to grant admin access to external services: Add the `X-Authorization: [authSharedSecret]` header to the request to authenticate as administrator (sharedSecretUser).
+* **API access**: A *shared key* can be optionally defined to grant admin access to external services: Add the `X-Authorization: [authSharedSecret]` header to the request to authenticate as administrator (sharedSecretUser).
 * **E-Mail restriction**: Definition which e-mail addresses can be entered on check-in to force university email addresses.
+* **Manual check out**: Users can check out by scanning the check-in QR code again or scanning a generic check-out QR code.
+* **Automatic check out**: In case user forgets to check-out, they get automatically checked-out after a configurable amount of time has passed.
+* **Multi check in**: Locations can contain sublocations: Users can check-in in whole buildings and then further check-in in rooms inside the building.
+* **Seat support**: A QR code can be generated for whole locations (like rooms or buildings) or per seat (e.g. one QR code per lecture hall seat).
+* **Seat filtering**: With enabled seat support, potentially affected people can be filtered by their seats. This allows differentiating between two types of contacts:
+  * "K1 contact": People who were in direct contact with an infected person.
+  * "K2 contact": People who where only in the same location and time but sat far away to the infected person.
 
 ## Managed hosting features
 Campus QR can be hosted by the university itself or by [Studo](https://studo.com). When hosted by Studo, the following hosting features are available per default: 
