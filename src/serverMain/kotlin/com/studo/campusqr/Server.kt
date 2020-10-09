@@ -107,9 +107,9 @@ suspend fun main() {
           get("visitsCsv") { call.getAuthenticatedCall()?.returnLocationVisitCsvData() }
           post("edit") { call.getAuthenticatedCall()?.editLocation() }
           get("qr-code") { call.getAuthenticatedCall()?.viewSingleQrCode() }
-          get("delete") { call.getAuthenticatedCall()?.deleteLocation() }
-          get("editSeatFilter") { call.getAuthenticatedCall()?.editSeatFilter() }
-          get("deleteSeatFilter") { call.getAuthenticatedCall()?.deleteSeatFilter() }
+          post("delete") { call.getAuthenticatedCall()?.deleteLocation() }
+          post("editSeatFilter") { call.getAuthenticatedCall()?.editSeatFilter() }
+          post("deleteSeatFilter") { call.getAuthenticatedCall()?.deleteSeatFilter() }
         }
       }
       route("access") {

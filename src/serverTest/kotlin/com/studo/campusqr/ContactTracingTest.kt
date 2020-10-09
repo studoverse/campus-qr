@@ -23,8 +23,8 @@ class ContactTracingTest {
     }
 
     assertEquals(
-        expected = setOf("a@test.com", "b@test.com", "c@test.com", "d@test.com", "g@test.com"),
-        actual = report.impactedUsersEmails.toSet()
+      expected = setOf("a@test.com", "b@test.com", "c@test.com", "d@test.com", "g@test.com"),
+      actual = report.impactedUsersEmails.toSet()
     )
   }
 
@@ -55,13 +55,14 @@ class ContactTracingTest {
     fun setup() {
       val infectedCheckIn = now.addMinutes(-60)
       val infectedCheckOut = now.addMinutes(-30)
+      val location = "testLocation"
 
       with(MainDatabase.getCollection<BackendLocation>()) {
         clear()
         assertEquals(0, count())
 
         insertOne(BackendLocation().apply {
-          _id = "testLocation"
+          _id = location
           name = "Test Location"
           createdBy = "test"
           createdDate = now.addDays(-1)
@@ -75,51 +76,60 @@ class ContactTracingTest {
         // Test data is taken from function docs of generateContactTracingReport()
         bulkWrite {
           listOf(
-              createTestCheckIn(
-                  checkInDate = infectedCheckIn,
-                  checkOutDate = infectedCheckOut,
-                  email = infectedEmail
-              ),
-              createTestCheckIn(
-                  checkInDate = infectedCheckIn.addMinutes(5),
-                  checkOutDate = infectedCheckOut.addMinutes(-5),
-                  email = "a@test.com"
-              ),
-              createTestCheckIn(
-                  checkInDate = infectedCheckOut.addMinutes(-5),
-                  checkOutDate = null,
-                  email = "b@test.com"
-              ),
-              createTestCheckIn(
-                  checkInDate = infectedCheckIn.addMinutes(-5),
-                  checkOutDate = infectedCheckIn.addMinutes(5),
-                  email = "c@test.com"
-              ),
-              createTestCheckIn(
-                  checkInDate = infectedCheckOut.addMinutes(-5),
-                  checkOutDate = infectedCheckOut.addMinutes(5),
-                  email = "d@test.com"
-              ),
-              createTestCheckIn(
-                  checkInDate = infectedCheckIn.addMinutes(-10),
-                  checkOutDate = infectedCheckIn.addMinutes(-5),
-                  email = "f@test.com"
-              ),
-              createTestCheckIn(
-                  checkInDate = infectedCheckOut.addMinutes(5),
-                  checkOutDate = infectedCheckOut.addMinutes(10),
-                  email = "f@test.com"
-              ),
-              createTestCheckIn(
-                  checkInDate = infectedCheckIn.addMinutes(-5),
-                  checkOutDate = infectedCheckOut.addMinutes(5),
-                  email = "g@test.com"
-              ),
-              createTestCheckIn(
-                  checkInDate = infectedCheckIn.addMinutes(-15),
-                  checkOutDate = infectedCheckIn.addSeconds(-100),
-                  email = transitUserEmail
-              )
+            createTestCheckIn(
+              checkInDate = infectedCheckIn,
+              checkOutDate = infectedCheckOut,
+              email = infectedEmail,
+              locationId = location
+            ),
+            createTestCheckIn(
+              checkInDate = infectedCheckIn.addMinutes(5),
+              checkOutDate = infectedCheckOut.addMinutes(-5),
+              email = "a@test.com",
+              locationId = location
+            ),
+            createTestCheckIn(
+              checkInDate = infectedCheckOut.addMinutes(-5),
+              checkOutDate = null,
+              email = "b@test.com",
+              locationId = location
+            ),
+            createTestCheckIn(
+              checkInDate = infectedCheckIn.addMinutes(-5),
+              checkOutDate = infectedCheckIn.addMinutes(5),
+              email = "c@test.com",
+              locationId = location
+            ),
+            createTestCheckIn(
+              checkInDate = infectedCheckOut.addMinutes(-5),
+              checkOutDate = infectedCheckOut.addMinutes(5),
+              email = "d@test.com",
+              locationId = location
+            ),
+            createTestCheckIn(
+              checkInDate = infectedCheckIn.addMinutes(-10),
+              checkOutDate = infectedCheckIn.addMinutes(-5),
+              email = "e@test.com",
+              locationId = location
+            ),
+            createTestCheckIn(
+              checkInDate = infectedCheckOut.addMinutes(5),
+              checkOutDate = infectedCheckOut.addMinutes(10),
+              email = "f@test.com",
+              locationId = location
+            ),
+            createTestCheckIn(
+              checkInDate = infectedCheckIn.addMinutes(-5),
+              checkOutDate = infectedCheckOut.addMinutes(5),
+              email = "g@test.com",
+              locationId = location
+            ),
+            createTestCheckIn(
+              checkInDate = infectedCheckIn.addMinutes(-15),
+              checkOutDate = infectedCheckIn.addSeconds(-100),
+              email = transitUserEmail,
+              locationId = location
+            )
           ).forEach { insertOne(it, upsert = false) }
         }
       }

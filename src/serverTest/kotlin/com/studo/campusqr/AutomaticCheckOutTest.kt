@@ -24,7 +24,7 @@ class AutomaticCheckOutTest {
       assertEquals(0, count())
 
       insertOne(
-          document = createTestCheckIn(checkInDate, checkOutDate = null),
+          document = createTestCheckIn(checkInDate, checkOutDate = null, locationId = "testLocation"),
           upsert = false
       )
 

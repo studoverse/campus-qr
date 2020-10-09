@@ -31,6 +31,11 @@ object Strings {
       "Nicht angegeben"
   )
 
+  val apply = LocalizedString(
+    "Apply",
+    "Anwenden",
+  )
+
   val locations_element_download_qr_code = LocalizedString(
       "Print / download QR code",
       "QR-Code drucken / herunterladen"
@@ -215,11 +220,6 @@ object Strings {
       "Kontakte zurückverfolgen"
   )
 
-  val report_checkins = LocalizedString(
-      "Check ins of the person",
-      "Check-Ins der Person"
-  )
-
   val report_checkin_email = LocalizedString(
       "E-mail Address",
       "E-Mail Adresse"
@@ -240,9 +240,34 @@ object Strings {
       "Sitzplatz",
   )
 
+  val report_checkin_filter = LocalizedString(
+    "Filter",
+    "Filter"
+  )
+
+  val report_checkin_seat_filter = LocalizedString(
+    "Seat filter",
+    "Sitzplatzfilter",
+  )
+
+  val report_checkin_add_filter_title = LocalizedString(
+    "Add seat filter",
+    "Sitzplatzfilter hinzufügen"
+  )
+
+  val report_checkin_add_filter_content = LocalizedString(
+    "Please select those seats that are close to the seat of the infected person.",
+    "Bitte wählen Sie jene Sitzplätze aus, die nahe zum Sitz der infizierten Person liegen."
+  )
+
+  val report_impacted_people = LocalizedString(
+    "Potential contacts",
+    "Potentielle Kontakte"
+  )
+
   val report_affected_people = LocalizedString(
-      "%s people between %s and %s were potentially in contact with the infected person.",
-      "%s Personen zwischen %s und %s waren potentiell in Kontakt mit der infizierten Person."
+      "%s people (%s contacts) between %s and %s were potentially in contact with the infected person.",
+      "%s Personen (%s Kontakte) zwischen %s und %s waren potentiell in Kontakt mit der infizierten Person."
   )
 
   val report_export_via_mail = LocalizedString(
