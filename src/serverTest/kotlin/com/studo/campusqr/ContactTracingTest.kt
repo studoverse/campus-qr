@@ -103,7 +103,7 @@ class ContactTracingTest {
               createTestCheckIn(
                   checkInDate = infectedCheckIn.addMinutes(-10),
                   checkOutDate = infectedCheckIn.addMinutes(-5),
-                  email = "f@test.com"
+                  email = "e@test.com"
               ),
               createTestCheckIn(
                   checkInDate = infectedCheckOut.addMinutes(5),

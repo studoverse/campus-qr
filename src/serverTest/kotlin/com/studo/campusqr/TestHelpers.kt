@@ -1,5 +1,6 @@
 package com.studo.campusqr
 
+import com.studo.campusqr.database.BackendSeatFilter
 import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.database.Configuration
 import com.studo.campusqr.database.MainDatabase
@@ -9,13 +10,28 @@ import java.util.*
 internal fun createTestCheckIn(
     checkInDate: Date,
     checkOutDate: Date? = null,
-    email: String = "test@test.com"
+    email: String = "test@test.com",
+    locationId: String = "testLocation1",
+    seat: Int? = null
 ) = CheckIn().apply {
   _id = randomId()
-  locationId = "testLocation"
+  this.locationId = locationId
   date = checkInDate
   this.checkOutDate = checkOutDate
   this.email = email
+  this.seat = seat
+}
+
+internal fun createTestFilter(
+  locationId: String,
+  seat: Int,
+  filteredSeats: List<Int>
+) = BackendSeatFilter().apply {
+  _id = randomId()
+  this.locationId = locationId
+  this.seat = seat
+  this.filteredSeats = filteredSeats
+  lastEditDate = Date()
 }
 
 internal fun setConfig(id: String, value: String) {

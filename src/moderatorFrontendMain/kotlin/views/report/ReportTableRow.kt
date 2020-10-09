@@ -112,7 +112,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
 
         },
         buttons = listOf(
-          DialogButton("Apply", onClick = {
+          DialogButton(Strings.apply.get(), onClick = {
             setState { showApplyFilterDialog = false }
             with(props.config) {
               onApplyFilterChange(userLocation, state.filteredSeats)
@@ -190,7 +190,7 @@ private val ReportTableRowStyle = { theme: dynamic ->
   // Keep in sync with ReportItemClasses!
   js {
     autocompleteWrapper = js {
-      // Make sure that dialog's apply button doesnt get overlayed by autocomplete's dropdown
+      // Make sure that dialog's apply button doesn't get overlaid by autocomplete's dropdown
       width = "calc(100% - 70px)"
     }
   }
