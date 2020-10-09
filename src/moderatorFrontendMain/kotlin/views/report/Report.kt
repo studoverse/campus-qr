@@ -225,13 +225,9 @@ class Report : RComponent<ReportProps, ReportState>() {
                 if (showEmailAddress) mTableCell { +Strings.report_checkin_email.get() }
                 mTableCell { +Strings.report_checkin_date.get() }
                 mTableCell { +Strings.report_checkin_location.get() }
-                if (state.reportData?.reportedUserLocations?.any { it.seat != null } == true) {
-                  mTableCell { +Strings.report_checkin_seat.get() }
-                }
+                mTableCell { +Strings.report_checkin_seat.get() }
                 mTableCell { +Strings.report_impacted_people.get() }
-                if (state.reportData?.reportedUserLocations?.any { it.locationSeatCount != null } == true) {
-                  mTableCell { +Strings.report_checkin_filter.get() }
-                }
+                mTableCell { +Strings.report_checkin_filter.get() }
               }
             }
             mTableBody {

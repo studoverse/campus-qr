@@ -34,7 +34,7 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **API access**: A *shared key* can be optionally defined to grant admin access to external services: Add the `X-Authorization: [authSharedSecret]` header to the request to authenticate as administrator (sharedSecretUser).
 * **E-Mail restriction**: Definition which e-mail addresses can be entered on check-in to force university email addresses.
 * **Manual check out**: Users can check out by scanning the check-in QR code again or scanning a generic check-out QR code.
-* **Automatic check out**: In case user forgets to check-out, they get automatically checked-out after a configurable amount of time has passed.
+* **Automatic check out**: In case users forget to check-out, they get automatically checked-out after a configurable amount of minutes have passed.
 * **Multi check in**: Locations can contain sublocations: Users can check-in in whole buildings and then further check-in in rooms inside the building.
 * **Seat support**: A QR code can be generated for whole locations (like rooms or buildings) or per seat (e.g. one QR code per lecture hall seat).
 * **Seat filtering**: With enabled seat support, potentially affected people can be filtered by their seats. This allows differentiating between two types of contacts:
