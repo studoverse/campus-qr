@@ -11,7 +11,7 @@ internal fun createTestCheckIn(
     checkInDate: Date,
     checkOutDate: Date? = null,
     email: String = "test@test.com",
-    locationId: String = "testLocation1",
+    locationId: String,
     seat: Int? = null
 ) = CheckIn().apply {
   _id = randomId()

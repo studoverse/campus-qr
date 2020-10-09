@@ -79,15 +79,15 @@ import java.util.*
     at the same time.
   - All other people are not treated as k1 contact person.
 
-  With seat filtering in location 1: (#2 -> {#1, #3}):
+  With seat filter in location 1: (#2 -> {#1, #3}):
   - e and f are treated as k1 contact person because of the filter.
   - All other people are not treated as k1 contact person.
 
-  With seat filtering in location 1: (#1 -> {#2, #3}):
+  With seat filter in location 1: (#1 -> {#2, #3}):
   - e, f and g are treated as k1 contact person because no seat filter applied for seat #2.
   - All other people are not treated as k1 contact person.
 
-  With seat filtering in location 2: (#2 -> {#1, #3}):
+  With seat filter in location 2: (#2 -> {#1, #3}):
   - e, f and g are treated as k1 contact person because no seat filter applied for seat #2 in location 1.
   - All other people are not treated as k1 contact person.
 

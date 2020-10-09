@@ -20,83 +20,127 @@ import kotlin.test.assertEquals
 class ContactTracingSeatTest {
 
   @Test
-  fun testSeatFiltering() {
-    setConfig("transitThresholdSeconds", 0)
-
+  fun withoutSeatFilter() {
     with(MainDatabase.getCollection<BackendSeatFilter>()) {
-      val filter = createTestFilter(
-        locationId = "testLocation1",
-        seat = 1,
-        filteredSeats = listOf(2, 3, 5)
-      )
-      insertOne(filter, upsert = true)
+      clear()
+      assertEquals(0, count())
     }
 
-    var report = runBlocking {
-      generateContactTracingReport(emails = listOf(infectedEmail), oldestDate = now.addDays(-1))
+    val report = runBlocking {
+      generateContactTracingReport(emails = listOf(infected), oldestDate = now.addDays(-7))
     }
 
     assertEquals(
-      expected = setOf("a@test.com", "b@test.com", "d@test.com"),
+      expected = setOf("e", "f", "g"),
       actual = report.impactedUsersEmails.toSet()
     )
+  }
 
-    assertEquals(
-      report.impactedUsersCount, 3
-    )
-
-    report = runBlocking {
-      generateContactTracingReport(emails = listOf(infectedEmail), oldestDate = now.addDays(-1))
-    }
-
+  @Test
+  fun seatFilterInLocation1() {
     with(MainDatabase.getCollection<BackendSeatFilter>()) {
-      val filter = createTestFilter(
-        locationId = "testLocation2",
-        seat = 1,
-        filteredSeats = listOf(2)
-      )
-      insertOne(filter, upsert = true)
+      clear()
+      assertEquals(0, count())
+      insertOne(createTestFilter(
+        locationId = location1,
+        seat = 2,
+        filteredSeats = listOf(1, 3)
+      ), upsert = true)
+      assertEquals(1, count())
+    }
+
+    val report = runBlocking {
+      generateContactTracingReport(emails = listOf(infected), oldestDate = now.addDays(-7))
     }
 
     assertEquals(
-      expected = setOf("a@test.com", "b@test.com", "d@test.com"),
+      expected = setOf("e", "f"),
       actual = report.impactedUsersEmails.toSet()
     )
+  }
+
+  @Test
+  fun notMatchingSeatFilterInLocation1() {
+    with(MainDatabase.getCollection<BackendSeatFilter>()) {
+      clear()
+      assertEquals(0, count())
+      insertOne(createTestFilter(
+        locationId = location1,
+        seat = 1,
+        filteredSeats = listOf(2, 3)
+      ), upsert = true)
+      assertEquals(1, count())
+    }
+
+    val report = runBlocking {
+      generateContactTracingReport(emails = listOf(infected), oldestDate = now.addDays(-7))
+    }
 
     assertEquals(
-      report.impactedUsersCount, 3
+      expected = setOf("e", "f", "g"),
+      actual = report.impactedUsersEmails.toSet()
+    )
+  }
+
+  @Test
+  fun seatFilterInLocation2() {
+    with(MainDatabase.getCollection<BackendSeatFilter>()) {
+      clear()
+      assertEquals(0, count())
+      insertOne(createTestFilter(
+        locationId = location2,
+        seat = 2,
+        filteredSeats = listOf(1, 3)
+      ), upsert = true)
+      assertEquals(1, count())
+    }
+
+    val report = runBlocking {
+      generateContactTracingReport(emails = listOf(infected), oldestDate = now.addDays(-7))
+    }
+
+    assertEquals(
+      expected = setOf("e", "f", "g"),
+      actual = report.impactedUsersEmails.toSet()
     )
   }
 
   companion object {
-    val now = Date()
-    val infectedCheckIn = now.addMinutes(-60)
-    val infectedCheckOut = now.addMinutes(-30)
-    private const val infectedEmail = "infected@test.com"
-    private const val transitUserEmail = "transitUser@test.com"
+    val now: Date = Date()
+    private val hour1: Date = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, 1) }.time
+    private val hour2: Date = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, 2) }.time
+    private val hour3: Date = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, 3) }.time
+    private val hour4: Date = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, 4) }.time
+    private val hour5: Date = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, 5) }.time
+    private val hour6: Date = Calendar.getInstance().apply { set(Calendar.HOUR_OF_DAY, 6) }.time
+
+    private const val infected = "infected"
+    private const val location1 = "location1"
+    private const val location2 = "location2"
 
     @BeforeClass
     @JvmStatic
     fun setup() {
+      setConfig("transitThresholdSeconds", 0)
 
       with(MainDatabase.getCollection<BackendLocation>()) {
         clear()
         assertEquals(0, count())
 
         insertOne(BackendLocation().apply {
-          _id = "testLocation1"
+          _id = location1
           name = "Test Location 1"
           createdBy = "test"
           createdDate = now.addDays(-1)
-          seatCount = 20
+          seatCount = 4
         }, upsert = false)
 
         insertOne(BackendLocation().apply {
-          _id = "testLocation2"
+          _id = location2
           name = "Test Location 2"
           createdBy = "test"
           createdDate = now.addDays(-1)
-          seatCount = 15
+          seatCount = 4
         }, upsert = false)
       }
 
@@ -107,83 +151,121 @@ class ContactTracingSeatTest {
         // Test data is taken from function docs of generateContactTracingReport()
         bulkWrite {
           listOf(
-            // Test location 1
+            // Test location 1 / time 1:00 - 2:00
             createTestCheckIn(
-              locationId = "testLocation1",
-              checkInDate = infectedCheckIn,
-              checkOutDate = infectedCheckOut,
-              email = infectedEmail,
+              locationId = location1,
+              checkInDate = hour1,
+              checkOutDate = hour2,
+              email = "a",
               seat = 1
             ),
             createTestCheckIn(
-              locationId = "testLocation1",
-              checkInDate = infectedCheckIn.addMinutes(5),
-              checkOutDate = infectedCheckOut.addMinutes(-5),
-              email = "a@test.com",
+              locationId = location1,
+              checkInDate = hour1,
+              checkOutDate = hour2,
+              email = "b",
               seat = 2
             ),
             createTestCheckIn(
-              locationId = "testLocation1",
-              checkInDate = infectedCheckOut.addMinutes(-5),
-              checkOutDate = null,
-              email = "b@test.com",
+              locationId = location1,
+              checkInDate = hour1,
+              checkOutDate = hour2,
+              email = "c",
               seat = 3
             ),
             createTestCheckIn(
-              locationId = "testLocation1",
-              checkInDate = infectedCheckIn.addMinutes(-5),
-              checkOutDate = infectedCheckIn.addMinutes(5),
-              email = "c@test.com",
+              locationId = location1,
+              checkInDate = hour1,
+              checkOutDate = hour2,
+              email = "d",
               seat = 4
             ),
+            // Test location 1 / time 3:00 - 4:00
             createTestCheckIn(
-              locationId = "testLocation1",
-              checkInDate = infectedCheckOut.addMinutes(-5),
-              checkOutDate = infectedCheckOut.addMinutes(5),
-              email = "d@test.com",
-              seat = 5
-            ),
-            createTestCheckIn(
-              locationId = "testLocation1",
-              checkInDate = infectedCheckIn.addMinutes(-10),
-              checkOutDate = infectedCheckIn.addMinutes(-5),
-              email = "e@test.com",
-              seat = 6
-            ),
-            createTestCheckIn(
-              locationId = "testLocation1",
-              checkInDate = infectedCheckOut.addMinutes(5),
-              checkOutDate = infectedCheckOut.addMinutes(10),
-              email = "f@test.com",
-              seat = 7
-            ),
-            createTestCheckIn(
-              locationId = "testLocation1",
-              checkInDate = infectedCheckIn.addMinutes(-5),
-              checkOutDate = infectedCheckOut.addMinutes(5),
-              email = "g@test.com",
-              seat = 8
-            ),
-            createTestCheckIn(
-              locationId = "testLocation2",
-              checkInDate = infectedCheckIn,
-              checkOutDate = infectedCheckOut,
-              email = infectedEmail,
+              locationId = location1,
+              checkInDate = hour3,
+              checkOutDate = hour4,
+              email = "e",
               seat = 1
             ),
             createTestCheckIn(
-              locationId = "testLocation2",
-              checkInDate = infectedCheckIn,
-              checkOutDate = infectedCheckOut,
-              email = "a2@test.com",
+              locationId = location1,
+              checkInDate = hour3,
+              checkOutDate = hour4,
+              email = infected,
               seat = 2
             ),
             createTestCheckIn(
-              locationId = "testLocation2",
-              checkInDate = infectedCheckOut,
-              checkOutDate = null,
-              email = "b2@test.com",
+              locationId = location1,
+              checkInDate = hour3,
+              checkOutDate = hour4,
+              email = "f",
               seat = 3
+            ),
+            createTestCheckIn(
+              locationId = location1,
+              checkInDate = hour3,
+              checkOutDate = hour4,
+              email = "g",
+              seat = 4
+            ),
+            // Location 2 / time 3:00 - 4:00
+            createTestCheckIn(
+              locationId = location2,
+              checkInDate = hour3,
+              checkOutDate = hour4,
+              email = "h",
+              seat = 1
+            ),
+            createTestCheckIn(
+              locationId = location2,
+              checkInDate = hour3,
+              checkOutDate = hour4,
+              email = "i",
+              seat = 2
+            ),
+            createTestCheckIn(
+              locationId = location2,
+              checkInDate = hour3,
+              checkOutDate = hour4,
+              email = "j",
+              seat = 3
+            ),
+            createTestCheckIn(
+              locationId = location2,
+              checkInDate = hour3,
+              checkOutDate = hour4,
+              email = "k",
+              seat = 4
+            ),
+            // Location 1 / time 5:00 - 6:00
+            createTestCheckIn(
+              locationId = location2,
+              checkInDate = hour5,
+              checkOutDate = hour6,
+              email = "l",
+              seat = 1
+            ),
+            createTestCheckIn(
+              locationId = location2,
+              checkInDate = hour5,
+              checkOutDate = hour6,
+              email = "m",
+              seat = 2
+            ),
+            createTestCheckIn(
+              locationId = location2,
+              checkInDate = hour5,
+              checkOutDate = hour6,
+              email = "n",
+              seat = 3
+            ),
+            createTestCheckIn(
+              locationId = location2,
+              checkInDate = hour5,
+              checkOutDate = hour6,
+              email = "o",
+              seat = 4
             ),
           ).forEach { insertOne(it, upsert = false) }
         }
