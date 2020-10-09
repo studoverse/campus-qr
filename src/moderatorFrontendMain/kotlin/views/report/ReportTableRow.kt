@@ -137,10 +137,8 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
       mTableCell {
         +props.config.userLocation.locationName
       }
-      props.config.userLocation.seat?.let { locationSeatNumber ->
-        mTableCell {
-          +locationSeatNumber.toString()
-        }
+      mTableCell {
+        +(props.config.userLocation.seat?.toString() ?: "-")
       }
       mTableCell {
         +props.config.userLocation.potentialContacts.toString()
