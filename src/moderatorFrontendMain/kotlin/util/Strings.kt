@@ -256,8 +256,8 @@ object Strings {
   )
 
   val report_checkin_add_filter_content = LocalizedString(
-    "Please select seats, that were close enough with the infected person.",
-    "Bitte wählen Sie Sitzplätze aus, die nahe genug der infizierten Person waren."
+    "Please select those seats that are close to the seat of the infected person.",
+    "Bitte wählen Sie jene Sitzplätze aus, die nahe zum Sitz der infizierten Person liegen."
   )
 
   val report_impacted_people = LocalizedString(
