@@ -1,9 +1,7 @@
 package com.studo.campusqr.auth
 
 import com.studo.campusqr.database.BackendUser
-import com.studo.campusqr.database.Configuration
 import com.studo.campusqr.extensions.runOnDb
-import com.studo.katerbase.equal
 
 interface AuthProvider {
   sealed class Result {
@@ -16,17 +14,13 @@ interface AuthProvider {
 }
 
 suspend fun getAuthProvider(): AuthProvider {
-  val ldapUrl = runOnDb {
-    getCollection<Configuration>().findOne(Configuration::_id equal "ldapUrl")?.stringValue
-  }
+  val ldapUrl: String = runOnDb { getConfig("ldapUrl") }
 
-  return if (!ldapUrl.isNullOrEmpty()) {
+  return when {
     // Authentication via LDAP
-    LdapAuth(ldapUrl)
-  } else {
+    ldapUrl.isNotEmpty() -> LdapAuth(ldapUrl)
+
     // Authentication via Campus QR
-    CampusQrAuth()
-  }.apply {
-    init()
-  }
+    else -> CampusQrAuth()
+  }.apply { init() }
 }
