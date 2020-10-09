@@ -17,10 +17,7 @@ suspend fun getAuthProvider(): AuthProvider {
   val ldapUrl: String = runOnDb { getConfig("ldapUrl") }
 
   return when {
-    // Authentication via LDAP
-    ldapUrl.isNotEmpty() -> LdapAuth(ldapUrl)
-
-    // Authentication via Campus QR
-    else -> CampusQrAuth()
+    ldapUrl.isNotEmpty() -> LdapAuth(ldapUrl) // Authentication via LDAP
+    else -> CampusQrAuth() // Authentication via Campus QR
   }.apply { init() }
 }
