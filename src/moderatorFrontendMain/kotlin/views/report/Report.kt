@@ -6,7 +6,6 @@ import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
-import kotlinx.browser.window
 import kotlinx.html.js.onSubmitFunction
 import muiDatePicker
 import org.w3c.dom.events.Event
@@ -74,19 +73,24 @@ class Report : RComponent<ReportProps, ReportState>() {
 
   private fun applyFilter(userLocation: ReportData.UserLocation, filteredSeats: List<Int>) = launch {
     setState { showProgress = true }
-    val response = NetworkManager.post<String>(
-      "$apiBase/location/${userLocation.locationId}/editSeatFilter", params = json(
-        "seat" to userLocation.seat,
-        "filteredSeats" to filteredSeats
+    // If no seats are selected, just delete the current filter
+    if (filteredSeats.isEmpty()) {
+      deleteFilter(userLocation)
+    } else {
+      val response = NetworkManager.post<String>(
+        "$apiBase/location/${userLocation.locationId}/editSeatFilter", params = json(
+          "seat" to userLocation.seat,
+          "filteredSeats" to filteredSeats
+        )
       )
-    )
-    setState {
-      if (response == "ok") {
-        // re-trace contacts
-        traceContacts()
-      } else {
-        snackbarText = Strings.error_try_again.get()
-        showProgress = false
+      setState {
+        if (response == "ok") {
+          // re-trace contacts
+          traceContacts()
+        } else {
+          snackbarText = Strings.error_try_again.get()
+          showProgress = false
+        }
       }
     }
   }
@@ -167,7 +171,6 @@ class Report : RComponent<ReportProps, ReportState>() {
               attrs.fullWidth = true
               attrs.variant = "outlined"
               attrs.label = Strings.report_email.get()
-              attrs.type = "email"
               attrs.value = state.emailTextFieldValue
               attrs.error = state.emailTextFieldError.isNotEmpty()
               attrs.helperText = state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()
@@ -208,7 +211,7 @@ class Report : RComponent<ReportProps, ReportState>() {
             +Strings.report_affected_people.get()
               .format(
                 reportData.impactedUsersCount.toString(),
-                reportData.reportedUserLocations.sumBy { it.impactedPeople }.toString(),
+                reportData.reportedUserLocations.sumBy { it.potentialContacts }.toString(),
                 reportData.startDate,
                 reportData.endDate
               )
@@ -225,10 +228,10 @@ class Report : RComponent<ReportProps, ReportState>() {
                 if (state.reportData?.reportedUserLocations?.any { it.seat != null } == true) {
                   mTableCell { +Strings.report_checkin_seat.get() }
                 }
+                mTableCell { +Strings.report_impacted_people.get() }
                 if (state.reportData?.reportedUserLocations?.any { it.locationSeatCount != null } == true) {
                   mTableCell { +Strings.report_checkin_filter.get() }
                 }
-                mTableCell { +Strings.report_impacted_people.get() }
               }
             }
             mTableBody {
@@ -247,13 +250,6 @@ class Report : RComponent<ReportProps, ReportState>() {
 
           spacer(32)
           if (reportData.impactedUsersCount > 0) {
-            muiButton {
-              attrs.size = "small"
-              attrs.color = "primary"
-              attrs.href = reportData.impactedUsersMailtoLink
-              +Strings.report_export_via_mail.get()
-            }
-            spacer()
             muiButton {
               attrs.size = "small"
               attrs.color = "primary"

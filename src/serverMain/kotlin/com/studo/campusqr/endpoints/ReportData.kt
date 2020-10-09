@@ -77,7 +77,7 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
       val transitThresholdSeconds: Int = getConfig("transitThresholdSeconds")
 
       // We need to probably optimize performance here in the future
-      val impactedCheckIns = reportedUserCheckIns.map { reportedUserCheckin ->
+      reportedUserCheckIns.map { reportedUserCheckin ->
         val impactedCheckIns = getCollection<CheckIn>()
           .find(
             CheckIn::locationId equal reportedUserCheckin.locationId,
@@ -92,13 +92,11 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
 
         return@map Contact(reportedUserCheckin, impactedCheckIns)
       }
-
-      impactedCheckIns
     }
   }
 
-  fun BackendSeatFilter.mapId() = "$locationId-$seat"
-  fun CheckIn.mapId() = "$locationId-$seat"
+  fun BackendSeatFilter.filterKey() = "$locationId-$seat"
+  fun CheckIn.filterKey() = "$locationId-$seat"
 
   val seatFilterTask: Deferred<Map<String, BackendSeatFilter>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
@@ -110,23 +108,24 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
               BackendSeatFilter::seat equal seat
             )
         }
-      }.associateBy { it.mapId() }
+      }.associateBy { it.filterKey() }
     }
   }
 
   val locationIdToLocationMap: Map<String, BackendLocation> = locationMapTask.await()
-  var contacts: List<Contact> = contactsTask.await()
   val seatFilterMap: Map<String, BackendSeatFilter> = seatFilterTask.await()
+  var contacts: List<Contact> = contactsTask.await()
 
   // Seat filters
   if (seatFilterMap.isNotEmpty()) {
     contacts = contacts.map { contact ->
-      val seatFilter = seatFilterMap[contact.reportedCheckIn.mapId()]
+      val seatFilter = seatFilterMap[contact.reportedCheckIn.filterKey()]
       if (seatFilter == null) {
-        contact // No change
+        // No change
+        return@map contact
       } else {
         // Apply seat filter
-        Contact(contact.reportedCheckIn, contact.impactedCheckIns.filter { impactedCheckIn ->
+        return@map Contact(contact.reportedCheckIn, contact.impactedCheckIns.filter { impactedCheckIn ->
           impactedCheckIn.seat in seatFilter.filteredSeats
         })
       }
@@ -148,7 +147,6 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
   return ReportData(
     impactedUsersEmails = impactedUsersEmails.toTypedArray(),
     impactedUsersCount = impactedUsers.count(),
-    impactedUsersMailtoLink = "mailto:?bcc=" + impactedUsersEmails.joinToString(","), // TODO move to frontend
     reportedUserLocations = contacts.map { (reportedCheckIn, impactedCheckIns) ->
       val location = locationIdToLocationMap.getValue(reportedCheckIn.locationId)
       ReportData.UserLocation(
@@ -158,8 +156,8 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
         email = reportedCheckIn.email,
         date = reportedCheckIn.date.toAustrianTime(yearAtBeginning = false),
         seat = reportedCheckIn.seat,
-        filteredSeats = seatFilterMap[reportedCheckIn.mapId()]?.filteredSeats?.toTypedArray(),
-        impactedPeople = impactedCheckIns.count()
+        potentialContacts = impactedCheckIns.count(),
+        filteredSeats = seatFilterMap[reportedCheckIn.filterKey()]?.filteredSeats?.toTypedArray(),
       )
     }.toTypedArray(),
     impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),

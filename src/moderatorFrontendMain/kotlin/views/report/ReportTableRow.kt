@@ -3,6 +3,7 @@ package views.report
 import com.studo.campusqr.common.ReportData
 import kotlinext.js.js
 import react.*
+import react.dom.div
 import util.Strings
 import util.get
 import views.common.spacer
@@ -25,7 +26,7 @@ interface ReportTableRowProps : RProps {
 interface ReportTableRowState : RState {
   var showProgress: Boolean
   var showApplyFilterDialog: Boolean
-  var filterOptions: Array<String>
+  var filterOptions: List<Int>
   var filteredSeats: List<Int>
 }
 
@@ -35,8 +36,8 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
     showProgress = false
     showApplyFilterDialog = false
     filterOptions = props.config.userLocation.locationSeatCount?.let { seatCount ->
-      (1..seatCount).map { it.toString() }.toTypedArray()
-    } ?: emptyArray()
+      (1..seatCount).map { it }
+    } ?: emptyList()
     filteredSeats = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
   }
 
@@ -61,51 +62,54 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
 
           spacer(16)
 
-          muiAutocomplete {
-            attrs.onChange = { _, target: Array<String>?, _ ->
-              setState {
-                filteredSeats = target?.map { it.toInt() } ?: emptyList()
+          div(props.classes.autocompleteWrapper) {
+            muiAutocomplete {
+              attrs.onChange = { _, target: Array<String>?, _ ->
+                setState {
+                  filteredSeats = target?.map { it.toInt() } ?: emptyList()
+                }
               }
-            }
-            attrs.onInputChange = { event, value, _ ->
-              // Add values after user pressed a " " or "," for fast input
-              if (value.endsWith(" ") || value.endsWith(",")) {
-                val seatNumber = value.trim().removeSuffix(",").toIntOrNull()
-                if (seatNumber != null && seatNumber.toString() in state.filterOptions && seatNumber !in state.filteredSeats) {
-                  setState {
-                    filteredSeats += seatNumber
+              attrs.onInputChange = { _, value, _ ->
+                // Add values after user pressed a " " or "," for fast input
+                if (value.endsWith(" ") || value.endsWith(",")) {
+                  val seatNumber = value.trim().removeSuffix(",").toIntOrNull()
+                  if (seatNumber != null && seatNumber in state.filterOptions && seatNumber !in state.filteredSeats) {
+                    setState {
+                      filteredSeats += seatNumber
+                    }
                   }
                 }
               }
-            }
-            attrs.disableCloseOnSelect = true
-            attrs.fullWidth = true
-            attrs.multiple = true
-            attrs.openOnFocus = true
-            attrs.options = state.filterOptions
-            attrs.value = state.filteredSeats.map { it.toString() }.toTypedArray()
-            attrs.getOptionLabel = { it }
-            attrs.renderOption = { option, state ->
-              Fragment {
-                mCheckbox {
-                  attrs.color = "primary"
-                  attrs.checked = state.selected as Boolean
+              attrs.disableCloseOnSelect = true
+              attrs.fullWidth = true
+              attrs.multiple = true
+              attrs.openOnFocus = true
+              attrs.options = state.filterOptions.map { it.toString() }.toTypedArray()
+              attrs.value = state.filteredSeats.map { it.toString() }.toTypedArray()
+              attrs.getOptionLabel = { it }
+              attrs.renderOption = { option, state ->
+                Fragment {
+                  mCheckbox {
+                    attrs.color = "primary"
+                    attrs.checked = state.selected as Boolean
+                  }
+                  +(option as String)
                 }
-                +(option as String)
               }
-            }
-            attrs.renderInput = { params: dynamic ->
-              textField {
-                attrs.id = params.id
-                attrs.InputProps = params.InputProps
-                attrs.inputProps = params.inputProps
-                attrs.disabled = params.disabled
-                attrs.fullWidth = params.fullWidth
-                attrs.variant = "outlined"
-                attrs.label = Strings.report_checkin_seat_filter.get()
+              attrs.renderInput = { params: dynamic ->
+                textField {
+                  attrs.id = params.id
+                  attrs.InputProps = params.InputProps
+                  attrs.inputProps = params.inputProps
+                  attrs.disabled = params.disabled
+                  attrs.fullWidth = params.fullWidth
+                  attrs.variant = "outlined"
+                  attrs.label = Strings.report_checkin_seat_filter.get()
+                }
               }
             }
           }
+
         },
         buttons = listOf(
           DialogButton("Apply", onClick = {
@@ -139,6 +143,9 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
         }
       }
       mTableCell {
+        +props.config.userLocation.potentialContacts.toString()
+      }
+      mTableCell {
         props.config.userLocation.locationSeatCount?.let {
           val currentFilteredSeats = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
           if (currentFilteredSeats.isNotEmpty()) {
@@ -170,20 +177,22 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
           }
         }
       }
-      mTableCell {
-        +props.config.userLocation.impactedPeople.toString()
-      }
     }
   }
 }
 
 interface ReportTableRowClasses {
+  var autocompleteWrapper: String
   // Keep in sync with ReportItemStyle!
 }
 
 private val ReportTableRowStyle = { theme: dynamic ->
   // Keep in sync with ReportItemClasses!
   js {
+    autocompleteWrapper = js {
+      // Make sure that dialog's apply button doesnt get overlayed by autocomplete's dropdown
+      width = "calc(100% - 70px)"
+    }
   }
 }
 

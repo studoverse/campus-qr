@@ -24,7 +24,6 @@ val UserData.isAuthenticated get() = clientUser != null
 class ReportData(
     val impactedUsersCount: Int,
     val impactedUsersEmails: Array<String>,
-    val impactedUsersMailtoLink: String,
     val impactedUsersEmailsCsvData: String,
     val reportedUserLocations: Array<UserLocation>,
     val reportedUserLocationsCsv: String,
@@ -40,8 +39,8 @@ class ReportData(
     val email: String,
     val date: String,
     val seat: Int?,
+    val potentialContacts: Int,
     val filteredSeats: Array<Int>?,
-    val impactedPeople: Int,
   )
 }
 
