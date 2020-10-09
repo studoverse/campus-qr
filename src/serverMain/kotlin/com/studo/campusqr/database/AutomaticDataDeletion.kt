@@ -3,7 +3,6 @@ package com.studo.campusqr.database
 import com.studo.campusqr.extensions.addDays
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.serverScope
-import com.studo.katerbase.equal
 import com.studo.katerbase.greaterEquals
 import com.studo.katerbase.lower
 import com.studo.katerbase.none
@@ -26,9 +25,8 @@ fun startAutomaticDataDeletion() = serverScope.launch {
 }
 
 internal suspend fun automaticDataDeletion() {
-  val deleteDays = runOnDb {
-    getCollection<Configuration>().findOne(Configuration::_id equal "deleteCheckInDataAfterDays")!!.intValue!!
-  }
+  val deleteDays: Int = runOnDb { getConfig("deleteCheckInDataAfterDays") }
+
   val now = Date()
   val deleteResult = runOnDb {
     getCollection<SessionToken>().deleteMany(SessionToken::expiryDate lower now)

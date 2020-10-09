@@ -7,7 +7,6 @@ import com.studo.campusqr.baseUrl
 import com.studo.campusqr.common.LoginResult
 import com.studo.campusqr.common.UserData
 import com.studo.campusqr.database.BackendUser
-import com.studo.campusqr.database.Configuration
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.*
@@ -22,9 +21,7 @@ import java.util.*
  */
 
 suspend fun ApplicationCall.getUserData() {
-  val appName = runOnDb {
-    getCollection<Configuration>().findOne(Configuration::_id equal "appName")?.stringValue ?: ""
-  }
+  val appName: String = runOnDb { getConfig("appName") }
 
   // sessionToken or user might be null when user is logged out or session expired
   val sessionToken = getSessionToken()
