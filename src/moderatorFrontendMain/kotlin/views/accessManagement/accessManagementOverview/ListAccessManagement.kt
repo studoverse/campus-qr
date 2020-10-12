@@ -16,9 +16,7 @@ import util.toRoute
 import views.accessManagement.AccessManagementDetailsProps
 import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.*
 import views.accessManagement.renderAccessManagementDetails
-import views.common.genericErrorView
-import views.common.networkErrorView
-import views.common.renderLinearProgress
+import views.common.*
 import webcore.MbSnackbarProps
 import webcore.NetworkManager
 import webcore.extensions.launch
@@ -118,53 +116,41 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   override fun RBuilder.render() {
     renderAddAccessManagementDialog()
     renderSnackbar()
-
-    div(GlobalCss.flex) {
-      typography {
-        attrs.className = props.classes.header
-        attrs.variant = "h5"
-        +Strings.access_control.get()
-        +" - "
-        if (state.clientLocation == null) {
-          +Strings.access_control_my.get()
-        } else {
-          +state.clientLocation!!.name
-        }
-      }
-      div(GlobalCss.flexEnd) {
-        routeContext.Consumer { routeContext ->
-          muiButton {
-            attrs.classes = js {
-              root = props.classes.headerButton
-            }
-            attrs.variant = "outlined"
-            attrs.color = "primary"
-            attrs.onClick = {
+    renderToolbarView(
+      ToolbarViewProps.Config(
+        title = StringBuilder().apply {
+          append(Strings.access_control.get())
+          append(" - ")
+          if (state.clientLocation == null) {
+            append(Strings.access_control_my.get())
+          } else {
+            append(state.clientLocation!!.name)
+          }
+        }.toString(),
+        buttons = listOf(
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.access_control_export.get(),
+            variant = "outlined",
+            onClick = { routeContext ->
               if (props.locationId == null) {
                 routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LIST_EXPORT.toRoute()!!)
               } else {
                 routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(pathParams = mapOf("id" to props.locationId!!))!!)
               }
             }
-            +Strings.access_control_export.get()
-          }
-        }
-
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.headerButton
-          }
-          attrs.variant = "contained"
-          attrs.color = "primary"
-          attrs.onClick = {
-            setState {
-              showAddAccessManagementDialog = true
+          ),
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.access_control_create.get(),
+            variant = "contained",
+            onClick = { _ ->
+              setState {
+                showAddAccessManagementDialog = true
+              }
             }
-          }
-          +Strings.access_control_create.get()
-        }
-      }
-    }
+          )
+        )
+      )
+    )
 
     renderLinearProgress(state.loadingAccessManagementList)
 
@@ -214,28 +200,11 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 }
 
 interface ListAccessClasses {
-  var header: String
-  var button: String
-  var headerButton: String
   // Keep in sync with ListLocationsStyle!
 }
 
 private val ListLocationsStyle = { theme: dynamic ->
   // Keep in sync with ListLocationsClasses!
-  js {
-    header = js {
-      margin = 16
-    }
-    button = js {
-      marginRight = 16
-      marginTop = 16
-      marginBottom = 16
-      marginLeft = 8
-    }
-    headerButton = js {
-      margin = 16
-    }
-  }
 }
 
 private val styled = withStyles<ListAccessManagementProps, ListAccessManagement>(ListLocationsStyle)

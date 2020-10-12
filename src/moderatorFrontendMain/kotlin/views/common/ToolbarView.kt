@@ -40,17 +40,19 @@ class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
       }
       div(GlobalCss.flexEnd) {
         routeContext.Consumer { routeContext ->
-          props.config.buttons.forEach { toolbarButton ->
-            muiButton {
-              attrs.classes = js {
-                root = props.classes.headerButton
+          div(props.classes.headerButtonsWrapper) {
+            props.config.buttons.forEach { toolbarButton ->
+              muiButton {
+                attrs.classes = js {
+                  root = props.classes.headerButton
+                }
+                attrs.variant = toolbarButton.variant
+                attrs.color = "primary"
+                attrs.onClick = {
+                  toolbarButton.onClick(routeContext)
+                }
+                +toolbarButton.text
               }
-              attrs.variant = toolbarButton.variant
-              attrs.color = "primary"
-              attrs.onClick = {
-                toolbarButton.onClick(routeContext)
-              }
-              +toolbarButton.text
             }
           }
         }
@@ -61,8 +63,8 @@ class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
 
 interface ToolbarViewClasses {
   var header: String
-  var button: String
   var headerButton: String
+  var headerButtonsWrapper: String
   // Keep in sync with ToolbarViewStyle!
 }
 
@@ -72,14 +74,14 @@ private val ToolbarViewStyle = { theme: dynamic ->
     header = js {
       margin = 16
     }
-    button = js {
+    headerButton = js {
       marginRight = 16
       marginTop = 16
       marginBottom = 16
-      marginLeft = 8
+      marginLeft = 0
     }
-    headerButton = js {
-      margin = 16
+    headerButtonsWrapper = js {
+      marginLeft = 16
     }
   }
 }
