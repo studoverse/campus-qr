@@ -610,6 +610,11 @@ object Strings {
       "Das Enddatum kann nicht vor dem Anfangsdatum liegen"
   )
 
+  val guest_access_control = LocalizedString(
+    "Guest access control",
+    "Gast-Zugangskontrolle",
+  )
+
   val user_sso_info = LocalizedString(
       "Single Sign On",
       "Single Sign On"

@@ -58,6 +58,11 @@ class App : RComponent<AppProps, AppState>() {
       icon = listIcon,
       url = Url.ACCESS_MANAGEMENT_LIST
     ),
+    SideDrawerItem(
+      label = Url.GUEST_ACCESS_MANAGEMENT.title,
+      icon = listIcon,
+      url = Url.GUEST_ACCESS_MANAGEMENT
+    )
   )
 
   private val moderatorSideDrawerItems = listOf(
