@@ -101,6 +101,7 @@ class CheckIn : MongoMainEntry() {
   var ipAddress: String? = null // Only stored if checkInIpAddressHeader is set
   var grantAccessId: String? = null // id of BackendAccess which was used to enter, null if no BackendAccess was used
   var seat: Int? = null // null if Location has no seatCount defined
+  var checkedInBy: String? = null // userId of the person who managed added this a manual guest check-in
 }
 
 class SessionToken : MongoMainEntry() {

@@ -1,26 +1,17 @@
 package views.guestAccessManagement.guestAccessManagementOverview
 
 import apiBase
-import app.GlobalCss
-import app.routeContext
 import com.studo.campusqr.common.ActiveCheckIn
-import kotlinext.js.js
 import react.*
-import react.dom.div
 import util.Strings
 import util.get
-import util.toRoute
-import views.common.ToolbarView
-import views.common.ToolbarViewProps
-import views.common.renderLinearProgress
-import views.common.renderToolbarView
+import views.common.*
+import views.guestAccessManagement.GuestAccessManagementDetailsProps
 import views.guestAccessManagement.renderGuestAccessManagementDetails
 import webcore.MbSnackbarProps
 import webcore.NetworkManager
 import webcore.extensions.launch
-import webcore.materialUI.muiButton
-import webcore.materialUI.typography
-import webcore.materialUI.withStyles
+import webcore.materialUI.*
 import webcore.mbMaterialDialog
 import webcore.mbSnackbar
 
@@ -46,7 +37,7 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
 
   private fun fetchActiveGuestCheckIns() = launch {
     setState { loadingAccessManagementList }
-    val response = NetworkManager.get<Array<ActiveCheckIn>>("$apiBase/quest-access/list")
+    val response = NetworkManager.get<Array<ActiveCheckIn>>("$apiBase/report/listGuestCheckIns")
     setState {
       if (response != null) {
         activeGuestCheckIns = response.toList()
@@ -66,6 +57,17 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
     title = Strings.access_control_create.get(),
     customContent = {
       renderGuestAccessManagementDetails(
+        GuestAccessManagementDetailsProps.Config(
+          onGuestCheckedIn = {
+            setState { showAddGuestCheckInDialog = false }
+            fetchActiveGuestCheckIns()
+          },
+          onShowSnackbar = { text ->
+            setState {
+              snackbarText = text
+            }
+          }
+        )
       )
     },
     buttons = null,
@@ -94,13 +96,40 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
         ToolbarViewProps.ToolbarButton(
           text = "Add guest",
           variant = "contained",
-          onClick = { _ ->
-
+          onClick = {
+            setState {
+              showAddGuestCheckInDialog = true
+            }
           }
         )
       )
     ))
     renderLinearProgress(state.loadingAccessManagementList)
+
+    when {
+      state.activeGuestCheckIns?.isNotEmpty() == true -> mTable {
+        mTableHead {
+          mTableRow {
+            mTableCell { +Strings.location_name.get() }
+            mTableCell { +Strings.email_address.get() }
+            mTableCell { +Strings.report_checkin_seat.get() }
+            mTableCell { +Strings.actions.get() }
+          }
+        }
+        mTableBody {
+          state.activeGuestCheckIns!!.forEach { activeCheckIn ->
+            renderGuestAccessManagementRow(
+              GuestAccessManagementRowProps.Config(activeCheckIn)
+            )
+          }
+        }
+      }
+      state.activeGuestCheckIns == null && !state.loadingAccessManagementList -> networkErrorView()
+      !state.loadingAccessManagementList -> genericErrorView(
+        Strings.guest_access_control_not_yet_added_title.get(),
+        Strings.guest_access_control_not_yet_added_subtitle.get()
+      )
+    }
   }
 }
 

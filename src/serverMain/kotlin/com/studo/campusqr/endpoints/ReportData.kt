@@ -2,6 +2,7 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.ActiveCheckIn
 import com.studo.campusqr.common.ReportData
+import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.BackendSeatFilter
@@ -264,7 +265,41 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
         locationId = checkIn.locationId,
         locationName = locationMap.getValue(checkIn.locationId),
         seat = checkIn.seat,
-        checkInDate = checkIn.date.time.toDouble()
+        checkInDate = checkIn.date.time.toDouble(),
+        email = checkIn.email
+      )
+    }
+  )
+}
+
+suspend fun AuthenticatedApplicationCall.listGuestActiveCheckIns() {
+  if (user.type != UserType.ACCESS_MANAGER && !user.isAdmin) {
+    respondForbidden()
+    return
+  }
+
+  val checkIns = runOnDb {
+    getCollection<CheckIn>()
+      .find(CheckIn::checkedInBy equal user._id)
+      .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
+      .toList()
+  }
+
+  val locationMap = runOnDb {
+    getCollection<BackendLocation>()
+      .find(BackendLocation::_id inArray checkIns.map { it.locationId }.distinct())
+      .associateBy(keySelector = { it._id }, valueTransform = { it.name })
+  }
+
+  respondObject(
+    checkIns.map { checkIn ->
+      ActiveCheckIn(
+        id = checkIn._id,
+        locationId = checkIn.locationId,
+        locationName = locationMap.getValue(checkIn.locationId),
+        seat = checkIn.seat,
+        checkInDate = checkIn.date.time.toDouble(),
+        email = checkIn.email
       )
     }
   )

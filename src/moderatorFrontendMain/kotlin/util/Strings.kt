@@ -615,6 +615,16 @@ object Strings {
     "Gast-Zugangskontrolle",
   )
 
+  val guest_access_control_not_yet_added_title = LocalizedString(
+    "No guest access control added yet.",
+    "Noch keine Gast-Zugangskontrolle hinzugefügt.",
+  )
+
+  val guest_access_control_not_yet_added_subtitle = LocalizedString(
+    "Click on \"add guest access control\" button in the top right corner to add a  guest access control.",
+    "Klicken Sie rechts oben auf \"Gast-Zugangskontrolle hinzufügen\" um eine Gast-Zugangskontrolle hinzuzufügen.",
+  )
+
   val user_sso_info = LocalizedString(
       "Single Sign On",
       "Single Sign On"

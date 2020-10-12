@@ -2,14 +2,10 @@ package views.accessManagement.accessManagementOverview
 
 import Url
 import apiBase
-import app.GlobalCss
-import app.routeContext
 import com.studo.campusqr.common.AccessManagementData
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.ClientLocation
-import kotlinext.js.js
 import react.*
-import react.dom.div
 import util.Strings
 import util.get
 import util.toRoute
@@ -61,8 +57,8 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 
   override fun componentDidUpdate(
-      prevProps: ListAccessManagementProps, prevState: ListAccessManagementState,
-      snapshot: Any
+    prevProps: ListAccessManagementProps, prevState: ListAccessManagementState,
+    snapshot: Any
   ) {
     if (prevProps.locationId != props.locationId) {
       setState {
@@ -77,40 +73,40 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 
   private fun RBuilder.renderAddAccessManagementDialog() = mbMaterialDialog(
-      show = state.showAddAccessManagementDialog,
-      title = Strings.access_control_create.get(),
-      customContent = {
-        renderAccessManagementDetails(
-            AccessManagementDetailsProps.Config.Create(
-                locationId = props.locationId,
-                onCreated = { success ->
-                  setState {
-                    showAddAccessManagementDialog = false
-                    snackbarText = if (success) {
-                      Strings.access_control_created_successfully.get()
-                    } else {
-                      Strings.error_try_again.get()
-                    }
-                  }
-                  fetchAccessManagementList()
-                })
-        )
-      },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddAccessManagementDialog = false
-        }
+    show = state.showAddAccessManagementDialog,
+    title = Strings.access_control_create.get(),
+    customContent = {
+      renderAccessManagementDetails(
+        AccessManagementDetailsProps.Config.Create(
+          locationId = props.locationId,
+          onCreated = { success ->
+            setState {
+              showAddAccessManagementDialog = false
+              snackbarText = if (success) {
+                Strings.access_control_created_successfully.get()
+              } else {
+                Strings.error_try_again.get()
+              }
+            }
+            fetchAccessManagementList()
+          })
+      )
+    },
+    buttons = null,
+    onClose = {
+      setState {
+        showAddAccessManagementDialog = false
       }
+    }
   )
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-      MbSnackbarProps.Config(
-          show = state.snackbarText.isNotEmpty(),
-          message = state.snackbarText,
-          onClose = {
-            setState { snackbarText = "" }
-          })
+    MbSnackbarProps.Config(
+      show = state.snackbarText.isNotEmpty(),
+      message = state.snackbarText,
+      onClose = {
+        setState { snackbarText = "" }
+      })
   )
 
   override fun RBuilder.render() {
@@ -154,8 +150,8 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 
     renderLinearProgress(state.loadingAccessManagementList)
 
-    if (state.accessManagementList?.isNotEmpty() == true) {
-      mTable {
+    when {
+      state.accessManagementList?.isNotEmpty() == true -> mTable {
         mTableHead {
           mTableRow {
             mTableCell { +Strings.location_name.get() }
@@ -168,32 +164,30 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
         mTableBody {
           state.accessManagementList!!.forEach { accessManagement ->
             renderAccessManagementRow(
-                Config(accessManagement,
-                    onOperationFinished = { operation, success ->
-                      setState {
-                        snackbarText = if (success) {
-                          fetchAccessManagementList()
-                          when (operation) {
-                            Operation.Edit -> Strings.access_control_edited_successfully.get()
-                            Operation.Duplicate -> Strings.access_control_duplicated_successfully.get()
-                            Operation.Delete -> Strings.access_control_deleted_successfully.get()
-                          }
-                        } else {
-                          Strings.error_try_again.get()
-                        }
+              Config(accessManagement,
+                onOperationFinished = { operation, success ->
+                  setState {
+                    snackbarText = if (success) {
+                      fetchAccessManagementList()
+                      when (operation) {
+                        Operation.Edit -> Strings.access_control_edited_successfully.get()
+                        Operation.Duplicate -> Strings.access_control_duplicated_successfully.get()
+                        Operation.Delete -> Strings.access_control_deleted_successfully.get()
                       }
+                    } else {
+                      Strings.error_try_again.get()
                     }
-                )
+                  }
+                }
+              )
             )
           }
         }
       }
-    } else if (state.accessManagementList == null && !state.loadingAccessManagementList) {
-      networkErrorView()
-    } else if (!state.loadingAccessManagementList) {
-      genericErrorView(
-          Strings.access_control_not_configured_yet.get(),
-          Strings.access_control_not_configured_yet_subtitle.get()
+      state.accessManagementList == null && !state.loadingAccessManagementList -> networkErrorView()
+      !state.loadingAccessManagementList -> genericErrorView(
+        Strings.access_control_not_configured_yet.get(),
+        Strings.access_control_not_configured_yet_subtitle.get()
       )
     }
   }
