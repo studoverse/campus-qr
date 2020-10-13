@@ -66,7 +66,7 @@ class GuestAccessManagementRow : RComponent<GuestAccessManagementRowProps, Guest
               }
             }
           }
-          +"Check-out"
+          +Strings.guest_access_control_check_out.get()
         }
       }
     }

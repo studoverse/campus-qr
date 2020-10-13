@@ -660,6 +660,11 @@ object Strings {
     "Check-Out erfolgreich",
   )
 
+  val guest_access_control_check_out = LocalizedString(
+    "Checkout",
+    "Check-Out",
+  )
+
   val user_sso_info = LocalizedString(
       "Single Sign On",
       "Single Sign On"

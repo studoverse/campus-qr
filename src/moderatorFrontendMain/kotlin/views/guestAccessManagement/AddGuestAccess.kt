@@ -136,7 +136,7 @@ class AddGuestAccess : RComponent<AddGuestAccessProps, AddGuestAccessState>() {
               checkInGuest()
             }
           }
-          +"Add Guest"
+          +Strings.guest_access_control_add_guest.get()
         }
       }
     }

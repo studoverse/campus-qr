@@ -131,10 +131,6 @@ class ActiveCheckIn(
   val email: String,
 ) : ClientPayload
 
-class NewGuestCheckIn(
-  val email: String,
-) : ClientPayload
-
 class EditSeatFilter(
   val seat: Int,
   val filteredSeats: List<Int>,
