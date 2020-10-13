@@ -43,7 +43,7 @@ object Strings {
 
   val invalid_email = LocalizedString(
     "Invalid email address",
-    "Ungültige E-Mail-Adresse",
+    "Ungültige E-Mail Adresse",
   )
 
   val locations_element_download_qr_code = LocalizedString(
@@ -631,28 +631,28 @@ object Strings {
   )
 
   val guest_checkin_add_guest = LocalizedString(
-    "Add guest",
-    "Gast hinzufügen",
+    "Check in guest",
+    "Gast einchecken",
   )
 
   val guest_checkin_not_yet_added_title = LocalizedString(
-    "No guest check in added yet.",
-    "Noch keine Gast Check-In hinzugefügt.",
+    "Currently no guests are checked in.",
+    "Momentan sind keine Gäste eingecheckt.",
   )
 
   val guest_checkin_not_yet_added_subtitle = LocalizedString(
-    "Click on \"add guest\" button in the top right corner to add a guest check in.",
-    "Klicken Sie rechts oben auf \"Gast hinzufügen\" um eine Gast Check-In hinzuzufügen.",
+    "Click on \"check in guest\" in the top right corner to check in a guest.",
+    "Klicken Sie rechts oben auf \"Gast einchecken\" um einen Gast einzuchecken.",
   )
 
   val guest_checkin_checkout_are_you_sure = LocalizedString(
-    "Are you sure you want to check out %s?",
-    "Sind Sie sicher, dass Sie %s auschecken möchten?", // FIXME: auschecken
+    "Check out %s now?",
+    "%s jetzt auschecken?",
   )
 
   val guest_checkin_email_must_not_be_empty = LocalizedString(
-    "Please add an email address",
-    "Bitte fügen Sie eine E-Mail-Adresse hinzu",
+    "Please add the email address of the guest",
+    "Bitte fügen Sie die E-Mail Adresse des Gasts hinzu",
   )
 
   val guest_checkin_select_seat = LocalizedString(
