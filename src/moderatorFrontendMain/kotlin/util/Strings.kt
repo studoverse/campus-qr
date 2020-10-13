@@ -641,8 +641,8 @@ object Strings {
   )
 
   val guest_checkin_not_yet_added_subtitle = LocalizedString(
-    "Click on \"add guest\" button in the top right corner to add a guest check in.",
-    "Klicken Sie rechts oben auf \"Gast hinzufügen\" um eine Gast Check-In hinzuzufügen.",
+    "Click on \"check in guest\" in the top right corner to check in a guest.",
+    "Klicken Sie rechts oben auf \"Gast einchecken\" um einen Gast einzuchecken.",
   )
 
   val guest_checkin_checkout_are_you_sure = LocalizedString(
