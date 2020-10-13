@@ -55,12 +55,12 @@ class App : RComponent<AppProps, AppState>() {
   private val accessManagerSideDrawerItems = listOf(
     SideDrawerItem(
       label = Url.ACCESS_MANAGEMENT_LIST.title,
-      icon = listIcon,
+      icon = verifiedUserIcon,
       url = Url.ACCESS_MANAGEMENT_LIST
     ),
     SideDrawerItem(
       label = Url.GUEST_ACCESS_MANAGEMENT.title,
-      icon = listIcon,
+      icon = supervisedUserCircleIcon,
       url = Url.GUEST_ACCESS_MANAGEMENT
     )
   )
@@ -68,12 +68,12 @@ class App : RComponent<AppProps, AppState>() {
   private val moderatorSideDrawerItems = listOf(
     SideDrawerItem(
       label = Url.LOCATIONS_LIST.title,
-      icon = listIcon,
+      icon = meetingRoomIcon,
       url = Url.LOCATIONS_LIST
     ),
     SideDrawerItem(
       label = Url.REPORT.title,
-      icon = contactMailIcon,
+      icon = bugReportIcon,
       url = Url.REPORT
     ),
   )

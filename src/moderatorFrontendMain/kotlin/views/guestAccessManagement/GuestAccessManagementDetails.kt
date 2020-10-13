@@ -27,6 +27,7 @@ interface GuestAccessManagementDetailsProps : RProps {
     val onGuestCheckedIn: () -> Unit,
     val onShowSnackbar: (String) -> Unit
   )
+
   var classes: GuestAccessManagementDetailsClasses
   var config: Config
 }
@@ -79,8 +80,9 @@ class GuestAccessManagementDetails :
 
   private fun checkInGuest() = launch {
     setState { showProgress = true }
+    val locationId = locationIdWithSeat(state.selectedLocation!!.id, state.seatInputValue)
     val response = NetworkManager.post<String>(
-      url = "$baseUrl/location/${state.selectedLocation!!.id}${state.seatInputValue?.let { "-$it" }}/guestCheckIn",
+      url = "$baseUrl/location/$locationId/guestCheckIn",
       params = json("email" to state.personEmailTextFieldValue)
     )
     setState {
@@ -237,6 +239,9 @@ class GuestAccessManagementDetails :
   }
 }
 
+// If seat is not null, id gets appended with '-' to locationId
+fun locationIdWithSeat(locationId: String, seat: Int?) = "$locationId${seat?.let { "-$it" } ?: ""}"
+
 interface GuestAccessManagementDetailsClasses {
   // Keep in sync with GuestAccessManagementDetailsStyle!
   var addButton: String
@@ -261,4 +266,3 @@ private val styled =
 fun RBuilder.renderGuestAccessManagementDetails(config: GuestAccessManagementDetailsProps.Config) = styled {
   attrs.config = config
 }
-  

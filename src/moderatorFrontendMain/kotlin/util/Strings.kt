@@ -36,6 +36,11 @@ object Strings {
     "Anwenden",
   )
 
+  val other = LocalizedString (
+    "Other",
+    "Sonstige",
+  )
+
   val locations_element_download_qr_code = LocalizedString(
       "Print / download QR code",
       "QR-Code drucken / herunterladen"
@@ -623,6 +628,11 @@ object Strings {
   val guest_access_control_not_yet_added_subtitle = LocalizedString(
     "Click on \"add guest access control\" button in the top right corner to add a  guest access control.",
     "Klicken Sie rechts oben auf \"Gast-Zugangskontrolle hinzufügen\" um eine Gast-Zugangskontrolle hinzuzufügen.",
+  )
+
+  val guest_access_control_checkout_are_you_sure = LocalizedString(
+    "Are you sure you want to check out %s?",
+    "Sind Sie sicher, dass Sie %s auschecken möchten?",
   )
 
   val user_sso_info = LocalizedString(

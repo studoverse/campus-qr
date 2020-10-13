@@ -439,6 +439,14 @@ val navigateNextIcon: RClass<IconProps> = importedNavigateNextIcon.default
 private external val importedVerifiedUserIcon: dynamic
 val verifiedUserIcon: RClass<IconProps> = importedVerifiedUserIcon.default
 
+@JsModule("@material-ui/icons/SupervisedUserCircle")
+private external val importedSupervisedUserCircleIcon: dynamic
+val supervisedUserCircleIcon: RClass<IconProps> = importedSupervisedUserCircleIcon.default
+
+@JsModule("@material-ui/icons/Person")
+private external val importedPersonIcon: dynamic
+val personIcon: RClass<IconProps> = importedPersonIcon.default
+
 @JsModule("@material-ui/icons/Build")
 private external val importedBuildIcon: dynamic
 val buildIcon: RClass<IconProps> = importedBuildIcon.default

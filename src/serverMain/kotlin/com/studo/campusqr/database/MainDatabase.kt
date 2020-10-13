@@ -34,8 +34,8 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
             partialIndex = arrayOf(CheckIn::checkOutDate equal null)
         )
 
-        // Guest check in
-        index(CheckIn::checkedInBy.ascending())
+        // Guest check in / check out
+        index(CheckIn::checkedInBy.ascending(), CheckIn::checkOutDate.descending())
     }
     collection<BackendSeatFilter>("seatFilters") {
         index(BackendSeatFilter::locationId.ascending(), BackendSeatFilter::seat.ascending())

@@ -1,22 +1,31 @@
 package views.guestAccessManagement.guestAccessManagementOverview
 
-import MenuItem
+import apiBase
 import com.studo.campusqr.common.ActiveCheckIn
+import com.studo.campusqr.common.extensions.format
 import kotlinx.browser.window
-import materialMenu
 import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
 import util.Strings
 import util.get
-import webcore.materialUI.*
+import views.guestAccessManagement.locationIdWithSeat
+import webcore.NetworkManager
+import webcore.extensions.launch
+import webcore.materialUI.mTableCell
+import webcore.materialUI.mTableRow
+import webcore.materialUI.muiButton
+import webcore.materialUI.withStyles
+import kotlin.js.json
 
 interface GuestAccessManagementRowProps : RProps {
   var classes: QuestAccessManagementRowClasses
   var config: Config
   class Config(
-    val activeCheckIn: ActiveCheckIn
+    val activeCheckIn: ActiveCheckIn,
+    val onCheckedOut: () -> Unit,
+    val onShowSnackbar: (String) -> Unit,
   )
 }
 
@@ -35,18 +44,28 @@ class GuestAccessManagementRow : RComponent<GuestAccessManagementRowProps, Guest
         +(props.config.activeCheckIn.seat?.toString() ?: "-")
       }
       mTableCell {
-        materialMenu(
-          menuItems = listOf(
-            MenuItem(text = "Check-out", icon = checkIcon, onClick = {
-              TODO("Not implemented")
-            }),
-            MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
-              if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
-                TODO("Not implemented")
+        muiButton {
+          attrs.variant = "outlined"
+          attrs.color = "primary"
+          attrs.onClick = {
+            if (window.confirm(Strings.guest_access_control_checkout_are_you_sure.get().format(props.config.activeCheckIn.email))) {
+              val locationId = with(props.config.activeCheckIn) { locationIdWithSeat(locationId, seat) }
+              launch {
+                val response = NetworkManager.post<String>(
+                  "$apiBase/location/$locationId/checkout", params = json(
+                    "email" to props.config.activeCheckIn.email
+                  )
+                )
+                if (response == "ok") {
+                  props.config.onCheckedOut()
+                } else {
+                  props.config.onShowSnackbar(Strings.error_try_again.get())
+                }
               }
-            }),
-          )
-        )
+            }
+          }
+          +"Check-out"
+        }
       }
     }
   }

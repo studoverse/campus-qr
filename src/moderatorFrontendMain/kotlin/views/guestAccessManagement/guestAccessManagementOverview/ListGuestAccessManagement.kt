@@ -113,13 +113,22 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
             mTableCell { +Strings.location_name.get() }
             mTableCell { +Strings.email_address.get() }
             mTableCell { +Strings.report_checkin_seat.get() }
-            mTableCell { +Strings.actions.get() }
+            mTableCell {  }
           }
         }
         mTableBody {
           state.activeGuestCheckIns!!.forEach { activeCheckIn ->
             renderGuestAccessManagementRow(
-              GuestAccessManagementRowProps.Config(activeCheckIn)
+              GuestAccessManagementRowProps.Config(
+                activeCheckIn,
+                onCheckedOut = {
+                  fetchActiveGuestCheckIns()
+                  setState { snackbarText = "Checkout successful" }
+                },
+                onShowSnackbar = { text ->
+                  setState { snackbarText = text }
+                }
+              )
             )
           }
         }
