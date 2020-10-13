@@ -266,7 +266,7 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
 }
 
 suspend fun AuthenticatedApplicationCall.listGuestActiveCheckIns() {
-  if (user.type != UserType.ACCESS_MANAGER && !user.isAdmin) {
+  if (user.isAccessManager) {
     respondForbidden()
     return
   }
@@ -294,6 +294,7 @@ suspend fun AuthenticatedApplicationCall.listGuestActiveCheckIns() {
   )
 }
 
+// locationId to location
 suspend fun List<CheckIn>.getLocationMap(): Map<String, BackendLocation> = runOnDb {
   MainDatabase.getCollection<BackendLocation>()
     .find(BackendLocation::_id inArray map { it.locationId }.distinct())

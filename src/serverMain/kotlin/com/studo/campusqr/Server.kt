@@ -103,7 +103,7 @@ suspend fun main() {
 
         route("{id}") {
           post("visit") { call.visitLocation() }
-          post("guestVisit") { call.getAuthenticatedCall()?.guestVisitLocation() }
+          post("guestCheckIn") { call.getAuthenticatedCall()?.guestCheckIn() }
           post("checkout") { call.checkOutLocation() }
           get("visitsCsv") { call.getAuthenticatedCall()?.returnLocationVisitCsvData() }
           post("edit") { call.getAuthenticatedCall()?.editLocation() }

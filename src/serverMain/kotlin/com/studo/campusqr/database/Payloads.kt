@@ -45,6 +45,7 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
 
   val isAdmin get() = type == UserType.ADMIN
   val isModerator get() = type == UserType.MODERATOR || isAdmin
+  val isAccessManager get() = type == UserType.ACCESS_MANAGER || isModerator
 }
 
 class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
@@ -101,7 +102,7 @@ class CheckIn : MongoMainEntry() {
   var ipAddress: String? = null // Only stored if checkInIpAddressHeader is set
   var grantAccessId: String? = null // id of BackendAccess which was used to enter, null if no BackendAccess was used
   var seat: Int? = null // null if Location has no seatCount defined
-  var checkedInBy: String? = null // userId of the person who managed this a manual guest check-in
+  var checkedInBy: String? = null // userId of the person who created this check in for a guest
 }
 
 class SessionToken : MongoMainEntry() {

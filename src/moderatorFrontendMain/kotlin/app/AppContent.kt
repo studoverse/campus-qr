@@ -59,7 +59,6 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
 
 interface AppContentClasses {
   // Keep in sync with AppContentStyle!
-  var container: String
 }
 
 private val AppContentStyle = { theme: dynamic ->
