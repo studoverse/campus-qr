@@ -1,4 +1,4 @@
-package views.guestAccessManagement
+package views.guestCheckIn
 
 import apiBase
 import app.GlobalCss
@@ -20,17 +20,17 @@ import webcore.extensions.launch
 import webcore.materialUI.*
 import kotlin.js.json
 
-interface AddGuestAccessProps : RProps {
+interface AddGuestCheckInProps : RProps {
   class Config(
     val onGuestCheckedIn: () -> Unit,
     val onShowSnackbar: (String) -> Unit
   )
 
-  var classes: AddGuestAccessClasses
+  var classes: AddGuestCheckInClasses
   var config: Config
 }
 
-interface AddGuestAccessState : RState {
+interface AddGuestCheckInState : RState {
   var locationFetchInProgress: Boolean
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>
@@ -45,9 +45,9 @@ interface AddGuestAccessState : RState {
   var seatInputError: String
 }
 
-class AddGuestAccess : RComponent<AddGuestAccessProps, AddGuestAccessState>() {
+class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
 
-  override fun AddGuestAccessState.init() {
+  override fun AddGuestCheckInState.init() {
     locationFetchInProgress = false
     showProgress = false
     locationNameToLocationMap = emptyMap()
@@ -103,14 +103,14 @@ class AddGuestAccess : RComponent<AddGuestAccessProps, AddGuestAccessState>() {
 
     if (state.personEmailTextFieldValue.isEmpty()) {
       setState {
-        personEmailTextFieldError = Strings.guest_access_control_email_must_not_be_empty.get()
+        personEmailTextFieldError = Strings.guest_checkin_email_must_not_be_empty.get()
       }
       return false
     }
 
     if (state.selectedLocation?.seatCount != null && state.seatInputValue == null) {
       setState {
-        seatInputError = Strings.guest_access_control_select_seat.get()
+        seatInputError = Strings.guest_checkin_select_seat.get()
       }
       return false
     }
@@ -136,7 +136,7 @@ class AddGuestAccess : RComponent<AddGuestAccessProps, AddGuestAccessState>() {
               checkInGuest()
             }
           }
-          +Strings.guest_access_control_add_guest.get()
+          +Strings.guest_checkin_add_guest.get()
         }
       }
     }
@@ -239,14 +239,14 @@ class AddGuestAccess : RComponent<AddGuestAccessProps, AddGuestAccessState>() {
 // If seat is not null, id gets appended with '-' to locationId
 fun locationIdWithSeat(locationId: String, seat: Int?) = "$locationId${seat?.let { "-$it" } ?: ""}"
 
-interface AddGuestAccessClasses {
-  // Keep in sync with GuestAccessManagementDetailsStyle!
+interface AddGuestCheckInClasses {
+  // Keep in sync with AddGuestCheckInStyle!
   var addButton: String
   var form: String
 }
 
-private val AddGuestAccessStyle = { theme: dynamic ->
-  // Keep in sync with GuestAccessManagementDetailsClasses!
+private val AddGuestCheckInStyle = { theme: dynamic ->
+  // Keep in sync with AddGuestCheckInClasses!
   js {
     addButton = js {
       marginBottom = 16
@@ -257,9 +257,8 @@ private val AddGuestAccessStyle = { theme: dynamic ->
   }
 }
 
-private val styled =
-  withStyles<AddGuestAccessProps, AddGuestAccess>(AddGuestAccessStyle)
+private val styled = withStyles<AddGuestCheckInProps, AddGuestCheckIn>(AddGuestCheckInStyle)
 
-fun RBuilder.renderAddGuestAccess(config: AddGuestAccessProps.Config) = styled {
+fun RBuilder.renderAddGuestCheckIn(config: AddGuestCheckInProps.Config) = styled {
   attrs.config = config
 }

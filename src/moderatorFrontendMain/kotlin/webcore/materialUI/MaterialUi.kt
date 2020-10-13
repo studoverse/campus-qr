@@ -395,6 +395,18 @@ val imageOutlinedIcon: RClass<IconProps> = importedImageOutlinedIcon.default
 private external val importedLinkIcon: dynamic
 val linkIcon: RClass<IconProps> = importedLinkIcon.default
 
+@JsModule("@material-ui/icons/WhereToVote")
+private external val importedWhereToVoteIcon: dynamic
+val whereToVoteIcon: RClass<IconProps> = importedWhereToVoteIcon.default
+
+@JsModule("@material-ui/icons/Block")
+private external val importedBlockIcon: dynamic
+val blockIcon: RClass<IconProps> = importedBlockIcon.default
+
+@JsModule("@material-ui/icons/GroupAdd")
+private external val importedGroupAddIcon: dynamic
+val groupAddIcon: RClass<IconProps> = importedGroupAddIcon.default
+
 @JsModule("@material-ui/icons/PlaylistAddCheck")
 private external val importedPlaylistAddCheckIcon: dynamic
 val playlistAddCheckIcon: RClass<IconProps> = importedPlaylistAddCheckIcon.default

@@ -4,23 +4,18 @@ import Url
 import com.studo.campusqr.common.UserData
 import kotlinext.js.js
 import react.*
-import react.dom.div
 import util.AppRoute
-import util.Strings
-import util.get
 import views.accessManagement.accessManagementExport.renderAccessManagementExportList
 import views.accessManagement.accessManagementOverview.renderAccessManagementList
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
-import views.guestAccessManagement.guestAccessManagementOverview.renderListGuestAccessManagement
+import views.guestCheckIn.guestCheckInOverview.renderGuestCheckInOverview
 import views.locations.locationsOverview.renderListLocations
 import views.login.LoginMode
 import views.login.renderLoginView
 import views.report.renderReport
 import views.users.*
-import webcore.MbSnackbarProps
 import webcore.materialUI.withStyles
-import webcore.mbSnackbar
 
 interface AppContentProps : RProps {
   class Config(
@@ -45,7 +40,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
       Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList(locationId = currentAppRoute.pathParams["id"])
       Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
       Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
-      Url.GUEST_ACCESS_MANAGEMENT -> renderListGuestAccessManagement()
+      Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()
       Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
       Url.USERS -> renderUsers(userData = props.config.userData!!)

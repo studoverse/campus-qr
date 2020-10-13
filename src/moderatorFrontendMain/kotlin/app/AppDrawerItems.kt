@@ -31,7 +31,7 @@ interface AppDrawerItemsProps : RProps {
     val userData: UserData?,
     val currentAppRoute: AppRoute?,
     val loading: Boolean,
-    val accessManagerSideDrawerItems: List<SideDrawerItem>,
+    val checkInSideDrawerItems: List<SideDrawerItem>,
     val moderatorSideDrawerItems: List<SideDrawerItem>,
     val adminSideDrawerItems: List<SideDrawerItem>,
     val onCloseMobileNav: () -> Unit
@@ -110,9 +110,9 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
 
       if (userType == UserType.ACCESS_MANAGER || userType == UserType.MODERATOR || userType == UserType.ADMIN) {
         listSubheader {
-          +UserType.ACCESS_MANAGER.localizedStringAction.get()
+          +Strings.check_in.get()
         }
-        props.config.accessManagerSideDrawerItems.forEach { sideDrawerItem ->
+        props.config.checkInSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
             label = sideDrawerItem.label.get(),
             icon = sideDrawerItem.icon,

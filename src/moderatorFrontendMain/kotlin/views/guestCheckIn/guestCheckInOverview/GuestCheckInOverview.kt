@@ -1,4 +1,4 @@
-package views.guestAccessManagement.guestAccessManagementOverview
+package views.guestCheckIn.guestCheckInOverview
 
 import apiBase
 import com.studo.campusqr.common.ActiveCheckIn
@@ -6,8 +6,8 @@ import react.*
 import util.Strings
 import util.get
 import views.common.*
-import views.guestAccessManagement.AddGuestAccessProps
-import views.guestAccessManagement.renderAddGuestAccess
+import views.guestCheckIn.AddGuestCheckInProps
+import views.guestCheckIn.renderAddGuestCheckIn
 import webcore.MbSnackbarProps
 import webcore.NetworkManager
 import webcore.extensions.launch
@@ -15,28 +15,28 @@ import webcore.materialUI.*
 import webcore.mbMaterialDialog
 import webcore.mbSnackbar
 
-interface ListGuestAccessManagementProps : RProps {
-  var classes: ListGuestAccessManagementClasses
+interface GuestCheckinOverviewProps : RProps {
+  var classes: GuestCheckInOverviewClasses
 }
 
-interface ListGuestAccessManagementState : RState {
+interface GuestCheckInOverviewState : RState {
   var activeGuestCheckIns: List<ActiveCheckIn>?
   var showAddGuestCheckInDialog: Boolean
-  var loadingAccessManagementList: Boolean
+  var loadingCheckInList: Boolean
   var snackbarText: String
 }
 
-class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, ListGuestAccessManagementState>() {
+class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInOverviewState>() {
 
-  override fun ListGuestAccessManagementState.init() {
+  override fun GuestCheckInOverviewState.init() {
     activeGuestCheckIns = emptyList()
     showAddGuestCheckInDialog = false
-    loadingAccessManagementList = false
+    loadingCheckInList = false
     snackbarText = ""
   }
 
   private fun fetchActiveGuestCheckIns() = launch {
-    setState { loadingAccessManagementList }
+    setState { loadingCheckInList }
     val response = NetworkManager.get<Array<ActiveCheckIn>>("$apiBase/report/listActiveGuestCheckIns")
     setState {
       if (response != null) {
@@ -44,7 +44,7 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
       } else {
         snackbarText = Strings.error_try_again.get()
       }
-      loadingAccessManagementList = false
+      loadingCheckInList = false
     }
   }
 
@@ -52,12 +52,12 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
     fetchActiveGuestCheckIns()
   }
 
-  private fun RBuilder.renderAddGuestAccessManagementDialog() = mbMaterialDialog(
+  private fun RBuilder.renderAddGuestCheckInDialog() = mbMaterialDialog(
     show = state.showAddGuestCheckInDialog,
-    title = Strings.access_control_create.get(),
+    title = Strings.guest_checkin_add_guest.get(),
     customContent = {
-      renderAddGuestAccess(
-        AddGuestAccessProps.Config(
+      renderAddGuestCheckIn(
+        AddGuestCheckInProps.Config(
           onGuestCheckedIn = {
             setState { showAddGuestCheckInDialog = false }
             fetchActiveGuestCheckIns()
@@ -89,12 +89,12 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
 
   override fun RBuilder.render() {
     renderSnackbar()
-    renderAddGuestAccessManagementDialog()
+    renderAddGuestCheckInDialog()
     renderToolbarView(ToolbarViewProps.Config(
-      title = Strings.guest_access_control.get(),
+      title = Strings.guest_checkin.get(),
       buttons = listOf(
         ToolbarViewProps.ToolbarButton(
-          text = Strings.guest_access_control_add_guest.get(),
+          text = Strings.guest_checkin_add_guest.get(),
           variant = "contained",
           onClick = {
             setState {
@@ -104,7 +104,7 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
         )
       )
     ))
-    renderLinearProgress(state.loadingAccessManagementList)
+    renderLinearProgress(state.loadingCheckInList)
 
     when {
       state.activeGuestCheckIns?.isNotEmpty() == true -> mTable {
@@ -118,12 +118,12 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
         }
         mTableBody {
           state.activeGuestCheckIns!!.forEach { activeCheckIn ->
-            renderGuestAccessManagementRow(
-              GuestAccessManagementRowProps.Config(
+            renderGuestCheckIntRow(
+              GuestCheckInRowProps.Config(
                 activeCheckIn,
                 onCheckedOut = {
                   fetchActiveGuestCheckIns()
-                  setState { snackbarText = Strings.guest_access_control_checkout_successful.get() }
+                  setState { snackbarText = Strings.guest_checkin_checkout_successful.get() }
                 },
                 onShowSnackbar = { text ->
                   setState { snackbarText = text }
@@ -133,28 +133,26 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
           }
         }
       }
-      state.activeGuestCheckIns == null && !state.loadingAccessManagementList -> networkErrorView()
-      !state.loadingAccessManagementList -> genericErrorView(
-        Strings.guest_access_control_not_yet_added_title.get(),
-        Strings.guest_access_control_not_yet_added_subtitle.get()
+      state.activeGuestCheckIns == null && !state.loadingCheckInList -> networkErrorView()
+      !state.loadingCheckInList -> genericErrorView(
+        Strings.guest_checkin_not_yet_added_title.get(),
+        Strings.guest_checkin_not_yet_added_subtitle.get()
       )
     }
   }
 }
 
-interface ListGuestAccessManagementClasses {
-  // Keep in sync with ListGuestAccessManagementStyle!
+interface GuestCheckInOverviewClasses {
+  // Keep in sync with ListGuestCheckInStyle!
 }
 
-private val ListGuestAccessManagementStyle = { theme: dynamic ->
-  // Keep in sync with ListGuestAccessManagementClasses!
+private val GuestCheckInOverviewStyle = { theme: dynamic ->
+  // Keep in sync with ListGuestCheckInClasses!
 }
 
-private val styled = withStyles<ListGuestAccessManagementProps, ListGuestAccessManagement>(
-  ListGuestAccessManagementStyle
-)
+private val styled = withStyles<GuestCheckinOverviewProps, GuestCheckInOverview>(GuestCheckInOverviewStyle)
 
-fun RBuilder.renderListGuestAccessManagement() = styled {
+fun RBuilder.renderGuestCheckInOverview() = styled {
   // Set component attrs here
 }
   

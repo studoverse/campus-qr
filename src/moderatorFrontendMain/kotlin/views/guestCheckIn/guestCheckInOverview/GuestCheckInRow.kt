@@ -1,4 +1,4 @@
-package views.guestAccessManagement.guestAccessManagementOverview
+package views.guestCheckIn.guestCheckInOverview
 
 import apiBase
 import com.studo.campusqr.common.ActiveCheckIn
@@ -10,7 +10,7 @@ import react.RProps
 import react.RState
 import util.Strings
 import util.get
-import views.guestAccessManagement.locationIdWithSeat
+import views.guestCheckIn.locationIdWithSeat
 import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.materialUI.mTableCell
@@ -19,8 +19,8 @@ import webcore.materialUI.muiButton
 import webcore.materialUI.withStyles
 import kotlin.js.json
 
-interface GuestAccessManagementRowProps : RProps {
-  var classes: QuestAccessManagementRowClasses
+interface GuestCheckInRowProps : RProps {
+  var classes: GuestCheckInRowClasses
   var config: Config
   class Config(
     val activeCheckIn: ActiveCheckIn,
@@ -29,9 +29,9 @@ interface GuestAccessManagementRowProps : RProps {
   )
 }
 
-interface GuestAccessManagementRowState : RState
+interface GuestCheckInRowState : RState
 
-class GuestAccessManagementRow : RComponent<GuestAccessManagementRowProps, GuestAccessManagementRowState>() {
+class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>() {
   override fun RBuilder.render() {
     mTableRow {
       mTableCell {
@@ -49,7 +49,7 @@ class GuestAccessManagementRow : RComponent<GuestAccessManagementRowProps, Guest
           attrs.color = "primary"
           attrs.onClick = {
             val areYouSureText =
-              Strings.guest_access_control_checkout_are_you_sure.get().format(props.config.activeCheckIn.email)
+              Strings.guest_checkin_checkout_are_you_sure.get().format(props.config.activeCheckIn.email)
             if (window.confirm(areYouSureText)) {
               val locationId = with(props.config.activeCheckIn) { locationIdWithSeat(locationId, seat) }
               launch {
@@ -66,24 +66,24 @@ class GuestAccessManagementRow : RComponent<GuestAccessManagementRowProps, Guest
               }
             }
           }
-          +Strings.guest_access_control_check_out.get()
+          +Strings.guest_checkin_check_out.get()
         }
       }
     }
   }
 }
 
-interface QuestAccessManagementRowClasses {
-  // Keep in sync with QuestAccessManagementRowStyle!
+interface GuestCheckInRowClasses {
+  // Keep in sync with GuestCheckInRowStyle!
 }
 
-private val QuestAccessManagementRowStyle = { theme: dynamic ->
-  // Keep in sync with QuestAccessManagementRowClasses!
+private val GuestCheckInRowStyle = { theme: dynamic ->
+  // Keep in sync with GuestCheckInRowClasses!
 }
 
-private val styled = withStyles<GuestAccessManagementRowProps, GuestAccessManagementRow>(QuestAccessManagementRowStyle)
+private val styled = withStyles<GuestCheckInRowProps, GuestCheckInRow>(GuestCheckInRowStyle)
 
-fun RBuilder.renderGuestAccessManagementRow(config: GuestAccessManagementRowProps.Config) = styled {
+fun RBuilder.renderGuestCheckIntRow(config: GuestCheckInRowProps.Config) = styled {
   attrs.config = config
 }
   

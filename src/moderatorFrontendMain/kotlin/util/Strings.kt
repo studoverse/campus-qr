@@ -230,6 +230,11 @@ object Strings {
       "Kontakte zurückverfolgen"
   )
 
+  val check_in = LocalizedString(
+    "Check in",
+    "Check-In"
+  )
+
   val report_checkin_email = LocalizedString(
       "E-mail Address",
       "E-Mail Adresse"
@@ -620,48 +625,48 @@ object Strings {
       "Das Enddatum kann nicht vor dem Anfangsdatum liegen"
   )
 
-  val guest_access_control = LocalizedString(
-    "Guest access control",
-    "Gast-Zugangskontrolle",
+  val guest_checkin = LocalizedString(
+    "Guest check in",
+    "Gast Check-In",
   )
 
-  val guest_access_control_add_guest = LocalizedString(
+  val guest_checkin_add_guest = LocalizedString(
     "Add guest",
     "Gast hinzufügen",
   )
 
-  val guest_access_control_not_yet_added_title = LocalizedString(
-    "No guest access control added yet.",
-    "Noch keine Gast-Zugangskontrolle hinzugefügt.",
+  val guest_checkin_not_yet_added_title = LocalizedString(
+    "No guest check in added yet.",
+    "Noch keine Gast Check-In hinzugefügt.",
   )
 
-  val guest_access_control_not_yet_added_subtitle = LocalizedString(
-    "Click on \"add guest access control\" button in the top right corner to add a  guest access control.",
-    "Klicken Sie rechts oben auf \"Gast-Zugangskontrolle hinzufügen\" um eine Gast-Zugangskontrolle hinzuzufügen.",
+  val guest_checkin_not_yet_added_subtitle = LocalizedString(
+    "Click on \"add guest\" button in the top right corner to add a guest check in.",
+    "Klicken Sie rechts oben auf \"Gast hinzufügen\" um eine Gast Check-In hinzuzufügen.",
   )
 
-  val guest_access_control_checkout_are_you_sure = LocalizedString(
+  val guest_checkin_checkout_are_you_sure = LocalizedString(
     "Are you sure you want to check out %s?",
-    "Sind Sie sicher, dass Sie %s auschecken möchten?",
+    "Sind Sie sicher, dass Sie %s auschecken möchten?", // FIXME: auschecken
   )
 
-  val guest_access_control_email_must_not_be_empty = LocalizedString(
+  val guest_checkin_email_must_not_be_empty = LocalizedString(
     "Please add an email address",
     "Bitte fügen Sie eine E-Mail-Adresse hinzu",
   )
 
-  val guest_access_control_select_seat = LocalizedString(
+  val guest_checkin_select_seat = LocalizedString(
     "Please select a seat",
     "Bitte wählen Sie einen Sitzplatz",
   )
 
-  val guest_access_control_checkout_successful = LocalizedString(
-    "Checkout successful",
+  val guest_checkin_checkout_successful = LocalizedString(
+    "Check out successful",
     "Check-Out erfolgreich",
   )
 
-  val guest_access_control_check_out = LocalizedString(
-    "Checkout",
+  val guest_checkin_check_out = LocalizedString(
+    "Check out",
     "Check-Out",
   )
 

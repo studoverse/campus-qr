@@ -52,16 +52,16 @@ interface AppState : RState {
 
 class App : RComponent<AppProps, AppState>() {
 
-  private val accessManagerSideDrawerItems = listOf(
+  private val checkInSideDrawerItems = listOf(
     SideDrawerItem(
       label = Url.ACCESS_MANAGEMENT_LIST.title,
-      icon = verifiedUserIcon,
+      icon = groupAddIcon,
       url = Url.ACCESS_MANAGEMENT_LIST
     ),
     SideDrawerItem(
-      label = Url.GUEST_ACCESS_MANAGEMENT.title,
-      icon = supervisedUserCircleIcon,
-      url = Url.GUEST_ACCESS_MANAGEMENT
+      label = Url.GUEST_CHECK_IN.title,
+      icon = whereToVoteIcon,
+      url = Url.GUEST_CHECK_IN
     )
   )
 
@@ -266,7 +266,7 @@ class App : RComponent<AppProps, AppState>() {
                   renderAppDrawerItems(AppDrawerItemsProps.Config(
                     userData = state.userData,
                     currentAppRoute = state.currentAppRoute,
-                    accessManagerSideDrawerItems = if (state.loadingUserData) emptyList() else accessManagerSideDrawerItems,
+                    checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
                     moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
                     adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
                     loading = false,
