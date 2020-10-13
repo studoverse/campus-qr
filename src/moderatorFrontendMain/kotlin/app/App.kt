@@ -229,12 +229,7 @@ class App : RComponent<AppProps, AppState>() {
     } else {
       renderAppContent(AppContentProps.Config(
         currentAppRoute = state.currentAppRoute,
-        userData = state.userData,
-        onShowSnackbar = { message ->
-          setState {
-            // Show snackbar
-          }
-        }
+        userData = state.userData
       ))
     }
   }

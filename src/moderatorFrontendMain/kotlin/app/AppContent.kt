@@ -17,9 +17,7 @@ import views.locations.locationsOverview.renderListLocations
 import views.login.LoginMode
 import views.login.renderLoginView
 import views.report.renderReport
-import views.users.AddUserProps
-import views.users.renderAddUser
-import views.users.renderUsers
+import views.users.*
 import webcore.MbSnackbarProps
 import webcore.materialUI.withStyles
 import webcore.mbSnackbar
@@ -28,7 +26,6 @@ interface AppContentProps : RProps {
   class Config(
     val currentAppRoute: AppRoute?,
     val userData: UserData?,
-    val onShowSnackbar: (String) -> Unit
   )
 
   var config: Config
@@ -36,14 +33,9 @@ interface AppContentProps : RProps {
   var classes: AppContentClasses
 }
 
-interface AppContentState : RState {
-  var snackbarText: String
-}
+interface AppContentState : RState
 
 class AppContent : RComponent<AppContentProps, AppContentState>() {
-  override fun AppContentState.init() {
-    snackbarText = ""
-  }
 
   override fun RBuilder.render() {
     val currentAppRoute = props.config.currentAppRoute
@@ -57,32 +49,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
       Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
       Url.USERS -> renderUsers(userData = props.config.userData!!)
-      Url.ACCOUNT_SETTINGS -> div(classes = props.classes.container) {
-        mbSnackbar(
-          MbSnackbarProps.Config(
-            show = state.snackbarText.isNotEmpty(),
-            message = state.snackbarText,
-            onClose = {
-              setState {
-                snackbarText = ""
-              }
-            })
-        )
-        renderAddUser(
-          config = AddUserProps.Config.Edit(props.config.userData!!.clientUser!!,
-            onFinished = { result ->
-              setState {
-                snackbarText = if (result == "ok") {
-                  Strings.user_updated_account_details.get()
-                } else {
-                  Strings.network_error.get()
-                }
-              }
-            }
-          ),
-          userData = props.config.userData!!
-        )
-      }
+      Url.ACCOUNT_SETTINGS -> renderMyAccount(MyAccountProps.Config(props.config.userData!!))
       Url.ADMIN_INFO -> renderAdminInfo()
       Url.LOGIN_EMAIL -> renderLoginView(
         studoUserData = props.config.userData!!,
@@ -103,12 +70,6 @@ interface AppContentClasses {
 private val AppContentStyle = { theme: dynamic ->
   // Keep in sync with AppContentClasses!
   js {
-    container = js {
-      marginTop = 32
-      marginLeft = 32
-      marginRight = marginLeft
-      marginBottom = 32
-    }
   }
 }
 
