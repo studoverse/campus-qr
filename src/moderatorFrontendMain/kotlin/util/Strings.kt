@@ -43,7 +43,7 @@ object Strings {
 
   val invalid_email = LocalizedString(
     "Invalid email address",
-    "Ungültige E-Mail-Adresse",
+    "Ungültige E-Mail Adresse",
   )
 
   val locations_element_download_qr_code = LocalizedString(
