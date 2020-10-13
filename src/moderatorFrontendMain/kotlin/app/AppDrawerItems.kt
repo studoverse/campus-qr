@@ -12,6 +12,7 @@ import react.dom.a
 import react.dom.div
 import react.dom.jsStyle
 import util.AppRoute
+import util.Strings
 import util.get
 import util.localizedStringAction
 import views.common.spacer
@@ -30,7 +31,7 @@ interface AppDrawerItemsProps : RProps {
     val userData: UserData?,
     val currentAppRoute: AppRoute?,
     val loading: Boolean,
-    val accessManagerSideDrawerItems: List<SideDrawerItem>,
+    val checkInSideDrawerItems: List<SideDrawerItem>,
     val moderatorSideDrawerItems: List<SideDrawerItem>,
     val adminSideDrawerItems: List<SideDrawerItem>,
     val onCloseMobileNav: () -> Unit
@@ -109,9 +110,9 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
 
       if (userType == UserType.ACCESS_MANAGER || userType == UserType.MODERATOR || userType == UserType.ADMIN) {
         listSubheader {
-          +UserType.ACCESS_MANAGER.localizedStringAction.get()
+          +Strings.check_in.get()
         }
-        props.config.accessManagerSideDrawerItems.forEach { sideDrawerItem ->
+        props.config.checkInSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
             label = sideDrawerItem.label.get(),
             icon = sideDrawerItem.icon,
@@ -150,6 +151,19 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
           )
         }
       }
+
+      if (props.config.userData?.externalAuthProvider == false) {
+        divider {}
+        listSubheader {
+          +Strings.other.get()
+        }
+        drawerListItem(
+          label = Strings.account_settings.get(),
+          icon = personIcon,
+          selected = props.config.currentAppRoute?.url == Url.ACCOUNT_SETTINGS,
+          url = Url.ACCOUNT_SETTINGS.path
+        )
+      }
     }
 
     list {
@@ -164,7 +178,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         flex = "1"
       }
     }
-    renderSettings(userData = props.config.userData)
+    renderSettings()
     spacer(16)
   }
 }

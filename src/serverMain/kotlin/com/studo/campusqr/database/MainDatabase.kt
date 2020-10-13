@@ -2,6 +2,7 @@ package com.studo.campusqr.database
 
 import com.studo.katerbase.MongoDatabase
 import com.studo.katerbase.equal
+import com.studo.katerbase.notEqual
 import kotlin.reflect.KClass
 
 private val mongoUri = System.getenv("MONGO_URI") ?: "mongodb://localhost:27017/campus-qr"
@@ -24,7 +25,10 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
     collection<Configuration>("configurations")
     collection<SessionToken>("sessionTokens")
     collection<CheckIn>("checkIns") {
-        index(CheckIn::email.ascending(), CheckIn::checkOutDate.descending()) // Checkout api & list of current check-ins
+        index(
+            CheckIn::email.ascending(),
+            CheckIn::checkOutDate.descending()
+        ) // Checkout api & list of current check-ins
         index(CheckIn::locationId.ascending(), CheckIn::date.descending()) // Contact tracing
 
         // Automatic check-out
@@ -33,6 +37,9 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
             CheckIn::checkOutDate.descending(), CheckIn::date.descending(),
             partialIndex = arrayOf(CheckIn::checkOutDate equal null)
         )
+
+        // Guest check in / check out
+        index(CheckIn::checkedInBy.ascending(), CheckIn::checkOutDate.descending())
     }
     collection<BackendSeatFilter>("seatFilters") {
         index(BackendSeatFilter::locationId.ascending(), BackendSeatFilter::seat.ascending())

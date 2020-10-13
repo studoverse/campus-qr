@@ -128,6 +128,7 @@ class ActiveCheckIn(
   val locationName: String,
   val seat: Int?,
   val checkInDate: Double,
+  val email: String,
 ) : ClientPayload
 
 class EditSeatFilter(

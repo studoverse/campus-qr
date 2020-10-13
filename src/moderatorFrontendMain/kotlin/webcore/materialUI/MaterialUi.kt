@@ -395,6 +395,26 @@ val imageOutlinedIcon: RClass<IconProps> = importedImageOutlinedIcon.default
 private external val importedLinkIcon: dynamic
 val linkIcon: RClass<IconProps> = importedLinkIcon.default
 
+@JsModule("@material-ui/icons/WhereToVote")
+private external val importedWhereToVoteIcon: dynamic
+val whereToVoteIcon: RClass<IconProps> = importedWhereToVoteIcon.default
+
+@JsModule("@material-ui/icons/Block")
+private external val importedBlockIcon: dynamic
+val blockIcon: RClass<IconProps> = importedBlockIcon.default
+
+@JsModule("@material-ui/icons/GroupAdd")
+private external val importedGroupAddIcon: dynamic
+val groupAddIcon: RClass<IconProps> = importedGroupAddIcon.default
+
+@JsModule("@material-ui/icons/BlurCircular")
+private external val importedBlurCircularIcon: dynamic
+val blurCircularIcon: RClass<IconProps> = importedBlurCircularIcon.default
+
+@JsModule("@material-ui/icons/LockOpen")
+private external val importedLockOpenIcon: dynamic
+val lockOpenIcon: RClass<IconProps> = importedLockOpenIcon.default
+
 @JsModule("@material-ui/icons/PlaylistAddCheck")
 private external val importedPlaylistAddCheckIcon: dynamic
 val playlistAddCheckIcon: RClass<IconProps> = importedPlaylistAddCheckIcon.default
@@ -438,6 +458,14 @@ val navigateNextIcon: RClass<IconProps> = importedNavigateNextIcon.default
 @JsModule("@material-ui/icons/VerifiedUser")
 private external val importedVerifiedUserIcon: dynamic
 val verifiedUserIcon: RClass<IconProps> = importedVerifiedUserIcon.default
+
+@JsModule("@material-ui/icons/SupervisedUserCircle")
+private external val importedSupervisedUserCircleIcon: dynamic
+val supervisedUserCircleIcon: RClass<IconProps> = importedSupervisedUserCircleIcon.default
+
+@JsModule("@material-ui/icons/Person")
+private external val importedPersonIcon: dynamic
+val personIcon: RClass<IconProps> = importedPersonIcon.default
 
 @JsModule("@material-ui/icons/Build")
 private external val importedBuildIcon: dynamic

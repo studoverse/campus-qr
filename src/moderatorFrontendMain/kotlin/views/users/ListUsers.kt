@@ -11,9 +11,7 @@ import react.dom.br
 import react.dom.div
 import util.Strings
 import util.get
-import views.common.networkErrorView
-import views.common.renderLinearProgress
-import views.common.spacer
+import views.common.*
 import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -127,43 +125,31 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     renderAddUserDialog()
     renderSsoInfoButtonDialog()
     renderSnackbar()
-
-    div(GlobalCss.flex) {
-      typography {
-        attrs.className = props.classes.header
-        attrs.variant = "h5"
-        +Strings.user_management.get()
-      }
-      div(GlobalCss.flexEnd) {
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.importButton
-          }
-          attrs.variant = "outlined"
-          attrs.color = "primary"
-          attrs.onClick = {
-            setState {
-              showSsoInfoDialog = true
+    renderToolbarView(
+      ToolbarViewProps.Config(
+        title = Strings.user_management.get(),
+        buttons = listOf(
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.user_sso_info.get(),
+            variant = "outlined",
+            onClick = {
+              setState {
+                showSsoInfoDialog = true
+              }
             }
-          }
-          +Strings.user_sso_info.get()
-        }
-
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.createButton
-          }
-          attrs.variant = "contained"
-          attrs.color = "primary"
-          attrs.onClick = {
-            setState {
-              showAddUserDialog = true
+          ),
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.user_add.get(),
+            variant = "contained",
+            onClick = {
+              setState {
+                showAddUserDialog = true
+              }
             }
-          }
-          +Strings.user_add.get()
-        }
-      }
-    }
+          )
+        )
+      )
+    )
 
     typography {
       attrs.className = props.classes.subtitle
@@ -214,10 +200,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 }
 
 interface ListUsersClasses {
-  var header: String
   var subtitle: String
-  var importButton: String
-  var createButton: String
   var dialogContent: String
   var info: String
   // Keep in sync with ListUsersStyle!
@@ -226,16 +209,7 @@ interface ListUsersClasses {
 private val ListUsersStyle = { theme: dynamic ->
   // Keep in sync with ListUsersClasses!
   js {
-    header = js {
-      margin = 16
-    }
     subtitle = js {
-      margin = 16
-    }
-    importButton = js {
-      margin = 16
-    }
-    createButton = js {
       margin = 16
     }
     dialogContent = js {

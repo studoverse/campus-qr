@@ -9,8 +9,10 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
+import views.common.ToolbarViewProps
 import views.common.networkErrorView
 import views.common.renderLinearProgress
+import views.common.renderToolbarView
 import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -62,19 +64,21 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
   }
 
   override fun RBuilder.render() {
-    div(GlobalCss.flex) {
-      typography {
-        attrs.className = props.classes.header
-        attrs.variant = "h5"
-        +Strings.access_control_export.get()
-        +" - "
-        if (state.clientLocation == null) {
-          +Strings.access_control_my.get()
-        } else {
-          +state.clientLocation!!.name
-        }
-      }
-    }
+    renderToolbarView(
+      ToolbarViewProps.Config(
+        title = StringBuilder().apply {
+          append(Strings.access_control_export.get())
+          append(" - ")
+          if (state.clientLocation == null) {
+            append(Strings.access_control_my.get())
+          } else {
+            append(state.clientLocation!!.name)
+          }
+        }.toString(),
+        backButtonUrl = Url.ACCESS_MANAGEMENT_LIST,
+        buttons = emptyList()
+      )
+    )
 
     renderLinearProgress(state.loadingPermitList)
 

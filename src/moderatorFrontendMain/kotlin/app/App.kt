@@ -52,23 +52,28 @@ interface AppState : RState {
 
 class App : RComponent<AppProps, AppState>() {
 
-  private val accessManagerSideDrawerItems = listOf(
+  private val checkInSideDrawerItems = listOf(
     SideDrawerItem(
       label = Url.ACCESS_MANAGEMENT_LIST.title,
-      icon = listIcon,
+      icon = lockOpenIcon,
       url = Url.ACCESS_MANAGEMENT_LIST
     ),
+    SideDrawerItem(
+      label = Url.GUEST_CHECK_IN.title,
+      icon = contactMailIcon,
+      url = Url.GUEST_CHECK_IN
+    )
   )
 
   private val moderatorSideDrawerItems = listOf(
     SideDrawerItem(
       label = Url.LOCATIONS_LIST.title,
-      icon = listIcon,
+      icon = meetingRoomIcon,
       url = Url.LOCATIONS_LIST
     ),
     SideDrawerItem(
       label = Url.REPORT.title,
-      icon = contactMailIcon,
+      icon = blurCircularIcon,
       url = Url.REPORT
     ),
   )
@@ -224,12 +229,7 @@ class App : RComponent<AppProps, AppState>() {
     } else {
       renderAppContent(AppContentProps.Config(
         currentAppRoute = state.currentAppRoute,
-        userData = state.userData,
-        onShowSnackbar = { message ->
-          setState {
-            // Show snackbar
-          }
-        }
+        userData = state.userData
       ))
     }
   }
@@ -266,7 +266,7 @@ class App : RComponent<AppProps, AppState>() {
                   renderAppDrawerItems(AppDrawerItemsProps.Config(
                     userData = state.userData,
                     currentAppRoute = state.currentAppRoute,
-                    accessManagerSideDrawerItems = if (state.loadingUserData) emptyList() else accessManagerSideDrawerItems,
+                    checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
                     moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
                     adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
                     loading = false,

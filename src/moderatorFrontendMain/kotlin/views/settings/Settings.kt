@@ -17,24 +17,12 @@ import webcore.materialUI.withStyles
 
 interface SettingsProps : RProps {
   var classes: SettingsClasses
-  var userData: UserData?
 }
 
 interface SettingsState : RState
 
 class Settings : RComponent<SettingsProps, SettingsState>() {
   override fun RBuilder.render() {
-    if (props.userData?.externalAuthProvider == false) {
-      muiButton {
-        attrs.className = props.classes.button
-        attrs.color = "primary"
-        attrs.onClick = {
-          window.location.href = "$pathBase/accountSettings"
-        }
-        +Strings.account_settings.get()
-      }
-      br {}
-    }
     renderLanguageSwitch()
     br {}
     muiButton {
@@ -62,8 +50,7 @@ private val SettingsStyle = { theme: dynamic ->
 
 private val styled = withStyles<SettingsProps, Settings>(SettingsStyle)
 
-fun RBuilder.renderSettings(userData: UserData?) = styled {
+fun RBuilder.renderSettings() = styled {
   // Set component attrs here
-  attrs.userData = userData
 }
   

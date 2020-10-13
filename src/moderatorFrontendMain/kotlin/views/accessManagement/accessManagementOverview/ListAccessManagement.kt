@@ -2,23 +2,17 @@ package views.accessManagement.accessManagementOverview
 
 import Url
 import apiBase
-import app.GlobalCss
-import app.routeContext
 import com.studo.campusqr.common.AccessManagementData
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.ClientLocation
-import kotlinext.js.js
 import react.*
-import react.dom.div
 import util.Strings
 import util.get
 import util.toRoute
 import views.accessManagement.AccessManagementDetailsProps
 import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.*
 import views.accessManagement.renderAccessManagementDetails
-import views.common.genericErrorView
-import views.common.networkErrorView
-import views.common.renderLinearProgress
+import views.common.*
 import webcore.MbSnackbarProps
 import webcore.NetworkManager
 import webcore.extensions.launch
@@ -63,8 +57,8 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 
   override fun componentDidUpdate(
-      prevProps: ListAccessManagementProps, prevState: ListAccessManagementState,
-      snapshot: Any
+    prevProps: ListAccessManagementProps, prevState: ListAccessManagementState,
+    snapshot: Any
   ) {
     if (prevProps.locationId != props.locationId) {
       setState {
@@ -79,97 +73,85 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 
   private fun RBuilder.renderAddAccessManagementDialog() = mbMaterialDialog(
-      show = state.showAddAccessManagementDialog,
-      title = Strings.access_control_create.get(),
-      customContent = {
-        renderAccessManagementDetails(
-            AccessManagementDetailsProps.Config.Create(
-                locationId = props.locationId,
-                onCreated = { success ->
-                  setState {
-                    showAddAccessManagementDialog = false
-                    snackbarText = if (success) {
-                      Strings.access_control_created_successfully.get()
-                    } else {
-                      Strings.error_try_again.get()
-                    }
-                  }
-                  fetchAccessManagementList()
-                })
-        )
-      },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddAccessManagementDialog = false
-        }
+    show = state.showAddAccessManagementDialog,
+    title = Strings.access_control_create.get(),
+    customContent = {
+      renderAccessManagementDetails(
+        AccessManagementDetailsProps.Config.Create(
+          locationId = props.locationId,
+          onCreated = { success ->
+            setState {
+              showAddAccessManagementDialog = false
+              snackbarText = if (success) {
+                Strings.access_control_created_successfully.get()
+              } else {
+                Strings.error_try_again.get()
+              }
+            }
+            fetchAccessManagementList()
+          })
+      )
+    },
+    buttons = null,
+    onClose = {
+      setState {
+        showAddAccessManagementDialog = false
       }
+    }
   )
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-      MbSnackbarProps.Config(
-          show = state.snackbarText.isNotEmpty(),
-          message = state.snackbarText,
-          onClose = {
-            setState { snackbarText = "" }
-          })
+    MbSnackbarProps.Config(
+      show = state.snackbarText.isNotEmpty(),
+      message = state.snackbarText,
+      onClose = {
+        setState { snackbarText = "" }
+      })
   )
 
   override fun RBuilder.render() {
     renderAddAccessManagementDialog()
     renderSnackbar()
-
-    div(GlobalCss.flex) {
-      typography {
-        attrs.className = props.classes.header
-        attrs.variant = "h5"
-        +Strings.access_control.get()
-        +" - "
-        if (state.clientLocation == null) {
-          +Strings.access_control_my.get()
-        } else {
-          +state.clientLocation!!.name
-        }
-      }
-      div(GlobalCss.flexEnd) {
-        routeContext.Consumer { routeContext ->
-          muiButton {
-            attrs.classes = js {
-              root = props.classes.headerButton
-            }
-            attrs.variant = "outlined"
-            attrs.color = "primary"
-            attrs.onClick = {
+    renderToolbarView(
+      ToolbarViewProps.Config(
+        title = StringBuilder().apply {
+          append(Strings.access_control.get())
+          append(" - ")
+          if (state.clientLocation == null) {
+            append(Strings.access_control_my.get())
+          } else {
+            append(state.clientLocation!!.name)
+          }
+        }.toString(),
+        buttons = listOf(
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.access_control_export.get(),
+            variant = "outlined",
+            onClick = { routeContext ->
               if (props.locationId == null) {
                 routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LIST_EXPORT.toRoute()!!)
               } else {
                 routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(pathParams = mapOf("id" to props.locationId!!))!!)
               }
             }
-            +Strings.access_control_export.get()
-          }
-        }
-
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.headerButton
-          }
-          attrs.variant = "contained"
-          attrs.color = "primary"
-          attrs.onClick = {
-            setState {
-              showAddAccessManagementDialog = true
+          ),
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.access_control_create.get(),
+            variant = "contained",
+            onClick = { _ ->
+              setState {
+                showAddAccessManagementDialog = true
+              }
             }
-          }
-          +Strings.access_control_create.get()
-        }
-      }
-    }
+          )
+        )
+      )
+    )
 
     renderLinearProgress(state.loadingAccessManagementList)
 
-    if (state.accessManagementList?.isNotEmpty() == true) {
-      mTable {
+    when {
+      state.accessManagementList?.isNotEmpty() == true -> mTable {
         mTableHead {
           mTableRow {
             mTableCell { +Strings.location_name.get() }
@@ -182,60 +164,41 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
         mTableBody {
           state.accessManagementList!!.forEach { accessManagement ->
             renderAccessManagementRow(
-                Config(accessManagement,
-                    onOperationFinished = { operation, success ->
-                      setState {
-                        snackbarText = if (success) {
-                          fetchAccessManagementList()
-                          when (operation) {
-                            Operation.Edit -> Strings.access_control_edited_successfully.get()
-                            Operation.Duplicate -> Strings.access_control_duplicated_successfully.get()
-                            Operation.Delete -> Strings.access_control_deleted_successfully.get()
-                          }
-                        } else {
-                          Strings.error_try_again.get()
-                        }
+              Config(accessManagement,
+                onOperationFinished = { operation, success ->
+                  setState {
+                    snackbarText = if (success) {
+                      fetchAccessManagementList()
+                      when (operation) {
+                        Operation.Edit -> Strings.access_control_edited_successfully.get()
+                        Operation.Duplicate -> Strings.access_control_duplicated_successfully.get()
+                        Operation.Delete -> Strings.access_control_deleted_successfully.get()
                       }
+                    } else {
+                      Strings.error_try_again.get()
                     }
-                )
+                  }
+                }
+              )
             )
           }
         }
       }
-    } else if (state.accessManagementList == null && !state.loadingAccessManagementList) {
-      networkErrorView()
-    } else if (!state.loadingAccessManagementList) {
-      genericErrorView(
-          Strings.access_control_not_configured_yet.get(),
-          Strings.access_control_not_configured_yet_subtitle.get()
+      state.accessManagementList == null && !state.loadingAccessManagementList -> networkErrorView()
+      !state.loadingAccessManagementList -> genericErrorView(
+        Strings.access_control_not_configured_yet.get(),
+        Strings.access_control_not_configured_yet_subtitle.get()
       )
     }
   }
 }
 
 interface ListAccessClasses {
-  var header: String
-  var button: String
-  var headerButton: String
   // Keep in sync with ListLocationsStyle!
 }
 
 private val ListLocationsStyle = { theme: dynamic ->
   // Keep in sync with ListLocationsClasses!
-  js {
-    header = js {
-      margin = 16
-    }
-    button = js {
-      marginRight = 16
-      marginTop = 16
-      marginBottom = 16
-      marginLeft = 8
-    }
-    headerButton = js {
-      margin = 16
-    }
-  }
 }
 
 private val styled = withStyles<ListAccessManagementProps, ListAccessManagement>(ListLocationsStyle)

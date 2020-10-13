@@ -85,6 +85,18 @@ private fun validateSeatForLocation(location: BackendLocation, seat: Int?) {
 }
 
 suspend fun ApplicationCall.visitLocation() {
+  performCheckIn()
+}
+
+suspend fun AuthenticatedApplicationCall.guestCheckIn() {
+  if (user.isAccessManager) {
+    performCheckIn(checkedInBy = user._id)
+  } else {
+    respondForbidden()
+  }
+}
+
+private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) {
   val params = receiveJsonStringMap()
 
   val (locationId, seat) = getUserLocation()
@@ -148,6 +160,7 @@ suspend fun ApplicationCall.visitLocation() {
     this.ipAddress = getConfig<String>("checkInIpAddressHeader").emptyToNull()?.let { request.headers[it] }
     this.grantAccessId = accessId
     this.seat = seat
+    this.checkedInBy = checkedInBy
   }
 
   runOnDb {

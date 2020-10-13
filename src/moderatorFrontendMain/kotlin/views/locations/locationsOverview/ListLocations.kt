@@ -9,9 +9,7 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
-import views.common.genericErrorView
-import views.common.networkErrorView
-import views.common.renderLinearProgress
+import views.common.*
 import views.locations.AddLocationProps.Config
 import views.locations.renderAddLocation
 import webcore.*
@@ -120,63 +118,45 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     renderAddLocationDialog()
     renderImportButtonDialog()
     renderSnackbar()
-
-    div(GlobalCss.flex) {
-      typography {
-        attrs.className = props.classes.header
-        attrs.variant = "h5"
-        +Strings.locations.get()
-      }
-      div(GlobalCss.flexEnd) {
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.button
-          }
-          attrs.variant = "outlined"
-          attrs.color = "primary"
-          attrs.href = "/location/qr-codes/checkout"
-          attrs.target = "_blank"
-          +Strings.print_checkout_code.get()
-        }
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.button
-          }
-          attrs.variant = "outlined"
-          attrs.color = "primary"
-          attrs.href = "/location/qr-codes"
-          attrs.target = "_blank"
-          +Strings.print_all_qrcodes.get()
-        }
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.button
-          }
-          attrs.variant = "outlined"
-          attrs.color = "primary"
-          attrs.onClick = {
-            setState {
-              showImportLocationDialog = true
+    renderToolbarView(
+      ToolbarViewProps.Config(
+        title = Strings.locations.get(),
+        buttons = listOf(
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.print_checkout_code.get(),
+            variant = "outlined",
+            onClick = {
+              window.open("/location/qr-codes/checkout", "_blank")
             }
-          }
-          +Strings.location_import.get()
-        }
-
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.createButton
-          }
-          attrs.variant = "contained"
-          attrs.color = "primary"
-          attrs.onClick = {
-            setState {
-              showAddLocationDialog = true
+          ),
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.print_all_qrcodes.get(),
+            variant = "outlined",
+            onClick = {
+              window.open("/location/qr-codes", "_blank")
             }
-          }
-          +Strings.location_create.get()
-        }
-      }
-    }
+          ),
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.location_import.get(),
+            variant = "outlined",
+            onClick = {
+              setState {
+                showImportLocationDialog = true
+              }
+            }
+          ),
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.location_create.get(),
+            variant = "contained",
+            onClick = {
+              setState {
+                showAddLocationDialog = true
+              }
+            }
+          ),
+        )
+      )
+    )
 
     renderLinearProgress(state.loadingLocationList)
 
@@ -213,27 +193,12 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
 }
 
 interface ListLocationsClasses {
-  var header: String
-  var button: String
-  var createButton: String
   // Keep in sync with ListLocationsStyle!
 }
 
 private val ListLocationsStyle = { theme: dynamic ->
   // Keep in sync with ListLocationsClasses!
   js {
-    header = js {
-      margin = 16
-    }
-    button = js {
-      marginRight = 16
-      marginTop = 16
-      marginBottom = 16
-      marginLeft = 8
-    }
-    createButton = js {
-      margin = 16
-    }
   }
 }
 

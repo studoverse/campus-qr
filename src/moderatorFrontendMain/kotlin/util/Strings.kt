@@ -36,6 +36,16 @@ object Strings {
     "Anwenden",
   )
 
+  val other = LocalizedString (
+    "Other",
+    "Sonstige",
+  )
+
+  val invalid_email = LocalizedString(
+    "Invalid email address",
+    "Ungültige E-Mail Adresse",
+  )
+
   val locations_element_download_qr_code = LocalizedString(
       "Print / download QR code",
       "QR-Code drucken / herunterladen"
@@ -218,6 +228,11 @@ object Strings {
   val report_search = LocalizedString(
       "Trace contacts",
       "Kontakte zurückverfolgen"
+  )
+
+  val check_in = LocalizedString(
+    "Check in",
+    "Check-In"
   )
 
   val report_checkin_email = LocalizedString(
@@ -608,6 +623,51 @@ object Strings {
   val access_control_end_date_before_start_date = LocalizedString(
       "End date cannot be before start date",
       "Das Enddatum kann nicht vor dem Anfangsdatum liegen"
+  )
+
+  val guest_checkin = LocalizedString(
+    "Guest check in",
+    "Gast Check-In",
+  )
+
+  val guest_checkin_add_guest = LocalizedString(
+    "Check in guest",
+    "Gast einchecken",
+  )
+
+  val guest_checkin_not_yet_added_title = LocalizedString(
+    "Currently no guests are checked in.",
+    "Momentan sind keine Gäste eingecheckt.",
+  )
+
+  val guest_checkin_not_yet_added_subtitle = LocalizedString(
+    "Click on \"check in guest\" in the top right corner to check in a guest.",
+    "Klicken Sie rechts oben auf \"Gast einchecken\" um einen Gast einzuchecken.",
+  )
+
+  val guest_checkin_checkout_are_you_sure = LocalizedString(
+    "Check out %s now?",
+    "%s jetzt auschecken?",
+  )
+
+  val guest_checkin_email_must_not_be_empty = LocalizedString(
+    "Please add the email address of the guest",
+    "Bitte fügen Sie die E-Mail Adresse des Gasts hinzu",
+  )
+
+  val guest_checkin_select_seat = LocalizedString(
+    "Please select a seat",
+    "Bitte wählen Sie einen Sitzplatz",
+  )
+
+  val guest_checkin_checkout_successful = LocalizedString(
+    "Check out successful",
+    "Check-Out erfolgreich",
+  )
+
+  val guest_checkin_check_out = LocalizedString(
+    "Check out",
+    "Check-Out",
   )
 
   val user_sso_info = LocalizedString(

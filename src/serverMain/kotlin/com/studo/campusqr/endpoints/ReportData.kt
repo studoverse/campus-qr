@@ -2,10 +2,12 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.ActiveCheckIn
 import com.studo.campusqr.common.ReportData
+import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.BackendSeatFilter
 import com.studo.campusqr.database.CheckIn
+import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.serverScope
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
@@ -105,11 +107,7 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
   }
 
   val locationMapTask: Deferred<Map<String, BackendLocation>> = serverScope.async(Dispatchers.IO) {
-    runOnDb {
-      getCollection<BackendLocation>()
-        .find(BackendLocation::_id inArray reportedUserCheckIns.map { it.locationId }.distinct())
-        .associateBy { it._id }
-    }
+    reportedUserCheckIns.getLocationMap()
   }
 
   data class Contact(val reportedCheckIn: CheckIn, val impactedCheckIns: List<CheckIn>)
@@ -255,21 +253,54 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
       .toList()
   }
 
-  val locationMap = runOnDb {
-    getCollection<BackendLocation>()
-      .find(BackendLocation::_id inArray checkIns.map { it.locationId }.distinct())
-      .associateBy(keySelector = { it._id }, valueTransform = { it.name })
-  }
+  val locationMap = checkIns.getLocationMap()
 
   respondObject(
     checkIns.map { checkIn ->
       ActiveCheckIn(
         id = checkIn._id,
         locationId = checkIn.locationId,
-        locationName = locationMap.getValue(checkIn.locationId),
+        locationName = locationMap.getValue(checkIn.locationId).name,
         seat = checkIn.seat,
-        checkInDate = checkIn.date.time.toDouble()
+        checkInDate = checkIn.date.time.toDouble(),
+        email = checkIn.email
       )
     }
   )
+}
+
+suspend fun AuthenticatedApplicationCall.listGuestActiveCheckIns() {
+  if (!user.isAccessManager) {
+    respondForbidden()
+    return
+  }
+
+  val checkIns = runOnDb {
+    getCollection<CheckIn>()
+      .find(CheckIn::checkedInBy equal user._id, CheckIn::checkOutDate equal null)
+      .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
+      .toList()
+  }
+
+  val locationMap: Map<String, BackendLocation> = checkIns.getLocationMap()
+
+  respondObject(
+    checkIns.map { checkIn ->
+      ActiveCheckIn(
+        id = checkIn._id,
+        locationId = checkIn.locationId,
+        locationName = locationMap.getValue(checkIn.locationId).name,
+        seat = checkIn.seat,
+        checkInDate = checkIn.date.time.toDouble(),
+        email = checkIn.email
+      )
+    }
+  )
+}
+
+// locationId to location
+suspend fun List<CheckIn>.getLocationMap(): Map<String, BackendLocation> = runOnDb {
+  MainDatabase.getCollection<BackendLocation>()
+    .find(BackendLocation::_id inArray map { it.locationId }.distinct())
+    .associateBy { it._id }
 }
