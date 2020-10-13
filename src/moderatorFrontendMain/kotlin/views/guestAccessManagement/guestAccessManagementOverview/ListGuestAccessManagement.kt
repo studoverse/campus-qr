@@ -6,8 +6,8 @@ import react.*
 import util.Strings
 import util.get
 import views.common.*
-import views.guestAccessManagement.GuestAccessManagementDetailsProps
-import views.guestAccessManagement.renderGuestAccessManagementDetails
+import views.guestAccessManagement.AddGuestAccessProps
+import views.guestAccessManagement.renderAddGuestAccess
 import webcore.MbSnackbarProps
 import webcore.NetworkManager
 import webcore.extensions.launch
@@ -37,7 +37,7 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
 
   private fun fetchActiveGuestCheckIns() = launch {
     setState { loadingAccessManagementList }
-    val response = NetworkManager.get<Array<ActiveCheckIn>>("$apiBase/report/listGuestCheckIns")
+    val response = NetworkManager.get<Array<ActiveCheckIn>>("$apiBase/report/listActiveGuestCheckIns")
     setState {
       if (response != null) {
         activeGuestCheckIns = response.toList()
@@ -56,8 +56,8 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
     show = state.showAddGuestCheckInDialog,
     title = Strings.access_control_create.get(),
     customContent = {
-      renderGuestAccessManagementDetails(
-        GuestAccessManagementDetailsProps.Config(
+      renderAddGuestAccess(
+        AddGuestAccessProps.Config(
           onGuestCheckedIn = {
             setState { showAddGuestCheckInDialog = false }
             fetchActiveGuestCheckIns()
@@ -91,10 +91,10 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
     renderSnackbar()
     renderAddGuestAccessManagementDialog()
     renderToolbarView(ToolbarViewProps.Config(
-      title = "Guest Access Control",
+      title = Strings.guest_access_control.get(),
       buttons = listOf(
         ToolbarViewProps.ToolbarButton(
-          text = "Add guest",
+          text = Strings.guest_access_control_add_guest.get(),
           variant = "contained",
           onClick = {
             setState {
@@ -123,7 +123,7 @@ class ListGuestAccessManagement : RComponent<ListGuestAccessManagementProps, Lis
                 activeCheckIn,
                 onCheckedOut = {
                   fetchActiveGuestCheckIns()
-                  setState { snackbarText = "Checkout successful" }
+                  setState { snackbarText = Strings.guest_access_control_checkout_successful.get() }
                 },
                 onShowSnackbar = { text ->
                   setState { snackbarText = text }

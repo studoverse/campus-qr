@@ -48,7 +48,9 @@ class GuestAccessManagementRow : RComponent<GuestAccessManagementRowProps, Guest
           attrs.variant = "outlined"
           attrs.color = "primary"
           attrs.onClick = {
-            if (window.confirm(Strings.guest_access_control_checkout_are_you_sure.get().format(props.config.activeCheckIn.email))) {
+            val areYouSureText =
+              Strings.guest_access_control_checkout_are_you_sure.get().format(props.config.activeCheckIn.email)
+            if (window.confirm(areYouSureText)) {
               val locationId = with(props.config.activeCheckIn) { locationIdWithSeat(locationId, seat) }
               launch {
                 val response = NetworkManager.post<String>(

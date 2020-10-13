@@ -41,6 +41,11 @@ object Strings {
     "Sonstige",
   )
 
+  val invalid_email = LocalizedString(
+    "Invalid email address",
+    "Ungültige E-Mail-Adresse",
+  )
+
   val locations_element_download_qr_code = LocalizedString(
       "Print / download QR code",
       "QR-Code drucken / herunterladen"
@@ -620,6 +625,11 @@ object Strings {
     "Gast-Zugangskontrolle",
   )
 
+  val guest_access_control_add_guest = LocalizedString(
+    "Add guest",
+    "Gast hinzufügen",
+  )
+
   val guest_access_control_not_yet_added_title = LocalizedString(
     "No guest access control added yet.",
     "Noch keine Gast-Zugangskontrolle hinzugefügt.",
@@ -633,6 +643,21 @@ object Strings {
   val guest_access_control_checkout_are_you_sure = LocalizedString(
     "Are you sure you want to check out %s?",
     "Sind Sie sicher, dass Sie %s auschecken möchten?",
+  )
+
+  val guest_access_control_email_must_not_be_empty = LocalizedString(
+    "Please add an email address",
+    "Bitte fügen Sie eine E-Mail-Adresse hinzu",
+  )
+
+  val guest_access_control_select_seat = LocalizedString(
+    "Please select a seat",
+    "Bitte wählen Sie einen Sitzplatz",
+  )
+
+  val guest_access_control_checkout_successful = LocalizedString(
+    "Checkout successful",
+    "Check-Out erfolgreich",
   )
 
   val user_sso_info = LocalizedString(

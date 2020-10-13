@@ -163,7 +163,7 @@ suspend fun ApplicationCall.visitLocation(checkedInBy: String? = null) {
   respondOk()
 }
 
-suspend fun AuthenticatedApplicationCall.guestCheckIn() {
+suspend fun AuthenticatedApplicationCall.guestVisitLocation() {
   if (user.type == UserType.ACCESS_MANAGER || user.isAdmin) {
     visitLocation(checkedInBy = user._id)
   } else {

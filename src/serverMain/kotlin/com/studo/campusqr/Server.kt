@@ -103,7 +103,7 @@ suspend fun main() {
 
         route("{id}") {
           post("visit") { call.visitLocation() }
-          post("guestCheckIn") { call.getAuthenticatedCall()?.guestCheckIn() }
+          post("guestVisit") { call.getAuthenticatedCall()?.guestVisitLocation() }
           post("checkout") { call.checkOutLocation() }
           get("visitsCsv") { call.getAuthenticatedCall()?.returnLocationVisitCsvData() }
           post("edit") { call.getAuthenticatedCall()?.editLocation() }
@@ -128,7 +128,7 @@ suspend fun main() {
       route("report") {
         post("list") { call.getAuthenticatedCall()?.returnReportData() }
         post("listActiveCheckIns") { call.getAuthenticatedCall()?.listAllActiveCheckIns() }
-        get("listGuestCheckIns") { call.getAuthenticatedCall()?.listGuestActiveCheckIns() }
+        get("listActiveGuestCheckIns") { call.getAuthenticatedCall()?.listGuestActiveCheckIns() }
       }
       route("admin") {
         get("campusqr-admin.js") { call.returnModeratorJs() }

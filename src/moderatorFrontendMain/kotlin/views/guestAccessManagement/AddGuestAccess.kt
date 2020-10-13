@@ -4,7 +4,6 @@ import apiBase
 import app.GlobalCss
 import app.baseUrl
 import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.NewGuestCheckIn
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*
@@ -15,24 +14,23 @@ import views.common.centeredProgress
 import views.common.networkErrorView
 import views.common.renderLinearProgress
 import views.common.spacer
-import views.guestAccessManagement.guestAccessManagementOverview.GuestAccessManagementRowProps
 import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
 import kotlin.js.json
 
-interface GuestAccessManagementDetailsProps : RProps {
+interface AddGuestAccessProps : RProps {
   class Config(
     val onGuestCheckedIn: () -> Unit,
     val onShowSnackbar: (String) -> Unit
   )
 
-  var classes: GuestAccessManagementDetailsClasses
+  var classes: AddGuestAccessClasses
   var config: Config
 }
 
-interface GuestAccessManagementDetailsState : RState {
+interface AddGuestAccessState : RState {
   var locationFetchInProgress: Boolean
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>
@@ -47,10 +45,9 @@ interface GuestAccessManagementDetailsState : RState {
   var seatInputError: String
 }
 
-class GuestAccessManagementDetails :
-  RComponent<GuestAccessManagementDetailsProps, GuestAccessManagementDetailsState>() {
+class AddGuestAccess : RComponent<AddGuestAccessProps, AddGuestAccessState>() {
 
-  override fun GuestAccessManagementDetailsState.init() {
+  override fun AddGuestAccessState.init() {
     locationFetchInProgress = false
     showProgress = false
     locationNameToLocationMap = emptyMap()
@@ -82,16 +79,16 @@ class GuestAccessManagementDetails :
     setState { showProgress = true }
     val locationId = locationIdWithSeat(state.selectedLocation!!.id, state.seatInputValue)
     val response = NetworkManager.post<String>(
-      url = "$baseUrl/location/$locationId/guestCheckIn",
+      url = "$baseUrl/location/$locationId/guestVisit",
       params = json("email" to state.personEmailTextFieldValue)
     )
     setState {
       showProgress = false
     }
-    if (response == "ok") {
-      props.config.onGuestCheckedIn()
-    } else {
-      props.config.onShowSnackbar(Strings.error_try_again.get())
+    when (response) {
+      "ok" -> props.config.onGuestCheckedIn()
+      "forbidden_email" -> props.config.onShowSnackbar(Strings.invalid_email.get())
+      else -> props.config.onShowSnackbar(Strings.error_try_again.get())
     }
   }
 
@@ -106,14 +103,14 @@ class GuestAccessManagementDetails :
 
     if (state.personEmailTextFieldValue.isEmpty()) {
       setState {
-        personEmailTextFieldError = "Email mustn't be empty!"
+        personEmailTextFieldError = Strings.guest_access_control_email_must_not_be_empty.get()
       }
       return false
     }
 
     if (state.selectedLocation?.seatCount != null && state.seatInputValue == null) {
       setState {
-        seatInputError = "Please select a seat!"
+        seatInputError = Strings.guest_access_control_select_seat.get()
       }
       return false
     }
@@ -242,13 +239,13 @@ class GuestAccessManagementDetails :
 // If seat is not null, id gets appended with '-' to locationId
 fun locationIdWithSeat(locationId: String, seat: Int?) = "$locationId${seat?.let { "-$it" } ?: ""}"
 
-interface GuestAccessManagementDetailsClasses {
+interface AddGuestAccessClasses {
   // Keep in sync with GuestAccessManagementDetailsStyle!
   var addButton: String
   var form: String
 }
 
-private val GuestAccessManagementDetailsStyle = { theme: dynamic ->
+private val AddGuestAccessStyle = { theme: dynamic ->
   // Keep in sync with GuestAccessManagementDetailsClasses!
   js {
     addButton = js {
@@ -261,8 +258,8 @@ private val GuestAccessManagementDetailsStyle = { theme: dynamic ->
 }
 
 private val styled =
-  withStyles<GuestAccessManagementDetailsProps, GuestAccessManagementDetails>(GuestAccessManagementDetailsStyle)
+  withStyles<AddGuestAccessProps, AddGuestAccess>(AddGuestAccessStyle)
 
-fun RBuilder.renderGuestAccessManagementDetails(config: GuestAccessManagementDetailsProps.Config) = styled {
+fun RBuilder.renderAddGuestAccess(config: AddGuestAccessProps.Config) = styled {
   attrs.config = config
 }
