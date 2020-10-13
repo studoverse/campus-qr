@@ -631,8 +631,8 @@ object Strings {
   )
 
   val guest_checkin_add_guest = LocalizedString(
-    "Add guest",
-    "Gast hinzufügen",
+    "Check in guest",
+    "Gast einchecken",
   )
 
   val guest_checkin_not_yet_added_title = LocalizedString(
