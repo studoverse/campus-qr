@@ -407,6 +407,14 @@ val blockIcon: RClass<IconProps> = importedBlockIcon.default
 private external val importedGroupAddIcon: dynamic
 val groupAddIcon: RClass<IconProps> = importedGroupAddIcon.default
 
+@JsModule("@material-ui/icons/BlurCircular")
+private external val importedBlurCircularIcon: dynamic
+val blurCircularIcon: RClass<IconProps> = importedBlurCircularIcon.default
+
+@JsModule("@material-ui/icons/LockOpen")
+private external val importedLockOpenIcon: dynamic
+val lockOpenIcon: RClass<IconProps> = importedLockOpenIcon.default
+
 @JsModule("@material-ui/icons/PlaylistAddCheck")
 private external val importedPlaylistAddCheckIcon: dynamic
 val playlistAddCheckIcon: RClass<IconProps> = importedPlaylistAddCheckIcon.default

@@ -55,12 +55,12 @@ class App : RComponent<AppProps, AppState>() {
   private val checkInSideDrawerItems = listOf(
     SideDrawerItem(
       label = Url.ACCESS_MANAGEMENT_LIST.title,
-      icon = groupAddIcon,
+      icon = lockOpenIcon,
       url = Url.ACCESS_MANAGEMENT_LIST
     ),
     SideDrawerItem(
       label = Url.GUEST_CHECK_IN.title,
-      icon = whereToVoteIcon,
+      icon = contactMailIcon,
       url = Url.GUEST_CHECK_IN
     )
   )
@@ -73,7 +73,7 @@ class App : RComponent<AppProps, AppState>() {
     ),
     SideDrawerItem(
       label = Url.REPORT.title,
-      icon = bugReportIcon,
+      icon = blurCircularIcon,
       url = Url.REPORT
     ),
   )

@@ -266,7 +266,7 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
 }
 
 suspend fun AuthenticatedApplicationCall.listGuestActiveCheckIns() {
-  if (user.isAccessManager) {
+  if (!user.isAccessManager) {
     respondForbidden()
     return
   }
