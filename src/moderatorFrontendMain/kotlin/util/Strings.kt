@@ -646,8 +646,8 @@ object Strings {
   )
 
   val guest_checkin_checkout_are_you_sure = LocalizedString(
-    "Are you sure you want to check out %s?",
-    "Sind Sie sicher, dass Sie %s auschecken möchten?", // FIXME: auschecken
+    "Check out %s now?",
+    "%s jetzt auschecken?",
   )
 
   val guest_checkin_email_must_not_be_empty = LocalizedString(
