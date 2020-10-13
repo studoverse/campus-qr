@@ -7,7 +7,6 @@ import com.studo.campusqr.database.*
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.campusqr.utils.getAuthenticatedCall
 import com.studo.katerbase.*
 import io.ktor.application.*
 import io.ktor.features.*
@@ -85,7 +84,19 @@ private fun validateSeatForLocation(location: BackendLocation, seat: Int?) {
   }
 }
 
-suspend fun ApplicationCall.visitLocation(checkedInBy: String? = null) {
+suspend fun ApplicationCall.visitLocation() {
+  performCheckIn()
+}
+
+suspend fun AuthenticatedApplicationCall.guestCheckIn() {
+  if (user.isAccessManager) {
+    performCheckIn(checkedInBy = user._id)
+  } else {
+    respondForbidden()
+  }
+}
+
+private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) {
   val params = receiveJsonStringMap()
 
   val (locationId, seat) = getUserLocation()
@@ -161,14 +172,6 @@ suspend fun ApplicationCall.visitLocation(checkedInBy: String? = null) {
   }
 
   respondOk()
-}
-
-suspend fun AuthenticatedApplicationCall.guestCheckIn() {
-  if (user.isAccessManager) {
-    visitLocation(checkedInBy = user._id)
-  } else {
-    respondForbidden()
-  }
 }
 
 suspend fun ApplicationCall.checkOutLocation() {
