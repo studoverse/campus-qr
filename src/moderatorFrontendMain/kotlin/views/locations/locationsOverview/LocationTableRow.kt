@@ -99,7 +99,7 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
                   val locationIdSuffix = if (props.config.location.seatCount == null) "" else "-1" // Check-in at seat 1 if needed
                   window.open("../../campus-qr?s=1&l=" + props.config.location.id + locationIdSuffix, target = "_blank")
                 }),
-                MenuItem(text = Strings.access_control.get(), icon = listIcon, onClick = {
+                MenuItem(text = Strings.access_control.get(), icon = verifiedUserIcon, onClick = {
                   routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST.toRoute(pathParams = mapOf("id" to props.config.location.id))!!)
                 }),
                 MenuItem(text = Strings.locations_element_download_csv.get(), icon = cloudDownloadIcon, onClick = {

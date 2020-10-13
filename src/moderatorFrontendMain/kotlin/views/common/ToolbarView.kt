@@ -1,5 +1,6 @@
 package views.common
 
+import Url
 import app.GlobalCss
 import app.RouteContext
 import app.routeContext
@@ -9,13 +10,13 @@ import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.div
-import webcore.materialUI.muiButton
-import webcore.materialUI.typography
-import webcore.materialUI.withStyles
+import util.toRoute
+import webcore.materialUI.*
 
 interface ToolbarViewProps : RProps {
   var classes: ToolbarViewClasses
   var config: Config
+
   class ToolbarButton(
     val text: String,
     val variant: String, // outlined|contained
@@ -24,7 +25,8 @@ interface ToolbarViewProps : RProps {
 
   class Config(
     val title: String,
-    val buttons: List<ToolbarButton>
+    val backButtonUrl: Url? = null,
+    val buttons: List<ToolbarButton> = emptyList()
   )
 }
 
@@ -33,6 +35,19 @@ interface ToolbarViewState : RState
 class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   override fun RBuilder.render() {
     div(GlobalCss.flex) {
+      props.config.backButtonUrl?.let { backButtonUrl ->
+        routeContext.Consumer { routeContext ->
+          iconButton {
+            attrs.classes = js {
+              root = props.classes.backButton
+            }
+            arrowBackIcon {}
+            attrs.onClick = {
+              routeContext.pushRoute(backButtonUrl.toRoute()!!)
+            }
+          }
+        }
+      }
       typography {
         attrs.className = props.classes.header
         attrs.variant = "h5"
@@ -65,6 +80,7 @@ interface ToolbarViewClasses {
   var header: String
   var headerButton: String
   var headerButtonsWrapper: String
+  var backButton: String
   // Keep in sync with ToolbarViewStyle!
 }
 
@@ -82,6 +98,10 @@ private val ToolbarViewStyle = { theme: dynamic ->
     }
     headerButtonsWrapper = js {
       marginLeft = 16
+    }
+    backButton = js {
+      width = 60
+      height = 60
     }
   }
 }
