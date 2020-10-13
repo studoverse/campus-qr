@@ -636,8 +636,8 @@ object Strings {
   )
 
   val guest_checkin_not_yet_added_title = LocalizedString(
-    "No guest check in added yet.",
-    "Noch keine Gast Check-In hinzugefügt.",
+    "Currently no guests are checked in.",
+    "Momentan sind keine Gäste eingecheckt.",
   )
 
   val guest_checkin_not_yet_added_subtitle = LocalizedString(
