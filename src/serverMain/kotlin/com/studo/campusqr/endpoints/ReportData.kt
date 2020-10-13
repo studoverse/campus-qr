@@ -11,9 +11,6 @@ import com.studo.campusqr.serverScope
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import com.studo.katerbase.*
 import kotlinx.coroutines.Deferred
-import com.studo.katerbase.equal
-import com.studo.katerbase.greaterEquals
-import com.studo.katerbase.inArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.util.*
@@ -145,15 +142,22 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
 
   val seatFilterTask: Deferred<Map<String, BackendSeatFilter>> = serverScope.async(Dispatchers.IO) {
     runOnDb {
-      reportedUserCheckIns.mapNotNull { checkIn ->
-        checkIn.seat?.let { seat ->
-          getCollection<BackendSeatFilter>()
-            .findOne(
-              BackendSeatFilter::locationId equal checkIn.locationId,
-              BackendSeatFilter::seat equal seat
-            )
+      reportedUserCheckIns
+        .mapNotNull { checkIn ->
+          checkIn.seat?.let { seat ->
+            getCollection<BackendSeatFilter>()
+              .findOne(
+                BackendSeatFilter::locationId equal checkIn.locationId,
+                BackendSeatFilter::seat equal seat
+              )
+          }
         }
-      }.associateBy { it.filterKey() }
+        .associateBy { it.filterKey() }
+        .onEach { (_, filter) ->
+          // Always append current seat to filter: Current seat can not be selected in moderator UI,
+          // but during transit a user might have checked in to the same seat
+          filter.filteredSeats += filter.seat
+        }
     }
   }
 
