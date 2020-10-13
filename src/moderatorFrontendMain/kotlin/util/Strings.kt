@@ -651,8 +651,8 @@ object Strings {
   )
 
   val guest_checkin_email_must_not_be_empty = LocalizedString(
-    "Please add an email address",
-    "Bitte fügen Sie eine E-Mail-Adresse hinzu",
+    "Please add the email address of the guest",
+    "Bitte fügen Sie die E-Mail Adresse des Gasts hinzu",
   )
 
   val guest_checkin_select_seat = LocalizedString(
