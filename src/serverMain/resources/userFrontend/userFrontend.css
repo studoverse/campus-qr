@@ -336,17 +336,17 @@ button#submit-button:active {
   margin-right: 18px;
 }
 
-#checkins-wrapper {
+#active-checkins-wrapper {
   margin-top: 32px;
   width: 100%;
 }
 
-#checkins-wrapper > p {
+#active-checkins-wrapper > p {
   text-align: center;
   font-style: italic;
 }
 
-#checkins-wrapper > .current-check-in {
+#active-checkins > .active-check-in {
   margin-bottom: 12px;
   color: #5d5d5d;
   display: flex;
@@ -354,7 +354,7 @@ button#submit-button:active {
   align-items: center;
 }
 
-#checkins-wrapper > .current-check-in > button {
+#active-checkins > .active-check-in > button {
   flex-shrink: 0;
   padding: 8px 12px;
   background: none;
@@ -362,11 +362,11 @@ button#submit-button:active {
   border-radius: 4px;
 }
 
-#checkins-wrapper > .current-check-in > button:hover {
+#active-checkins > .active-check-in > button:hover {
   background-color: #b5b5b540;
 }
 
-#checkins-wrapper > .current-check-in > button:focus {
+#active-checkins > .active-check-in > button:focus {
   background-color: #b5b5b570;
 }
 
