@@ -681,21 +681,21 @@ object Strings {
   )
 
   val user_sso_info = LocalizedString(
-      "Single Sign On",
-      "Single Sign On"
+    "Single Sign On",
+    "Single Sign On"
   )
 
   val user_sso_info_details1 = LocalizedString(
-      "To connect this web application to the Single Sign On system used at the university or to enable an " +
-          "SSO login via the Campus Management System, " +
-          "please contact the developers of this application directly. " +
-          "The authentication can also be done by LDAP. " +
-          "The Studo team can integrate a customized SSO solution in coordination with the university.",
-      "Um diese Web Applikation mit dem an der Hochschule verwendeten Single Sign On System zu verbinden bzw. " +
-          "einen SSO-Login über das Campus Management System zu ermöglichen, " +
-          "kontaktieren Sie bitte direkt die Entwickkler dieser Applikation. " +
-          "Die Authentifizierung kann desweiteren durch LDAP erfolgen." +
-          "Das Studo Team kann in Abstimmung der Hochschule eine für Sie zugeschnitte SSO-Lösung integrieren."
+    "To connect this web application to the Single Sign On system used at the university or to enable an " +
+        "SSO login via the Campus Management System, " +
+        "please contact the developers of this application directly. " +
+        "The authentication can also be done by LDAP. " +
+        "The Studo team can integrate a customized SSO solution in coordination with the university.",
+    "Um diese Web Applikation mit dem an der Hochschule verwendeten Single Sign On System zu verbinden bzw. " +
+        "einen SSO-Login über das Campus Management System zu ermöglichen, " +
+        "kontaktieren Sie bitte direkt die Entwickkler dieser Applikation. " +
+        "Die Authentifizierung kann desweiteren durch LDAP erfolgen. " +
+        "Das Studo Team kann in Abstimmung der Hochschule eine für Sie zugeschnitte SSO-Lösung integrieren."
   )
 
   val user_sso_info_details2 = LocalizedString(
