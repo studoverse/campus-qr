@@ -148,16 +148,20 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
               }),
               MenuItem(text = Strings.duplicate.get(), icon = fileCopyOutlinedIcon, onClick = {
                 launch {
-                  val response =
-                    NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
+                  val response = NetworkManager.post<String>(
+                    "$apiBase/access/${props.config.accessManagement.id}/duplicate",
+                    params = null
+                  )
                   props.config.onOperationFinished(Operation.Duplicate, response == "ok")
                 }
               }),
               MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
                 if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
                   launch {
-                    val response =
-                      NetworkManager.get<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
+                    val response = NetworkManager.post<String>(
+                      "$apiBase/access/${props.config.accessManagement.id}/delete",
+                      params = null
+                    )
                     props.config.onOperationFinished(Operation.Delete, response == "ok")
                   }
                 }
