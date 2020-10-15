@@ -120,8 +120,8 @@ suspend fun main() {
 
         route("{id}") {
           get("/") { call.getAuthenticatedCall()?.getAccess() }
-          get("delete") { call.getAuthenticatedCall()?.deleteAccess() }
-          get("duplicate") { call.getAuthenticatedCall()?.duplicateAccess() }
+          post("delete") { call.getAuthenticatedCall()?.deleteAccess() }
+          post("duplicate") { call.getAuthenticatedCall()?.duplicateAccess() }
           post("edit") { call.getAuthenticatedCall()?.editAccess() }
         }
       }
