@@ -120,6 +120,16 @@ object Strings {
       "Ort erfolgreich erstellt"
   )
 
+  val location_edited = LocalizedString(
+    "Location successfully edited",
+    "Ort erfolgreich bearbeitet"
+  )
+
+  val location_deleted = LocalizedString(
+    "Location successfully deleted",
+    "Ort erfolgreich gelöscht"
+  )
+
   val location_name = LocalizedString(
       "Location",
       "Ort"

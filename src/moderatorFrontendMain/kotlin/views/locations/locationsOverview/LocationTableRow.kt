@@ -22,7 +22,8 @@ import webcore.mbMaterialDialog
 interface LocationTableRowProps : RProps {
   class Config(
     val location: ClientLocation,
-    val onEditFinished: (response: String?) -> Unit
+    val onEditFinished: (response: String?) -> Unit,
+    val onDeleteFinished: (response: String?) -> Unit,
   )
 
   var config: Config
@@ -119,9 +120,11 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
                 MenuItem(text = Strings.location_delete.get(), icon = deleteIcon, onClick = {
                   if (window.confirm(Strings.location_delete_are_you_sure.get())) {
                     launch {
-                      val response = NetworkManager.get<String>("$apiBase/location/${props.config.location.id}/delete")
-                        ?: return@launch
-                      props.config.onEditFinished(response)
+                      val response = NetworkManager.post<String>(
+                        "$apiBase/location/${props.config.location.id}/delete",
+                        params = null
+                      )
+                      props.config.onDeleteFinished(response)
                     }
                   }
                 }),
