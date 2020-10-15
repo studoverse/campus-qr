@@ -1,7 +1,6 @@
 package views.users
 
 import apiBase
-import app.GlobalCss
 import com.studo.campusqr.common.ClientUser
 import com.studo.campusqr.common.UserData
 import kotlinext.js.js
@@ -128,7 +127,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     renderToolbarView(
       ToolbarViewProps.Config(
         title = Strings.user_management.get(),
-        buttons = listOf(
+        buttons = listOfNotNull(
           ToolbarViewProps.ToolbarButton(
             text = Strings.user_sso_info.get(),
             variant = "outlined",
@@ -138,7 +137,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
               }
             }
           ),
-          ToolbarViewProps.ToolbarButton(
+          if (props.userData.externalAuthProvider) null else ToolbarViewProps.ToolbarButton(
             text = Strings.user_add.get(),
             variant = "contained",
             onClick = {
