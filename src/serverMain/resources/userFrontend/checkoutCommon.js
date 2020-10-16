@@ -21,12 +21,15 @@ function checkOut(checkinKey, buttonElement) {
   }
 }
 
-function regenerateCheckoutView({locationId = "", onCurrentLocationRemoved = null} = {}) {
+let includedCurrentLocation = false; // true if the provided locationId (below) has ever been checked in
+
+function regenerateCheckoutView({locationId = "", onCurrentLocationRemoved = null, forceShow = false} = {}) {
   let savedCheckins = 0;
-  let checkinsWrapper = document.getElementById("checkins-wrapper");
-  // Remove previous elements
-  for (let i = checkinsWrapper.childElementCount - 1; i >= 4; i--) {
-    checkinsWrapper.removeChild(checkinsWrapper.children[i]);
+  let activeCheckinsWrapper = document.getElementById("active-checkins-wrapper");
+  let activeCheckins = document.getElementById("active-checkins");
+  // Remove previous checkin elements
+  for (let i = activeCheckins.childElementCount - 1; i >= 0; i--) {
+    activeCheckins.children[i].remove();
   }
 
   let foundCurrentLocation = false;
@@ -40,25 +43,29 @@ function regenerateCheckoutView({locationId = "", onCurrentLocationRemoved = nul
 
       if (key.split("checkin-")[1] === locationId) {
         foundCurrentLocation = true;
+        includedCurrentLocation = true;
       }
 
-      // Show checkins wrapper if at least one checkin is present
-      checkinsWrapper.className = checkinsWrapper.className.replace("hidden", "");
-
-      let checkinNode = checkinsWrapper.children[2].cloneNode(true);
+      // Show activeCheckinsWrapper if at least one checkin is present
+      activeCheckinsWrapper.className = activeCheckinsWrapper.className.replace("hidden", "");
+      let checkinNode = activeCheckinsWrapper.children[2].cloneNode(true); // Clone pre-made checkin-node
       checkinNode.className = checkinNode.className.replace("hidden", "");
       checkinNode.children[0].innerText = value.split("::")[2];
       checkinNode.children[1].addEventListener("click", checkOut(key, checkinNode.childNodes[1]));
 
-      checkinsWrapper.appendChild(checkinNode);
+      activeCheckins.appendChild(checkinNode);
     }
   }
 
-  if (!foundCurrentLocation && onCurrentLocationRemoved) {
+  if (includedCurrentLocation && !foundCurrentLocation && onCurrentLocationRemoved) {
     onCurrentLocationRemoved();
+  }
+
+  if (forceShow) {
+    activeCheckinsWrapper.className = activeCheckinsWrapper.className.replace("hidden", "");
   }
 
   // Hide / show "no checkins" text if checkins were added / not added
   let noCheckinsClass = savedCheckins > 0 ? " hidden" : "";
-  checkinsWrapper.children[3].className = checkinsWrapper.children[3].className.replace("hidden", "") + noCheckinsClass;
+  activeCheckinsWrapper.children[3].className = activeCheckinsWrapper.children[3].className.replace("hidden", "") + noCheckinsClass;
 }

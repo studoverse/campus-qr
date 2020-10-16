@@ -2,6 +2,8 @@ function pad(num, size) {
   return ('000' + num).substr(-size);
 }
 
+// Passed from serverside: after how many ms a user is automatically checked out
+let autoCheckoutMs = document.head.querySelector("[name~=auto-checkout-ms][content]").content;
 let fullLocationId = new URLSearchParams(window.location.search).get("l");
 
 // True if the page was opened directly from the QR code and not reloaded / bookmarked
@@ -23,9 +25,12 @@ function onLoad() {
       setDatetimeElement(lastDateLong);
       showCheckin(email);
     },
-    onShowNewCheckin: normalStartup,
-    onCheckinExpired: checkinExpired,
+    onShowNewCheckin: formSetup,
+    onCheckinExpired: removeCurrentCheckin,
   });
+
+  // Check if any checkin has expired once every second
+  setInterval(() => handleOldCheckin({onCheckinExpired: removeCurrentCheckin}), 1000);
 
   deleteExpiredCheckins();
 }
@@ -97,16 +102,10 @@ function onSubmit() {
   submitButton.innerText = "..."
 }
 
-function normalStartup() {
-  let overlay = document.getElementById("overlay");
-  let contentWrapper = document.getElementById("all-content-wrapper");
-  if (!justScanned) {
-    overlay.className = overlay.className.replace("hidden", "");
-    contentWrapper.className = contentWrapper.className.replace("hidden", "") + "hidden"; // Hide page content
-    return;
-  }
-
+function formSetup() {
   if (!fullLocationId) {
+    let overlay = document.getElementById("overlay");
+    let contentWrapper = document.getElementById("all-content-wrapper");
     overlay.className = overlay.className.replace("hidden", "");
     contentWrapper.className = contentWrapper.className.replace("hidden", "") + "hidden"; // Hide page content
 
@@ -148,16 +147,6 @@ function showCheckin(email) {
   document.getElementById("result-ok-id").innerText = email
   resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "");
   resultOk.className = resultOk.className.replace("hidden", "");
-
-  // Check if checkin has expired every second
-  let interval = setInterval(function () {
-    handleOldCheckin({
-      onCheckinExpired: function () {
-        clearInterval(interval);
-        checkinExpired();
-      }
-    });
-  }, 1000);
 }
 
 function hideVerification() {
@@ -167,19 +156,23 @@ function hideVerification() {
   resultOkWrapper.className = resultOkWrapper.className.replace("hidden", "") + " hidden";
 }
 
+function hideForm() {
+  let form = document.getElementById("form");
+  form.className = form.className.replace("hidden", "") + " hidden";
+}
+
 function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, onCheckinExpired = null}) {
   regenerateCheckoutView({
     locationId: fullLocationId,
-    onCurrentLocationRemoved: function () {
-      hideVerification();
-    }
+    onCurrentLocationRemoved: hideVerification,
+    forceShow: !justScanned // If page was re-opened, always show the checkins list (even if it's empty)
   });
 
   let lastCheckin = window.localStorage.getItem("checkin-" + fullLocationId)
   if (lastCheckin) {
     let email = atob(lastCheckin.split("::")[0])
     let lastDateLong = parseInt(lastCheckin.split("::")[1])
-    if (Date.now() - lastDateLong < 1000 * 60 * 60) {
+    if (Date.now() - lastDateLong < autoCheckoutMs) {
       // Checkin not expired
       if (onShowLastCheckin) onShowLastCheckin(lastDateLong, email);
     } else {
@@ -189,22 +182,19 @@ function handleOldCheckin({onShowNewCheckin = null, onShowLastCheckin = null, on
     }
   } else {
     // No saved checkin
-    if (onShowNewCheckin) onShowNewCheckin();
+    if (justScanned) {
+      if (onShowNewCheckin) onShowNewCheckin();
+    } else {
+      onCheckinExpired();
+      hideForm();
+    }
   }
 }
 
-function checkinExpired() {
-  let overlay = document.getElementById("overlay");
-  overlay.className = overlay.className.replace("hidden", ""); // show overlay
-
-  let overlayExpired = document.getElementById("overlay-expired");
-  overlayExpired.className = overlayExpired.className.replace("hidden", ""); // Show expired text
-
-  let overlayRetry = document.getElementById("overlay-retry");
-  overlayRetry.className = overlayRetry.className.replace("hidden", "") + "hidden"; // Hide default text
-
-  let contentWrapper = document.getElementById("all-content-wrapper");
-  contentWrapper.className = contentWrapper.className.replace("hidden", "") + "hidden"; // Hide page content
+function removeCurrentCheckin() {
+  window.localStorage.removeItem("checkin-" + fullLocationId);
+  hideVerification();
+  regenerateCheckoutView();
 }
 
 // Deletes expired checkins from other locations that are older than 24 hours
