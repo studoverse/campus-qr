@@ -2,9 +2,7 @@ package views.users
 
 import apiBase
 import app.GlobalCss
-import com.studo.campusqr.common.ClientUser
-import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
@@ -21,7 +19,6 @@ import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
-import kotlin.js.json
 
 interface AddUserProps : RProps {
   sealed class Config(val onFinished: (response: String?) -> Unit) {
@@ -46,7 +43,7 @@ interface AddUserState : RState {
   var userPasswordTextFieldValue: String
   var userPasswordTextFieldError: String
 
-  var userType: UserType
+  var userRoles: Set<UserRole>
 }
 
 class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
@@ -63,19 +60,21 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userType = (props.config as? Config.Edit)?.user?.type?.let { UserType.valueOf(it) } ?: UserType.ACCESS_MANAGER
+    userRoles = (props.config as? Config.Edit)?.user?.roles ?: setOf(UserRole.ACCESS_MANAGER)
   }
 
   private fun createNewUser() = launch {
     setState { userCreationInProgress = true }
     val response = NetworkManager.post<String>(
-      url = "$apiBase/user/create",
-      params = json(
-        "email" to state.userEmailTextFieldValue,
-        "password" to state.userPasswordTextFieldValue,
-        "name" to state.userNameTextFieldValue,
-        "userType" to state.userType.name,
-      )
+        url = "$apiBase/user/create",
+        json = JSON.stringify(
+            NewUserData(
+                email = state.userEmailTextFieldValue,
+                password = state.userPasswordTextFieldValue,
+                name = state.userNameTextFieldValue,
+                roles = state.userRoles.map { it.name }.toTypedArray()
+            )
+        )
     )
     setState {
       userCreationInProgress = false
@@ -86,13 +85,18 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
   private fun editUser() = launch {
     setState { userCreationInProgress = true }
     val response = NetworkManager.post<String>(
-      url = "$apiBase/user/edit",
-      params = json(
-        "userId" to (props.config as Config.Edit).user.id,
-        "name" to state.userNameTextFieldValue.emptyToNull(),
-        "password" to state.userPasswordTextFieldValue.emptyToNull(),
-        "userType" to state.userType.name.takeIf { (props.config as Config.Edit).user.type != it },
-      )
+        url = "$apiBase/user/edit",
+        json = JSON.stringify(
+            EditUserData(
+                userId = (props.config as Config.Edit).user.id,
+                name = state.userNameTextFieldValue.emptyToNull(),
+                password = state.userPasswordTextFieldValue.emptyToNull(),
+                roles = state.userRoles
+                    .takeIf { (props.config as Config.Edit).user.roles != it }
+                    ?.map { it.name }
+                    ?.toTypedArray()
+            )
+        )
     )
     setState {
       userCreationInProgress = false
@@ -221,32 +225,29 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     spacer(16)
 
-    if (UserType.valueOf(props.userData.clientUser!!.type) == UserType.ADMIN) {
+    if (UserRole.ADMIN in props.userData.clientUser!!.roles) {
+      typography {
+        +Strings.user_permission.get()
+      }
       div(classes = props.classes.userTypeSwitch) {
         formControl {
           attrs.fullWidth = true
-          inputLabel {
-            +Strings.user_permission.get()
-          }
           attrs.variant = "outlined"
-          muiSelect {
-            attrs.value = state.userType.toString()
-            attrs.onChange = { event ->
-              val value = event.target.value as String
-              setState {
-                userType = UserType.valueOf(value)
-              }
-            }
-            attrs.variant = "outlined"
-            attrs.label = Strings.user_permission.get()
 
-            UserType.values().forEach { userType ->
-              menuItem {
-                attrs.value = userType.toString()
-                attrs.disabled = userType != UserType.ADMIN &&
-                    (props.config as? Config.Edit)?.user?.id == props.userData.clientUser!!.id
-                +userType.localizedString.get()
+          UserRole.values().forEach { userRole ->
+            formControlLabel {
+              attrs.control = mCheckbox {
+                attrs.checked = userRole in state.userRoles
+                attrs.onChange = { event, checked ->
+                  val existingRoles = state.userRoles
+                  if (checked) {
+                    setState { userRoles = existingRoles + userRole }
+                  } else {
+                    setState { userRoles = existingRoles - userRole }
+                  }
+                }
               }
+              attrs.label = userRole.localizedString.get()
             }
           }
         }
@@ -264,7 +265,6 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
           attrs.variant = "contained"
           attrs.color = "primary"
           attrs.onClick = {
-
             when (props.config) {
               is Config.Create -> if (validateNameInput() && validatePasswordInput() && validateEmailInput()) {
                 createNewUser()

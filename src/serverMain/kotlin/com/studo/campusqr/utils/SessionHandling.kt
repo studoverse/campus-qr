@@ -1,6 +1,6 @@
 package com.studo.campusqr.utils
 
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.UserRole
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -101,7 +101,7 @@ private suspend fun getOrCreateSharedSecretUser(): BackendUser = runOnDb {
       email = sharedSecretUserId
       createdDate = Date()
       name = "Shared Secret User"
-      type = UserType.ADMIN
+      roles = setOf(UserRole.ADMIN)
     }
   }
 }

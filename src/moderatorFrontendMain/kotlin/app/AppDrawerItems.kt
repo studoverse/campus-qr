@@ -2,7 +2,8 @@ package app
 
 import Url
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.UserRole
+import com.studo.campusqr.common.roles
 import com.studo.campusqr.common.utils.LocalizedString
 import kotlinext.js.js
 import kotlinx.html.js.onClickFunction
@@ -106,48 +107,48 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
     }
 
     fun drawerItems() {
-      val userType = props.config.userData?.clientUser?.type?.let { UserType.valueOf(it) }
+      val roles = props.config.userData?.clientUser?.roles ?: setOf()
 
-      if (userType == UserType.ACCESS_MANAGER || userType == UserType.MODERATOR || userType == UserType.ADMIN) {
+      if (UserRole.ACCESS_MANAGER in roles || UserRole.LOCATION_MANAGER in roles || UserRole.INFECTION_MANAGER in roles || UserRole.ADMIN in roles) {
         listSubheader {
           +Strings.check_in.get()
         }
         props.config.checkInSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-            label = sideDrawerItem.label.get(),
-            icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-            url = sideDrawerItem.url.path
+              label = sideDrawerItem.label.get(),
+              icon = sideDrawerItem.icon,
+              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+              url = sideDrawerItem.url.path
           )
         }
       }
 
-      if (userType == UserType.MODERATOR || userType == UserType.ADMIN) {
+      if (UserRole.LOCATION_MANAGER in roles || UserRole.LOCATION_MANAGER in roles || UserRole.ADMIN in roles) {
         divider {}
         listSubheader {
-          +UserType.MODERATOR.localizedStringAction.get()
+          +UserRole.LOCATION_MANAGER.localizedStringAction.get()
         }
         props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-            label = sideDrawerItem.label.get(),
-            icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-            url = sideDrawerItem.url.path
+              label = sideDrawerItem.label.get(),
+              icon = sideDrawerItem.icon,
+              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+              url = sideDrawerItem.url.path
           )
         }
       }
 
-      if (userType == UserType.ADMIN) {
+      if (UserRole.ADMIN in roles) {
         divider {}
         listSubheader {
-          +UserType.ADMIN.localizedStringAction.get()
+          +UserRole.ADMIN.localizedStringAction.get()
         }
         props.config.adminSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-            label = sideDrawerItem.label.get(),
-            icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-            url = sideDrawerItem.url.path
+              label = sideDrawerItem.label.get(),
+              icon = sideDrawerItem.icon,
+              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+              url = sideDrawerItem.url.path
           )
         }
       }

@@ -1,6 +1,6 @@
 package com.studo.campusqr.auth
 
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.UserRole
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -28,7 +28,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
   private lateinit var ldapGroupRegex: String
   private var ldapPrintDebugLogs: Boolean = false
   private var ldapTimeoutMs: Int = 0
-  private lateinit var ldapDefaultUserType: UserType
+  private lateinit var ldapDefaultUserRole: UserRole
 
   override suspend fun init() {
     runOnDb {
@@ -40,7 +40,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
       ldapGroupRegex = getConfig("ldapGroupRegex")
       ldapPrintDebugLogs = getConfig("ldapPrintDebugLogs")
       ldapTimeoutMs = getConfig("ldapTimeoutMs")
-      ldapDefaultUserType = UserType.valueOf(getConfig("ldapDefaultUserType"))
+      ldapDefaultUserRole = UserRole.valueOf(getConfig("ldapDefaultUserType"))
     }
 
     debugLog("Search filters: $ldapSearchFilterList")
@@ -135,14 +135,14 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
       val user = runOnDb {
         getCollection<BackendUser>().findOneOrInsert(BackendUser::_id equal userId) {
           BackendUser(
-            userId = userId,
-            email = email,
-            name = email
-              .substringBefore("@")
-              .replace(".", " ")
-              .split(" ")
-              .joinToString(separator = " ", transform = { it.capitalize() }),
-            type = ldapDefaultUserType
+              userId = userId,
+              email = email,
+              name = email
+                  .substringBefore("@")
+                  .replace(".", " ")
+                  .split(" ")
+                  .joinToString(separator = " ", transform = { it.capitalize() }),
+              roles = setOf(ldapDefaultUserRole)
           )
         }
       }

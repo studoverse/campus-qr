@@ -29,7 +29,7 @@ suspend fun getAllLocations(language: String): List<ClientLocation> {
 }
 
 suspend fun AuthenticatedApplicationCall.createLocation() {
-  if (!user.isModerator) {
+  if (!user.isLocationManager) {
     respondForbidden()
     return
   }
@@ -200,7 +200,7 @@ suspend fun ApplicationCall.checkOutLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
-  if (!user.isModerator) {
+  if (!user.isInfectionManager) {
     respondForbidden()
     return
   }
@@ -225,7 +225,7 @@ suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
 }
 
 suspend fun AuthenticatedApplicationCall.editLocation() {
-  if (!user.isModerator) {
+  if (!user.isLocationManager) {
     respondForbidden()
     return
   }
@@ -252,7 +252,7 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteLocation() {
-  if (!user.isModerator) {
+  if (!user.isLocationManager) {
     respondForbidden()
     return
   }

@@ -6,10 +6,11 @@ enum class LoginResult {
   UNKNOWN_ERROR // In case the server returned e.g. a maintenance page
 }
 
-enum class UserType {
+enum class UserRole {
   ADMIN, // Can add/delete users + all moderator features
-  MODERATOR, // Can create new locations, and manage check-in data
   ACCESS_MANAGER, // Can give access to existing locations
+  LOCATION_MANAGER, // Can add or delete locations
+  INFECTION_MANAGER, // Can access check-in data
 }
 
 val emailSeparators = arrayOf(" ", ",", ";")

@@ -1,7 +1,8 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.common.UserType
-import com.studo.campusqr.common.UserType.ACCESS_MANAGER
+import com.studo.campusqr.common.EditUserData
+import com.studo.campusqr.common.NewUserData
+import com.studo.campusqr.common.UserRole
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -26,16 +27,16 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
     return
   }
 
-  val params = receiveJsonStringMap()
+  val params: NewUserData = receiveClientPayload()
 
-  val email = params.getValue("email").trim().toLowerCase()
+  val email = params.email.trim().toLowerCase()
   val newUser = BackendUser(
-    userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
-    email = email,
-    name = params.getValue("name").trim(),
-    type = params["userType"]?.let { UserType.valueOf(it) } ?: ACCESS_MANAGER
+      userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
+      email = email,
+      name = params.name.trim(),
+      roles = params.roles.map { UserRole.valueOf(it) }.toSet()
   ).apply {
-    this.passwordHash = Algorithm.hashPassword(params.getValue("password"))
+    this.passwordHash = Algorithm.hashPassword(params.password)
     this.createdBy = user._id
   }
 
@@ -74,16 +75,16 @@ suspend fun AuthenticatedApplicationCall.editUser() {
     return
   }
 
-  val params = receiveJsonStringMap()
-  val changedUserId = params["userId"] ?: user._id
+  val params: EditUserData = receiveClientPayload()
+  val changedUserId = params.userId ?: user._id
 
-  val newName = params["name"]?.trim()
-  val newPassword = params["password"]
-  val newUserType = params["userType"]?.let { UserType.valueOf(it) }
+  val newName = params.name?.trim()
+  val newPassword = params.password
+  val newRoles = params.roles?.map { UserRole.valueOf(it) }?.toSet()
 
   // Only ADMIN users can change the password of other users
   // Only ADMIN users can change user types
-  if (!user.isAdmin && (changedUserId != user._id || newUserType != null)) {
+  if (!user.isAdmin && (changedUserId != user._id || newRoles != null)) {
     respondForbidden()
     return
   }
@@ -96,8 +97,8 @@ suspend fun AuthenticatedApplicationCall.editUser() {
       if (newPassword != null) {
         BackendUser::passwordHash setTo Algorithm.hashPassword(newPassword)
       }
-      if (newUserType != null) {
-        BackendUser::type setTo newUserType
+      if (newRoles != null) {
+        BackendUser::roles setTo newRoles
       }
     }
   }

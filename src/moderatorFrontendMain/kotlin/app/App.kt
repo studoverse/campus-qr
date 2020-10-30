@@ -4,9 +4,10 @@ import MuiPickersUtilsProvider
 import Url
 import apiBase
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.UserRole
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.isAuthenticated
+import com.studo.campusqr.common.roles
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -173,12 +174,15 @@ class App : RComponent<AppProps, AppState>() {
           // The user is not logged in so push him to login page
           pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }
-        window.location.pathname.removeSuffix("/") == "/admin" ->
-          when (UserType.valueOf(state.userData!!.clientUser!!.type)) {
-            UserType.ACCESS_MANAGER -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
-            UserType.MODERATOR -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
-            UserType.ADMIN -> pushAppRoute(Url.USERS.toRoute()!!)
+        window.location.pathname.removeSuffix("/") == "/admin" -> {
+          val clientUser = state.userData!!.clientUser!!
+          when {
+            UserRole.ACCESS_MANAGER in clientUser.roles -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
+            UserRole.LOCATION_MANAGER in clientUser.roles -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
+            UserRole.INFECTION_MANAGER in clientUser.roles -> pushAppRoute(Url.REPORT.toRoute()!!)
+            UserRole.ADMIN in clientUser.roles -> pushAppRoute(Url.USERS.toRoute()!!)
           }
+        }
         else -> {
           // User linked directly to a sub-page
           handleHistoryChange()

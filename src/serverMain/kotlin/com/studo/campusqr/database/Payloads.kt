@@ -22,12 +22,12 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
   var createdBy: String? = null // userId (null on ldap)
   lateinit var name: String
   var firstLoginDate: Date? = null
-  var type = UserType.MODERATOR
+  var roles: Set<UserRole> = setOf()
   override fun toClientClass(language: String) = ClientUser(
       id = _id,
       email = email,
       name = name,
-      type = type.name,
+      rolesRaw = roles.map { it.name }.toTypedArray(),
       firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
           ?: LocalizedString(
               "Not logged in yet",
@@ -35,17 +35,18 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
           ).get(language)
   )
 
-  constructor(userId: String, email: String, name: String, type: UserType) : this() {
+  constructor(userId: String, email: String, name: String, roles: Set<UserRole>) : this() {
     this.email = email
     this._id = userId
     this.name = name
     this.createdDate = Date()
-    this.type = type
+    this.roles = roles
   }
 
-  val isAdmin get() = type == UserType.ADMIN
-  val isModerator get() = type == UserType.MODERATOR || isAdmin
-  val isAccessManager get() = type == UserType.ACCESS_MANAGER || isModerator
+  val isAdmin get() = UserRole.ADMIN in roles
+  val isLocationManager get() = UserRole.LOCATION_MANAGER in roles || isAdmin
+  val isInfectionManager get() = UserRole.INFECTION_MANAGER in roles || isAdmin
+  val isAccessManager get() = UserRole.ACCESS_MANAGER in roles || isAdmin
 }
 
 class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {

@@ -1,7 +1,7 @@
 package util
 
 import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.UserRole
 import com.studo.campusqr.common.utils.LocalizedString
 
 object Strings {
@@ -495,6 +495,16 @@ object Strings {
       "Moderator"
   )
 
+  val user_role_location_manager = LocalizedString(
+      "Location Manager",
+      "Raumverwaltung"
+  )
+
+  val user_role_infection_manager = LocalizedString(
+      "Infection Manager", // TODO @Z wording?
+      "TODO"
+  )
+
   val user_type_moderator_action = LocalizedString(
       "Moderation",
       "Moderation"
@@ -735,18 +745,19 @@ object Strings {
   )
 }
 
-val UserType.localizedString: LocalizedString
+val UserRole.localizedString: LocalizedString
   get() = when (this) {
-    UserType.ADMIN -> Strings.user_type_admin
-    UserType.MODERATOR -> Strings.user_type_moderator
-    UserType.ACCESS_MANAGER -> Strings.access_control_manager
+    UserRole.ADMIN -> Strings.user_type_admin
+    UserRole.LOCATION_MANAGER -> Strings.user_role_location_manager
+    UserRole.INFECTION_MANAGER -> Strings.user_role_infection_manager
+    UserRole.ACCESS_MANAGER -> Strings.access_control_manager
   }
 
-val UserType.localizedStringAction: LocalizedString
+val UserRole.localizedStringAction: LocalizedString
   get() = when (this) {
-    UserType.ADMIN -> Strings.user_type_admin_action
-    UserType.MODERATOR -> Strings.user_type_moderator_action
-    UserType.ACCESS_MANAGER -> Strings.access_control
+    UserRole.ADMIN -> Strings.user_type_admin_action
+    UserRole.LOCATION_MANAGER, UserRole.INFECTION_MANAGER -> Strings.user_type_moderator_action
+    UserRole.ACCESS_MANAGER -> Strings.access_control
   }
 
 val LocationAccessType.localizedString: LocalizedString

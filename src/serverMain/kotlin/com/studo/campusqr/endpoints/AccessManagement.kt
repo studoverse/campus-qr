@@ -1,6 +1,9 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.AccessManagementExportData
+import com.studo.campusqr.common.ClientAccessManagement
+import com.studo.campusqr.common.EditAccess
+import com.studo.campusqr.common.NewAccess
 import com.studo.campusqr.database.BackendAccess
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange
@@ -34,10 +37,8 @@ private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocat
     .associateBy { it._id }
 }
 
-private val AuthenticatedApplicationCall.isAllowed get() = user.isModerator || user.type == UserType.ACCESS_MANAGER
-
 suspend fun AuthenticatedApplicationCall.listAccess() {
-  if (!isAllowed) {
+  if (!user.isAccessManager) {
     respondForbidden(); return
   }
 
@@ -46,7 +47,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.isModerator) -> {
+        locationId != null && (user.isLocationManager) -> {
           find(BackendAccess::locationId equal locationId).toList()
         }
         else -> {
@@ -68,7 +69,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.listExportAccess() {
-  if (!isAllowed) {
+  if (!user.isAccessManager) {
     respondForbidden(); return
   }
 
@@ -78,16 +79,16 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.isModerator) -> {
+        locationId != null && (user.isLocationManager) -> {
           find(
-            BackendAccess::locationId equal locationId,
-            BackendAccess::dateRanges.any(DateRange::to greater now)
+              BackendAccess::locationId equal locationId,
+              BackendAccess::dateRanges.any(DateRange::to greater now)
           ).toList()
         }
         else -> {
           find(
-            BackendAccess::createdBy equal user._id,
-            BackendAccess::dateRanges.any(DateRange::to greater now)
+              BackendAccess::createdBy equal user._id,
+              BackendAccess::dateRanges.any(DateRange::to greater now)
           ).toList()
         }
       }
@@ -118,7 +119,7 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.getAccess() {
-  if (!isAllowed) {
+  if (!user.isAccessManager) {
     respondForbidden(); return
   }
 
@@ -131,7 +132,7 @@ suspend fun AuthenticatedApplicationCall.getAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.createAccess() {
-  if (!isAllowed) {
+  if (!user.isAccessManager) {
     respondForbidden(); return
   }
 
@@ -156,7 +157,7 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteAccess() {
-  if (!isAllowed) {
+  if (!user.isAccessManager) {
     respondForbidden(); return
   }
 
@@ -164,7 +165,7 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
-  if (user._id != access.createdBy && !user.isModerator) {
+  if (user._id != access.createdBy && !user.isLocationManager) {
     respondForbidden(); return
   }
 
@@ -176,7 +177,7 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.duplicateAccess() {
-  if (!isAllowed) {
+  if (!user.isAccessManager) {
     respondForbidden(); return
   }
 
@@ -193,7 +194,7 @@ suspend fun AuthenticatedApplicationCall.duplicateAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.editAccess() {
-  if (!isAllowed) {
+  if (!user.isAccessManager) {
     respondForbidden(); return
   }
 
@@ -201,7 +202,7 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
-  if (user._id != access.createdBy && !user.isModerator) {
+  if (user._id != access.createdBy && !user.isLocationManager) {
     respondForbidden(); return
   }
 

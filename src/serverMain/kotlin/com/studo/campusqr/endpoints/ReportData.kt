@@ -2,7 +2,6 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.ActiveCheckIn
 import com.studo.campusqr.common.ReportData
-import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.BackendSeatFilter
@@ -219,7 +218,7 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
 }
 
 suspend fun AuthenticatedApplicationCall.returnReportData() {
-  if (!user.isModerator) {
+  if (!user.isInfectionManager) {
     respondForbidden()
     return
   }
@@ -238,7 +237,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
  * Might be useful for direct API access.
  */
 suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
-  if (!user.isModerator) {
+  if (!user.isInfectionManager) {
     respondForbidden()
     return
   }
