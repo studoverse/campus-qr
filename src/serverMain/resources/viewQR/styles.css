@@ -55,7 +55,7 @@ header > h2 {
 
 .small-pages-scaling-container > .page:first-child {
   /* Separates left & right page and helps centering the cut */
-  border-right: 1px solid #b3b3b3;
+  border-right: 1px solid #888888;
 }
 
 div.break {
