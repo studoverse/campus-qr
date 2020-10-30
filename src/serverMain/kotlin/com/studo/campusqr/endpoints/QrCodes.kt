@@ -36,7 +36,7 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
           ).get(this@viewSingleQrCode)
         }
       } else {
-        renderPrintPage(language, smallPages = location.seatCount != null) {
+        renderPrintPage(language) {
           renderLocation(location, configs)
         }
       }
@@ -58,14 +58,15 @@ suspend fun AuthenticatedApplicationCall.viewCheckoutCode() {
     }
 
     body {
-      renderPrintPage(language, smallPages = false) {
+      renderPrintPage(language) {
         renderQrCodePage(
           "Check Out",
           "checkout",
           configs,
           subtext1 = configs.getValue("scanCheckoutSubtext1"),
           subtext2 = configs.getValue("scanCheckoutSubtext1"),
-          subtitle = ""
+          subtitle = "",
+          smallPage = false
         )
       }
     }
@@ -96,7 +97,7 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
           ).get(this@viewAllQrCodes)
         }
       } else {
-        renderPrintPage(language, smallPages = false) {
+        renderPrintPage(language) {
           for (location in locations) {
             renderLocation(location, configs)
           }
@@ -106,12 +107,7 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
   }
 }
 
-fun FlowContent.renderPrintPage(language: String, smallPages: Boolean, block: FlowContent.() -> Unit) {
-  if (smallPages && getConfig("multiSeatLocationsUseSmallCheckinPages")) {
-    style {
-      +"@page { size: A4 landscape; }"
-    }
-  }
+fun FlowContent.renderPrintPage(language: String, block: FlowContent.() -> Unit) {
   noScript {
     +"You need to enable JavaScript to run this app."
   }
@@ -160,12 +156,12 @@ fun FlowContent.renderLocation(location: ClientLocation, configs: Map<String, St
     } else {
       for (seat in 1..location.seatCount) {
         val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
-        renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs)
+        renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs, smallPage = false)
         div("break") {}
       }
     }
   } else {
-    renderQrCodePage(location.name, location.id, configs)
+    renderQrCodePage(location.name, location.id, configs, smallPage = false)
   }
 }
 
@@ -176,7 +172,7 @@ fun FlowContent.renderQrCodePage(
   subtext1: String = configs.getValue("scanSubtext1"),
   subtext2: String = configs.getValue("scanSubtext2"),
   subtitle: String = "Check In",
-  smallPage: Boolean = false, // True if there are two Din A5 pages side by side on one Din A4 sheet
+  smallPage: Boolean, // True if there are two Din A5 pages side by side on one Din A4 sheet
 ) {
   val htmlResourcePath = if (smallPage) "viewQR/qrcode_print_template_a5.html" else "viewQR/qrcode_print_template_a4.html"
   val htmlString = (HtmlTemplateCache[htmlResourcePath] ?: "template missing")

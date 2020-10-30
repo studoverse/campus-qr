@@ -28,11 +28,12 @@ header > h2 {
 }
 
 .small-pages-container {
-  /* height must be 1mm less than A4 because of rounding errors that would otherwise leave empty pages */
-  height: 209mm;
-  width: 297mm;
-  overflow: hidden;
+  /* width must be 1mm less than A4 because of rounding errors that would otherwise leave empty pages */
+  height: 297mm;
+  width: 209mm;
   page-break-after: always;
+  transform: translateX(209mm) rotate(90deg);
+  transform-origin: top left;
 }
 
 .small-pages-scaling-container {
@@ -53,7 +54,7 @@ header > h2 {
   border-top: 1px solid black;
 }
 
-.small-pages-scaling-container > .page:first-child {
+.small-pages-scaling-container .page:first-child {
   /* Separates left & right page and helps centering the cut */
   border-right: 1px solid #888888;
 }
