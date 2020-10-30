@@ -90,6 +90,8 @@ suspend fun initialDatabaseSetup() {
       insert("checkInIpAddressHeader", "") // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
 
       insert("authSharedSecret", "") // Auth via X-Authorization header. If empty, no shared secret access is possible.
+
+      insert("multiSeatLocationsUseSmallCheckinPages", 0) // If 1, the printable QR codes use A5 instead of A4 format
     }
 
     // Create root user

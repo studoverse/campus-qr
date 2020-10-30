@@ -2,6 +2,7 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.utils.LocalizedString
+import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.database.getConfigs
 import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
@@ -35,7 +36,7 @@ suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
           ).get(this@viewSingleQrCode)
         }
       } else {
-        renderPrintPage(language) {
+        renderPrintPage(language, smallPages = location.seatCount != null) {
           renderLocation(location, configs)
         }
       }
@@ -57,7 +58,7 @@ suspend fun AuthenticatedApplicationCall.viewCheckoutCode() {
     }
 
     body {
-      renderPrintPage(language) {
+      renderPrintPage(language, smallPages = false) {
         renderQrCodePage(
           "Check Out",
           "checkout",
@@ -95,7 +96,7 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
           ).get(this@viewAllQrCodes)
         }
       } else {
-        renderPrintPage(language) {
+        renderPrintPage(language, smallPages = false) {
           for (location in locations) {
             renderLocation(location, configs)
           }
@@ -105,7 +106,12 @@ suspend fun AuthenticatedApplicationCall.viewAllQrCodes() {
   }
 }
 
-fun FlowContent.renderPrintPage(language: String, block: FlowContent.() -> Unit) {
+fun FlowContent.renderPrintPage(language: String, smallPages: Boolean, block: FlowContent.() -> Unit) {
+  if (smallPages && getConfig("multiSeatLocationsUseSmallCheckinPages")) {
+    style {
+      +"@page { size: A4 landscape; }"
+    }
+  }
   noScript {
     +"You need to enable JavaScript to run this app."
   }
@@ -136,10 +142,27 @@ fun FlowContent.renderPrintPage(language: String, block: FlowContent.() -> Unit)
 }
 
 fun FlowContent.renderLocation(location: ClientLocation, configs: Map<String, String>) {
+  val multiSeatLocationsUseSmallCheckinPages: Boolean = getConfig("multiSeatLocationsUseSmallCheckinPages")
   if (location.seatCount != null) {
-    for (seat in 1..location.seatCount) {
-      val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
-      renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs)
+    if (multiSeatLocationsUseSmallCheckinPages) {
+      // Put two portrait A5 pages side by side on each landscape A4 sheet
+      for (skippedSeat in 1..location.seatCount step 2) {
+        div("small-pages-container") { // Crops the inner container
+          div("small-pages-scaling-container") { // Scales content to 0.5
+            // Render the two pages as if they were full-size
+            for (seat in listOf(skippedSeat, skippedSeat + 1)) {
+              val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
+              renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs, smallPage = true)
+            }
+          }
+        }
+      }
+    } else {
+      for (seat in 1..location.seatCount) {
+        val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
+        renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs)
+        div("break") {}
+      }
     }
   } else {
     renderQrCodePage(location.name, location.id, configs)
@@ -152,7 +175,8 @@ fun FlowContent.renderQrCodePage(
   configs: Map<String, String>,
   subtext1: String = configs.getValue("scanSubtext1"),
   subtext2: String = configs.getValue("scanSubtext2"),
-  subtitle: String = "Check In"
+  subtitle: String = "Check In",
+  smallPage: Boolean = false, // True if there are two Din A5 pages side by side on one Din A4 sheet
 ) {
   div("page") {
     div("header") {
@@ -175,5 +199,4 @@ fun FlowContent.renderQrCodePage(
       }
     }
   }
-  div("break") {}
 }
