@@ -178,25 +178,20 @@ fun FlowContent.renderQrCodePage(
   subtitle: String = "Check In",
   smallPage: Boolean = false, // True if there are two Din A5 pages side by side on one Din A4 sheet
 ) {
-  div("page") {
-    div("header") {
-      h1 {
-        +name
-      }
-      p {
-        +subtitle
-      }
-    }
-    div("qrcode") {
-      this.id = id
-    }
-    div("footer") {
-      p {
-        +subtext1
-      }
-      p {
-        +subtext2
-      }
-    }
+  val htmlResourcePath = if (smallPage) "viewQR/qrcode_print_template_a5.html" else "viewQR/qrcode_print_template_a4.html"
+  val htmlString = (HtmlTemplateCache[htmlResourcePath] ?: "template missing")
+      .replace("%%NAME%%", name)
+      .replace("%%ID%%", id)
+      .replace("%%SUBTEXT_1%%", subtext1)
+      .replace("%%SUBTEXT_2%%", subtext2)
+      .replace("%%SUBTITLE%%", subtitle)
+
+  div { unsafe { raw(htmlString) } }
+}
+
+object HtmlTemplateCache {
+  private val cacheMap: MutableMap<String, String> = mutableMapOf() // Resource path to raw resource string
+  operator fun get(path: String): String? {
+    return cacheMap[path] ?: this::class.java.classLoader.getResource(path)?.readText()?.also { cacheMap[path] = it }
   }
 }
