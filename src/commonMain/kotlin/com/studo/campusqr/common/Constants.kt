@@ -10,7 +10,7 @@ enum class UserRole {
   ADMIN, // Can add/delete users + all moderator features
   ACCESS_MANAGER, // Can give access to existing locations
   EDIT_LOCATIONS, // Can add or delete locations
-  VIEW_CHECKINS, // Can access check-in data // TODO @Z change this wording in code // TODO @Z show list of rooms but no edit
+  VIEW_CHECKINS, // Can access check-in data
 }
 
 val emailSeparators = arrayOf(" ", ",", ";")
