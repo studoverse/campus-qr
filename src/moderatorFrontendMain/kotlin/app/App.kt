@@ -3,11 +3,8 @@ package app
 import MuiPickersUtilsProvider
 import Url
 import apiBase
-import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserRole
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emptyToNull
-import com.studo.campusqr.common.isAuthenticated
-import com.studo.campusqr.common.roles
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -66,18 +63,26 @@ class App : RComponent<AppProps, AppState>() {
     )
   )
 
-  private val moderatorSideDrawerItems = listOf(
-    SideDrawerItem(
-      label = Url.LOCATIONS_LIST.title,
-      icon = meetingRoomIcon,
-      url = Url.LOCATIONS_LIST
-    ),
-    SideDrawerItem(
-      label = Url.REPORT.title,
-      icon = blurCircularIcon,
-      url = Url.REPORT
-    ),
-  )
+  private val moderatorSideDrawerItems: List<SideDrawerItem> get() {
+    val items = mutableListOf<SideDrawerItem>()
+
+    if (state.userData?.clientUser?.isLocationManager == true) {
+      items += SideDrawerItem(
+          label = Url.LOCATIONS_LIST.title,
+          icon = meetingRoomIcon,
+          url = Url.LOCATIONS_LIST
+      )
+    }
+    if (state.userData?.clientUser?.isInfectionManager == true) {
+      items += SideDrawerItem(
+          label = Url.REPORT.title,
+          icon = blurCircularIcon,
+          url = Url.REPORT
+      )
+    }
+
+    return items
+  }
 
   private val adminSideDrawerItems = listOf(
     SideDrawerItem(
