@@ -35,7 +35,7 @@ private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocat
 }
 
 suspend fun AuthenticatedApplicationCall.listAccess() {
-  if (!user.isAccessManager) {
+  if (!user.canEditLocationAccess) {
     respondForbidden(); return
   }
 
@@ -66,7 +66,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.listExportAccess() {
-  if (!user.isAccessManager) {
+  if (!user.canEditLocationAccess) {
     respondForbidden(); return
   }
 
@@ -116,7 +116,7 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.getAccess() {
-  if (!user.isAccessManager) {
+  if (!user.canEditLocationAccess) {
     respondForbidden(); return
   }
 
@@ -129,7 +129,7 @@ suspend fun AuthenticatedApplicationCall.getAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.createAccess() {
-  if (!user.isAccessManager) {
+  if (!user.canEditLocationAccess) {
     respondForbidden(); return
   }
 
@@ -154,7 +154,7 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteAccess() {
-  if (!user.isAccessManager) {
+  if (!user.canEditLocationAccess) {
     respondForbidden(); return
   }
 
@@ -174,7 +174,7 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.duplicateAccess() {
-  if (!user.isAccessManager) {
+  if (!user.canEditLocationAccess) {
     respondForbidden(); return
   }
 
@@ -191,7 +191,7 @@ suspend fun AuthenticatedApplicationCall.duplicateAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.editAccess() {
-  if (!user.isAccessManager) {
+  if (!user.canEditLocationAccess) {
     respondForbidden(); return
   }
 

@@ -28,7 +28,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
   private lateinit var ldapGroupRegex: String
   private var ldapPrintDebugLogs: Boolean = false
   private var ldapTimeoutMs: Int = 0
-  private lateinit var ldapDefaultUserRole: UserRole
+  private lateinit var ldapDefaultUserRoles: List<UserRole>
 
   override suspend fun init() {
     runOnDb {
@@ -40,7 +40,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
       ldapGroupRegex = getConfig("ldapGroupRegex")
       ldapPrintDebugLogs = getConfig("ldapPrintDebugLogs")
       ldapTimeoutMs = getConfig("ldapTimeoutMs")
-      ldapDefaultUserRole = UserRole.valueOf(getConfig("ldapDefaultUserType"))
+      ldapDefaultUserRoles = getConfig<String>("ldapDefaultUserType").split(",").map { UserRole.valueOf(it.trim()) }
     }
 
     debugLog("Search filters: $ldapSearchFilterList")
@@ -142,7 +142,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
                   .replace(".", " ")
                   .split(" ")
                   .joinToString(separator = " ", transform = { it.capitalize() }),
-              roles = setOf(ldapDefaultUserRole)
+              roles = ldapDefaultUserRoles.toSet()
           )
         }
       }

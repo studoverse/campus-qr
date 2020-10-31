@@ -52,7 +52,7 @@ class App : RComponent<AppProps, AppState>() {
 
   private val checkInSideDrawerItems: List<SideDrawerItem>
     get() {
-      return if (state.userData?.clientUser?.isAccessManager == true) {
+      return if (state.userData?.clientUser?.canEditLocationAccess == true) {
         listOf(
           SideDrawerItem(
             label = Url.ACCESS_MANAGEMENT_LIST.title,
@@ -197,7 +197,7 @@ class App : RComponent<AppProps, AppState>() {
         window.location.pathname.removeSuffix("/") == "/admin" -> {
           val clientUser = state.userData!!.clientUser!!
           when {
-            UserRole.ACCESS_MANAGER in clientUser.roles -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
+            UserRole.EDIT_ACCESS in clientUser.roles -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
             UserRole.EDIT_LOCATIONS in clientUser.roles -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
             UserRole.VIEW_CHECKINS in clientUser.roles -> pushAppRoute(Url.REPORT.toRoute()!!)
             UserRole.ADMIN in clientUser.roles -> pushAppRoute(Url.USERS.toRoute()!!)

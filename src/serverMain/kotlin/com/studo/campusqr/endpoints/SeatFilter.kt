@@ -19,7 +19,7 @@ import java.util.*
 
 // Edit or create seat filter
 suspend fun AuthenticatedApplicationCall.editSeatFilter() {
-  if (!user.canEditLocations) {
+  if (!user.canViewCheckIns) {
     respondForbidden()
     return
   }
@@ -64,7 +64,7 @@ suspend fun AuthenticatedApplicationCall.editSeatFilter() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteSeatFilter() {
-  if (!user.canEditLocations) {
+  if (!user.canViewCheckIns) {
     respondForbidden()
     return
   }

@@ -57,13 +57,13 @@ class ClientUser(
   val firstLoginDate: String,
 ) : ClientPayload
 
-val ClientUser.roles get() = rolesRaw.map { UserRole.valueOf(it) }.toSet()
+val ClientUser.roles: Set<UserRole> get() = rolesRaw.map { UserRole.valueOf(it) }.toSet()
 
 // Keep in sync with BackendUser
 val ClientUser.isAdmin get() = UserRole.ADMIN in roles
 val ClientUser.canEditLocations get() = UserRole.EDIT_LOCATIONS in roles || isAdmin
 val ClientUser.canViewCheckIns get() = UserRole.VIEW_CHECKINS in roles || isAdmin
-val ClientUser.isAccessManager get() = UserRole.ACCESS_MANAGER in roles || isAdmin
+val ClientUser.canEditLocationAccess get() = UserRole.EDIT_ACCESS in roles || isAdmin
 
 class AccessManagementData(
   val accessManagement: Array<ClientAccessManagement>,

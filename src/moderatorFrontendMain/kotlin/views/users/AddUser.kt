@@ -60,7 +60,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userRoles = (props.config as? Config.Edit)?.user?.roles ?: setOf(UserRole.ACCESS_MANAGER)
+    userRoles = (props.config as? Config.Edit)?.user?.roles ?: setOf(UserRole.EDIT_ACCESS)
   }
 
   private fun createNewUser() = launch {

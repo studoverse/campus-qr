@@ -745,14 +745,14 @@ val UserRole.localizedString: LocalizedString
     UserRole.ADMIN -> Strings.user_type_admin
     UserRole.EDIT_LOCATIONS -> Strings.user_role_location_manager
     UserRole.VIEW_CHECKINS -> Strings.user_role_infection_manager
-    UserRole.ACCESS_MANAGER -> Strings.access_control_manager
+    UserRole.EDIT_ACCESS -> Strings.access_control_manager
   }
 
 val UserRole.localizedStringAction: LocalizedString
   get() = when (this) {
     UserRole.ADMIN -> Strings.user_type_admin_action
     UserRole.EDIT_LOCATIONS, UserRole.VIEW_CHECKINS -> Strings.user_type_moderator_action
-    UserRole.ACCESS_MANAGER -> Strings.access_control
+    UserRole.EDIT_ACCESS -> Strings.access_control
   }
 
 val LocationAccessType.localizedString: LocalizedString

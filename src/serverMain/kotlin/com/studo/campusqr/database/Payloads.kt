@@ -47,7 +47,7 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
   val isAdmin get() = UserRole.ADMIN in roles
   val canEditLocations get() = UserRole.EDIT_LOCATIONS in roles || isAdmin
   val canViewCheckIns get() = UserRole.VIEW_CHECKINS in roles || isAdmin
-  val isAccessManager get() = UserRole.ACCESS_MANAGER in roles || isAdmin
+  val canEditLocationAccess get() = UserRole.EDIT_ACCESS in roles || isAdmin
 }
 
 class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
