@@ -60,7 +60,7 @@ suspend fun AuthenticatedApplicationCall.listLocations() {
   val locations = getAllLocations(language)
 
   if (!user.canViewCheckIns) {
-    locations.forEach { location -> location.checkInCount = -1 }
+    locations.forEach { location -> location.checkInCount = null }
   }
 
   respondObject(locations)

@@ -6,7 +6,7 @@ interface ClientPayload
 class ClientLocation(
   val id: String,
   val name: String,
-  var checkInCount: Int,
+  var checkInCount: Int?,
   val accessType: String,
   val seatCount: Int?,
 ) : ClientPayload
