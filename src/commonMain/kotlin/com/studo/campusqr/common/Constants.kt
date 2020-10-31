@@ -9,8 +9,8 @@ enum class LoginResult {
 enum class UserRole {
   ADMIN, // Can add/delete users + all moderator features
   ACCESS_MANAGER, // Can give access to existing locations
-  LOCATION_MANAGER, // Can add or delete locations
-  INFECTION_MANAGER, // Can access check-in data
+  EDIT_LOCATIONS, // Can add or delete locations
+  VIEW_CHECKINS, // Can access check-in data // TODO @Z change this wording in code // TODO @Z show list of rooms but no edit
 }
 
 val emailSeparators = arrayOf(" ", ",", ";")

@@ -24,7 +24,8 @@ interface LocationTableRowProps : RProps {
     val location: ClientLocation,
     val onEditFinished: (response: String?) -> Unit,
     val onDeleteFinished: (response: String?) -> Unit,
-    val showCheckInCount: Boolean
+    val showCheckInCount: Boolean,
+    val canEditLocations: Boolean,
   )
 
   var config: Config
@@ -91,11 +92,13 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
           } else {
             materialMenu(
               menuItems = listOfNotNull(
-                MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
-                  setState {
-                    showEditLocationDialog = true
-                  }
-                }),
+                if (props.config.canEditLocations) {
+                  MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
+                    setState {
+                      showEditLocationDialog = true
+                    }
+                  })
+                } else null,
                 MenuItem(text = Strings.locations_element_download_qr_code.get(), icon = imageRoundedIcon, onClick = {
                   window.open("$baseUrl/location/${props.config.location.id}/qr-code", target = "_blank")
                 }),
@@ -124,17 +127,19 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
                     }
                   })
                 } else null,
-                MenuItem(text = Strings.location_delete.get(), icon = deleteIcon, onClick = {
-                  if (window.confirm(Strings.location_delete_are_you_sure.get())) {
-                    launch {
-                      val response = NetworkManager.post<String>(
-                        "$apiBase/location/${props.config.location.id}/delete",
-                        params = null
-                      )
-                      props.config.onDeleteFinished(response)
+                if (props.config.canEditLocations) {
+                  MenuItem(text = Strings.location_delete.get(), icon = deleteIcon, onClick = {
+                    if (window.confirm(Strings.location_delete_are_you_sure.get())) {
+                      launch {
+                        val response = NetworkManager.post<String>(
+                          "$apiBase/location/${props.config.location.id}/delete",
+                          params = null
+                        )
+                        props.config.onDeleteFinished(response)
+                      }
                     }
-                  }
-                }),
+                  })
+                } else null,
               )
             )
           }

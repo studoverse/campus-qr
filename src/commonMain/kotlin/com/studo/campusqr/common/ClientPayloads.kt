@@ -22,15 +22,15 @@ class UserData(
 val UserData.isAuthenticated get() = clientUser != null
 
 class ReportData(
-    val impactedUsersCount: Int,
-    val impactedUsersEmails: Array<String>,
-    val impactedUsersEmailsCsvData: String,
-    val reportedUserLocations: Array<UserLocation>,
-    val reportedUserLocationsCsv: String,
-    val reportedUserLocationsCsvFileName: String,
-    val startDate: String,
-    val endDate: String,
-    val impactedUsersEmailsCsvFileName: String,
+  val impactedUsersCount: Int,
+  val impactedUsersEmails: Array<String>,
+  val impactedUsersEmailsCsvData: String,
+  val reportedUserLocations: Array<UserLocation>,
+  val reportedUserLocationsCsv: String,
+  val reportedUserLocationsCsvFileName: String,
+  val startDate: String,
+  val endDate: String,
+  val impactedUsersEmailsCsvFileName: String,
 ) : ClientPayload {
   class UserLocation(
     val locationId: String,
@@ -45,34 +45,34 @@ class ReportData(
 }
 
 class LocationVisitData(
-    val csvData: String,
-    val csvFileName: String,
+  val csvData: String,
+  val csvFileName: String,
 ) : ClientPayload
 
 class ClientUser(
-    val id: String,
-    val email: String,
-    val name: String,
-    val rolesRaw: Array<String>,
-    val firstLoginDate: String,
+  val id: String,
+  val email: String,
+  val name: String,
+  val rolesRaw: Array<String>,
+  val firstLoginDate: String,
 ) : ClientPayload
 
 val ClientUser.roles get() = rolesRaw.map { UserRole.valueOf(it) }.toSet()
 
 // Keep in sync with BackendUser
 val ClientUser.isAdmin get() = UserRole.ADMIN in roles
-val ClientUser.isLocationManager get() = UserRole.LOCATION_MANAGER in roles || isAdmin
-val ClientUser.isInfectionManager get() = UserRole.INFECTION_MANAGER in roles || isAdmin
+val ClientUser.canEditLocations get() = UserRole.EDIT_LOCATIONS in roles || isAdmin
+val ClientUser.canViewCheckIns get() = UserRole.VIEW_CHECKINS in roles || isAdmin
 val ClientUser.isAccessManager get() = UserRole.ACCESS_MANAGER in roles || isAdmin
 
 class AccessManagementData(
-    val accessManagement: Array<ClientAccessManagement>,
-    val clientLocation: ClientLocation?,
+  val accessManagement: Array<ClientAccessManagement>,
+  val clientLocation: ClientLocation?,
 ) : ClientPayload
 
 class AccessManagementExportData(
-    val permits: Array<Permit>,
-    val clientLocation: ClientLocation?,
+  val permits: Array<Permit>,
+  val clientLocation: ClientLocation?,
 ) : ClientPayload {
   class Permit(
     val dateRange: ClientDateRange,
@@ -91,44 +91,44 @@ class ClientAccessManagement(
 ) : ClientPayload
 
 class ClientDateRange(
-    val from: Double,
-    val to: Double,
+  val from: Double,
+  val to: Double,
 ) : ClientPayload
 
 class NewAccess(
-    val locationId: String,
-    val allowedEmails: Array<String>,
-    val dateRanges: Array<ClientDateRange>,
-    val note: String,
-    val reason: String,
+  val locationId: String,
+  val allowedEmails: Array<String>,
+  val dateRanges: Array<ClientDateRange>,
+  val note: String,
+  val reason: String,
 ) : ClientPayload
 
 class NewUserData(
-    val email: String,
-    val name: String,
-    val password: String,
-    val roles: Array<String>,
+  val email: String,
+  val name: String,
+  val password: String,
+  val roles: Array<String>,
 ) : ClientPayload
 
 class EditUserData(
-    val userId: String? = null,
-    val name: String?,
-    val password: String?,
-    val roles: Array<String>?,
+  val userId: String? = null,
+  val name: String?,
+  val password: String?,
+  val roles: Array<String>?,
 ) : ClientPayload
 
 class EditAccess(
-    val locationId: String? = null,
-    val allowedEmails: Array<String>? = null,
-    val dateRanges: Array<ClientDateRange>? = null,
-    val note: String? = null,
-    val reason: String? = null,
+  val locationId: String? = null,
+  val allowedEmails: Array<String>? = null,
+  val dateRanges: Array<ClientDateRange>? = null,
+  val note: String? = null,
+  val reason: String? = null,
 ) : ClientPayload
 
 class CreateLocation(
-    val name: String,
-    val accessType: LocationAccessType,
-    val seatCount: Int?,
+  val name: String,
+  val accessType: LocationAccessType,
+  val seatCount: Int?,
 ) : ClientPayload
 
 class EditLocation(

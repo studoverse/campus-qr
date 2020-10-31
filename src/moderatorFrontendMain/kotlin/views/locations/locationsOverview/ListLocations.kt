@@ -3,7 +3,8 @@ package views.locations.locationsOverview
 import apiBase
 import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.isInfectionManager
+import com.studo.campusqr.common.canEditLocations
+import com.studo.campusqr.common.canViewCheckIns
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
@@ -121,50 +122,53 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     renderAddLocationDialog()
     renderImportButtonDialog()
     renderSnackbar()
-    renderToolbarView(
-      ToolbarViewProps.Config(
-        title = Strings.locations.get(),
-        buttons = listOf(
-          ToolbarViewProps.ToolbarButton(
-            text = Strings.print_checkout_code.get(),
-            variant = "outlined",
-            onClick = {
-              window.open("/location/qr-codes/checkout", "_blank")
-            }
-          ),
-          ToolbarViewProps.ToolbarButton(
-            text = Strings.print_all_qrcodes.get(),
-            variant = "outlined",
-            onClick = {
-              window.open("/location/qr-codes", "_blank")
-            }
-          ),
-          ToolbarViewProps.ToolbarButton(
-            text = Strings.location_import.get(),
-            variant = "outlined",
-            onClick = {
-              setState {
-                showImportLocationDialog = true
+    if (props.userData.clientUser!!.canEditLocations) {
+      renderToolbarView(
+        ToolbarViewProps.Config(
+          title = Strings.locations.get(),
+          buttons = listOf(
+            ToolbarViewProps.ToolbarButton(
+              text = Strings.print_checkout_code.get(),
+              variant = "outlined",
+              onClick = {
+                window.open("/location/qr-codes/checkout", "_blank")
               }
-            }
-          ),
-          ToolbarViewProps.ToolbarButton(
-            text = Strings.location_create.get(),
-            variant = "contained",
-            onClick = {
-              setState {
-                showAddLocationDialog = true
+            ),
+            ToolbarViewProps.ToolbarButton(
+              text = Strings.print_all_qrcodes.get(),
+              variant = "outlined",
+              onClick = {
+                window.open("/location/qr-codes", "_blank")
               }
-            }
-          ),
+            ),
+            ToolbarViewProps.ToolbarButton(
+              text = Strings.location_import.get(),
+              variant = "outlined",
+              onClick = {
+                setState {
+                  showImportLocationDialog = true
+                }
+              }
+            ),
+            ToolbarViewProps.ToolbarButton(
+              text = Strings.location_create.get(),
+              variant = "contained",
+              onClick = {
+                setState {
+                  showAddLocationDialog = true
+                }
+              }
+            ),
+          )
         )
       )
-    )
+    }
 
     renderLinearProgress(state.loadingLocationList)
 
     if (state.locationList?.isNotEmpty() == true) {
-      val showCheckInCount = props.userData.clientUser!!.isInfectionManager
+      val showCheckInCount = props.userData.clientUser!!.canViewCheckIns
+      val canEditLocations = props.userData.clientUser!!.canEditLocations
       mTable {
         mTableHead {
           mTableRow {
@@ -187,7 +191,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
                 onDeleteFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_deleted.get())
                 },
-                showCheckInCount = showCheckInCount
+                showCheckInCount = showCheckInCount,
+                canEditLocations = canEditLocations
               )
             )
           }

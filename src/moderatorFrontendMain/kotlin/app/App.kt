@@ -50,52 +50,67 @@ interface AppState : RState {
 
 class App : RComponent<AppProps, AppState>() {
 
-  private val checkInSideDrawerItems = listOf(
-    SideDrawerItem(
-      label = Url.ACCESS_MANAGEMENT_LIST.title,
-      icon = lockOpenIcon,
-      url = Url.ACCESS_MANAGEMENT_LIST
-    ),
-    SideDrawerItem(
-      label = Url.GUEST_CHECK_IN.title,
-      icon = contactMailIcon,
-      url = Url.GUEST_CHECK_IN
-    )
-  )
+  private val checkInSideDrawerItems: List<SideDrawerItem>
+    get() {
+      return if (state.userData?.clientUser?.isAccessManager == true) {
+        listOf(
+          SideDrawerItem(
+            label = Url.ACCESS_MANAGEMENT_LIST.title,
+            icon = lockOpenIcon,
+            url = Url.ACCESS_MANAGEMENT_LIST
+          ),
+          SideDrawerItem(
+            label = Url.GUEST_CHECK_IN.title,
+            icon = contactMailIcon,
+            url = Url.GUEST_CHECK_IN
+          )
+        )
+      } else {
+        emptyList()
+      }
+    }
 
-  private val moderatorSideDrawerItems: List<SideDrawerItem> get() {
-    val items = mutableListOf<SideDrawerItem>()
+  private val moderatorSideDrawerItems: List<SideDrawerItem>
+    get() {
+      val items = mutableListOf<SideDrawerItem>()
 
-    if (state.userData?.clientUser?.isLocationManager == true) {
-      items += SideDrawerItem(
+      if (state.userData?.clientUser?.canEditLocations == true || state.userData?.clientUser?.canViewCheckIns == true) {
+        items += SideDrawerItem(
           label = Url.LOCATIONS_LIST.title,
           icon = meetingRoomIcon,
           url = Url.LOCATIONS_LIST
-      )
-    }
-    if (state.userData?.clientUser?.isInfectionManager == true) {
-      items += SideDrawerItem(
+        )
+      }
+      if (state.userData?.clientUser?.canViewCheckIns == true) {
+        items += SideDrawerItem(
           label = Url.REPORT.title,
           icon = blurCircularIcon,
           url = Url.REPORT
-      )
+        )
+      }
+
+      return items
     }
 
-    return items
-  }
-
-  private val adminSideDrawerItems = listOf(
-    SideDrawerItem(
-      label = Url.USERS.title,
-      icon = peopleIcon,
-      url = Url.USERS
-    ),
-    SideDrawerItem(
-      label = Url.ADMIN_INFO.title,
-      icon = infoIcon,
-      url = Url.ADMIN_INFO
-    ),
-  )
+  private val adminSideDrawerItems: List<SideDrawerItem>
+    get() {
+      return if (state.userData?.clientUser?.isAdmin == true) {
+        listOf(
+          SideDrawerItem(
+            label = Url.USERS.title,
+            icon = peopleIcon,
+            url = Url.USERS
+          ),
+          SideDrawerItem(
+            label = Url.ADMIN_INFO.title,
+            icon = infoIcon,
+            url = Url.ADMIN_INFO
+          ),
+        )
+      } else {
+        emptyList()
+      }
+    }
 
   private fun enableClientSideRouting() {
     window.addEventListener("popstate", {
@@ -168,9 +183,9 @@ class App : RComponent<AppProps, AppState>() {
       val currentRoute = window.location.toRoute()
 
       fun calculateRedirectQueryParams(): Map<String, String> = window.location.relativeUrl
-          .removeSuffix("/")
-          .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
-          ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
+        .removeSuffix("/")
+        .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
+        ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
         ?.let { mapOf("redirect" to it) }
         ?: emptyMap()
 
@@ -183,8 +198,8 @@ class App : RComponent<AppProps, AppState>() {
           val clientUser = state.userData!!.clientUser!!
           when {
             UserRole.ACCESS_MANAGER in clientUser.roles -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
-            UserRole.LOCATION_MANAGER in clientUser.roles -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
-            UserRole.INFECTION_MANAGER in clientUser.roles -> pushAppRoute(Url.REPORT.toRoute()!!)
+            UserRole.EDIT_LOCATIONS in clientUser.roles -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
+            UserRole.VIEW_CHECKINS in clientUser.roles -> pushAppRoute(Url.REPORT.toRoute()!!)
             UserRole.ADMIN in clientUser.roles -> pushAppRoute(Url.USERS.toRoute()!!)
           }
         }
@@ -236,10 +251,12 @@ class App : RComponent<AppProps, AppState>() {
         networkErrorView()
       }
     } else {
-      renderAppContent(AppContentProps.Config(
-        currentAppRoute = state.currentAppRoute,
-        userData = state.userData
-      ))
+      renderAppContent(
+        AppContentProps.Config(
+          currentAppRoute = state.currentAppRoute,
+          userData = state.userData
+        )
+      )
     }
   }
 

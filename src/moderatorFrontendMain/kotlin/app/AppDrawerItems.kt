@@ -3,7 +3,6 @@ package app
 import Url
 import com.studo.campusqr.common.UserData
 import com.studo.campusqr.common.UserRole
-import com.studo.campusqr.common.roles
 import com.studo.campusqr.common.utils.LocalizedString
 import kotlinext.js.js
 import kotlinx.html.js.onClickFunction
@@ -107,9 +106,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
     }
 
     fun drawerItems() {
-      val roles = props.config.userData?.clientUser?.roles ?: setOf()
-
-      if (UserRole.ACCESS_MANAGER in roles || UserRole.LOCATION_MANAGER in roles || UserRole.INFECTION_MANAGER in roles || UserRole.ADMIN in roles) {
+      if (props.config.checkInSideDrawerItems.isNotEmpty()) {
         listSubheader {
           +Strings.check_in.get()
         }
@@ -123,10 +120,10 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         }
       }
 
-      if (UserRole.LOCATION_MANAGER in roles || UserRole.LOCATION_MANAGER in roles || UserRole.ADMIN in roles) {
+      if (props.config.moderatorSideDrawerItems.isNotEmpty()) {
         divider {}
         listSubheader {
-          +UserRole.LOCATION_MANAGER.localizedStringAction.get()
+          +UserRole.EDIT_LOCATIONS.localizedStringAction.get()
         }
         props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
@@ -138,7 +135,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         }
       }
 
-      if (UserRole.ADMIN in roles) {
+      if (props.config.adminSideDrawerItems.isNotEmpty()) {
         divider {}
         listSubheader {
           +UserRole.ADMIN.localizedStringAction.get()

@@ -436,8 +436,8 @@ object Strings {
   )
 
   val user_permission = LocalizedString(
-      "Permission",
-      "Berechtigung"
+      "Permissions",
+      "Berechtigungen"
   )
 
   val user_first_login_date = LocalizedString(
@@ -490,19 +490,14 @@ object Strings {
       "Administration"
   )
 
-  val user_type_moderator = LocalizedString(
-      "Moderator",
-      "Moderator"
-  )
-
   val user_role_location_manager = LocalizedString(
-      "Location Manager",
+      "Location Management",
       "Raumverwaltung"
   )
 
   val user_role_infection_manager = LocalizedString(
-      "Infection Manager", // TODO @Z wording?
-      "TODO"
+      "View check-ins",
+      "Check-ins einsehen"
   )
 
   val user_type_moderator_action = LocalizedString(
@@ -521,8 +516,8 @@ object Strings {
   )
 
   val access_control_manager = LocalizedString(
-      "Access manager",
-      "Zugangsverwalter"
+      "Access management",
+      "Zugangsverwaltung"
   )
 
   val access_control_export = LocalizedString(
@@ -748,15 +743,15 @@ object Strings {
 val UserRole.localizedString: LocalizedString
   get() = when (this) {
     UserRole.ADMIN -> Strings.user_type_admin
-    UserRole.LOCATION_MANAGER -> Strings.user_role_location_manager
-    UserRole.INFECTION_MANAGER -> Strings.user_role_infection_manager
+    UserRole.EDIT_LOCATIONS -> Strings.user_role_location_manager
+    UserRole.VIEW_CHECKINS -> Strings.user_role_infection_manager
     UserRole.ACCESS_MANAGER -> Strings.access_control_manager
   }
 
 val UserRole.localizedStringAction: LocalizedString
   get() = when (this) {
     UserRole.ADMIN -> Strings.user_type_admin_action
-    UserRole.LOCATION_MANAGER, UserRole.INFECTION_MANAGER -> Strings.user_type_moderator_action
+    UserRole.EDIT_LOCATIONS, UserRole.VIEW_CHECKINS -> Strings.user_type_moderator_action
     UserRole.ACCESS_MANAGER -> Strings.access_control
   }
 
