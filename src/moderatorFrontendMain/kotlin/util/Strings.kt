@@ -490,14 +490,14 @@ object Strings {
       "Administration"
   )
 
-  val user_role_edit_location = LocalizedString(
-      "Location management",
-      "Raumverwaltung"
+  val user_permission_edit_location = LocalizedString(
+    "Location management",
+    "Raumverwaltung"
   )
 
-  val user_role_view_checkins = LocalizedString(
-      "View check-ins",
-      "Check-ins einsehen"
+  val user_permission_view_checkins = LocalizedString(
+    "View check-ins",
+    "Check-ins einsehen"
   )
 
   val user_type_moderator_action = LocalizedString(
@@ -515,9 +515,9 @@ object Strings {
       "Meine Genehmigungen"
   )
 
-  val user_role_edit_own_access = LocalizedString(
-      "Access management & guest check-in",
-      "Zugangsverwaltung & Gast Check-In"
+  val user_permission_edit_own_access = LocalizedString(
+    "Access management & guest check-in",
+    "Zugangsverwaltung & Gast Check-In"
   )
 
   val user_permission_edit_all_access = LocalizedString(
@@ -748,9 +748,9 @@ object Strings {
 val UserPermission.localizedString: LocalizedString
   get() = when (this) {
     UserPermission.EDIT_USERS -> Strings.user_permission_edit_users
-    UserPermission.EDIT_LOCATIONS -> Strings.user_role_edit_location
-    UserPermission.VIEW_CHECKINS -> Strings.user_role_view_checkins
-    UserPermission.EDIT_OWN_ACCESS -> Strings.user_role_edit_own_access
+    UserPermission.EDIT_LOCATIONS -> Strings.user_permission_edit_location
+    UserPermission.VIEW_CHECKINS -> Strings.user_permission_view_checkins
+    UserPermission.EDIT_OWN_ACCESS -> Strings.user_permission_edit_own_access
     UserPermission.EDIT_ALL_ACCESS -> Strings.user_permission_edit_all_access
   }
 

@@ -235,20 +235,20 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
           attrs.fullWidth = true
           attrs.variant = "outlined"
 
-          UserPermission.values().forEach { userRole ->
+          UserPermission.values().forEach { userPermission ->
             formControlLabel {
               attrs.control = mCheckbox {
-                attrs.checked = userRole in state.userPermissions
+                attrs.checked = userPermission in state.userPermissions
                 attrs.onChange = { event, checked ->
                   val existingPermissions = state.userPermissions
                   if (checked) {
-                    setState { userPermissions = existingPermissions + userRole }
+                    setState { userPermissions = existingPermissions + userPermission }
                   } else {
-                    setState { userPermissions = existingPermissions - userRole }
+                    setState { userPermissions = existingPermissions - userPermission }
                   }
                 }
               }
-              attrs.label = userRole.localizedString.get()
+              attrs.label = userPermission.localizedString.get()
             }
           }
         }
