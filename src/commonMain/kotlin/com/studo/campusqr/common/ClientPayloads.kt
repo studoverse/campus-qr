@@ -6,7 +6,7 @@ interface ClientPayload
 class ClientLocation(
   val id: String,
   val name: String,
-  val checkInCount: Int,
+  var checkInCount: Int,
   val accessType: String,
   val seatCount: Int?,
 ) : ClientPayload
@@ -58,6 +58,12 @@ class ClientUser(
 ) : ClientPayload
 
 val ClientUser.roles get() = rolesRaw.map { UserRole.valueOf(it) }.toSet()
+
+// Keep in sync with BackendUser
+val ClientUser.isAdmin get() = UserRole.ADMIN in roles
+val ClientUser.isLocationManager get() = UserRole.LOCATION_MANAGER in roles || isAdmin
+val ClientUser.isInfectionManager get() = UserRole.INFECTION_MANAGER in roles || isAdmin
+val ClientUser.isAccessManager get() = UserRole.ACCESS_MANAGER in roles || isAdmin
 
 class AccessManagementData(
     val accessManagement: Array<ClientAccessManagement>,

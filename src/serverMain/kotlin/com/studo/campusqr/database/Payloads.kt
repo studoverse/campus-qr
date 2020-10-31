@@ -43,6 +43,7 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
     this.roles = roles
   }
 
+  // Keep in sync with ClientUser
   val isAdmin get() = UserRole.ADMIN in roles
   val isLocationManager get() = UserRole.LOCATION_MANAGER in roles || isAdmin
   val isInfectionManager get() = UserRole.INFECTION_MANAGER in roles || isAdmin

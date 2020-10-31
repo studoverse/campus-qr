@@ -1,9 +1,6 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.common.AccessManagementExportData
-import com.studo.campusqr.common.ClientAccessManagement
-import com.studo.campusqr.common.EditAccess
-import com.studo.campusqr.common.NewAccess
+import com.studo.campusqr.common.*
 import com.studo.campusqr.database.BackendAccess
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange

@@ -58,6 +58,11 @@ suspend fun AuthenticatedApplicationCall.listLocations() {
   }
 
   val locations = getAllLocations(language)
+
+  if (!user.isInfectionManager) {
+    locations.forEach { location -> location.checkInCount = -1 }
+  }
+
   respondObject(locations)
 }
 

@@ -1,12 +1,12 @@
 package views.locations.locationsOverview
 
 import apiBase
-import app.GlobalCss
 import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.isInfectionManager
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
-import react.dom.div
 import util.Strings
 import util.get
 import views.common.*
@@ -18,6 +18,7 @@ import webcore.materialUI.*
 
 interface ListLocationsProps : RProps {
   var classes: ListLocationsClasses
+  var userData: UserData
 }
 
 interface ListLocationsState : RState {
@@ -163,11 +164,14 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     renderLinearProgress(state.loadingLocationList)
 
     if (state.locationList?.isNotEmpty() == true) {
+      val showCheckInCount = props.userData.clientUser!!.isInfectionManager
       mTable {
         mTableHead {
           mTableRow {
             mTableCell { +Strings.location_name.get() }
-            mTableCell { +Strings.location_check_in_count.get() }
+            if (showCheckInCount) {
+              mTableCell { +Strings.location_check_in_count.get() }
+            }
             mTableCell { +Strings.location_access_type.get() }
             mTableCell { +Strings.location_number_of_seats.get() }
             mTableCell { +Strings.actions.get() }
@@ -182,7 +186,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
                 },
                 onDeleteFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_deleted.get())
-                }
+                },
+                showCheckInCount = showCheckInCount
               )
             )
           }
@@ -211,7 +216,8 @@ private val ListLocationsStyle = { theme: dynamic ->
 
 private val styled = withStyles<ListLocationsProps, ListLocations>(ListLocationsStyle)
 
-fun RBuilder.renderListLocations() = styled {
+fun RBuilder.renderListLocations(userData: UserData) = styled {
   // Set component attrs here
+  attrs.userData = userData
 }
   
