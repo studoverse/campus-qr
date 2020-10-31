@@ -227,7 +227,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     if (UserRole.ADMIN in props.userData.clientUser!!.roles) {
       typography {
-        +Strings.user_permission.get()
+        +Strings.user_roles.get()
       }
       div(classes = props.classes.userTypeSwitch) {
         formControl {

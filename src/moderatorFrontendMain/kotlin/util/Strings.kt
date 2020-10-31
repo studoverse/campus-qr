@@ -435,8 +435,8 @@ object Strings {
       "Name"
   )
 
-  val user_permission = LocalizedString(
-      "Permissions",
+  val user_roles = LocalizedString(
+      "Roles",
       "Berechtigungen"
   )
 
@@ -480,7 +480,7 @@ object Strings {
       "Ein User mit dieser E-Mail Addresse existiert bereits."
   )
 
-  val user_type_admin = LocalizedString(
+  val user_role_admin = LocalizedString(
       "Administrator",
       "Administrator"
   )
@@ -490,12 +490,12 @@ object Strings {
       "Administration"
   )
 
-  val user_role_location_manager = LocalizedString(
+  val user_role_edit_location = LocalizedString(
       "Location Management",
       "Raumverwaltung"
   )
 
-  val user_role_infection_manager = LocalizedString(
+  val user_role_view_checkins = LocalizedString(
       "View check-ins",
       "Check-ins einsehen"
   )
@@ -515,8 +515,8 @@ object Strings {
       "Meine Genehmigungen"
   )
 
-  val access_control_manager = LocalizedString(
-      "Access management",
+  val user_role_edit_access = LocalizedString(
+      "Edit access",
       "Zugangsverwaltung"
   )
 
@@ -742,17 +742,10 @@ object Strings {
 
 val UserRole.localizedString: LocalizedString
   get() = when (this) {
-    UserRole.ADMIN -> Strings.user_type_admin
-    UserRole.EDIT_LOCATIONS -> Strings.user_role_location_manager
-    UserRole.VIEW_CHECKINS -> Strings.user_role_infection_manager
-    UserRole.EDIT_ACCESS -> Strings.access_control_manager
-  }
-
-val UserRole.localizedStringAction: LocalizedString
-  get() = when (this) {
-    UserRole.ADMIN -> Strings.user_type_admin_action
-    UserRole.EDIT_LOCATIONS, UserRole.VIEW_CHECKINS -> Strings.user_type_moderator_action
-    UserRole.EDIT_ACCESS -> Strings.access_control
+    UserRole.ADMIN -> Strings.user_role_admin
+    UserRole.EDIT_LOCATIONS -> Strings.user_role_edit_location
+    UserRole.VIEW_CHECKINS -> Strings.user_role_view_checkins
+    UserRole.EDIT_ACCESS -> Strings.user_role_edit_access
   }
 
 val LocationAccessType.localizedString: LocalizedString

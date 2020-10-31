@@ -7,7 +7,7 @@ enum class LoginResult {
 }
 
 enum class UserRole {
-  ADMIN, // Can add/delete users + all moderator features
+  ADMIN, // Has every other UserRole
   EDIT_ACCESS, // Can give access to existing locations
   EDIT_LOCATIONS, // Can add or delete locations
   VIEW_CHECKINS, // Can access check-in data

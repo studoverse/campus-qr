@@ -2,7 +2,6 @@ package app
 
 import Url
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserRole
 import com.studo.campusqr.common.utils.LocalizedString
 import kotlinext.js.js
 import kotlinx.html.js.onClickFunction
@@ -14,7 +13,6 @@ import react.dom.jsStyle
 import util.AppRoute
 import util.Strings
 import util.get
-import util.localizedStringAction
 import views.common.spacer
 import views.settings.renderSettings
 import webcore.materialUI.*
@@ -123,7 +121,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
       if (props.config.moderatorSideDrawerItems.isNotEmpty()) {
         divider {}
         listSubheader {
-          +UserRole.EDIT_LOCATIONS.localizedStringAction.get()
+          +Strings.user_type_moderator_action.get()
         }
         props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
@@ -138,7 +136,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
       if (props.config.adminSideDrawerItems.isNotEmpty()) {
         divider {}
         listSubheader {
-          +UserRole.ADMIN.localizedStringAction.get()
+          +Strings.user_type_admin_action.get()
         }
         props.config.adminSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
