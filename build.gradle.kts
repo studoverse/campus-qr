@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
-  kotlin("multiplatform") version "1.4.0"
+  kotlin("multiplatform") version "1.4.10"
   application
   id("com.github.johnrengelman.shadow") version "5.0.0"
 }
@@ -61,10 +61,10 @@ kotlin {
         implementation("io.ktor:ktor-html-builder:1.4.0")
         implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
 
-        implementation("org.mongodb:mongo-java-driver:3.12.2")
+        implementation("org.mongodb:mongodb-driver-sync:4.1.0")
 
-        implementation("com.fasterxml.jackson.core:jackson-core:2.10.3")
-        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.3")
+        implementation("com.fasterxml.jackson.core:jackson-core:2.11.2")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2")
 
         implementation("ch.qos.logback:logback-classic:1.2.3")
 
@@ -79,9 +79,9 @@ kotlin {
     val moderatorFrontendMain by getting {
       dependencies {
         implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.2")
-        implementation("org.jetbrains:kotlin-react:16.13.1-pre.110-kotlin-1.4.0")
-        implementation("org.jetbrains:kotlin-react-dom:16.13.1-pre.110-kotlin-1.4.0")
-        implementation("org.jetbrains:kotlin-styled:1.0.0-pre.110-kotlin-1.4.0")
+        api("org.jetbrains:kotlin-react:16.13.1-pre.115-kotlin-1.4.10")
+        api("org.jetbrains:kotlin-react-dom:16.13.1-pre.115-kotlin-1.4.10")
+        api("org.jetbrains:kotlin-extensions:1.0.1-pre.115-kotlin-1.4.10")
         implementation(npm("normalize.css", "^8.0.1"))
 
         api(npm("react", "^16.5.2"))
@@ -89,10 +89,10 @@ kotlin {
 
         api(npm("@material-ui/core", "^4.10.2"))
         api(
-            npm(
-                "@material-ui/lab",
-                "^4.0.0-alpha.56"
-            )
+          npm(
+            "@material-ui/lab",
+            "^4.0.0-alpha.56"
+          )
         ) // Needed for MuiAutocomplete. Can be removed if it gets merged into @material-ui/core
         api(npm("@material-ui/icons", "^3.0.1"))
         api(npm("@material-ui/pickers", "3.2.10"))
