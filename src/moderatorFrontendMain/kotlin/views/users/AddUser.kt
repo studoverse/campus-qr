@@ -43,7 +43,7 @@ interface AddUserState : RState {
   var userPasswordTextFieldValue: String
   var userPasswordTextFieldError: String
 
-  var userRoles: Set<UserRole>
+  var userPermissions: Set<UserPermission>
 }
 
 class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
@@ -60,21 +60,21 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userRoles = (props.config as? Config.Edit)?.user?.roles ?: setOf(UserRole.EDIT_OWN_ACCESS)
+    userPermissions = (props.config as? Config.Edit)?.user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS)
   }
 
   private fun createNewUser() = launch {
     setState { userCreationInProgress = true }
     val response = NetworkManager.post<String>(
-        url = "$apiBase/user/create",
-        json = JSON.stringify(
-            NewUserData(
-                email = state.userEmailTextFieldValue,
-                password = state.userPasswordTextFieldValue,
-                name = state.userNameTextFieldValue,
-                roles = state.userRoles.map { it.name }.toTypedArray()
-            )
+      url = "$apiBase/user/create",
+      json = JSON.stringify(
+        NewUserData(
+          email = state.userEmailTextFieldValue,
+          password = state.userPasswordTextFieldValue,
+          name = state.userNameTextFieldValue,
+          permissions = state.userPermissions.map { it.name }.toTypedArray()
         )
+      )
     )
     setState {
       userCreationInProgress = false
@@ -85,18 +85,18 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
   private fun editUser() = launch {
     setState { userCreationInProgress = true }
     val response = NetworkManager.post<String>(
-        url = "$apiBase/user/edit",
-        json = JSON.stringify(
-            EditUserData(
-                userId = (props.config as Config.Edit).user.id,
-                name = state.userNameTextFieldValue.emptyToNull(),
-                password = state.userPasswordTextFieldValue.emptyToNull(),
-                roles = state.userRoles
-                    .takeIf { (props.config as Config.Edit).user.roles != it }
-                    ?.map { it.name }
-                    ?.toTypedArray()
-            )
+      url = "$apiBase/user/edit",
+      json = JSON.stringify(
+        EditUserData(
+          userId = (props.config as Config.Edit).user.id,
+          name = state.userNameTextFieldValue.emptyToNull(),
+          password = state.userPasswordTextFieldValue.emptyToNull(),
+          permissions = state.userPermissions
+            .takeIf { (props.config as Config.Edit).user.permissions != it }
+            ?.map { it.name }
+            ?.toTypedArray()
         )
+      )
     )
     setState {
       userCreationInProgress = false
@@ -228,23 +228,23 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     // This view is is either used for user management, or to change own user properties
     if (props.userData.clientUser!!.canEditUsers) {
       typography {
-        +Strings.user_roles.get()
+        +Strings.user_permissions.get()
       }
       div(classes = props.classes.userTypeSwitch) {
         formControl {
           attrs.fullWidth = true
           attrs.variant = "outlined"
 
-          UserRole.values().forEach { userRole ->
+          UserPermission.values().forEach { userRole ->
             formControlLabel {
               attrs.control = mCheckbox {
-                attrs.checked = userRole in state.userRoles
+                attrs.checked = userRole in state.userPermissions
                 attrs.onChange = { event, checked ->
-                  val existingRoles = state.userRoles
+                  val existingPermissions = state.userPermissions
                   if (checked) {
-                    setState { userRoles = existingRoles + userRole }
+                    setState { userPermissions = existingPermissions + userRole }
                   } else {
-                    setState { userRoles = existingRoles - userRole }
+                    setState { userPermissions = existingPermissions - userRole }
                   }
                 }
               }

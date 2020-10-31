@@ -2,7 +2,7 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.EditUserData
 import com.studo.campusqr.common.NewUserData
-import com.studo.campusqr.common.UserRole
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -31,10 +31,10 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 
   val email = params.email.trim().toLowerCase()
   val newUser = BackendUser(
-      userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
-      email = email,
-      name = params.name.trim(),
-      roles = params.roles.map { UserRole.valueOf(it) }.toSet()
+    userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
+    email = email,
+    name = params.name.trim(),
+    permissions = params.permissions.map { UserPermission.valueOf(it) }.toSet()
   ).apply {
     this.passwordHash = Algorithm.hashPassword(params.password)
     this.createdBy = user._id
@@ -80,11 +80,11 @@ suspend fun AuthenticatedApplicationCall.editUser() {
 
   val newName = params.name?.trim()
   val newPassword = params.password
-  val newRoles = params.roles?.map { UserRole.valueOf(it) }?.toSet()
+  val newPermissions = params.permissions?.map { UserPermission.valueOf(it) }?.toSet()
 
   // Only EDIT_USERS users can change the password of other users
   // Only EDIT_USERS users can change user permissions
-  if (!user.canEditUsers && (changedUserId != user._id || newRoles != null)) {
+  if (!user.canEditUsers && (changedUserId != user._id || newPermissions != null)) {
     respondForbidden()
     return
   }
@@ -97,8 +97,8 @@ suspend fun AuthenticatedApplicationCall.editUser() {
       if (newPassword != null) {
         BackendUser::passwordHash setTo Algorithm.hashPassword(newPassword)
       }
-      if (newRoles != null) {
-        BackendUser::roles setTo newRoles
+      if (newPermissions != null) {
+        BackendUser::permissions setTo newPermissions
       }
     }
   }

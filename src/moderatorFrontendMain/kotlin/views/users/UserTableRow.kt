@@ -4,7 +4,7 @@ import MenuItem
 import apiBase
 import com.studo.campusqr.common.ClientUser
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.roles
+import com.studo.campusqr.common.permissions
 import kotlinx.browser.window
 import materialMenu
 import react.*
@@ -92,7 +92,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
         +props.config.user.email
       }
       mTableCell {
-        +props.config.user.roles.joinToString(separator = ", ", transform = { it.localizedString.get() })
+        +props.config.user.permissions.joinToString(separator = ", ", transform = { it.localizedString.get() })
       }
       mTableCell {
         +props.config.user.firstLoginDate

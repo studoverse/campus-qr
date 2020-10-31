@@ -105,7 +105,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
       formControl {
         attrs.fullWidth = true
         inputLabel {
-          +Strings.user_roles.get()
+          +Strings.user_permissions.get()
         }
         attrs.variant = "outlined"
         muiSelect {

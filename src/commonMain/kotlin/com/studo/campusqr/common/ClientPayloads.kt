@@ -53,19 +53,19 @@ class ClientUser(
   val id: String,
   val email: String,
   val name: String,
-  val rolesRaw: Array<String>,
+  val permissionsRaw: Array<String>,
   val firstLoginDate: String,
 ) : ClientPayload
 
-val ClientUser.roles: Set<UserRole> get() = rolesRaw.map { UserRole.valueOf(it) }.toSet()
+val ClientUser.permissions: Set<UserPermission> get() = permissionsRaw.map { UserPermission.valueOf(it) }.toSet()
 
 // Keep in sync with BackendUser
-val ClientUser.canEditUsers get() = UserRole.EDIT_USERS in roles
-val ClientUser.canEditLocations get() = UserRole.EDIT_LOCATIONS in roles
-val ClientUser.canViewCheckIns get() = UserRole.VIEW_CHECKINS in roles
+val ClientUser.canEditUsers get() = UserPermission.EDIT_USERS in permissions
+val ClientUser.canEditLocations get() = UserPermission.EDIT_LOCATIONS in permissions
+val ClientUser.canViewCheckIns get() = UserPermission.VIEW_CHECKINS in permissions
 val ClientUser.canEditAnyLocationAccess get() = canEditOwnLocationAccess || canEditAllLocationAccess
-val ClientUser.canEditOwnLocationAccess get() = UserRole.EDIT_OWN_ACCESS in roles
-val ClientUser.canEditAllLocationAccess get() = UserRole.EDIT_ALL_ACCESS in roles
+val ClientUser.canEditOwnLocationAccess get() = UserPermission.EDIT_OWN_ACCESS in permissions
+val ClientUser.canEditAllLocationAccess get() = UserPermission.EDIT_ALL_ACCESS in permissions
 
 class AccessManagementData(
   val accessManagement: Array<ClientAccessManagement>,
@@ -109,14 +109,14 @@ class NewUserData(
   val email: String,
   val name: String,
   val password: String,
-  val roles: Array<String>,
+  val permissions: Array<String>,
 ) : ClientPayload
 
 class EditUserData(
   val userId: String? = null,
   val name: String?,
   val password: String?,
-  val roles: Array<String>?,
+  val permissions: Array<String>?,
 ) : ClientPayload
 
 class EditAccess(

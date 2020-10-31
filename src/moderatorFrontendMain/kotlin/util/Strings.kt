@@ -1,7 +1,7 @@
 package util
 
 import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.UserRole
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.utils.LocalizedString
 
 object Strings {
@@ -421,33 +421,33 @@ object Strings {
   )
 
   val user_administration_hint3 = LocalizedString(
-      "Administrators can additionally create, delete and edit users (access managers, moderators and other administrators).",
-      "Administratoren können zusätzlich Benutzer (Zugangsveralter, Moderatoren und weitere Administratoren) erstellen, löschen und bearbeiten."
+    "Administrators can additionally create, delete and edit users (access managers, moderators and other administrators).",
+    "Administratoren können zusätzlich Benutzer (Zugangsveralter, Moderatoren und weitere Administratoren) erstellen, löschen und bearbeiten."
   )
 
   val user_administration_external_auth_provider = LocalizedString(
-      "Users managed by LDAP.",
-      "User werden durch LDAP verwaltet."
+    "Users managed by LDAP.",
+    "User werden durch LDAP verwaltet."
   )
 
   val user_name = LocalizedString(
-      "Name",
-      "Name"
+    "Name",
+    "Name"
   )
 
-  val user_roles = LocalizedString(
-      "Roles",
-      "Berechtigungen"
+  val user_permissions = LocalizedString(
+    "Permissions",
+    "Berechtigungen"
   )
 
   val user_first_login_date = LocalizedString(
-      "First login date",
-      "Datum des ersten Logins"
+    "First login date",
+    "Datum des ersten Logins"
   )
 
   val user_add = LocalizedString(
-      "Create user",
-      "User erstellen"
+    "Create user",
+    "User erstellen"
   )
 
   val user_edit = LocalizedString(
@@ -745,13 +745,13 @@ object Strings {
   )
 }
 
-val UserRole.localizedString: LocalizedString
+val UserPermission.localizedString: LocalizedString
   get() = when (this) {
-    UserRole.EDIT_USERS -> Strings.user_permission_edit_users
-    UserRole.EDIT_LOCATIONS -> Strings.user_role_edit_location
-    UserRole.VIEW_CHECKINS -> Strings.user_role_view_checkins
-    UserRole.EDIT_OWN_ACCESS -> Strings.user_role_edit_own_access
-    UserRole.EDIT_ALL_ACCESS -> Strings.user_permission_edit_all_access
+    UserPermission.EDIT_USERS -> Strings.user_permission_edit_users
+    UserPermission.EDIT_LOCATIONS -> Strings.user_role_edit_location
+    UserPermission.VIEW_CHECKINS -> Strings.user_role_view_checkins
+    UserPermission.EDIT_OWN_ACCESS -> Strings.user_role_edit_own_access
+    UserPermission.EDIT_ALL_ACCESS -> Strings.user_permission_edit_all_access
   }
 
 val LocationAccessType.localizedString: LocalizedString

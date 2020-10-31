@@ -197,10 +197,10 @@ class App : RComponent<AppProps, AppState>() {
         window.location.pathname.removeSuffix("/") == "/admin" -> {
           val clientUser = state.userData!!.clientUser!!
           when {
-            UserRole.EDIT_OWN_ACCESS in clientUser.roles -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
-            UserRole.EDIT_LOCATIONS in clientUser.roles -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
-            UserRole.VIEW_CHECKINS in clientUser.roles -> pushAppRoute(Url.REPORT.toRoute()!!)
-            UserRole.EDIT_USERS in clientUser.roles -> pushAppRoute(Url.USERS.toRoute()!!)
+            UserPermission.EDIT_OWN_ACCESS in clientUser.permissions -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
+            UserPermission.EDIT_LOCATIONS in clientUser.permissions -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
+            UserPermission.VIEW_CHECKINS in clientUser.permissions -> pushAppRoute(Url.REPORT.toRoute()!!)
+            UserPermission.EDIT_USERS in clientUser.permissions -> pushAppRoute(Url.USERS.toRoute()!!)
           }
         }
         else -> {

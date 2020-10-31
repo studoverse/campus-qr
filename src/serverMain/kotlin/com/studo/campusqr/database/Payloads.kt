@@ -22,34 +22,34 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
   var createdBy: String? = null // userId (null on ldap)
   lateinit var name: String
   var firstLoginDate: Date? = null
-  var roles: Set<UserRole> = setOf()
+  var permissions: Set<UserPermission> = setOf()
   override fun toClientClass(language: String) = ClientUser(
-      id = _id,
-      email = email,
-      name = name,
-      rolesRaw = roles.map { it.name }.toTypedArray(),
-      firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
-          ?: LocalizedString(
-              "Not logged in yet",
-              "Noch nicht eingeloggt"
-          ).get(language)
+    id = _id,
+    email = email,
+    name = name,
+    permissionsRaw = permissions.map { it.name }.toTypedArray(),
+    firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
+      ?: LocalizedString(
+        "Not logged in yet",
+        "Noch nicht eingeloggt"
+      ).get(language)
   )
 
-  constructor(userId: String, email: String, name: String, roles: Set<UserRole>) : this() {
+  constructor(userId: String, email: String, name: String, permissions: Set<UserPermission>) : this() {
     this.email = email
     this._id = userId
     this.name = name
     this.createdDate = Date()
-    this.roles = roles
+    this.permissions = permissions
   }
 
   // Keep in sync with ClientUser
-  val canEditUsers get() = UserRole.EDIT_USERS in roles
-  val canEditLocations get() = UserRole.EDIT_LOCATIONS in roles
-  val canViewCheckIns get() = UserRole.VIEW_CHECKINS in roles
+  val canEditUsers get() = UserPermission.EDIT_USERS in permissions
+  val canEditLocations get() = UserPermission.EDIT_LOCATIONS in permissions
+  val canViewCheckIns get() = UserPermission.VIEW_CHECKINS in permissions
   val canEditAnyLocationAccess get() = canEditOwnLocationAccess || canEditAllLocationAccess
-  val canEditOwnLocationAccess get() = UserRole.EDIT_OWN_ACCESS in roles
-  val canEditAllLocationAccess get() = UserRole.EDIT_ALL_ACCESS in roles
+  val canEditOwnLocationAccess get() = UserPermission.EDIT_OWN_ACCESS in permissions
+  val canEditAllLocationAccess get() = UserPermission.EDIT_ALL_ACCESS in permissions
 }
 
 class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {

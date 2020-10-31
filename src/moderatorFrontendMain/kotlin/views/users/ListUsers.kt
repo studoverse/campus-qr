@@ -174,7 +174,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
           mTableRow {
             mTableCell { +Strings.user_name.get() }
             mTableCell { +Strings.email_address.get() }
-            mTableCell { +Strings.user_roles.get() }
+            mTableCell { +Strings.user_permissions.get() }
             mTableCell { +Strings.user_first_login_date.get() }
             mTableCell { +Strings.actions.get() }
           }
