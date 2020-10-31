@@ -218,7 +218,7 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
 }
 
 suspend fun AuthenticatedApplicationCall.returnReportData() {
-  if (!user.isInfectionManager) {
+  if (!user.canViewCheckIns) {
     respondForbidden()
     return
   }
@@ -237,7 +237,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
  * Might be useful for direct API access.
  */
 suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
-  if (!user.isInfectionManager) {
+  if (!user.canViewCheckIns) {
     respondForbidden()
     return
   }

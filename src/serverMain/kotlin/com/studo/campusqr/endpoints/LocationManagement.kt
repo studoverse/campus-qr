@@ -29,7 +29,7 @@ suspend fun getAllLocations(language: String): List<ClientLocation> {
 }
 
 suspend fun AuthenticatedApplicationCall.createLocation() {
-  if (!user.isLocationManager) {
+  if (!user.canEditLocations) {
     respondForbidden()
     return
   }
@@ -59,7 +59,7 @@ suspend fun AuthenticatedApplicationCall.listLocations() {
 
   val locations = getAllLocations(language)
 
-  if (!user.isInfectionManager) {
+  if (!user.canViewCheckIns) {
     locations.forEach { location -> location.checkInCount = -1 }
   }
 
@@ -205,7 +205,7 @@ suspend fun ApplicationCall.checkOutLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
-  if (!user.isInfectionManager) {
+  if (!user.canViewCheckIns) {
     respondForbidden()
     return
   }
@@ -230,7 +230,7 @@ suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
 }
 
 suspend fun AuthenticatedApplicationCall.editLocation() {
-  if (!user.isLocationManager) {
+  if (!user.canEditLocations) {
     respondForbidden()
     return
   }
@@ -257,7 +257,7 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteLocation() {
-  if (!user.isLocationManager) {
+  if (!user.canEditLocations) {
     respondForbidden()
     return
   }

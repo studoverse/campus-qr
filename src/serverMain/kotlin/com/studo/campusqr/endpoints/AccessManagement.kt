@@ -44,7 +44,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.isLocationManager) -> {
+        locationId != null && (user.canEditLocations) -> {
           find(BackendAccess::locationId equal locationId).toList()
         }
         else -> {
@@ -76,7 +76,7 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.isLocationManager) -> {
+        locationId != null && (user.canEditLocations) -> {
           find(
               BackendAccess::locationId equal locationId,
               BackendAccess::dateRanges.any(DateRange::to greater now)
@@ -162,7 +162,7 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
-  if (user._id != access.createdBy && !user.isLocationManager) {
+  if (user._id != access.createdBy && !user.canEditLocations) {
     respondForbidden(); return
   }
 
@@ -199,7 +199,7 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
-  if (user._id != access.createdBy && !user.isLocationManager) {
+  if (user._id != access.createdBy && !user.canEditLocations) {
     respondForbidden(); return
   }
 
