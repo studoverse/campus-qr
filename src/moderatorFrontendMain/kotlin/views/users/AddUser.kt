@@ -225,7 +225,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     spacer(16)
 
-    if (UserRole.ADMIN in props.userData.clientUser!!.roles) {
+    if (props.userData.clientUser!!.isAdmin) {
       typography {
         +Strings.user_roles.get()
       }
