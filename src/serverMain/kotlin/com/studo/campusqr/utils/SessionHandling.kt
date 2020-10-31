@@ -101,7 +101,7 @@ private suspend fun getOrCreateSharedSecretUser(): BackendUser = runOnDb {
       email = sharedSecretUserId
       createdDate = Date()
       name = "Shared Secret User"
-      roles = setOf(UserRole.ADMIN)
+      roles = UserRole.values().toSet()
     }
   }
 }

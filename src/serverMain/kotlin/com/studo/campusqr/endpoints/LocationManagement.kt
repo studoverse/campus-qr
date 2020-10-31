@@ -94,7 +94,7 @@ suspend fun ApplicationCall.visitLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.guestCheckIn() {
-  if (user.canEditLocationAccess) {
+  if (user.canEditAnyLocationAccess) {
     performCheckIn(checkedInBy = user._id)
   } else {
     respondForbidden()

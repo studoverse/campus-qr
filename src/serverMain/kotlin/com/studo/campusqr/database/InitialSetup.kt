@@ -84,7 +84,7 @@ suspend fun initialDatabaseSetup() {
       insert("ldapPrintDebugLogs", 0)
       insert("ldapTimeoutMs", 10_000)
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
-      insert("ldapDefaultUserType", UserRole.EDIT_ACCESS.toString()) // For users who sign up via ldap
+      insert("ldapDefaultUserType", UserRole.EDIT_OWN_ACCESS.toString()) // For users who sign up via ldap
 
       insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
       insert("checkInIpAddressHeader", "") // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
@@ -101,7 +101,7 @@ suspend fun initialDatabaseSetup() {
         name = "Root User"
         createdDate = Date()
         createdBy = _id
-        roles = setOf(UserRole.ADMIN)
+        roles = UserRole.values().toSet()
       }
       // Only create new user when we have no user yet, and only if we use built-in username/password auth and no thirdparty-auth provider
       if (count() == 0L && getAuthProvider() is CampusQrAuth) {

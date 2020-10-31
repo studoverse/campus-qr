@@ -167,13 +167,11 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     renderLinearProgress(state.loadingLocationList)
 
     if (state.locationList?.isNotEmpty() == true) {
-      val showCheckInCount = props.userData.clientUser!!.canViewCheckIns
-      val canEditLocations = props.userData.clientUser!!.canEditLocations
       mTable {
         mTableHead {
           mTableRow {
             mTableCell { +Strings.location_name.get() }
-            if (showCheckInCount) {
+            if (props.userData.clientUser!!.canViewCheckIns) {
               mTableCell { +Strings.location_check_in_count.get() }
             }
             mTableCell { +Strings.location_access_type.get() }
@@ -191,8 +189,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
                 onDeleteFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_deleted.get())
                 },
-                showCheckInCount = showCheckInCount,
-                canEditLocations = canEditLocations
+                clientUser = props.userData.clientUser!!
               )
             )
           }

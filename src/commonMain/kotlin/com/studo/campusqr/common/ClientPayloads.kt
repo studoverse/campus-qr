@@ -60,10 +60,12 @@ class ClientUser(
 val ClientUser.roles: Set<UserRole> get() = rolesRaw.map { UserRole.valueOf(it) }.toSet()
 
 // Keep in sync with BackendUser
-val ClientUser.isAdmin get() = UserRole.ADMIN in roles
-val ClientUser.canEditLocations get() = UserRole.EDIT_LOCATIONS in roles || isAdmin
-val ClientUser.canViewCheckIns get() = UserRole.VIEW_CHECKINS in roles || isAdmin
-val ClientUser.canEditLocationAccess get() = UserRole.EDIT_ACCESS in roles || isAdmin
+val ClientUser.canEditUsers get() = UserRole.EDIT_USERS in roles
+val ClientUser.canEditLocations get() = UserRole.EDIT_LOCATIONS in roles
+val ClientUser.canViewCheckIns get() = UserRole.VIEW_CHECKINS in roles
+val ClientUser.canEditAnyLocationAccess get() = canEditOwnLocationAccess || canEditAllLocationAccess
+val ClientUser.canEditOwnLocationAccess get() = UserRole.EDIT_OWN_ACCESS in roles
+val ClientUser.canEditAllLocationAccess get() = UserRole.EDIT_ALL_ACCESS in roles
 
 class AccessManagementData(
   val accessManagement: Array<ClientAccessManagement>,

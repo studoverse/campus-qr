@@ -35,7 +35,7 @@ private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocat
 }
 
 suspend fun AuthenticatedApplicationCall.listAccess() {
-  if (!user.canEditLocationAccess) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -44,7 +44,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.canEditLocations) -> {
+        locationId != null && user.canEditAllLocationAccess -> {
           find(BackendAccess::locationId equal locationId).toList()
         }
         else -> {
@@ -66,7 +66,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.listExportAccess() {
-  if (!user.canEditLocationAccess) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -76,7 +76,7 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.canEditLocations) -> {
+        locationId != null && user.canEditAllLocationAccess -> {
           find(
               BackendAccess::locationId equal locationId,
               BackendAccess::dateRanges.any(DateRange::to greater now)
@@ -116,20 +116,25 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.getAccess() {
-  if (!user.canEditLocationAccess) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
   val accessId = parameters["id"] ?: throw BadRequestException("No accessId provided")
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
+
+  if (access.createdBy != user._id && !user.canEditAllLocationAccess) {
+    respondForbidden(); return
+  }
+
   val location = getLocationsMap(listOf(access.locationId)).getValue(access.locationId)
 
   respondObject(access.toClientClass(location))
 }
 
 suspend fun AuthenticatedApplicationCall.createAccess() {
-  if (!user.canEditLocationAccess) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -154,7 +159,7 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteAccess() {
-  if (!user.canEditLocationAccess) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -162,7 +167,7 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
-  if (user._id != access.createdBy && !user.canEditLocations) {
+  if (user._id != access.createdBy && !user.canEditAllLocationAccess) {
     respondForbidden(); return
   }
 
@@ -174,13 +179,18 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.duplicateAccess() {
-  if (!user.canEditLocationAccess) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
   val accessId = parameters["id"] ?: throw BadRequestException("No accessId provided")
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
+
+  if (user._id != access.createdBy && !user.canEditAllLocationAccess) {
+    respondForbidden(); return
+  }
+
   access._id = randomId()
 
   runOnDb {
@@ -191,7 +201,7 @@ suspend fun AuthenticatedApplicationCall.duplicateAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.editAccess() {
-  if (!user.canEditLocationAccess) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -199,7 +209,7 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
-  if (user._id != access.createdBy && !user.canEditLocations) {
+  if (user._id != access.createdBy && !user.canEditAllLocationAccess) {
     respondForbidden(); return
   }
 

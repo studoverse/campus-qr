@@ -60,7 +60,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userRoles = (props.config as? Config.Edit)?.user?.roles ?: setOf(UserRole.EDIT_ACCESS)
+    userRoles = (props.config as? Config.Edit)?.user?.roles ?: setOf(UserRole.EDIT_OWN_ACCESS)
   }
 
   private fun createNewUser() = launch {
@@ -225,7 +225,8 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     spacer(16)
 
-    if (props.userData.clientUser!!.isAdmin) {
+    // This view is is either used for user management, or to change own user properties
+    if (props.userData.clientUser!!.canEditUsers) {
       typography {
         +Strings.user_roles.get()
       }

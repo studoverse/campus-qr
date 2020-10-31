@@ -22,7 +22,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
     return
   }
 
-  if (!user.isAdmin) {
+  if (!user.canEditUsers) {
     respondForbidden()
     return
   }
@@ -53,7 +53,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteUser() {
-  if (!user.isAdmin) {
+  if (!user.canEditUsers) {
     respondForbidden()
     return
   }
@@ -82,9 +82,9 @@ suspend fun AuthenticatedApplicationCall.editUser() {
   val newPassword = params.password
   val newRoles = params.roles?.map { UserRole.valueOf(it) }?.toSet()
 
-  // Only ADMIN users can change the password of other users
-  // Only ADMIN users can change user types
-  if (!user.isAdmin && (changedUserId != user._id || newRoles != null)) {
+  // Only EDIT_USERS users can change the password of other users
+  // Only EDIT_USERS users can change user permissions
+  if (!user.canEditUsers && (changedUserId != user._id || newRoles != null)) {
     respondForbidden()
     return
   }
@@ -107,7 +107,7 @@ suspend fun AuthenticatedApplicationCall.editUser() {
 }
 
 suspend fun AuthenticatedApplicationCall.listUsers() {
-  if (!user.isAdmin) {
+  if (!user.canEditUsers) {
     respondForbidden()
     return
   }

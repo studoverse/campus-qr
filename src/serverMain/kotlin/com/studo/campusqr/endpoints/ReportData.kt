@@ -269,7 +269,7 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
 }
 
 suspend fun AuthenticatedApplicationCall.listGuestActiveCheckIns() {
-  if (!user.canEditLocationAccess) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden()
     return
   }

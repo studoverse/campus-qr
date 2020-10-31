@@ -480,9 +480,9 @@ object Strings {
       "Ein User mit dieser E-Mail Addresse existiert bereits."
   )
 
-  val user_role_admin = LocalizedString(
-      "Administrator",
-      "Administrator"
+  val user_permission_edit_users = LocalizedString(
+      "User & permission management",
+      "Benutzer- & Rechteverwaltung"
   )
 
   val user_type_admin_action = LocalizedString(
@@ -491,7 +491,7 @@ object Strings {
   )
 
   val user_role_edit_location = LocalizedString(
-      "Location Management",
+      "Location management",
       "Raumverwaltung"
   )
 
@@ -515,9 +515,14 @@ object Strings {
       "Meine Genehmigungen"
   )
 
-  val user_role_edit_access = LocalizedString(
-      "Edit access",
-      "Zugangsverwaltung"
+  val user_role_edit_own_access = LocalizedString(
+      "Access management & guest check-in",
+      "Zugangsverwaltung & Gast Check-In"
+  )
+
+  val user_permission_edit_all_access = LocalizedString(
+    "Administration of all access managements & guest check-ins",
+    "Administration von allen Zugangsverwaltungen & Gast Check-Ins"
   )
 
   val access_control_export = LocalizedString(
@@ -742,10 +747,11 @@ object Strings {
 
 val UserRole.localizedString: LocalizedString
   get() = when (this) {
-    UserRole.ADMIN -> Strings.user_role_admin
+    UserRole.EDIT_USERS -> Strings.user_permission_edit_users
     UserRole.EDIT_LOCATIONS -> Strings.user_role_edit_location
     UserRole.VIEW_CHECKINS -> Strings.user_role_view_checkins
-    UserRole.EDIT_ACCESS -> Strings.user_role_edit_access
+    UserRole.EDIT_OWN_ACCESS -> Strings.user_role_edit_own_access
+    UserRole.EDIT_ALL_ACCESS -> Strings.user_permission_edit_all_access
   }
 
 val LocationAccessType.localizedString: LocalizedString
