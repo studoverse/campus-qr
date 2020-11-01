@@ -41,7 +41,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
       ldapPrintDebugLogs = getConfig("ldapPrintDebugLogs")
       ldapTimeoutMs = getConfig("ldapTimeoutMs")
       ldapDefaultUserPermissions =
-        getConfig<String>("ldapDefaultUserType").split(",").map { UserPermission.valueOf(it.trim()) }
+        getConfig<String>("ldapDefaultUserPermissions").split(",").map { UserPermission.valueOf(it.trim()) }
     }
 
     debugLog("Search filters: $ldapSearchFilterList")

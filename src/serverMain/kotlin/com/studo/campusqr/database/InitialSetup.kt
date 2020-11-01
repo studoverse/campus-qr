@@ -87,7 +87,7 @@ suspend fun initialDatabaseSetup() {
       insert("ldapPrintDebugLogs", 0)
       insert("ldapTimeoutMs", 10_000)
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
-      insert("ldapDefaultUserType", UserPermission.EDIT_OWN_ACCESS.toString()) // For users who sign up via ldap
+      insert("ldapDefaultUserPermissions", UserPermission.EDIT_OWN_ACCESS.toString()) // For users who sign up via ldap
 
       insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
       insert(
