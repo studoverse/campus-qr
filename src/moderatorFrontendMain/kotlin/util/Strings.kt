@@ -415,21 +415,6 @@ object Strings {
       "Userverwaltung"
   )
 
-  val user_administration_hint1 = LocalizedString(
-      "Access managers can view, assign and edit access permissions to existing locations to enable a university access control system.",
-      "Zugangsverwalter können Zugangsberechtigungen zu bestehenden Orten einsehen, vergeben und bearbeiten, um eine Zugangskontrolle an der Hochschule zu ermöglichen."
-  )
-
-  val user_administration_hint2 = LocalizedString(
-      "Moderators can additionally list and edit locations, download check-in data and report infections.",
-      "Moderatoren können zusätzlich Orte auflisten und bearbeiten, Check-In-Daten herunterladen und Infektionen melden."
-  )
-
-  val user_administration_hint3 = LocalizedString(
-    "Administrators can additionally create, delete and edit users (access managers, moderators and other administrators).",
-    "Administratoren können zusätzlich Benutzer (Zugangsveralter, Moderatoren und weitere Administratoren) erstellen, löschen und bearbeiten."
-  )
-
   val user_administration_external_auth_provider = LocalizedString(
     "Users managed by LDAP.",
     "User werden durch LDAP verwaltet."
