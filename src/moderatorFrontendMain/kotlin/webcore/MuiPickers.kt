@@ -1,4 +1,3 @@
-import kotlinx.html.RP
 import react.RClass
 import react.RProps
 import kotlin.js.Date
@@ -20,8 +19,9 @@ interface MuiDatePickerProps : RProps {
   var maxDate: Date
   var minDate: Date
 
-  // type of the value depend on the used Util library. in our case we choosed Luxon
+  // type of the value depend on the used Util library. in our case we chose Luxon
   var onChange: (value: LuxonDateTime) -> Unit
+  var helperText: String
   var onOpen: () -> Unit
   var onClose: () -> Unit
   var animateYearScrolling: Boolean

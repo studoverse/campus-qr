@@ -1,7 +1,8 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.common.UserType
-import com.studo.campusqr.common.UserType.ACCESS_MANAGER
+import com.studo.campusqr.common.EditUserData
+import com.studo.campusqr.common.NewUserData
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -21,21 +22,21 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
     return
   }
 
-  if (!user.isAdmin) {
+  if (!user.canEditUsers) {
     respondForbidden()
     return
   }
 
-  val params = receiveJsonStringMap()
+  val params: NewUserData = receiveClientPayload()
 
-  val email = params.getValue("email").trim().toLowerCase()
+  val email = params.email.trim().toLowerCase()
   val newUser = BackendUser(
     userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
     email = email,
-    name = params.getValue("name").trim(),
-    type = params["userType"]?.let { UserType.valueOf(it) } ?: ACCESS_MANAGER
+    name = params.name.trim(),
+    permissions = params.permissions.map { UserPermission.valueOf(it) }.toSet()
   ).apply {
-    this.passwordHash = Algorithm.hashPassword(params.getValue("password"))
+    this.passwordHash = Algorithm.hashPassword(params.password)
     this.createdBy = user._id
   }
 
@@ -52,7 +53,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteUser() {
-  if (!user.isAdmin) {
+  if (!user.canEditUsers) {
     respondForbidden()
     return
   }
@@ -74,16 +75,16 @@ suspend fun AuthenticatedApplicationCall.editUser() {
     return
   }
 
-  val params = receiveJsonStringMap()
-  val changedUserId = params["userId"] ?: user._id
+  val params: EditUserData = receiveClientPayload()
+  val changedUserId = params.userId ?: user._id
 
-  val newName = params["name"]?.trim()
-  val newPassword = params["password"]
-  val newUserType = params["userType"]?.let { UserType.valueOf(it) }
+  val newName = params.name?.trim()
+  val newPassword = params.password
+  val newPermissions = params.permissions?.map { UserPermission.valueOf(it) }?.toSet()
 
-  // Only ADMIN users can change the password of other users
-  // Only ADMIN users can change user types
-  if (!user.isAdmin && (changedUserId != user._id || newUserType != null)) {
+  // Only EDIT_USERS users can change the password of other users
+  // Only EDIT_USERS users can change user permissions
+  if (!user.canEditUsers && (changedUserId != user._id || newPermissions != null)) {
     respondForbidden()
     return
   }
@@ -96,8 +97,8 @@ suspend fun AuthenticatedApplicationCall.editUser() {
       if (newPassword != null) {
         BackendUser::passwordHash setTo Algorithm.hashPassword(newPassword)
       }
-      if (newUserType != null) {
-        BackendUser::type setTo newUserType
+      if (newPermissions != null) {
+        BackendUser::permissions setTo newPermissions
       }
     }
   }
@@ -106,7 +107,7 @@ suspend fun AuthenticatedApplicationCall.editUser() {
 }
 
 suspend fun AuthenticatedApplicationCall.listUsers() {
-  if (!user.isAdmin) {
+  if (!user.canEditUsers) {
     respondForbidden()
     return
   }

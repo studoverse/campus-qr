@@ -2,7 +2,7 @@ package com.studo.campusqr.database
 
 import com.studo.campusqr.auth.CampusQrAuth
 import com.studo.campusqr.auth.getAuthProvider
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.utils.Algorithm
 import com.studo.katerbase.sha256
@@ -80,14 +80,20 @@ suspend fun initialDatabaseSetup() {
       insert("ldapApplicationUserCredentials", "password") // For user disabling via lookup
       insert("ldapGroupAttributeName", "memberOf") // LDAP attribute-name of the user
       insert("ldapGroupFilter", "(objectclass=user)")
-      insert("ldapGroupRegex", "CN=CampusQR,") // At least one attribute must match this regex to authenticate with success
+      insert(
+        "ldapGroupRegex",
+        "CN=CampusQR,"
+      ) // At least one attribute must match this regex to authenticate with success
       insert("ldapPrintDebugLogs", 0)
       insert("ldapTimeoutMs", 10_000)
       insert("ldapUserDisablingIntervalMinutes", 24 * 60)
-      insert("ldapDefaultUserType", UserType.ACCESS_MANAGER.toString()) // For users who sign up via ldap
+      insert("ldapDefaultUserPermissions", UserPermission.EDIT_OWN_ACCESS.toString()) // For users who sign up via ldap
 
       insert("storeCheckInUserAgent", 0) // Set to 1 if UserAgent should be stored on checkIn
-      insert("checkInIpAddressHeader", "") // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
+      insert(
+        "checkInIpAddressHeader",
+        ""
+      ) // Set to "X-Forwarded-For" (or custom) if IP address should be stored on checkIn
 
       insert("authSharedSecret", "") // Auth via X-Authorization header. If empty, no shared secret access is possible.
     }
@@ -101,7 +107,7 @@ suspend fun initialDatabaseSetup() {
         name = "Root User"
         createdDate = Date()
         createdBy = _id
-        type = UserType.ADMIN
+        permissions = UserPermission.values().toSet()
       }
       // Only create new user when we have no user yet, and only if we use built-in username/password auth and no thirdparty-auth provider
       if (count() == 0L && getAuthProvider() is CampusQrAuth) {

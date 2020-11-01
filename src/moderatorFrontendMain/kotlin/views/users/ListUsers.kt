@@ -6,7 +6,6 @@ import com.studo.campusqr.common.UserData
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
-import react.dom.br
 import react.dom.div
 import util.Strings
 import util.get
@@ -150,16 +149,6 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       )
     )
 
-    typography {
-      attrs.className = props.classes.subtitle
-      attrs.variant = "subtitle1"
-      +Strings.user_administration_hint1.get()
-      br { }
-      +Strings.user_administration_hint2.get()
-      br { }
-      +Strings.user_administration_hint3.get()
-    }
-
     if (props.userData.externalAuthProvider) {
       div(classes = props.classes.info) {
         +Strings.user_administration_external_auth_provider.get()
@@ -174,7 +163,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
           mTableRow {
             mTableCell { +Strings.user_name.get() }
             mTableCell { +Strings.email_address.get() }
-            mTableCell { +Strings.user_permission.get() }
+            mTableCell { +Strings.user_permissions.get() }
             mTableCell { +Strings.user_first_login_date.get() }
             mTableCell { +Strings.actions.get() }
           }

@@ -4,10 +4,13 @@ import MenuItem
 import apiBase
 import com.studo.campusqr.common.ClientUser
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.permissions
+import kotlinext.js.js
 import kotlinx.browser.window
 import materialMenu
 import react.*
+import react.dom.li
+import react.dom.ul
 import util.Strings
 import util.get
 import util.localizedString
@@ -92,7 +95,13 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
         +props.config.user.email
       }
       mTableCell {
-        +UserType.valueOf(props.config.user.type).localizedString.get()
+        ul(classes = props.classes.permissionsList) {
+          props.config.user.permissions.map { permission ->
+            li {
+              +permission.localizedString.get()
+            }
+          }
+        }
       }
       mTableCell {
         +props.config.user.firstLoginDate
@@ -125,10 +134,17 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
 
 interface UserTableRowClasses {
   // Keep in sync with UserItemStyle!
+  var permissionsList: String
 }
 
 private val UserTableRowStyle = { theme: dynamic ->
   // Keep in sync with UserItemClasses!
+  js {
+    permissionsList = js {
+      margin = 0
+      paddingInlineStart = "20px"
+    }
+  }
 }
 
 private val styled = withStyles<UserTableRowProps, UserTableRow>(UserTableRowStyle)

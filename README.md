@@ -15,7 +15,7 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 
 ## Features
 * **Simple**: Both check-in and administration have a clean and easy to use user interface.
-* **Secure**: State-of-the-art security measurements, role-based user management with only hashed password saving and encryption.
+* **Secure**: State-of-the-art security measurements, permission-based user management with only hashed password saving and encryption.
 * **Accessible**: Mobile optimized and responsive check in and management UI on all major devices and browsers without installation.
 * **Open source**: 100% of the code is open source and is without further modification production ready.
 * **Self-hostable**: The whole application can be hosted by the university itself. [Studo](https://studo.com) provides support in hosting the application.
@@ -25,7 +25,7 @@ The [Studo app](https://studo.com) integrates the provided Android and iOS refer
 * **Exportable**: Check-ins at specific locations and check-ins from specific people can be downloaded as csv file to open them in Excel.
 * **Infection tracing**: Fast and reliable tracing of infection chains. 
 * **Automatic data deletion**: After a configurable time (default: 4 weeks) the check-in data will be automatically deleted to comply with the GDPR.
-* **Multirole administration**: The moderation frontend of Campus QR can be used by thousands of employees of a university.
+* **Multipermission administration**: The moderation frontend of Campus QR can be used by thousands of employees of a university.
 * **Access management**: Creation of specific access for students or guests within selected time frame to allow a controlled reopening of university buildings.
 * **Visitor list export**: Simple doorman specific interface with upcoming access permits
 * **Scalable access verification**: Access control can be verified by a doorman or lecturer in parallel to avoid crowds around entries. A unique access verification code is generated daily for easy parallel verification.

@@ -2,7 +2,6 @@ package app
 
 import Url
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserType
 import com.studo.campusqr.common.utils.LocalizedString
 import kotlinext.js.js
 import kotlinx.html.js.onClickFunction
@@ -14,7 +13,6 @@ import react.dom.jsStyle
 import util.AppRoute
 import util.Strings
 import util.get
-import util.localizedStringAction
 import views.common.spacer
 import views.settings.renderSettings
 import webcore.materialUI.*
@@ -106,48 +104,46 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
     }
 
     fun drawerItems() {
-      val userType = props.config.userData?.clientUser?.type?.let { UserType.valueOf(it) }
-
-      if (userType == UserType.ACCESS_MANAGER || userType == UserType.MODERATOR || userType == UserType.ADMIN) {
+      if (props.config.checkInSideDrawerItems.isNotEmpty()) {
         listSubheader {
           +Strings.check_in.get()
         }
         props.config.checkInSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-            label = sideDrawerItem.label.get(),
-            icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-            url = sideDrawerItem.url.path
+              label = sideDrawerItem.label.get(),
+              icon = sideDrawerItem.icon,
+              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+              url = sideDrawerItem.url.path
           )
         }
       }
 
-      if (userType == UserType.MODERATOR || userType == UserType.ADMIN) {
+      if (props.config.moderatorSideDrawerItems.isNotEmpty()) {
         divider {}
         listSubheader {
-          +UserType.MODERATOR.localizedStringAction.get()
+          +Strings.user_type_moderator_action.get()
         }
         props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-            label = sideDrawerItem.label.get(),
-            icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-            url = sideDrawerItem.url.path
+              label = sideDrawerItem.label.get(),
+              icon = sideDrawerItem.icon,
+              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+              url = sideDrawerItem.url.path
           )
         }
       }
 
-      if (userType == UserType.ADMIN) {
+      if (props.config.adminSideDrawerItems.isNotEmpty()) {
         divider {}
         listSubheader {
-          +UserType.ADMIN.localizedStringAction.get()
+          +Strings.user_type_admin_action.get()
         }
         props.config.adminSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-            label = sideDrawerItem.label.get(),
-            icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-            url = sideDrawerItem.url.path
+              label = sideDrawerItem.label.get(),
+              icon = sideDrawerItem.icon,
+              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+              url = sideDrawerItem.url.path
           )
         }
       }

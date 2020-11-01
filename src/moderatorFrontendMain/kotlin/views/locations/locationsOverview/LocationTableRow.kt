@@ -5,9 +5,7 @@ import Url
 import apiBase
 import app.baseUrl
 import app.routeContext
-import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.LocationVisitData
-import com.studo.campusqr.common.accessTypeEnum
+import com.studo.campusqr.common.*
 import kotlinx.browser.window
 import materialMenu
 import react.*
@@ -24,6 +22,7 @@ interface LocationTableRowProps : RProps {
     val location: ClientLocation,
     val onEditFinished: (response: String?) -> Unit,
     val onDeleteFinished: (response: String?) -> Unit,
+    val clientUser: ClientUser,
   )
 
   var config: Config
@@ -72,8 +71,10 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
       mTableCell {
         +props.config.location.name
       }
-      mTableCell {
-        +props.config.location.checkInCount.toString()
+      if (props.config.clientUser.canViewCheckIns) {
+        mTableCell {
+          +props.config.location.checkInCount.toString()
+        }
       }
       mTableCell {
         +props.config.location.accessTypeEnum.localizedString.get()
@@ -87,47 +88,57 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
             circularProgress {}
           } else {
             materialMenu(
-              menuItems = listOf(
-                MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
-                  setState {
-                    showEditLocationDialog = true
-                  }
-                }),
+              menuItems = listOfNotNull(
+                if (props.config.clientUser.canEditLocations) {
+                  MenuItem(text = Strings.edit.get(), icon = editIcon, onClick = {
+                    setState {
+                      showEditLocationDialog = true
+                    }
+                  })
+                } else null,
                 MenuItem(text = Strings.locations_element_download_qr_code.get(), icon = imageRoundedIcon, onClick = {
                   window.open("$baseUrl/location/${props.config.location.id}/qr-code", target = "_blank")
                 }),
-                MenuItem(text = Strings.locations_element_simulate_scan.get(), icon = fullscreenIcon, onClick = {
-                  val locationIdSuffix = if (props.config.location.seatCount == null) "" else "-1" // Check-in at seat 1 if needed
-                  window.open("../../campus-qr?s=1&l=" + props.config.location.id + locationIdSuffix, target = "_blank")
-                }),
-                MenuItem(text = Strings.access_control.get(), icon = lockOpenIcon, onClick = {
-                  routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST.toRoute(pathParams = mapOf("id" to props.config.location.id))!!)
-                }),
-                MenuItem(text = Strings.locations_element_download_csv.get(), icon = cloudDownloadIcon, onClick = {
-                  launch {
-                    setState {
-                      showProgress = true
-                    }
-                    val visitData =
-                      NetworkManager.get<LocationVisitData>("$apiBase/location/${props.config.location.id}/visitsCsv")
-                        ?: return@launch
-                    fileDownload(data = visitData.csvData, fileName = visitData.csvFileName)
-                    setState {
-                      showProgress = false
-                    }
-                  }
-                }),
-                MenuItem(text = Strings.location_delete.get(), icon = deleteIcon, onClick = {
-                  if (window.confirm(Strings.location_delete_are_you_sure.get())) {
+                if (props.config.clientUser.canViewCheckIns) {
+                  MenuItem(text = Strings.locations_element_simulate_scan.get(), icon = fullscreenIcon, onClick = {
+                    val locationIdSuffix = if (props.config.location.seatCount == null) "" else "-1" // Check-in at seat 1 if needed
+                    window.open("../../campus-qr?s=1&l=" + props.config.location.id + locationIdSuffix, target = "_blank")
+                  })
+                } else null,
+                if (props.config.clientUser.canEditAllLocationAccess) {
+                  MenuItem(text = Strings.access_control.get(), icon = lockOpenIcon, onClick = {
+                    routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST.toRoute(pathParams = mapOf("id" to props.config.location.id))!!)
+                  })
+                } else null,
+                if (props.config.clientUser.canViewCheckIns) {
+                  MenuItem(text = Strings.locations_element_download_csv.get(), icon = cloudDownloadIcon, onClick = {
                     launch {
-                      val response = NetworkManager.post<String>(
-                        "$apiBase/location/${props.config.location.id}/delete",
-                        params = null
-                      )
-                      props.config.onDeleteFinished(response)
+                      setState {
+                        showProgress = true
+                      }
+                      val visitData =
+                          NetworkManager.get<LocationVisitData>("$apiBase/location/${props.config.location.id}/visitsCsv")
+                              ?: return@launch
+                      fileDownload(data = visitData.csvData, fileName = visitData.csvFileName)
+                      setState {
+                        showProgress = false
+                      }
                     }
-                  }
-                }),
+                  })
+                } else null,
+                if (props.config.clientUser.canEditLocations) {
+                  MenuItem(text = Strings.location_delete.get(), icon = deleteIcon, onClick = {
+                    if (window.confirm(Strings.location_delete_are_you_sure.get())) {
+                      launch {
+                        val response = NetworkManager.post<String>(
+                          "$apiBase/location/${props.config.location.id}/delete",
+                          params = null
+                        )
+                        props.config.onDeleteFinished(response)
+                      }
+                    }
+                  })
+                } else null,
               )
             )
           }

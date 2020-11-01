@@ -19,7 +19,6 @@ import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
-import kotlin.coroutines.CoroutineContext
 import kotlin.js.json
 
 interface AddLocationProps : RProps {
@@ -106,7 +105,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
       formControl {
         attrs.fullWidth = true
         inputLabel {
-          +Strings.user_permission.get()
+          +Strings.user_permissions.get()
         }
         attrs.variant = "outlined"
         muiSelect {

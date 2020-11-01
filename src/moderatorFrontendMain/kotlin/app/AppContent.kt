@@ -3,7 +3,10 @@ package app
 import Url
 import com.studo.campusqr.common.UserData
 import kotlinext.js.js
-import react.*
+import react.RBuilder
+import react.RComponent
+import react.RProps
+import react.RState
 import util.AppRoute
 import views.accessManagement.accessManagementExport.renderAccessManagementExportList
 import views.accessManagement.accessManagementOverview.renderAccessManagementList
@@ -14,7 +17,9 @@ import views.locations.locationsOverview.renderListLocations
 import views.login.LoginMode
 import views.login.renderLoginView
 import views.report.renderReport
-import views.users.*
+import views.users.MyAccountProps
+import views.users.renderMyAccount
+import views.users.renderUsers
 import webcore.materialUI.withStyles
 
 interface AppContentProps : RProps {
@@ -41,7 +46,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
       Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
       Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
       Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()
-      Url.LOCATIONS_LIST -> renderListLocations()
+      Url.LOCATIONS_LIST -> renderListLocations(userData = props.config.userData!!)
       Url.REPORT -> renderReport()
       Url.USERS -> renderUsers(userData = props.config.userData!!)
       Url.ACCOUNT_SETTINGS -> renderMyAccount(MyAccountProps.Config(props.config.userData!!))

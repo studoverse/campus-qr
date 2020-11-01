@@ -34,10 +34,8 @@ private suspend fun getLocationsMap(ids: List<String>): Map<String, BackendLocat
     .associateBy { it._id }
 }
 
-private val AuthenticatedApplicationCall.isAllowed get() = user.isModerator || user.type == UserType.ACCESS_MANAGER
-
 suspend fun AuthenticatedApplicationCall.listAccess() {
-  if (!isAllowed) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -46,7 +44,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.isModerator) -> {
+        locationId != null && user.canEditAllLocationAccess -> {
           find(BackendAccess::locationId equal locationId).toList()
         }
         else -> {
@@ -68,7 +66,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.listExportAccess() {
-  if (!isAllowed) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -78,16 +76,16 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
   val accessPayloads: List<BackendAccess> = runOnDb {
     with(getCollection<BackendAccess>()) {
       when {
-        locationId != null && (user.isModerator) -> {
+        locationId != null && user.canEditAllLocationAccess -> {
           find(
-            BackendAccess::locationId equal locationId,
-            BackendAccess::dateRanges.any(DateRange::to greater now)
+              BackendAccess::locationId equal locationId,
+              BackendAccess::dateRanges.any(DateRange::to greater now)
           ).toList()
         }
         else -> {
           find(
-            BackendAccess::createdBy equal user._id,
-            BackendAccess::dateRanges.any(DateRange::to greater now)
+              BackendAccess::createdBy equal user._id,
+              BackendAccess::dateRanges.any(DateRange::to greater now)
           ).toList()
         }
       }
@@ -118,20 +116,25 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.getAccess() {
-  if (!isAllowed) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
   val accessId = parameters["id"] ?: throw BadRequestException("No accessId provided")
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
+
+  if (access.createdBy != user._id && !user.canEditAllLocationAccess) {
+    respondForbidden(); return
+  }
+
   val location = getLocationsMap(listOf(access.locationId)).getValue(access.locationId)
 
   respondObject(access.toClientClass(location))
 }
 
 suspend fun AuthenticatedApplicationCall.createAccess() {
-  if (!isAllowed) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -156,7 +159,7 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteAccess() {
-  if (!isAllowed) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -164,7 +167,7 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
-  if (user._id != access.createdBy && !user.isModerator) {
+  if (user._id != access.createdBy && !user.canEditAllLocationAccess) {
     respondForbidden(); return
   }
 
@@ -176,13 +179,18 @@ suspend fun AuthenticatedApplicationCall.deleteAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.duplicateAccess() {
-  if (!isAllowed) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
   val accessId = parameters["id"] ?: throw BadRequestException("No accessId provided")
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
+
+  if (user._id != access.createdBy && !user.canEditAllLocationAccess) {
+    respondForbidden(); return
+  }
+
   access._id = randomId()
 
   runOnDb {
@@ -193,7 +201,7 @@ suspend fun AuthenticatedApplicationCall.duplicateAccess() {
 }
 
 suspend fun AuthenticatedApplicationCall.editAccess() {
-  if (!isAllowed) {
+  if (!user.canEditAnyLocationAccess) {
     respondForbidden(); return
   }
 
@@ -201,7 +209,7 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
 
   val access = getAccess(accessId) ?: throw BadRequestException("Access doesn't exist")
 
-  if (user._id != access.createdBy && !user.isModerator) {
+  if (user._id != access.createdBy && !user.canEditAllLocationAccess) {
     respondForbidden(); return
   }
 

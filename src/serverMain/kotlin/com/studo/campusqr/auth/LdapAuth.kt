@@ -1,6 +1,6 @@
 package com.studo.campusqr.auth
 
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
@@ -28,7 +28,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
   private lateinit var ldapGroupRegex: String
   private var ldapPrintDebugLogs: Boolean = false
   private var ldapTimeoutMs: Int = 0
-  private lateinit var ldapDefaultUserType: UserType
+  private lateinit var ldapDefaultUserPermissions: List<UserPermission>
 
   override suspend fun init() {
     runOnDb {
@@ -40,7 +40,8 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
       ldapGroupRegex = getConfig("ldapGroupRegex")
       ldapPrintDebugLogs = getConfig("ldapPrintDebugLogs")
       ldapTimeoutMs = getConfig("ldapTimeoutMs")
-      ldapDefaultUserType = UserType.valueOf(getConfig("ldapDefaultUserType"))
+      ldapDefaultUserPermissions =
+        getConfig<String>("ldapDefaultUserPermissions").split(",").map { UserPermission.valueOf(it.trim()) }
     }
 
     debugLog("Search filters: $ldapSearchFilterList")
@@ -142,7 +143,7 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
               .replace(".", " ")
               .split(" ")
               .joinToString(separator = " ", transform = { it.capitalize() }),
-            type = ldapDefaultUserType
+            permissions = ldapDefaultUserPermissions.toSet()
           )
         }
       }
