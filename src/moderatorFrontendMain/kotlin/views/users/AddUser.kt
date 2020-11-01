@@ -230,7 +230,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
       typography {
         +Strings.user_permissions.get()
       }
-      div(classes = props.classes.userTypeSwitch) {
+      div(classes = props.classes.userPermissionsSwitch) {
         formControl {
           attrs.fullWidth = true
           attrs.variant = "outlined"
@@ -286,7 +286,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 interface AddUserClasses {
   // Keep in sync with AddUserStyle!
   var addButton: String
-  var userTypeSwitch: String
+  var userPermissionsSwitch: String
 }
 
 private val AddUserStyle = { theme: dynamic ->
@@ -295,7 +295,7 @@ private val AddUserStyle = { theme: dynamic ->
     addButton = js {
       marginBottom = 16
     }
-    userTypeSwitch = js {
+    userPermissionsSwitch = js {
       display = "flex"
       justifyContent = "center"
       alignItems = "center"
