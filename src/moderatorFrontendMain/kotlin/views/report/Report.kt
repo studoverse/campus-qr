@@ -151,6 +151,7 @@ class Report : RComponent<ReportProps, ReportState>() {
             attrs.inputVariant = "outlined"
             attrs.label = Strings.report_infection_date.get()
             attrs.value = state.infectionDate
+            attrs.helperText = Strings.report_infection_date_tip.get()
             attrs.onChange = {
               setState {
                 infectionDate = it.toJSDate()

@@ -1,7 +1,7 @@
 package util
 
 import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.utils.LocalizedString
 
 object Strings {
@@ -216,28 +216,33 @@ object Strings {
   )
 
   val report = LocalizedString(
-      "Report Infection",
-      "Infektion melden"
+    "Report Infection",
+    "Infektion melden"
   )
 
   val report_email = LocalizedString(
-      "E-mail address of the infected person",
-      "E-Mail Adresse der infizierten Person"
+    "E-mail address of the infected person",
+    "E-Mail Adresse der infizierten Person"
   )
 
   val report_email_tip = LocalizedString(
-      "Multiple e-mail addresses can be searched for by separating them with a comma.",
-      "Mehrere E-Mail Adressen können gesucht werden, indem sie durch einen Beistrich getrennt angegeben werden."
+    "Multiple e-mail addresses can be searched for by separating them with a comma.",
+    "Mehrere E-Mail Adressen können gesucht werden, indem sie durch einen Beistrich getrennt angegeben werden."
+  )
+
+  val report_infection_date_tip = LocalizedString(
+    "Search for check-ins between tracing start date and now.",
+    "Durchsuche Check-Ins zwischen dem Tracing Start Datum und jetzt."
   )
 
   val report_infection_date = LocalizedString(
-      "Infection date",
-      "Datum der Infektion"
+    "Tracing start date",
+    "Tracing Start Datum"
   )
 
   val report_search = LocalizedString(
-      "Trace contacts",
-      "Kontakte zurückverfolgen"
+    "Trace contacts",
+    "Kontakte zurückverfolgen"
   )
 
   val check_in = LocalizedString(
@@ -410,44 +415,29 @@ object Strings {
       "Userverwaltung"
   )
 
-  val user_administration_hint1 = LocalizedString(
-      "Access managers can view, assign and edit access permissions to existing locations to enable a university access control system.",
-      "Zugangsverwalter können Zugangsberechtigungen zu bestehenden Orten einsehen, vergeben und bearbeiten, um eine Zugangskontrolle an der Hochschule zu ermöglichen."
-  )
-
-  val user_administration_hint2 = LocalizedString(
-      "Moderators can additionally list and edit locations, download check-in data and report infections.",
-      "Moderatoren können zusätzlich Orte auflisten und bearbeiten, Check-In-Daten herunterladen und Infektionen melden."
-  )
-
-  val user_administration_hint3 = LocalizedString(
-      "Administrators can additionally create, delete and edit users (access managers, moderators and other administrators).",
-      "Administratoren können zusätzlich Benutzer (Zugangsveralter, Moderatoren und weitere Administratoren) erstellen, löschen und bearbeiten."
-  )
-
   val user_administration_external_auth_provider = LocalizedString(
-      "Users managed by LDAP.",
-      "User werden durch LDAP verwaltet."
+    "Users managed by LDAP.",
+    "User werden durch LDAP verwaltet."
   )
 
   val user_name = LocalizedString(
-      "Name",
-      "Name"
+    "Name",
+    "Name"
   )
 
-  val user_permission = LocalizedString(
-      "Permission",
-      "Berechtigung"
+  val user_permissions = LocalizedString(
+    "Permissions",
+    "Berechtigungen"
   )
 
   val user_first_login_date = LocalizedString(
-      "First login date",
-      "Datum des ersten Logins"
+    "First login date",
+    "Datum des ersten Logins"
   )
 
   val user_add = LocalizedString(
-      "Create user",
-      "User erstellen"
+    "Create user",
+    "User erstellen"
   )
 
   val user_edit = LocalizedString(
@@ -480,9 +470,9 @@ object Strings {
       "Ein User mit dieser E-Mail Addresse existiert bereits."
   )
 
-  val user_type_admin = LocalizedString(
-      "Administrator",
-      "Administrator"
+  val user_permission_edit_users = LocalizedString(
+      "User & permission management",
+      "Benutzer- & Rechteverwaltung"
   )
 
   val user_type_admin_action = LocalizedString(
@@ -490,9 +480,14 @@ object Strings {
       "Administration"
   )
 
-  val user_type_moderator = LocalizedString(
-      "Moderator",
-      "Moderator"
+  val user_permission_edit_location = LocalizedString(
+    "Location management",
+    "Raumverwaltung"
+  )
+
+  val user_permission_view_checkins = LocalizedString(
+    "View check-ins",
+    "Check-ins einsehen"
   )
 
   val user_type_moderator_action = LocalizedString(
@@ -510,9 +505,14 @@ object Strings {
       "Meine Genehmigungen"
   )
 
-  val access_control_manager = LocalizedString(
-      "Access manager",
-      "Zugangsverwalter"
+  val user_permission_edit_own_access = LocalizedString(
+    "Access management & guest check-in",
+    "Zugangsverwaltung & Gast Check-In"
+  )
+
+  val user_permission_edit_all_access = LocalizedString(
+    "Administration of all access managements & guest check-ins",
+    "Administration von allen Zugangsverwaltungen & Gast Check-Ins"
   )
 
   val access_control_export = LocalizedString(
@@ -735,18 +735,13 @@ object Strings {
   )
 }
 
-val UserType.localizedString: LocalizedString
+val UserPermission.localizedString: LocalizedString
   get() = when (this) {
-    UserType.ADMIN -> Strings.user_type_admin
-    UserType.MODERATOR -> Strings.user_type_moderator
-    UserType.ACCESS_MANAGER -> Strings.access_control_manager
-  }
-
-val UserType.localizedStringAction: LocalizedString
-  get() = when (this) {
-    UserType.ADMIN -> Strings.user_type_admin_action
-    UserType.MODERATOR -> Strings.user_type_moderator_action
-    UserType.ACCESS_MANAGER -> Strings.access_control
+    UserPermission.EDIT_USERS -> Strings.user_permission_edit_users
+    UserPermission.EDIT_LOCATIONS -> Strings.user_permission_edit_location
+    UserPermission.VIEW_CHECKINS -> Strings.user_permission_view_checkins
+    UserPermission.EDIT_OWN_ACCESS -> Strings.user_permission_edit_own_access
+    UserPermission.EDIT_ALL_ACCESS -> Strings.user_permission_edit_all_access
   }
 
 val LocationAccessType.localizedString: LocalizedString

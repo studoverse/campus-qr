@@ -6,7 +6,7 @@ interface ClientPayload
 class ClientLocation(
   val id: String,
   val name: String,
-  val checkInCount: Int,
+  var checkInCount: Int?,
   val accessType: String,
   val seatCount: Int?,
 ) : ClientPayload
@@ -22,15 +22,15 @@ class UserData(
 val UserData.isAuthenticated get() = clientUser != null
 
 class ReportData(
-    val impactedUsersCount: Int,
-    val impactedUsersEmails: Array<String>,
-    val impactedUsersEmailsCsvData: String,
-    val reportedUserLocations: Array<UserLocation>,
-    val reportedUserLocationsCsv: String,
-    val reportedUserLocationsCsvFileName: String,
-    val startDate: String,
-    val endDate: String,
-    val impactedUsersEmailsCsvFileName: String,
+  val impactedUsersCount: Int,
+  val impactedUsersEmails: Array<String>,
+  val impactedUsersEmailsCsvData: String,
+  val reportedUserLocations: Array<UserLocation>,
+  val reportedUserLocationsCsv: String,
+  val reportedUserLocationsCsvFileName: String,
+  val startDate: String,
+  val endDate: String,
+  val impactedUsersEmailsCsvFileName: String,
 ) : ClientPayload {
   class UserLocation(
     val locationId: String,
@@ -53,9 +53,19 @@ class ClientUser(
   val id: String,
   val email: String,
   val name: String,
-  val type: String,
+  val permissionsRaw: Array<String>,
   val firstLoginDate: String,
 ) : ClientPayload
+
+val ClientUser.permissions: Set<UserPermission> get() = permissionsRaw.map { UserPermission.valueOf(it) }.toSet()
+
+// Keep in sync with BackendUser
+val ClientUser.canEditUsers get() = UserPermission.EDIT_USERS in permissions
+val ClientUser.canEditLocations get() = UserPermission.EDIT_LOCATIONS in permissions
+val ClientUser.canViewCheckIns get() = UserPermission.VIEW_CHECKINS in permissions
+val ClientUser.canEditAnyLocationAccess get() = canEditOwnLocationAccess || canEditAllLocationAccess
+val ClientUser.canEditOwnLocationAccess get() = UserPermission.EDIT_OWN_ACCESS in permissions
+val ClientUser.canEditAllLocationAccess get() = UserPermission.EDIT_ALL_ACCESS in permissions
 
 class AccessManagementData(
   val accessManagement: Array<ClientAccessManagement>,
@@ -93,6 +103,20 @@ class NewAccess(
   val dateRanges: Array<ClientDateRange>,
   val note: String,
   val reason: String,
+) : ClientPayload
+
+class NewUserData(
+  val email: String,
+  val name: String,
+  val password: String,
+  val permissions: Array<String>,
+) : ClientPayload
+
+class EditUserData(
+  val userId: String? = null,
+  val name: String?,
+  val password: String?,
+  val permissions: Array<String>?,
 ) : ClientPayload
 
 class EditAccess(

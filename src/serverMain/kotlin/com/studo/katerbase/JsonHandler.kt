@@ -28,54 +28,54 @@ import kotlin.reflect.jvm.kotlinProperty
 
 object JsonHandler {
   val clientJacksonMapper: ObjectMapper = ObjectMapper()
-      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) // Don't fail when JSON has new/additional values
-      .configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true) // Jackson doesn't ignore Transient members, so make it ignore them
-      .configure(DeserializationFeature.ACCEPT_FLOAT_AS_INT, true)
-      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true) // This is used to handle db migration of enum values softly
-      .configure(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS, true) // Used for Double.INFINITY
-      .registerKotlinModule()
-      .setDateFormat(SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX"))!!
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) // Don't fail when JSON has new/additional values
+    .configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true) // Jackson doesn't ignore Transient members, so make it ignore them
+    .configure(DeserializationFeature.ACCEPT_FLOAT_AS_INT, true)
+    .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true) // This is used to handle db migration of enum values softly
+    .configure(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS, true) // Used for Double.INFINITY
+    .registerKotlinModule()
+    .setDateFormat(SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX"))!!
 
   private val mongoJacksonMapper: ObjectMapper = ObjectMapper()
-      .registerModule(
-          SimpleModule(
-              /* name = */ "MongoWrapperModule",
-              /* version = */ Version.unknownVersion(),
-              /* deserializers = */ mapOf(
-              Date::class.java to MongoDateDeserializer(),
-              ByteArray::class.java to MongoByteArrayDeserializer()
-          ),
-              /* serializers = */ listOf(MongoDateSerializer())
-          )
+    .registerModule(
+      SimpleModule(
+        /* name = */ "MongoWrapperModule",
+        /* version = */ Version.unknownVersion(),
+        /* deserializers = */ mapOf(
+          Date::class.java to MongoDateDeserializer(),
+          ByteArray::class.java to MongoByteArrayDeserializer()
+        ),
+        /* serializers = */ listOf(MongoDateSerializer())
       )
-      .configure(
-          DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-          false
-      ) // Don't fail when JSON has new/additional values
-      .configure(
-          MapperFeature.PROPAGATE_TRANSIENT_MARKER,
-          true
-      ) // Jackson doesn't ignore Transient members, so make it ignore them
-      .configure(DeserializationFeature.ACCEPT_FLOAT_AS_INT, true)
-      .configure(
-          DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
-          true
-      ) // This is used to handle db migration of enum values softly
-      .setVisibility(
-          PropertyAccessor.ALL,
-          JsonAutoDetect.Visibility.NONE
-      ) // Ignore all computed properties and functions
-      .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-      .registerKotlinModule()
+    )
+    .configure(
+      DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+      false
+    ) // Don't fail when JSON has new/additional values
+    .configure(
+      MapperFeature.PROPAGATE_TRANSIENT_MARKER,
+      true
+    ) // Jackson doesn't ignore Transient members, so make it ignore them
+    .configure(DeserializationFeature.ACCEPT_FLOAT_AS_INT, true)
+    .configure(
+      DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
+      true
+    ) // This is used to handle db migration of enum values softly
+    .setVisibility(
+      PropertyAccessor.ALL,
+      JsonAutoDetect.Visibility.NONE
+    ) // Ignore all computed properties and functions
+    .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+    .registerKotlinModule()
 
   private fun <T : Any> ObjectMapper.constructCollectionType(kClass: KClass<T>) =
-      typeFactory.constructCollectionType(List::class.java, kClass.java)
+    typeFactory.constructCollectionType(List::class.java, kClass.java)
 
   private val classMap = ConcurrentHashMap<String, ClassDescriptor<out Any>>(50, 9.0f, 1)
   private val valueMethodCache = ConcurrentHashMap<KClass<out Any>, Method>(50, 9.0f, 1)
 
   private class ClassDescriptor<T : Any>(kClass: KClass<T>) {
-    val enumListTypes: List<Pair<KProperty<*>, KClass<*>>>
+    val enumIterableTypes: List<Pair<KProperty<*>, KClass<*>>>
     val nonNullableListTypes: List<KProperty<*>>
 
     init {
@@ -83,28 +83,28 @@ object JsonHandler {
 
       nonNullableListTypes = kotlinProperties.filter { it.returnType.isSubtypeOf(nonNullableListType) }
 
-      enumListTypes = kotlinProperties
-          .filter { it.returnType.isSubtypeOf(enumListType) }
-          .map { it to it.returnType.arguments.first().type!!.classifier as KClass<*> }
+      enumIterableTypes = kotlinProperties
+        .filter { it.returnType.isSubtypeOf(enumIterableType) }
+        .map { it to it.returnType.arguments.first().type!!.classifier as KClass<*> }
     }
 
     companion object {
-      private val enumListType = List::class.createType(
-          listOf(
-              KTypeProjection(
-                  variance = KVariance.INVARIANT, type = Enum::class.createType(
-                  listOf(
-                      KTypeProjection(variance = KVariance.OUT, type = Any::class.createType())
-                  )
+      private val enumIterableType = Iterable::class.createType(
+        listOf(
+          KTypeProjection(
+            variance = KVariance.INVARIANT, type = Enum::class.createType(
+              listOf(
+                KTypeProjection(variance = KVariance.OUT, type = Any::class.createType())
               )
-              )
+            )
           )
+        )
       )
 
       private val nonNullableListType = Collection::class.createType(
-          listOf(
-              KTypeProjection(variance = KVariance.OUT, type = Any::class.createType(nullable = false))
-          )
+        listOf(
+          KTypeProjection(variance = KVariance.OUT, type = Any::class.createType(nullable = false))
+        )
       )
     }
   }
@@ -138,7 +138,7 @@ object JsonHandler {
   fun <T : Any> toBsonDocument(payload: T): Document = mongoJacksonMapper.convertValue(payload, Document::class.java)
 
   fun <T : Any, R : Any> convertValue(payload: T, kClass: KClass<R>): R =
-      mongoJacksonMapper.convertValue(payload, kClass.java)
+    mongoJacksonMapper.convertValue(payload, kClass.java)
 
   inline fun <reified R : Any> convertValue(payload: Any): R = convertValue(payload, R::class)
 
@@ -179,11 +179,11 @@ object JsonHandler {
         because READ_UNKNOWN_ENUM_VALUES_AS_NULL is enabled.
         So always set these vars manually, and get every enum value with "valueOf" method
       */
-      classDescriptor.enumListTypes.forEach { (property, enumClass) ->
+      classDescriptor.enumIterableTypes.forEach { (property, enumClass) ->
         val valueOfMethod =
-            valueMethodCache.getOrPut(enumClass) { enumClass.java.declaredMethods.find { it.name == "valueOf" }!! } // Cache this because declaredMethods is expensive
+          valueMethodCache.getOrPut(enumClass) { enumClass.java.declaredMethods.find { it.name == "valueOf" }!! } // Cache this because declaredMethods is expensive
         val stringValues = tree[property.name]?.map { it.textValue()!! }
-            ?: return@forEach // Not unchecked because MongoDB enums can only have string values
+          ?: return@forEach // Not unchecked because MongoDB enums can only have string values
         val validValues = stringValues.mapNotNull {
           // Try to deserialize enum values from strings, if none found drop it
           try {
@@ -201,7 +201,8 @@ object JsonHandler {
     return treeToValue(tree, clazz.java)
   }
 
-  fun <T : Any> fromJson(json: String, clazz: KClass<T>): T = clientJacksonMapper.copy().fromTree(clientJacksonMapper.copy().readTree(json), clazz)
+  fun <T : Any> fromJson(json: String, clazz: KClass<T>): T =
+    clientJacksonMapper.copy().fromTree(clientJacksonMapper.copy().readTree(json), clazz)
 
   fun <T : Any> fromJson(json: String, clazz: Class<T>): T = clientJacksonMapper.readValue(json, clazz)!!
 
@@ -210,7 +211,7 @@ object JsonHandler {
   fun toJsonMap(json: String): Map<String, Any?> = fromJson(json)
 
   fun <T : Any> fromJsonList(json: String, clazz: KClass<T>): List<T> =
-      clientJacksonMapper.readValue(json, clientJacksonMapper.constructCollectionType(clazz))!!
+    clientJacksonMapper.readValue(json, clientJacksonMapper.constructCollectionType(clazz))!!
 
   inline fun <reified T : Any> fromJsonList(json: String): List<T> = fromJsonList(json, T::class)
 
@@ -221,21 +222,21 @@ object JsonHandler {
 
   private class MongoDateSerializer : JsonSerializer<Date>() {
     override fun serialize(value: Date, gen: JsonGenerator, serializers: SerializerProvider) =
-        gen.writeEmbeddedObject(value)
+      gen.writeEmbeddedObject(value)
 
     override fun handledType(): Class<Date> = Date::class.java
   }
 
   private class MongoDateDeserializer : JsonDeserializer<Date>() {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Date? =
-        p!!.readValueAs(POJONode::class.java).pojo as? Date
+      p!!.readValueAs(POJONode::class.java).pojo as? Date
 
     override fun isCachable(): Boolean = true
   }
 
   private class MongoByteArrayDeserializer : JsonDeserializer<ByteArray>() {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): ByteArray? =
-        p!!.readValueAsTree<ObjectNode>()["data"]?.binaryValue()
+      p!!.readValueAsTree<ObjectNode>()["data"]?.binaryValue()
 
     override fun isCachable(): Boolean = true
   }

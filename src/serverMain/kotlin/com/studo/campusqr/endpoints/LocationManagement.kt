@@ -29,7 +29,7 @@ suspend fun getAllLocations(language: String): List<ClientLocation> {
 }
 
 suspend fun AuthenticatedApplicationCall.createLocation() {
-  if (!user.isModerator) {
+  if (!user.canEditLocations) {
     respondForbidden()
     return
   }
@@ -58,6 +58,11 @@ suspend fun AuthenticatedApplicationCall.listLocations() {
   }
 
   val locations = getAllLocations(language)
+
+  if (!user.canViewCheckIns) {
+    locations.forEach { location -> location.checkInCount = null }
+  }
+
   respondObject(locations)
 }
 
@@ -89,7 +94,7 @@ suspend fun ApplicationCall.visitLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.guestCheckIn() {
-  if (user.isAccessManager) {
+  if (user.canEditAnyLocationAccess) {
     performCheckIn(checkedInBy = user._id)
   } else {
     respondForbidden()
@@ -200,7 +205,7 @@ suspend fun ApplicationCall.checkOutLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
-  if (!user.isModerator) {
+  if (!user.canViewCheckIns) {
     respondForbidden()
     return
   }
@@ -225,7 +230,7 @@ suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
 }
 
 suspend fun AuthenticatedApplicationCall.editLocation() {
-  if (!user.isModerator) {
+  if (!user.canEditLocations) {
     respondForbidden()
     return
   }
@@ -252,7 +257,7 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
 }
 
 suspend fun AuthenticatedApplicationCall.deleteLocation() {
-  if (!user.isModerator) {
+  if (!user.canEditLocations) {
     respondForbidden()
     return
   }

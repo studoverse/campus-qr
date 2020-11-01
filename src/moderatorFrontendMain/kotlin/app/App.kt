@@ -3,10 +3,8 @@ package app
 import MuiPickersUtilsProvider
 import Url
 import apiBase
-import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emptyToNull
-import com.studo.campusqr.common.isAuthenticated
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -52,44 +50,67 @@ interface AppState : RState {
 
 class App : RComponent<AppProps, AppState>() {
 
-  private val checkInSideDrawerItems = listOf(
-    SideDrawerItem(
-      label = Url.ACCESS_MANAGEMENT_LIST.title,
-      icon = lockOpenIcon,
-      url = Url.ACCESS_MANAGEMENT_LIST
-    ),
-    SideDrawerItem(
-      label = Url.GUEST_CHECK_IN.title,
-      icon = contactMailIcon,
-      url = Url.GUEST_CHECK_IN
-    )
-  )
+  private val checkInSideDrawerItems: List<SideDrawerItem>
+    get() {
+      return if (state.userData?.clientUser?.canEditAnyLocationAccess == true) {
+        listOf(
+          SideDrawerItem(
+            label = Url.ACCESS_MANAGEMENT_LIST.title,
+            icon = lockOpenIcon,
+            url = Url.ACCESS_MANAGEMENT_LIST
+          ),
+          SideDrawerItem(
+            label = Url.GUEST_CHECK_IN.title,
+            icon = contactMailIcon,
+            url = Url.GUEST_CHECK_IN
+          )
+        )
+      } else {
+        emptyList()
+      }
+    }
 
-  private val moderatorSideDrawerItems = listOf(
-    SideDrawerItem(
-      label = Url.LOCATIONS_LIST.title,
-      icon = meetingRoomIcon,
-      url = Url.LOCATIONS_LIST
-    ),
-    SideDrawerItem(
-      label = Url.REPORT.title,
-      icon = blurCircularIcon,
-      url = Url.REPORT
-    ),
-  )
+  private val moderatorSideDrawerItems: List<SideDrawerItem>
+    get() {
+      val items = mutableListOf<SideDrawerItem>()
 
-  private val adminSideDrawerItems = listOf(
-    SideDrawerItem(
-      label = Url.USERS.title,
-      icon = peopleIcon,
-      url = Url.USERS
-    ),
-    SideDrawerItem(
-      label = Url.ADMIN_INFO.title,
-      icon = infoIcon,
-      url = Url.ADMIN_INFO
-    ),
-  )
+      if (state.userData?.clientUser?.canEditLocations == true || state.userData?.clientUser?.canViewCheckIns == true) {
+        items += SideDrawerItem(
+          label = Url.LOCATIONS_LIST.title,
+          icon = meetingRoomIcon,
+          url = Url.LOCATIONS_LIST
+        )
+      }
+      if (state.userData?.clientUser?.canViewCheckIns == true) {
+        items += SideDrawerItem(
+          label = Url.REPORT.title,
+          icon = blurCircularIcon,
+          url = Url.REPORT
+        )
+      }
+
+      return items
+    }
+
+  private val adminSideDrawerItems: List<SideDrawerItem>
+    get() {
+      return if (state.userData?.clientUser?.canEditUsers == true) {
+        listOf(
+          SideDrawerItem(
+            label = Url.USERS.title,
+            icon = peopleIcon,
+            url = Url.USERS
+          ),
+          SideDrawerItem(
+            label = Url.ADMIN_INFO.title,
+            icon = infoIcon,
+            url = Url.ADMIN_INFO
+          ),
+        )
+      } else {
+        emptyList()
+      }
+    }
 
   private fun enableClientSideRouting() {
     window.addEventListener("popstate", {
@@ -162,9 +183,9 @@ class App : RComponent<AppProps, AppState>() {
       val currentRoute = window.location.toRoute()
 
       fun calculateRedirectQueryParams(): Map<String, String> = window.location.relativeUrl
-          .removeSuffix("/")
-          .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
-          ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
+        .removeSuffix("/")
+        .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
+        ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
         ?.let { mapOf("redirect" to it) }
         ?: emptyMap()
 
@@ -173,12 +194,15 @@ class App : RComponent<AppProps, AppState>() {
           // The user is not logged in so push him to login page
           pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }
-        window.location.pathname.removeSuffix("/") == "/admin" ->
-          when (UserType.valueOf(state.userData!!.clientUser!!.type)) {
-            UserType.ACCESS_MANAGER -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
-            UserType.MODERATOR -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
-            UserType.ADMIN -> pushAppRoute(Url.USERS.toRoute()!!)
+        window.location.pathname.removeSuffix("/") == "/admin" -> {
+          val clientUser = state.userData!!.clientUser!!
+          when {
+            UserPermission.EDIT_OWN_ACCESS in clientUser.permissions -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
+            UserPermission.EDIT_LOCATIONS in clientUser.permissions -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
+            UserPermission.VIEW_CHECKINS in clientUser.permissions -> pushAppRoute(Url.REPORT.toRoute()!!)
+            UserPermission.EDIT_USERS in clientUser.permissions -> pushAppRoute(Url.USERS.toRoute()!!)
           }
+        }
         else -> {
           // User linked directly to a sub-page
           handleHistoryChange()
@@ -227,10 +251,12 @@ class App : RComponent<AppProps, AppState>() {
         networkErrorView()
       }
     } else {
-      renderAppContent(AppContentProps.Config(
-        currentAppRoute = state.currentAppRoute,
-        userData = state.userData
-      ))
+      renderAppContent(
+        AppContentProps.Config(
+          currentAppRoute = state.currentAppRoute,
+          userData = state.userData
+        )
+      )
     }
   }
 

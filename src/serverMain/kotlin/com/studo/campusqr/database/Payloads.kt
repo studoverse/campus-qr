@@ -22,30 +22,34 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
   var createdBy: String? = null // userId (null on ldap)
   lateinit var name: String
   var firstLoginDate: Date? = null
-  var type = UserType.MODERATOR
+  var permissions: Set<UserPermission> = setOf()
   override fun toClientClass(language: String) = ClientUser(
-      id = _id,
-      email = email,
-      name = name,
-      type = type.name,
-      firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
-          ?: LocalizedString(
-              "Not logged in yet",
-              "Noch nicht eingeloggt"
-          ).get(language)
+    id = _id,
+    email = email,
+    name = name,
+    permissionsRaw = permissions.map { it.name }.toTypedArray(),
+    firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
+      ?: LocalizedString(
+        "Not logged in yet",
+        "Noch nicht eingeloggt"
+      ).get(language)
   )
 
-  constructor(userId: String, email: String, name: String, type: UserType) : this() {
+  constructor(userId: String, email: String, name: String, permissions: Set<UserPermission>) : this() {
     this.email = email
     this._id = userId
     this.name = name
     this.createdDate = Date()
-    this.type = type
+    this.permissions = permissions
   }
 
-  val isAdmin get() = type == UserType.ADMIN
-  val isModerator get() = type == UserType.MODERATOR || isAdmin
-  val isAccessManager get() = type == UserType.ACCESS_MANAGER || isModerator
+  // Keep in sync with ClientUser
+  val canEditUsers get() = UserPermission.EDIT_USERS in permissions
+  val canEditLocations get() = UserPermission.EDIT_LOCATIONS in permissions
+  val canViewCheckIns get() = UserPermission.VIEW_CHECKINS in permissions
+  val canEditAnyLocationAccess get() = canEditOwnLocationAccess || canEditAllLocationAccess
+  val canEditOwnLocationAccess get() = UserPermission.EDIT_OWN_ACCESS in permissions
+  val canEditAllLocationAccess get() = UserPermission.EDIT_ALL_ACCESS in permissions
 }
 
 class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {

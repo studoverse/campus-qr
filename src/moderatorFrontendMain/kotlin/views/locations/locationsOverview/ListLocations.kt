@@ -1,12 +1,13 @@
 package views.locations.locationsOverview
 
 import apiBase
-import app.GlobalCss
 import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.canEditLocations
+import com.studo.campusqr.common.canViewCheckIns
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
-import react.dom.div
 import util.Strings
 import util.get
 import views.common.*
@@ -18,6 +19,7 @@ import webcore.materialUI.*
 
 interface ListLocationsProps : RProps {
   var classes: ListLocationsClasses
+  var userData: UserData
 }
 
 interface ListLocationsState : RState {
@@ -120,45 +122,47 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     renderAddLocationDialog()
     renderImportButtonDialog()
     renderSnackbar()
-    renderToolbarView(
-      ToolbarViewProps.Config(
-        title = Strings.locations.get(),
-        buttons = listOf(
-          ToolbarViewProps.ToolbarButton(
-            text = Strings.print_checkout_code.get(),
-            variant = "outlined",
-            onClick = {
-              window.open("/location/qr-codes/checkout", "_blank")
-            }
-          ),
-          ToolbarViewProps.ToolbarButton(
-            text = Strings.print_all_qrcodes.get(),
-            variant = "outlined",
-            onClick = {
-              window.open("/location/qr-codes", "_blank")
-            }
-          ),
-          ToolbarViewProps.ToolbarButton(
-            text = Strings.location_import.get(),
-            variant = "outlined",
-            onClick = {
-              setState {
-                showImportLocationDialog = true
+    if (props.userData.clientUser!!.canEditLocations) {
+      renderToolbarView(
+        ToolbarViewProps.Config(
+          title = Strings.locations.get(),
+          buttons = listOf(
+            ToolbarViewProps.ToolbarButton(
+              text = Strings.print_checkout_code.get(),
+              variant = "outlined",
+              onClick = {
+                window.open("/location/qr-codes/checkout", "_blank")
               }
-            }
-          ),
-          ToolbarViewProps.ToolbarButton(
-            text = Strings.location_create.get(),
-            variant = "contained",
-            onClick = {
-              setState {
-                showAddLocationDialog = true
+            ),
+            ToolbarViewProps.ToolbarButton(
+              text = Strings.print_all_qrcodes.get(),
+              variant = "outlined",
+              onClick = {
+                window.open("/location/qr-codes", "_blank")
               }
-            }
-          ),
+            ),
+            ToolbarViewProps.ToolbarButton(
+              text = Strings.location_import.get(),
+              variant = "outlined",
+              onClick = {
+                setState {
+                  showImportLocationDialog = true
+                }
+              }
+            ),
+            ToolbarViewProps.ToolbarButton(
+              text = Strings.location_create.get(),
+              variant = "contained",
+              onClick = {
+                setState {
+                  showAddLocationDialog = true
+                }
+              }
+            ),
+          )
         )
       )
-    )
+    }
 
     renderLinearProgress(state.loadingLocationList)
 
@@ -167,7 +171,9 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
         mTableHead {
           mTableRow {
             mTableCell { +Strings.location_name.get() }
-            mTableCell { +Strings.location_check_in_count.get() }
+            if (props.userData.clientUser!!.canViewCheckIns) {
+              mTableCell { +Strings.location_check_in_count.get() }
+            }
             mTableCell { +Strings.location_access_type.get() }
             mTableCell { +Strings.location_number_of_seats.get() }
             mTableCell { +Strings.actions.get() }
@@ -182,7 +188,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
                 },
                 onDeleteFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_deleted.get())
-                }
+                },
+                clientUser = props.userData.clientUser!!
               )
             )
           }
@@ -211,7 +218,8 @@ private val ListLocationsStyle = { theme: dynamic ->
 
 private val styled = withStyles<ListLocationsProps, ListLocations>(ListLocationsStyle)
 
-fun RBuilder.renderListLocations() = styled {
+fun RBuilder.renderListLocations(userData: UserData) = styled {
   // Set component attrs here
+  attrs.userData = userData
 }
   

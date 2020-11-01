@@ -2,9 +2,7 @@ package views.users
 
 import apiBase
 import app.GlobalCss
-import com.studo.campusqr.common.ClientUser
-import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.UserType
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
@@ -21,7 +19,6 @@ import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
-import kotlin.js.json
 
 interface AddUserProps : RProps {
   sealed class Config(val onFinished: (response: String?) -> Unit) {
@@ -46,7 +43,7 @@ interface AddUserState : RState {
   var userPasswordTextFieldValue: String
   var userPasswordTextFieldError: String
 
-  var userType: UserType
+  var userPermissions: Set<UserPermission>
 }
 
 class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
@@ -63,18 +60,20 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userType = (props.config as? Config.Edit)?.user?.type?.let { UserType.valueOf(it) } ?: UserType.ACCESS_MANAGER
+    userPermissions = (props.config as? Config.Edit)?.user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS)
   }
 
   private fun createNewUser() = launch {
     setState { userCreationInProgress = true }
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/create",
-      params = json(
-        "email" to state.userEmailTextFieldValue,
-        "password" to state.userPasswordTextFieldValue,
-        "name" to state.userNameTextFieldValue,
-        "userType" to state.userType.name,
+      json = JSON.stringify(
+        NewUserData(
+          email = state.userEmailTextFieldValue,
+          password = state.userPasswordTextFieldValue,
+          name = state.userNameTextFieldValue,
+          permissions = state.userPermissions.map { it.name }.toTypedArray()
+        )
       )
     )
     setState {
@@ -87,11 +86,16 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     setState { userCreationInProgress = true }
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/edit",
-      params = json(
-        "userId" to (props.config as Config.Edit).user.id,
-        "name" to state.userNameTextFieldValue.emptyToNull(),
-        "password" to state.userPasswordTextFieldValue.emptyToNull(),
-        "userType" to state.userType.name.takeIf { (props.config as Config.Edit).user.type != it },
+      json = JSON.stringify(
+        EditUserData(
+          userId = (props.config as Config.Edit).user.id,
+          name = state.userNameTextFieldValue.emptyToNull(),
+          password = state.userPasswordTextFieldValue.emptyToNull(),
+          permissions = state.userPermissions
+            .takeIf { (props.config as Config.Edit).user.permissions != it }
+            ?.map { it.name }
+            ?.toTypedArray()
+        )
       )
     )
     setState {
@@ -221,32 +225,30 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     spacer(16)
 
-    if (UserType.valueOf(props.userData.clientUser!!.type) == UserType.ADMIN) {
-      div(classes = props.classes.userTypeSwitch) {
+    // This view is is either used for user management, or to change own user properties
+    if (props.userData.clientUser!!.canEditUsers) {
+      typography {
+        +Strings.user_permissions.get()
+      }
+      div(classes = props.classes.userPermissionsSwitch) {
         formControl {
           attrs.fullWidth = true
-          inputLabel {
-            +Strings.user_permission.get()
-          }
           attrs.variant = "outlined"
-          muiSelect {
-            attrs.value = state.userType.toString()
-            attrs.onChange = { event ->
-              val value = event.target.value as String
-              setState {
-                userType = UserType.valueOf(value)
-              }
-            }
-            attrs.variant = "outlined"
-            attrs.label = Strings.user_permission.get()
 
-            UserType.values().forEach { userType ->
-              menuItem {
-                attrs.value = userType.toString()
-                attrs.disabled = userType != UserType.ADMIN &&
-                    (props.config as? Config.Edit)?.user?.id == props.userData.clientUser!!.id
-                +userType.localizedString.get()
+          UserPermission.values().forEach { userPermission ->
+            formControlLabel {
+              attrs.control = mCheckbox {
+                attrs.checked = userPermission in state.userPermissions
+                attrs.onChange = { event, checked ->
+                  val existingPermissions = state.userPermissions
+                  if (checked) {
+                    setState { userPermissions = existingPermissions + userPermission }
+                  } else {
+                    setState { userPermissions = existingPermissions - userPermission }
+                  }
+                }
               }
+              attrs.label = userPermission.localizedString.get()
             }
           }
         }
@@ -264,7 +266,6 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
           attrs.variant = "contained"
           attrs.color = "primary"
           attrs.onClick = {
-
             when (props.config) {
               is Config.Create -> if (validateNameInput() && validatePasswordInput() && validateEmailInput()) {
                 createNewUser()
@@ -285,7 +286,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 interface AddUserClasses {
   // Keep in sync with AddUserStyle!
   var addButton: String
-  var userTypeSwitch: String
+  var userPermissionsSwitch: String
 }
 
 private val AddUserStyle = { theme: dynamic ->
@@ -294,7 +295,7 @@ private val AddUserStyle = { theme: dynamic ->
     addButton = js {
       marginBottom = 16
     }
-    userTypeSwitch = js {
+    userPermissionsSwitch = js {
       display = "flex"
       justifyContent = "center"
       alignItems = "center"
