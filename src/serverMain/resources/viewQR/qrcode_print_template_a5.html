@@ -1,0 +1,21 @@
+<!--
+This printing template will only be used if the multiSeatLocationsUseSmallCheckinPages config is set to true and the room in question as multiple seats.
+
+You can reference resources such as javascript or css by placing the files in the same directory as this one and using the following path:
+"/static/viewQR/your_css_file.css"
+
+Available substitutions are: NAME, SUBTITLE, SUBTEXT_1, SUBTEXT_2.
+To add more, edit `FlowContent.renderQrCodePage()` in  src/serverMain/kotlin/com/studo/campusqr/endpoints/QrCodes.kt or contact us.
+-->
+
+<div class="page">
+  <div class="header">
+    <h1>%%NAME%%</h1>
+    <p>%%SUBTITLE%%</p>
+  </div>
+  <div class="qrcode" id="%%ID%%"></div>
+  <div class="footer">
+    <p>%%SUBTEXT_1%%</p>
+    <p>%%SUBTEXT_2%%</p>
+  </div>
+</div>

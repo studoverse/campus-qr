@@ -27,14 +27,36 @@ header > h2 {
   font-size: 32px;
 }
 
+.small-pages-container {
+  /* width must be 1mm less than A4 because of rounding errors that would otherwise leave empty pages */
+  height: 297mm;
+  width: 209mm;
+  page-break-after: always;
+  transform: translateX(209mm) rotate(90deg);
+  transform-origin: top left;
+}
+
+.small-pages-scaling-container {
+  display: flex;
+  transform: scale(calc(210 / 297));
+  transform-origin: top left;
+}
+
 .page {
   height: 297mm;
-  width: 100%;
+  width: 210mm;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+  flex-grow: 0;
+  flex-shrink: 0;
   border-top: 1px solid black;
+}
+
+.small-pages-scaling-container .page:first-child {
+  /* Separates left & right page and helps centering the cut */
+  border-right: 1px solid #888888;
 }
 
 div.break {
