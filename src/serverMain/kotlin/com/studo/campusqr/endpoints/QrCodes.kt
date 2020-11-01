@@ -146,7 +146,7 @@ fun FlowContent.renderLocation(location: ClientLocation, configs: Map<String, St
         div("small-pages-container") { // Crops the inner container
           div("small-pages-scaling-container") { // Scales content to 0.5
             // Render the two pages as if they were full-size
-            for (seat in listOf(skippedSeat, skippedSeat + 1)) {
+            for (seat in listOfNotNull(skippedSeat, if (skippedSeat < location.seatCount) skippedSeat + 1 else null)) {
               val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
               renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs, smallPage = true)
             }
