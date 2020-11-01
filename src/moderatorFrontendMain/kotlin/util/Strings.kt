@@ -216,28 +216,33 @@ object Strings {
   )
 
   val report = LocalizedString(
-      "Report Infection",
-      "Infektion melden"
+    "Report Infection",
+    "Infektion melden"
   )
 
   val report_email = LocalizedString(
-      "E-mail address of the infected person",
-      "E-Mail Adresse der infizierten Person"
+    "E-mail address of the infected person",
+    "E-Mail Adresse der infizierten Person"
   )
 
   val report_email_tip = LocalizedString(
-      "Multiple e-mail addresses can be searched for by separating them with a comma.",
-      "Mehrere E-Mail Adressen können gesucht werden, indem sie durch einen Beistrich getrennt angegeben werden."
+    "Multiple e-mail addresses can be searched for by separating them with a comma.",
+    "Mehrere E-Mail Adressen können gesucht werden, indem sie durch einen Beistrich getrennt angegeben werden."
+  )
+
+  val report_infection_date_tip = LocalizedString(
+    "Search for check-ins between tracing start date and now.",
+    "Durchsuche Check-Ins zwischen dem Tracing Start Datum und jetzt."
   )
 
   val report_infection_date = LocalizedString(
-      "Infection date",
-      "Datum der Infektion"
+    "Tracing start date",
+    "Tracing Start Datum"
   )
 
   val report_search = LocalizedString(
-      "Trace contacts",
-      "Kontakte zurückverfolgen"
+    "Trace contacts",
+    "Kontakte zurückverfolgen"
   )
 
   val check_in = LocalizedString(
