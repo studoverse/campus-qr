@@ -122,25 +122,25 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     renderAddLocationDialog()
     renderImportButtonDialog()
     renderSnackbar()
-    if (props.userData.clientUser!!.canEditLocations) {
-      renderToolbarView(
-        ToolbarViewProps.Config(
-          title = Strings.locations.get(),
-          buttons = listOf(
-            ToolbarViewProps.ToolbarButton(
-              text = Strings.print_checkout_code.get(),
-              variant = "outlined",
-              onClick = {
-                window.open("/location/qr-codes/checkout", "_blank")
-              }
-            ),
-            ToolbarViewProps.ToolbarButton(
-              text = Strings.print_all_qrcodes.get(),
-              variant = "outlined",
-              onClick = {
-                window.open("/location/qr-codes", "_blank")
-              }
-            ),
+    renderToolbarView(
+      ToolbarViewProps.Config(
+        title = Strings.locations.get(),
+        buttons = listOfNotNull(
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.print_checkout_code.get(),
+            variant = "outlined",
+            onClick = {
+              window.open("/location/qr-codes/checkout", "_blank")
+            }
+          ),
+          ToolbarViewProps.ToolbarButton(
+            text = Strings.print_all_qrcodes.get(),
+            variant = "outlined",
+            onClick = {
+              window.open("/location/qr-codes", "_blank")
+            }
+          ),
+          if (props.userData.clientUser!!.canEditLocations) {
             ToolbarViewProps.ToolbarButton(
               text = Strings.location_import.get(),
               variant = "outlined",
@@ -149,7 +149,9 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
                   showImportLocationDialog = true
                 }
               }
-            ),
+            )
+          } else null,
+          if (props.userData.clientUser!!.canEditLocations) {
             ToolbarViewProps.ToolbarButton(
               text = Strings.location_create.get(),
               variant = "contained",
@@ -158,11 +160,11 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
                   showAddLocationDialog = true
                 }
               }
-            ),
-          )
+            )
+          } else null,
         )
       )
-    }
+    )
 
     renderLinearProgress(state.loadingLocationList)
 
@@ -182,7 +184,8 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
         mTableBody {
           state.locationList!!.forEach { location ->
             renderLocationTableRow(
-              LocationTableRowProps.Config(location,
+              LocationTableRowProps.Config(
+                location,
                 onEditFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_edited.get())
                 },
