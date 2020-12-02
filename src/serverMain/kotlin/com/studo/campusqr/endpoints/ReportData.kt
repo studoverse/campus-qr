@@ -209,7 +209,7 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
     impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
     impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv",
     reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
-      "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};${locationIdToLocationMap.getValue(it.locationId).name};${it.seat ?: "-"}"
+      "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};\"${locationIdToLocationMap.getValue(it.locationId).name.replace("\"", "\"\"")}\";${it.seat ?: "-"}"
     },
     reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
     startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
