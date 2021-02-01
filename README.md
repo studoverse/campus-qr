@@ -13,7 +13,8 @@ The system is open source and can be hosted by the university itself.
 The web app is available as stand-alone application.
 The [Studo app](https://studo.com) integrates the provided Android and iOS reference implementation to allow offline dispatching of check-in events.
 
-![IOEB-seal](https://www.ioeb-innovationsplattform.at/typo3conf/ext/bb_boilerplate/Resources/Public/Css/ioeb-siegel.svg) In 2021, Campus QR received the IÖB-awarded seal from the Public Procurement Promoting Innovation Austria (IÖB).
+![IOEB-seal](https://www.ioeb-innovationsplattform.at/typo3conf/ext/bb_boilerplate/Resources/Public/Css/ioeb-siegel.svg | width=100)
+In 2021, Campus QR received the IÖB-awarded seal from the Public Procurement Promoting Innovation Austria (IÖB).
 
 ## Features
 * **Simple**: Both check-in and administration have a clean and easy to use user interface.
