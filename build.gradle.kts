@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
-  kotlin("multiplatform") version "1.4.10"
+  kotlin("multiplatform") version "1.4.31"
   application
   id("com.github.johnrengelman.shadow") version "5.0.0"
 }
