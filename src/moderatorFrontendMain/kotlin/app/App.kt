@@ -148,9 +148,24 @@ class App : RComponent<AppProps, AppState>() {
     handleHistoryChange()
   }
 
+  private fun calculateRedirectQueryParams(): Map<String, String> = window.location.relativeUrl
+    .removeSuffix("/")
+    .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
+    ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
+    ?.let { mapOf("redirect" to it) }
+    ?: emptyMap()
+
   private fun handleHistoryChange() {
     val activeView = window.location.toRoute() ?: return
-    setState { currentAppRoute = activeView }
+
+    if (isNotAuthenticatedButRequiresAuth(activeView)) {
+      // The user might end here by clicking back after logging out.
+      // componentDidMount() won't be called as going back is not mounting a new component.
+      // The user is not logged in so push him to login page
+      pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
+    } else {
+      setState { currentAppRoute = activeView }
+    }
   }
 
   override fun AppState.init() {
@@ -177,20 +192,17 @@ class App : RComponent<AppProps, AppState>() {
     }
   }
 
+  private fun isNotAuthenticatedButRequiresAuth(currentRoute: AppRoute?): Boolean {
+    return !state.userData!!.isAuthenticated && currentRoute?.url?.requiresAuth != false
+  }
+
   override fun componentDidMount() {
     fetchUserDataAndInit {
       // Do not use state.currentAppRoute here, because that can represent the old route and not the new location
       val currentRoute = window.location.toRoute()
 
-      fun calculateRedirectQueryParams(): Map<String, String> = window.location.relativeUrl
-        .removeSuffix("/")
-        .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
-        ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
-        ?.let { mapOf("redirect" to it) }
-        ?: emptyMap()
-
       when {
-        !state.userData!!.isAuthenticated && currentRoute?.url?.requiresAuth != false -> {
+        isNotAuthenticatedButRequiresAuth(currentRoute) -> {
           // The user is not logged in so push him to login page
           pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }

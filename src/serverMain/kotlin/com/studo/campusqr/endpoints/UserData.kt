@@ -27,6 +27,10 @@ suspend fun ApplicationCall.getUserData() {
   val sessionToken = getSessionToken()
   val user = sessionToken?.let { runOnDb { getUser(it) } }
 
+  // Make sure not to cache logged-in state, so the browser will re-fetch this in any case e.g. when pressing back in browser after logout
+  // see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#preventing_caching
+  response.header("Cache-Control", "no-store, max-age=0")
+
   respondObject(
     UserData(
       appName = appName,
