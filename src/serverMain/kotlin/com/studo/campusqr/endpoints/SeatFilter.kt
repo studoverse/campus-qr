@@ -1,5 +1,6 @@
 package com.studo.campusqr.endpoints
 
+import com.moshbit.katerbase.equal
 import com.studo.campusqr.common.DeleteSeatFilter
 import com.studo.campusqr.common.EditSeatFilter
 import com.studo.campusqr.database.BackendSeatFilter
@@ -8,8 +9,6 @@ import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.extensions.respondOk
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.katerbase.MongoMainEntry.Companion.generateId
-import com.studo.katerbase.equal
 import io.ktor.features.*
 import java.util.*
 
@@ -48,13 +47,13 @@ suspend fun AuthenticatedApplicationCall.editSeatFilter() {
     }
     else -> {
       runOnDb {
-        getCollection<BackendSeatFilter>().insertOne(BackendSeatFilter().also { filter ->
-          filter._id = generateId(locationId, params.seat.toString())
-          filter.locationId = locationId
-          filter.seat = params.seat
-          filter.editedBy = user._id
-          filter.lastEditDate = Date()
-          filter.filteredSeats = params.filteredSeats
+        getCollection<BackendSeatFilter>().insertOne(BackendSeatFilter().apply {
+          _id = generateId(locationId, params.seat.toString())
+          this.locationId = locationId
+          seat = params.seat
+          editedBy = user._id
+          lastEditDate = Date()
+          filteredSeats = params.filteredSeats
         }, upsert = true)
       }
 

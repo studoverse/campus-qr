@@ -1,5 +1,7 @@
 package com.studo.campusqr.endpoints
 
+import com.moshbit.katerbase.MongoDatabase
+import com.moshbit.katerbase.equal
 import com.studo.campusqr.common.EditUserData
 import com.studo.campusqr.common.NewUserData
 import com.studo.campusqr.common.UserPermission
@@ -9,9 +11,6 @@ import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.Algorithm
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.katerbase.MongoDatabase
-import com.studo.katerbase.MongoMainEntry
-import com.studo.katerbase.equal
 
 /**
  * This file contains every endpoint which is used in the user management.
@@ -31,8 +30,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 
   val email = params.email.trim().toLowerCase()
   val newUser = BackendUser(
-    userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
-    email = email,
+    email = email, // Use email as primary key. Email can not be changed.
     name = params.name.trim(),
     permissions = params.permissions.map { UserPermission.valueOf(it) }.toSet()
   ).apply {

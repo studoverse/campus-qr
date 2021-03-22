@@ -1,10 +1,10 @@
 package com.studo.campusqr.database
 
+import com.moshbit.katerbase.MongoMainEntry
+import com.moshbit.katerbase.MongoSubEntry
 import com.studo.campusqr.common.*
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.extensions.toAustrianTime
-import com.studo.katerbase.MongoMainEntry
-import com.studo.katerbase.MongoSubEntry
 import java.util.*
 
 /**
@@ -35,9 +35,9 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
       ).get(language)
   )
 
-  constructor(userId: String, email: String, name: String, permissions: Set<UserPermission>) : this() {
+  constructor(email: String, userId: String? = null, name: String, permissions: Set<UserPermission>) : this() {
     this.email = email
-    this._id = userId
+    this._id = userId ?: generateId(email)
     this.name = name
     this.createdDate = Date()
     this.permissions = permissions

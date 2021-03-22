@@ -20,6 +20,7 @@ repositories {
   maven {
     url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
   }
+  maven("https://jitpack.io")
 }
 kotlin {
   jvm("server") {
@@ -69,6 +70,7 @@ kotlin {
         implementation("ch.qos.logback:logback-classic:1.2.3")
 
         implementation("commons-codec:commons-codec:1.14")
+        implementation("com.github.studo-app:katerbase:88f1cdde5e")
       }
     }
     val serverTest by getting {

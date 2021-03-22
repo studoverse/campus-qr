@@ -1,10 +1,10 @@
 package com.studo.campusqr.database
 
+import com.moshbit.katerbase.equal
+import com.moshbit.katerbase.lower
 import com.studo.campusqr.extensions.addMinutes
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.serverScope
-import com.studo.katerbase.equal
-import com.studo.katerbase.lower
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*

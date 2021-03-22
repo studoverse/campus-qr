@@ -1,5 +1,6 @@
 package com.studo.campusqr.utils
 
+import com.moshbit.katerbase.equal
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
@@ -8,8 +9,6 @@ import com.studo.campusqr.extensions.addDays
 import com.studo.campusqr.extensions.addYears
 import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.extensions.runOnDb
-import com.studo.katerbase.equal
-import com.studo.katerbase.sha256
 import io.ktor.application.*
 import io.ktor.sessions.*
 import java.util.*

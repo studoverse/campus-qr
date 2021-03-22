@@ -1,5 +1,6 @@
 package com.studo.campusqr.endpoints
 
+import com.moshbit.katerbase.*
 import com.studo.campusqr.common.ActiveCheckIn
 import com.studo.campusqr.common.ReportData
 import com.studo.campusqr.common.emailSeparators
@@ -10,7 +11,6 @@ import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.serverScope
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.katerbase.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

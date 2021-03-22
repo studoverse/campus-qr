@@ -1,5 +1,6 @@
 package com.studo.campusqr.endpoints
 
+import com.moshbit.katerbase.equal
 import com.studo.campusqr.auth.AuthProvider
 import com.studo.campusqr.auth.CampusQrAuth
 import com.studo.campusqr.authProvider
@@ -10,7 +11,6 @@ import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.*
-import com.studo.katerbase.equal
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.sessions.*

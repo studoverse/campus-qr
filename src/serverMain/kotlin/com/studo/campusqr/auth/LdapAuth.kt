@@ -1,13 +1,12 @@
 package com.studo.campusqr.auth
 
+import com.moshbit.katerbase.equal
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.serverScope
-import com.studo.katerbase.MongoMainEntry
-import com.studo.katerbase.equal
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -132,12 +131,12 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
     } else {
       // Insert user if not yet created
       debugLog("Username/Password valid for $email --> Allow login")
-      val userId = MongoMainEntry.generateId(email)
+      val userId = with(BackendUser()) { generateId(email) }
       val user = runOnDb {
         getCollection<BackendUser>().findOneOrInsert(BackendUser::_id equal userId) {
           BackendUser(
-            userId = userId,
             email = email,
+            userId = userId,
             name = email
               .substringBefore("@")
               .replace(".", " ")

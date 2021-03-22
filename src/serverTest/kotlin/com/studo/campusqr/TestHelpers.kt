@@ -4,7 +4,7 @@ import com.studo.campusqr.database.BackendSeatFilter
 import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.database.Configuration
 import com.studo.campusqr.database.MainDatabase
-import com.studo.katerbase.equal
+import com.moshbit.katerbase.equal
 import java.util.*
 
 internal fun createTestCheckIn(
