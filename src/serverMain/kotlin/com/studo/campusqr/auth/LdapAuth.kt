@@ -1,5 +1,6 @@
 package com.studo.campusqr.auth
 
+import com.moshbit.katerbase.MongoMainEntry
 import com.moshbit.katerbase.equal
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.database.BackendUser
@@ -131,12 +132,12 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
     } else {
       // Insert user if not yet created
       debugLog("Username/Password valid for $email --> Allow login")
-      val userId = with(BackendUser()) { generateId(email) }
+      val userId = MongoMainEntry.generateId(email)
       val user = runOnDb {
         getCollection<BackendUser>().findOneOrInsert(BackendUser::_id equal userId) {
           BackendUser(
-            email = email,
             userId = userId,
+            email = email,
             name = email
               .substringBefore("@")
               .replace(".", " ")

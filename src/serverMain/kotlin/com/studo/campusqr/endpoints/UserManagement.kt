@@ -1,6 +1,7 @@
 package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.MongoDatabase
+import com.moshbit.katerbase.MongoMainEntry
 import com.moshbit.katerbase.equal
 import com.studo.campusqr.common.EditUserData
 import com.studo.campusqr.common.NewUserData
@@ -30,6 +31,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 
   val email = params.email.trim().toLowerCase()
   val newUser = BackendUser(
+    userId = MongoMainEntry.generateId(email),
     email = email, // Use email as primary key. Email can not be changed.
     name = params.name.trim(),
     permissions = params.permissions.map { UserPermission.valueOf(it) }.toSet()

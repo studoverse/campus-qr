@@ -35,9 +35,9 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
       ).get(language)
   )
 
-  constructor(email: String, userId: String? = null, name: String, permissions: Set<UserPermission>) : this() {
+  constructor(userId: String, email: String, name: String, permissions: Set<UserPermission>) : this() {
     this.email = email
-    this._id = userId ?: generateId(email)
+    this._id = userId
     this.name = name
     this.createdDate = Date()
     this.permissions = permissions
