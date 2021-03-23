@@ -1,6 +1,5 @@
 package com.studo.campusqr.endpoints
 
-import com.moshbit.katerbase.contains
 import com.moshbit.katerbase.equal
 import com.studo.campusqr.auth.AuthProvider
 import com.studo.campusqr.auth.CampusQrAuth
@@ -76,7 +75,7 @@ suspend fun ApplicationCall.login() {
 
   runOnDb {
     getCollection<BackendUser>().updateOne(
-      BackendUser::_id contains loginResult.user._id,
+      BackendUser::_id equal loginResult.user._id,
       BackendUser::firstLoginDate equal null
     ) {
       BackendUser::firstLoginDate setTo Date()
