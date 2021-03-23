@@ -1,8 +1,7 @@
 package com.studo.campusqr.database
 
-import com.studo.katerbase.MongoDatabase
-import com.studo.katerbase.equal
-import com.studo.katerbase.notEqual
+import com.moshbit.katerbase.MongoDatabase
+import com.moshbit.katerbase.equal
 import kotlin.reflect.KClass
 
 private val mongoUri = System.getenv("MONGO_URI") ?: "mongodb://localhost:27017/campus-qr"

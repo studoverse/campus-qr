@@ -1,14 +1,7 @@
-package com.studo.katerbase
+package com.studo.campusqr.utils
 
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.Logger
 import org.apache.commons.codec.binary.Hex
-import org.slf4j.impl.StaticLoggerBinder
 import java.security.MessageDigest
-
-internal fun setLogLevel(name: String, level: Level) {
-  (StaticLoggerBinder.getSingleton().loggerFactory.getLogger(name) as Logger).level = level
-}
 
 fun ByteArray.sha256(): String {
   val md = MessageDigest.getInstance("SHA-256")

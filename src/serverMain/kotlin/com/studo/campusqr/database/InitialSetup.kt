@@ -5,7 +5,7 @@ import com.studo.campusqr.auth.getAuthProvider
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.utils.Algorithm
-import com.studo.katerbase.sha256
+import com.studo.campusqr.utils.sha256
 import java.util.*
 import kotlin.streams.toList
 

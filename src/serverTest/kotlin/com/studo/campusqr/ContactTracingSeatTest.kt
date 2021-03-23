@@ -9,7 +9,7 @@ import com.studo.campusqr.extensions.addDays
 import com.studo.campusqr.extensions.addMinutes
 import com.studo.campusqr.extensions.addSeconds
 import com.studo.campusqr.extensions.runOnDb
-import com.studo.katerbase.MongoMainEntry
+import com.moshbit.katerbase.MongoMainEntry
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.BeforeClass

@@ -1,9 +1,9 @@
 package com.studo.campusqr.auth
 
+import com.moshbit.katerbase.equal
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.utils.Algorithm
-import com.studo.katerbase.equal
 
 class CampusQrAuth : AuthProvider {
   override suspend fun init() {

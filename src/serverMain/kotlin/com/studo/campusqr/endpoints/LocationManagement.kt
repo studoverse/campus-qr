@@ -1,5 +1,6 @@
 package com.studo.campusqr.endpoints
 
+import com.moshbit.katerbase.*
 import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
@@ -7,7 +8,6 @@ import com.studo.campusqr.database.*
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.katerbase.*
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*

@@ -10,7 +10,7 @@ import com.studo.campusqr.database.startAutomaticDataDeletion
 import com.studo.campusqr.endpoints.*
 import com.studo.campusqr.utils.Session
 import com.studo.campusqr.utils.getAuthenticatedCall
-import com.studo.katerbase.setLogLevel
+import com.studo.campusqr.utils.setLogLevel
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.content.*

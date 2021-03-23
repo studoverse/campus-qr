@@ -1,13 +1,13 @@
 package com.studo.campusqr.auth
 
+import com.moshbit.katerbase.MongoMainEntry
+import com.moshbit.katerbase.equal
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.serverScope
-import com.studo.katerbase.MongoMainEntry
-import com.studo.katerbase.equal
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
