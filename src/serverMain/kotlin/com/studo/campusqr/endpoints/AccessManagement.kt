@@ -1,9 +1,6 @@
 package com.studo.campusqr.endpoints
 
-import com.moshbit.katerbase.any
-import com.moshbit.katerbase.equal
-import com.moshbit.katerbase.greater
-import com.moshbit.katerbase.inArray
+import com.moshbit.katerbase.*
 import com.studo.campusqr.common.*
 import com.studo.campusqr.database.BackendAccess
 import com.studo.campusqr.database.BackendLocation
@@ -190,7 +187,7 @@ suspend fun AuthenticatedApplicationCall.duplicateAccess() {
     respondForbidden(); return
   }
 
-  with(access) { _id = randomId() }
+  access._id = MongoMainEntry.randomId()
 
   runOnDb {
     getCollection<BackendAccess>().insertOne(access, upsert = false)
