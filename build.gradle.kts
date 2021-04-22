@@ -45,7 +45,6 @@ kotlin {
     }
     val serverMain by getting {
       dependencies {
-        implementation(kotlin("stdlib-jdk8"))
         implementation("io.ktor:ktor-server-netty:1.4.0")
         implementation("io.ktor:ktor-html-builder:1.4.0")
         implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
@@ -68,7 +67,6 @@ kotlin {
     }
     val moderatorFrontendMain by getting {
       dependencies {
-        api(kotlin("stdlib-js"))
         implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.2")
         api("org.jetbrains:kotlin-react:16.13.1-pre.115-kotlin-1.4.10")
         api("org.jetbrains:kotlin-react-dom:16.13.1-pre.115-kotlin-1.4.10")
