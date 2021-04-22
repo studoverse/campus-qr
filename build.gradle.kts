@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 plugins {
   kotlin("multiplatform") version "1.4.32"
   application
-  //id("com.github.johnrengelman.shadow") version "5.0.0"
+  id("com.github.johnrengelman.shadow") version "5.0.0"
 }
 group = "com.studo"
 version = "1.0.0"
@@ -33,21 +33,6 @@ kotlin {
     useCommonJs()
     browser {
       binaries.executable()
-      /*
-      webpackTask {
-        cssSupport.enabled = true
-      }
-      runTask {
-        cssSupport.enabled = true
-      }
-      testTask {
-        useKarma {
-          useChromeHeadless()
-          webpackConfig.cssSupport.enabled = true
-        }
-      }
-
-       */
     }
   }
   sourceSets {
@@ -138,7 +123,6 @@ tasks.getByName<JavaExec>("run") {
   classpath(tasks.getByName<Jar>("serverJar"))
 }
 
-/*
 tasks.getByName("shadowJar") {
   dependsOn(tasks.getByName("serverJar"))
   setProperty("archiveFileName", "Server.jar")
@@ -148,9 +132,3 @@ tasks.register("stage") {
   group = "distribution"
   dependsOn(tasks.getByName("shadowJar"))
 }
-*/
-
-/*
-tasks.register("compileKotlin") {
-  dependsOn(tasks.getByName("compileKotlinServer"))
-}*/
