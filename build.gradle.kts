@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
-  kotlin("multiplatform") version "1.4.31"
+  kotlin("multiplatform") version "1.4.32"
   application
-  id("com.github.johnrengelman.shadow") version "5.0.0"
+  //id("com.github.johnrengelman.shadow") version "5.0.0"
 }
 group = "com.studo"
 version = "1.0.0"
@@ -25,15 +25,15 @@ repositories {
 kotlin {
   jvm("server") {
     compilations.all {
-      kotlinOptions.jvmTarget = "1.8"
+      kotlinOptions.jvmTarget = "11"
     }
     withJava()
-
   }
   js("moderatorFrontend") {
     useCommonJs()
     browser {
       binaries.executable()
+      /*
       webpackTask {
         cssSupport.enabled = true
       }
@@ -46,6 +46,8 @@ kotlin {
           webpackConfig.cssSupport.enabled = true
         }
       }
+
+       */
     }
   }
   sourceSets {
@@ -58,6 +60,7 @@ kotlin {
     }
     val serverMain by getting {
       dependencies {
+        implementation(kotlin("stdlib-jdk8"))
         implementation("io.ktor:ktor-server-netty:1.4.0")
         implementation("io.ktor:ktor-html-builder:1.4.0")
         implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
@@ -80,6 +83,7 @@ kotlin {
     }
     val moderatorFrontendMain by getting {
       dependencies {
+        api(kotlin("stdlib-js"))
         implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.2")
         api("org.jetbrains:kotlin-react:16.13.1-pre.115-kotlin-1.4.10")
         api("org.jetbrains:kotlin-react-dom:16.13.1-pre.115-kotlin-1.4.10")
@@ -134,6 +138,7 @@ tasks.getByName<JavaExec>("run") {
   classpath(tasks.getByName<Jar>("serverJar"))
 }
 
+/*
 tasks.getByName("shadowJar") {
   dependsOn(tasks.getByName("serverJar"))
   setProperty("archiveFileName", "Server.jar")
@@ -143,3 +148,9 @@ tasks.register("stage") {
   group = "distribution"
   dependsOn(tasks.getByName("shadowJar"))
 }
+*/
+
+/*
+tasks.register("compileKotlin") {
+  dependsOn(tasks.getByName("compileKotlinServer"))
+}*/
