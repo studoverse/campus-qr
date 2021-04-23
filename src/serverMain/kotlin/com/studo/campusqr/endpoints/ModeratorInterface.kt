@@ -2,6 +2,7 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.extensions.getResourceAsStream
 import com.studo.campusqr.extensions.language
+import com.studo.campusqr.localDebug
 import com.studo.campusqr.utils.getCsrfToken
 import io.ktor.application.*
 import io.ktor.html.*
@@ -9,7 +10,6 @@ import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.util.date.*
 import kotlinx.html.*
-import java.io.File
 
 /**
  * This file contains everything we need to serve the moderation frontend.
@@ -24,16 +24,16 @@ suspend fun ApplicationCall.returnModeratorIndexHtml() {
   }
 }
 
-suspend fun ApplicationCall.returnModeratorJs() = respondBytes(moderatorUiJs, contentType = ContentType.Text.JavaScript)
+suspend fun ApplicationCall.returnModeratorJs() =
+  respondBytes(moderatorUiJs!!, contentType = ContentType.Text.JavaScript)
 
 // Keep the whole JS in memory to reduce disk IO
-private val moderatorUiJs = run {
+private val moderatorUiJs: ByteArray? = run {
   val js = getResourceAsStream("campusqr-admin.js")
-      ?.bufferedReader()
-      ?.use { it.readText() }
-      ?: File("build/distributions/campusqr-admin.js").readText() // For local development
+    ?.bufferedReader()
+    ?.use { it.readText() }
 
-  js.toByteArray() // Save as byte array here, so ktor doesn't need any further transformation to stream to client.
+  js?.toByteArray() // Save as byte array here, so ktor doesn't need any further transformation to stream to client.
 }
 
 private fun ApplicationCall.addLanguageCookieIfNeeded(language: String) {
@@ -84,7 +84,10 @@ private fun HTML.moderatorIndex(call: ApplicationCall, csrfToken: String) {
       id = "root"
     }
     script {
-      src = "/admin/campusqr-admin.js"
+      src = when {
+        localDebug -> "/CampusQR.js"
+        else -> "/admin/campusqr-admin.js"
+      }
     }
   }
 }

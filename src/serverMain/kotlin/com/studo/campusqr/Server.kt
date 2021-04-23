@@ -28,6 +28,7 @@ object Server
 
 val serverScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 val baseUrl: String get() = MainDatabase.getConfig("baseUrl")
+val localDebug: Boolean = System.getenv("DEBUG") == "true"
 lateinit var authProvider: AuthProvider
 
 suspend fun main() {
@@ -49,7 +50,9 @@ suspend fun main() {
       header("X-Frame-Options", "DENY")
       header("Strict-Transport-Security", "max-age=31536000; preload")
       header("X-Content-Type-Options", "nosniff")
-      header("Content-Security-Policy", "script-src 'self'")
+      if (!localDebug) {
+        header("Content-Security-Policy", "script-src 'self'")
+      }
       header("Referrer-Policy", "no-referrer")
       header(
         "Feature-Policy", "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; " +
@@ -71,6 +74,9 @@ suspend fun main() {
 
     install(CORS) {
       host(URL(baseUrl).host, schemes = listOf("https", "http"))
+      if (localDebug) {
+        host("localhost:8072")
+      }
       allowNonSimpleContentTypes = true
       allowCredentials = true
       maxAgeInSeconds = Duration.ofDays(1).seconds

@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
-  kotlin("multiplatform") version "1.4.31"
+  kotlin("multiplatform") version "1.4.32"
   application
   id("com.github.johnrengelman.shadow") version "5.0.0"
 }
@@ -25,27 +25,14 @@ repositories {
 kotlin {
   jvm("server") {
     compilations.all {
-      kotlinOptions.jvmTarget = "1.8"
+      kotlinOptions.jvmTarget = "11"
     }
     withJava()
-
   }
   js("moderatorFrontend") {
     useCommonJs()
     browser {
       binaries.executable()
-      webpackTask {
-        cssSupport.enabled = true
-      }
-      runTask {
-        cssSupport.enabled = true
-      }
-      testTask {
-        useKarma {
-          useChromeHeadless()
-          webpackConfig.cssSupport.enabled = true
-        }
-      }
     }
   }
   sourceSets {
