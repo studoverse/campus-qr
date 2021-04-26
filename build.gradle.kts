@@ -25,7 +25,7 @@ repositories {
 kotlin {
   jvm("server") {
     compilations.all {
-      kotlinOptions.jvmTarget = "11"
+      kotlinOptions.jvmTarget = "1.8"
     }
     withJava()
   }
