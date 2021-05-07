@@ -10,16 +10,7 @@ version = "1.0.0"
 
 repositories {
   mavenCentral()
-  jcenter()
-  maven {
-    url = uri("https://dl.bintray.com/kotlin/ktor")
-  }
-  maven {
-    url = uri("https://dl.bintray.com/kotlin/kotlinx")
-  }
-  maven {
-    url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
-  }
+  maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
   maven("https://jitpack.io")
 }
 kotlin {
@@ -47,7 +38,7 @@ kotlin {
       dependencies {
         implementation("io.ktor:ktor-server-netty:1.4.0")
         implementation("io.ktor:ktor-html-builder:1.4.0")
-        implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
+        implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
         implementation("org.mongodb:mongodb-driver-sync:4.1.0")
 
@@ -57,7 +48,7 @@ kotlin {
         implementation("ch.qos.logback:logback-classic:1.2.3")
 
         implementation("commons-codec:commons-codec:1.14")
-        implementation("com.github.studo-app:katerbase:abc9891909")
+        implementation("com.github.studo-app:katerbase:418f2e6ce2")
       }
     }
     val serverTest by getting {
@@ -67,25 +58,27 @@ kotlin {
     }
     val moderatorFrontendMain by getting {
       dependencies {
-        implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.2")
-        api("org.jetbrains:kotlin-react:16.13.1-pre.115-kotlin-1.4.10")
-        api("org.jetbrains:kotlin-react-dom:16.13.1-pre.115-kotlin-1.4.10")
-        api("org.jetbrains:kotlin-extensions:1.0.1-pre.115-kotlin-1.4.10")
+        implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.3")
+        api("org.jetbrains:kotlin-react:16.13.1-pre.123-kotlin-1.4.10")
+        api("org.jetbrains:kotlin-react-dom:16.13.1-pre.123-kotlin-1.4.10")
+        api("org.jetbrains:kotlin-extensions:1.0.1-pre.144-kotlin-1.4.10")
         implementation(npm("normalize.css", "^8.0.1"))
+        implementation(devNpm("style-loader", "^1.2.1"))
+        implementation(devNpm("css-loader", "^4.3.0"))
 
         api(npm("react", "^16.5.2"))
         api(npm("react-dom", "^16.5.2"))
 
         api(npm("@material-ui/core", "^4.10.2"))
-        api(
-          npm(
-            "@material-ui/lab",
-            "^4.0.0-alpha.56"
-          )
-        ) // Needed for MuiAutocomplete. Can be removed if it gets merged into @material-ui/core
+
+        // Needed for MuiAutocomplete. Can be removed if it gets merged into @material-ui/core
+        api(npm("@material-ui/lab", "^4.0.0-alpha.56"))
+
         api(npm("@material-ui/icons", "^3.0.1"))
+
+        // Don't update to latest version until @material-ui/pickers v4 comes out
         api(npm("@material-ui/pickers", "3.2.10"))
-        // don't update to latest version until @material-ui/pickers v4 comes out
+
         api(npm("@date-io/luxon", "1.3.13"))
         api(npm("luxon", "1.24.1"))
 
