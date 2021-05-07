@@ -48,7 +48,7 @@ kotlin {
         implementation("ch.qos.logback:logback-classic:1.2.3")
 
         implementation("commons-codec:commons-codec:1.14")
-        implementation("com.github.studo-app:katerbase:2268ca8ef4")
+        implementation("com.github.studo-app:katerbase:418f2e6ce2")
       }
     }
     val serverTest by getting {
@@ -63,6 +63,8 @@ kotlin {
         api("org.jetbrains:kotlin-react-dom:16.13.1-pre.123-kotlin-1.4.10")
         api("org.jetbrains:kotlin-extensions:1.0.1-pre.144-kotlin-1.4.10")
         implementation(npm("normalize.css", "^8.0.1"))
+        implementation(devNpm("style-loader", "^1.2.1"))
+        implementation(devNpm("css-loader", "^4.3.0"))
 
         api(npm("react", "^16.5.2"))
         api(npm("react-dom", "^16.5.2"))
