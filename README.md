@@ -81,8 +81,10 @@ The following environment variables need to be configured:
 * `HOST` (default: `0.0.0.0`): By default the web application is accessible from every host. Set it to `127.0.0.1` if the web application should only be accessible from localhost.
 * `MONGO_URI` (default: `mongodb://localhost:27017/campus-qr)`: Database URI to store further configuration, locations, check-ins and moderation users. Make sure that the database is either not accessible from another host or provide authentication parameters in the URI.
 
-Start the application by `./gradlew run` or build the application with `.gradlew stage` to run it with `java -jar build/libs/Server.jar`.
-The default admin email address is `admin@example.org` with password `admin`. Please change it immediately after your first login to the moderation frontend.
+Start the application by `./gradlew run` or build the application with `/.gradlew stage` to run it
+with `java -jar build/libs/Server.jar`. Alternatively the backend can be started by running the `Debug Backend` and
+the `Start dev webserver` IntelliJ run configurations. The default admin email address is `admin@example.org` with
+password `admin`. Please change it immediately after your first login to the moderation frontend.
 
 ## Deployment
 When self-hosting Campus QR, create a setup that ensures at least weekly updates of the upstream source code to quickly react on updates.
