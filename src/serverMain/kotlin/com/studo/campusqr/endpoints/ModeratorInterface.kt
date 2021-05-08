@@ -29,7 +29,7 @@ suspend fun ApplicationCall.returnModeratorJs() =
 
 // Keep the whole JS in memory to reduce disk IO
 private val moderatorUiJs: ByteArray? = run {
-  val js = getResourceAsStream("campusqr-admin.js")
+  val js = getResourceAsStream("/campusqr-admin.js")
     ?.bufferedReader()
     ?.use { it.readText() }
 

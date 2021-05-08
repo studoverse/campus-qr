@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 plugins {
   kotlin("multiplatform") version "1.4.32"
   application
-  id("com.github.johnrengelman.shadow") version "5.0.0"
+  id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 group = "com.studo"
 version = "1.0.0"
@@ -98,20 +98,20 @@ application {
 tasks.getByName<KotlinWebpack>("moderatorFrontendBrowserProductionWebpack") {
   outputFileName = "campusqr-admin.js"
 }
-tasks.getByName<Jar>("serverJar") {
+tasks.getByName<Jar>("shadowJar") {
   dependsOn(tasks.getByName("moderatorFrontendBrowserProductionWebpack"))
   val moderatorFrontendBrowserProductionWebpack =
     tasks.getByName<KotlinWebpack>("moderatorFrontendBrowserProductionWebpack")
   from(
-      File(
-          moderatorFrontendBrowserProductionWebpack.destinationDirectory,
-          moderatorFrontendBrowserProductionWebpack.outputFileName
-      )
+    File(
+      moderatorFrontendBrowserProductionWebpack.destinationDirectory,
+      moderatorFrontendBrowserProductionWebpack.outputFileName
+    )
   )
 }
 tasks.getByName<JavaExec>("run") {
-  dependsOn(tasks.getByName<Jar>("serverJar"))
-  classpath(tasks.getByName<Jar>("serverJar"))
+  dependsOn(tasks.getByName<Jar>("shadowJar"))
+  classpath(tasks.getByName<Jar>("shadowJar"))
 }
 
 tasks.getByName("shadowJar") {
