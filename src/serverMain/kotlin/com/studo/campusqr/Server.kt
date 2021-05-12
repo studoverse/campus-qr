@@ -89,7 +89,7 @@ suspend fun main() {
       route("campus-qr") {
         get { call.userFrontend() }
         get("checkout") { call.checkOutView() }
-        get("liveCheckins") { call.liveCheckInsView() }
+        get("liveCheckIns") { call.liveCheckInsView() }
       }
       route("user") {
         get("data") { call.getUserData() }

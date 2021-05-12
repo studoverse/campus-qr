@@ -24,7 +24,7 @@ interface LocationTableRowProps : RProps {
     val onDeleteFinished: (response: String?) -> Unit,
     val userData: UserData,
   ) {
-    val clientUser: ClientUser =  userData.clientUser!!
+    val clientUser: ClientUser get() = userData.clientUser!!
   }
 
   var config: Config
@@ -103,7 +103,7 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
                 }),
                 if (props.config.userData.liveCheckInsViewEnabled) {
                   MenuItem(text = Strings.live_check_ins.get(), icon = settingsBackupRestoreIcon, onClick = {
-                    window.open("$apiBase/campus-qr/liveCheckins?l=" + props.config.location.id, target = "_blank")
+                    window.open("$apiBase/campus-qr/liveCheckIns?l=" + props.config.location.id, target = "_blank")
                   })
                 } else null,
                 if (props.config.clientUser.canViewCheckIns) {

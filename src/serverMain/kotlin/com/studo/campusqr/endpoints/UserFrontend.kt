@@ -342,7 +342,7 @@ fun FlowContent.campusFooter(language: String, configs: Map<String, String>, liv
     }
     liveCheckInLocationId?.let { locationId ->
       a {
-        href = "/campus-qr/liveCheckins?l=${locationId}"
+        href = "/campus-qr/liveCheckIns?l=${locationId}"
         target = "_BLANK"
         +LocalizedString(
           "Live check-ins",
