@@ -428,6 +428,29 @@ footer a {
   margin-top: 16px;
 }
 
+.blinking-dot {
+  margin-bottom: 3px;
+  height: 12px;
+  width: 12px;
+  margin-right: 8px;
+  background-color: #49b832;
+  border-radius: 50%;
+  display: inline-block;
+
+  animation: blink-animation 1s step-start 0s infinite;
+  -webkit-animation: blink-animation 1s step-start 0s infinite;
+}
+
+@keyframes blink-animation {
+  50% {
+    opacity: 0.0;
+  }
+}
+@-webkit-keyframes blink-animation {
+  50% {
+    opacity: 0.0;
+  }
+}
 
 /* Keep this at the end to prevent flashing unstyled content */
 html {

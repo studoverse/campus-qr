@@ -280,6 +280,9 @@ suspend fun ApplicationCall.liveCheckInsView() {
         div("content") {
           div("qr-code-container centered") {}
           h2("live-check-in-count-header centered") {
+            span("blinking-dot") {
+              id = "blinking-dot"
+            }
             +LocalizedString(
               "Live check-ins",
               "Live Check-ins",
