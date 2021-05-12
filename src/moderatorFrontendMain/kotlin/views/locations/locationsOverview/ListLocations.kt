@@ -192,7 +192,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
                 onDeleteFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_deleted.get())
                 },
-                clientUser = props.userData.clientUser!!
+                userData = props.userData,
               )
             )
           }

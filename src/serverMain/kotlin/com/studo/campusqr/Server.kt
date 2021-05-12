@@ -86,8 +86,11 @@ suspend fun main() {
       get("favicon.ico") { call.favicon() }
       get("robots.txt") { call.robotsTxt() }
       get("/") { call.index() }
-      get("campus-qr") { call.userFrontend() }
-      get("campus-qr/checkout") { call.checkOutView() }
+      route("campus-qr") {
+        get { call.userFrontend() }
+        get("checkout") { call.checkOutView() }
+        get("liveCheckins") { call.liveCheckInsView() }
+      }
       route("user") {
         get("data") { call.getUserData() }
         get("logout") { call.getAuthenticatedCall()?.logout() }
@@ -117,6 +120,7 @@ suspend fun main() {
           post("delete") { call.getAuthenticatedCall()?.deleteLocation() }
           post("editSeatFilter") { call.getAuthenticatedCall()?.editSeatFilter() }
           post("deleteSeatFilter") { call.getAuthenticatedCall()?.deleteSeatFilter() }
+          get("pollLiveCheckIns") { call.pollLiveCheckIns() }
         }
       }
       route("access") {

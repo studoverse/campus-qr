@@ -413,8 +413,19 @@ a, a:visited {
   background: none;
   color: #2196F3;
   margin-top: auto;
-  margin-bottom: 16px;
   cursor: pointer;
+}
+
+.centered {
+  text-align: center;
+}
+
+#live-check-in-count  {
+  font-size: 120px;
+}
+
+footer a {
+  margin-top: 16px;
 }
 
 

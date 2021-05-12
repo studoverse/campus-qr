@@ -22,6 +22,7 @@ import java.util.*
 
 suspend fun ApplicationCall.getUserData() {
   val appName: String = runOnDb { getConfig("appName") }
+  val liveCheckInsViewEnabled = runOnDb { getConfig<Boolean>("liveCheckInsViewEnabled") }
 
   // sessionToken or user might be null when user is logged out or session expired
   val sessionToken = getSessionToken()
@@ -36,6 +37,7 @@ suspend fun ApplicationCall.getUserData() {
       appName = appName,
       clientUser = user?.toClientClass(this@getUserData.language),
       externalAuthProvider = authProvider !is CampusQrAuth,
+      liveCheckInsViewEnabled = liveCheckInsViewEnabled,
     )
   )
 }

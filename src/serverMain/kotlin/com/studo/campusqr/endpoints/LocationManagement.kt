@@ -8,6 +8,7 @@ import com.studo.campusqr.database.*
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
+import com.studo.campusqr.utils.getAuthenticatedCall
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -72,8 +73,8 @@ private fun ApplicationCall.getUserLocation(): UserLocation {
   // id-parameter is either "$locationId" or "$locationId-$seat" (depending if location has seatCount defined or not)
   val fullLocationId = parameters["id"] ?: throw BadRequestException("No locationId was provided")
   return UserLocation(
-      locationId = fullLocationId.substringBefore("-"),
-      seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
+    locationId = fullLocationId.substringBefore("-"),
+    seat = fullLocationId.substringAfter("-", missingDelimiterValue = "").emptyToNull()?.toIntOrNull()
   )
 }
 
@@ -216,9 +217,9 @@ suspend fun AuthenticatedApplicationCall.returnLocationVisitCsvData() {
 
   val checkIns = runOnDb {
     getCollection<CheckIn>()
-        .find(CheckIn::locationId equal locationId)
-        .sortByDescending(CheckIn::date)
-        .toList()
+      .find(CheckIn::locationId equal locationId)
+      .sortByDescending(CheckIn::date)
+      .toList()
   }
 
   respondObject(
@@ -272,4 +273,27 @@ suspend fun AuthenticatedApplicationCall.deleteLocation() {
   }
 
   respondOk()
+}
+
+suspend fun ApplicationCall.pollLiveCheckIns() {
+  val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
+  val liveCheckInsViewEnabled = runOnDb { getConfig<Boolean>("liveCheckInsViewEnabled") }
+  if (!liveCheckInsViewEnabled) {
+    throw IllegalStateException("Live check-in function is disabled")
+  }
+
+  // Get active check ins
+  val activeCheckInsCount = runOnDb {
+    getCollection<CheckIn>().count(
+      CheckIn::locationId equal locationId,
+      CheckIn::checkOutDate equal null
+    )
+  }.toInt()
+
+  respondObject(
+    LiveCheckIn(
+      activeCheckIns = activeCheckInsCount,
+      qrCodeContent = null
+    )
+  )
 }

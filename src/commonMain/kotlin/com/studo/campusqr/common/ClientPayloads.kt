@@ -17,6 +17,7 @@ class UserData(
   var appName: String,
   var clientUser: ClientUser? = null, // Null when unauthenticated
   var externalAuthProvider: Boolean = false,
+  var liveCheckInsViewEnabled: Boolean,
 ) : ClientPayload
 
 val UserData.isAuthenticated get() = clientUser != null
@@ -162,4 +163,9 @@ class EditSeatFilter(
 
 class DeleteSeatFilter(
   val seat: Int,
+) : ClientPayload
+
+class LiveCheckIn(
+  val activeCheckIns: Int,
+  val qrCodeContent: String?
 ) : ClientPayload
