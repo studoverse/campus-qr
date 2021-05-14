@@ -443,12 +443,12 @@ footer a {
 
 @keyframes blink-animation {
   50% {
-    opacity: 0.0;
+    opacity: 0.2;
   }
 }
 @-webkit-keyframes blink-animation {
   50% {
-    opacity: 0.0;
+    opacity: 0.2;
   }
 }
 

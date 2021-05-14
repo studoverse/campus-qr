@@ -120,7 +120,7 @@ suspend fun main() {
           post("delete") { call.getAuthenticatedCall()?.deleteLocation() }
           post("editSeatFilter") { call.getAuthenticatedCall()?.editSeatFilter() }
           post("deleteSeatFilter") { call.getAuthenticatedCall()?.deleteSeatFilter() }
-          get("pollLiveCheckIns") { call.pollLiveCheckIns() }
+          get("getLiveCheckIns") { call.getLiveCheckIns() }
         }
       }
       route("access") {

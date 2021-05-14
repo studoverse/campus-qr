@@ -275,7 +275,7 @@ suspend fun AuthenticatedApplicationCall.deleteLocation() {
   respondOk()
 }
 
-suspend fun ApplicationCall.pollLiveCheckIns() {
+suspend fun ApplicationCall.getLiveCheckIns() {
   val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
   val liveCheckInsViewEnabled = runOnDb { getConfig<Boolean>("liveCheckInsViewEnabled") }
   if (!liveCheckInsViewEnabled) {

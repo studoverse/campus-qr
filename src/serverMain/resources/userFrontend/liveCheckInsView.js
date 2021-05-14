@@ -1,32 +1,32 @@
-let fullLocationId = new URLSearchParams(window.location.search).get("l")
-let liveCheckinDisabledHolder = document.getElementById("live-check-in-disabled")
-let reEnableRefreshingButton = document.getElementById("re-enable-refreshing-button")
-let liveCheckInCount = document.getElementById("live-check-in-count")
-let blinkingDot = document.getElementById("blinking-dot")
+let fullLocationId = new URLSearchParams(window.location.search).get("l");
+let liveCheckinDisabledHolder = document.getElementById("live-check-in-disabled");
+let reEnableRefreshingButton = document.getElementById("re-enable-refreshing-button");
+let liveCheckInCount = document.getElementById("live-check-in-count");
+let blinkingDot = document.getElementById("blinking-dot");
 
-let pollCount = 0
-let pollInterval = 5000
-let maxPollCount = 300_000 / pollInterval // Poll for 5 minutes
+let pollCount = 0;
+let pollInterval = 5000;
+let maxPollCount = 300_000 / pollInterval; // Poll for 5 minutes
 
 function onLoad() {
   reEnableRefreshingButton.onclick = function () {
-    pollCount = 0
-    pollLiveCheckIns()
+    pollCount = 0;
+    pollLiveCheckIns();
   }
-  liveCheckinDisabledHolder.hidden = true
-  liveCheckInCount.innerText = ""
-  pollLiveCheckIns()
+  liveCheckinDisabledHolder.hidden = true;
+  liveCheckInCount.innerText = "";
+  pollLiveCheckIns();
 }
 
 function pollLiveCheckIns() {
   if (fullLocationId == null) {
-    return
+    return;
   }
-  pollCount += 1
+  pollCount += 1;
   if (pollCount < maxPollCount) {
-    liveCheckinDisabledHolder.hidden = true
-    blinkingDot.style.display = ""
-    fetch(`/location/${fullLocationId}/pollLiveCheckIns`)
+    liveCheckinDisabledHolder.hidden = true;
+    blinkingDot.style.display = "";
+    fetch(`/location/${fullLocationId}/getLiveCheckIns`)
         .then(res => res.json())
         .then(json => {
           let activeCheckIns = json.activeCheckIns
@@ -36,16 +36,16 @@ function pollLiveCheckIns() {
         })
         .catch(err => console.error(err))
         .finally(function () {
-          setTimeout(pollLiveCheckIns, pollInterval)
-        })
+          setTimeout(pollLiveCheckIns, pollInterval);
+        });
   } else {
-    liveCheckinDisabledHolder.hidden = false
-    blinkingDot.style.display = "none"
+    liveCheckinDisabledHolder.hidden = false;
+    blinkingDot.style.display = "none";
   }
 }
 
 if (/complete|interactive|loaded/.test(document.readyState)) {
-  onLoad()
+  onLoad();
 } else {
-  document.addEventListener('DOMContentLoaded', onLoad, false)
+  document.addEventListener('DOMContentLoaded', onLoad, false);
 }

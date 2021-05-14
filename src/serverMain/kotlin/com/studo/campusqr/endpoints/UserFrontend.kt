@@ -284,8 +284,8 @@ suspend fun ApplicationCall.liveCheckInsView() {
               id = "blinking-dot"
             }
             +LocalizedString(
-              "Live check-ins",
-              "Live Check-ins",
+              "Live - currently checked in",
+              "Live - derzeit eingecheckt",
             ).get(language)
           }
           span("centered") {
@@ -346,10 +346,10 @@ fun FlowContent.campusFooter(language: String, configs: Map<String, String>, liv
     liveCheckInLocationId?.let { locationId ->
       a {
         href = "/campus-qr/liveCheckIns?l=${locationId}"
-        target = "_BLANK"
+        target = "_blank"
         +LocalizedString(
-          "Live check-ins",
-          "Live Check-ins",
+          "Live - currently checked in",
+          "Live - derzeit eingecheckt",
         ).get(language)
       }
     }
