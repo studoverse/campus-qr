@@ -12,7 +12,7 @@ function onLoad() {
   reEnableRefreshingButton.onclick = function () {
     pollCount = 0;
     pollLiveCheckIns();
-  }
+  };
   liveCheckinDisabledHolder.hidden = true;
   liveCheckInCount.innerText = "";
   pollLiveCheckIns();
