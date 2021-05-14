@@ -2,7 +2,6 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.database.getConfigs
-import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.extensions.runOnDb
 import io.ktor.application.*

@@ -4,13 +4,18 @@ import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.database.getConfigs
-import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import io.ktor.html.*
 import io.ktor.http.*
 import kotlinx.html.*
+import kotlin.collections.Map
+import kotlin.collections.MutableMap
+import kotlin.collections.getValue
+import kotlin.collections.listOfNotNull
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 
 suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
   if (!sessionToken.isAuthenticated) {
