@@ -735,8 +735,8 @@ object Strings {
   )
 
   val live_check_ins = LocalizedString(
-    "Live check-ins",
-    "Live Check-ins",
+    "Live - currently checked in",
+    "Live - derzeit eingecheckt",
   )
 
 }
