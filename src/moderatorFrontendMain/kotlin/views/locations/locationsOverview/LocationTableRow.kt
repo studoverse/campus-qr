@@ -22,8 +22,10 @@ interface LocationTableRowProps : RProps {
     val location: ClientLocation,
     val onEditFinished: (response: String?) -> Unit,
     val onDeleteFinished: (response: String?) -> Unit,
-    val clientUser: ClientUser,
-  )
+    val userData: UserData,
+  ) {
+    val clientUser: ClientUser get() = userData.clientUser!!
+  }
 
   var config: Config
   var classes: LocationTableRowClasses
@@ -99,10 +101,15 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
                 MenuItem(text = Strings.locations_element_download_qr_code.get(), icon = imageRoundedIcon, onClick = {
                   window.open("$baseUrl/location/${props.config.location.id}/qr-code", target = "_blank")
                 }),
+                if (props.config.userData.liveCheckInsViewEnabled) {
+                  MenuItem(text = Strings.live_check_ins.get(), icon = settingsBackupRestoreIcon, onClick = {
+                    window.open("$apiBase/campus-qr/liveCheckIns?l=" + props.config.location.id, target = "_blank")
+                  })
+                } else null,
                 if (props.config.clientUser.canViewCheckIns) {
                   MenuItem(text = Strings.locations_element_simulate_scan.get(), icon = fullscreenIcon, onClick = {
                     val locationIdSuffix = if (props.config.location.seatCount == null) "" else "-1" // Check-in at seat 1 if needed
-                    window.open("../../campus-qr?s=1&l=" + props.config.location.id + locationIdSuffix, target = "_blank")
+                    window.open("$apiBase/campus-qr?s=1&l=" + props.config.location.id + locationIdSuffix, target = "_blank")
                   })
                 } else null,
                 if (props.config.clientUser.canEditAllLocationAccess) {

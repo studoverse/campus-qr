@@ -24,8 +24,9 @@ suspend fun ApplicationCall.userFrontend() {
   val location = locationId?.let { id -> getLocationOrNull(id) }
 
   val configs = getConfigs(language)
-  val showVerificationAnimation = runOnDb { getConfig<Int>("showVerificationAnimation") } == 1
+  val showVerificationAnimation = runOnDb { getConfig<Boolean>("showVerificationAnimation") }
   val autoCheckoutMs = runOnDb { getConfig<Int>("autoCheckOutMinutes") } * 60 * 1000
+  val liveCheckInsViewEnabled = runOnDb { getConfig<Boolean>("liveCheckInsViewEnabled") }
 
   val now = Date()
 
@@ -117,7 +118,10 @@ suspend fun ApplicationCall.userFrontend() {
                 button(classes = "submit") {
                   id = "submit-button"
                   type = ButtonType.button
-                  +LocalizedString("Check in at ${location.name}", "Check in bei ${location.name}").get(this@userFrontend)
+                  +LocalizedString(
+                    "Check in at ${location.name}",
+                    "Check in bei ${location.name}"
+                  ).get(this@userFrontend)
                 }
                 div("form-acceptTos") {
                   checkBoxInput {
@@ -171,7 +175,9 @@ suspend fun ApplicationCall.userFrontend() {
                             +"""
                             <svg>
                               <symbol id="s-text">
-                                <text text-anchor="middle" x="50%" y="90%">${now.date.toString().padStart(2, '0')}</text>
+                                <text text-anchor="middle" x="50%" y="90%">${
+                              now.date.toString().padStart(2, '0')
+                            }</text>
                               </symbol>
           
                               <g class = "g-ants">
@@ -231,7 +237,7 @@ suspend fun ApplicationCall.userFrontend() {
             }
             campusCheckins(language, hidden = true)
           }
-          campusFooter(language, configs)
+          campusFooter(language, configs, liveCheckInLocationId = locationId.takeIf { liveCheckInsViewEnabled })
         }
       }
     }
@@ -259,7 +265,58 @@ suspend fun ApplicationCall.checkOutView() {
   }
 }
 
-fun FlowContent.campusFooter(language: String, configs: Map<String, String>) {
+suspend fun ApplicationCall.liveCheckInsView() {
+  val configs = getConfigs(language)
+  respondHtml(HttpStatusCode.OK) {
+    lang = language
+    headTemplate("Live", css = "userFrontend/userFrontend.css", js = "userFrontend/liveCheckInsView.js")
+    body {
+      noScript {
+        +"You need to enable JavaScript to run this app."
+      }
+      div {
+        id = "all-content-wrapper"
+        campusHeader(configs.getValue("logoUrl"))
+        div("content") {
+          div("qr-code-container centered") {}
+          h2("live-check-in-count-header centered") {
+            span("blinking-dot") {
+              id = "blinking-dot"
+            }
+            +LocalizedString(
+              "Live - currently checked in",
+              "Live - derzeit eingecheckt",
+            ).get(language)
+          }
+          span("centered") {
+            id = "live-check-in-count"
+          }
+
+          div("centered") {
+            id = "live-check-in-disabled"
+            p {
+              +LocalizedString(
+                "Auto refresh disabled. Click on the button below to re-enable auto refresh.",
+                "Die automatische Aktualisierung ist deaktiviert. Klicken Sie auf die Schaltfläche unten, um die automatische Aktualisierung wieder zu aktivieren."
+              ).get(language)
+            }
+            button {
+              id = "re-enable-refreshing-button"
+              +LocalizedString(
+                "Re-enable auto refresh",
+                "Automatische Aktualisierung wieder einschalten"
+              ).get(language)
+            }
+          }
+
+        }
+        campusFooter(language, configs)
+      }
+    }
+  }
+}
+
+fun FlowContent.campusFooter(language: String, configs: Map<String, String>, liveCheckInLocationId: String? = null) {
   footer {
     val userFooterAdditionalInfoUrl = configs.getValue("userFooterAdditionalInfoUrl")
     if (userFooterAdditionalInfoUrl.isNotEmpty()) {
@@ -285,6 +342,16 @@ fun FlowContent.campusFooter(language: String, configs: Map<String, String>) {
       target = "_blank"
       href = configs.getValue("imprintUrl")
       +configs.getValue("imprintText")
+    }
+    liveCheckInLocationId?.let { locationId ->
+      a {
+        href = "/campus-qr/liveCheckIns?l=${locationId}"
+        target = "_blank"
+        +LocalizedString(
+          "Live - currently checked in",
+          "Live - derzeit eingecheckt",
+        ).get(language)
+      }
     }
   }
 }

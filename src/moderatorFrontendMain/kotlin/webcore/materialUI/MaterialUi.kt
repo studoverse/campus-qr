@@ -248,6 +248,10 @@ val infoOutlinedIcon: RClass<IconProps> = importedInfoOutlinedIcon.default
 private external val importedImageRoundedIcon: dynamic
 val imageRoundedIcon: RClass<IconProps> = importedImageRoundedIcon.default
 
+@JsModule("@material-ui/icons/SettingsBackupRestore")
+private external val importedSettingsBackupRestoreIcon: dynamic
+val settingsBackupRestoreIcon: RClass<IconProps> = importedSettingsBackupRestoreIcon.default
+
 @JsModule("@material-ui/icons/Fullscreen")
 private external val importedFullscreenIcon: dynamic
 val fullscreenIcon: RClass<IconProps> = importedFullscreenIcon.default

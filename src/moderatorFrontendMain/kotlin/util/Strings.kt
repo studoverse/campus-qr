@@ -733,6 +733,12 @@ object Strings {
         "Bitte kontaktieren Sie das Studo Team für weitere Unterstützung oder falls Sie weitere " +
         "Konfigurationsparameter wünschen."
   )
+
+  val live_check_ins = LocalizedString(
+    "Live - currently checked in",
+    "Live - derzeit eingecheckt",
+  )
+
 }
 
 val UserPermission.localizedString: LocalizedString
