@@ -5,7 +5,7 @@ import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.http.*
 import kotlinx.html.*
-
+import com.studo.campusqr.extensions.get
 
 suspend fun ApplicationCall.index() {
   respondHtml(HttpStatusCode.OK) {

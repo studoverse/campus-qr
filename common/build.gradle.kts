@@ -3,10 +3,9 @@ plugins {
 }
 
 kotlin {
-  jvm {
-    withJava()
-  }
+  jvm()
   js {
+    useCommonJs()
     browser()
   }
 
@@ -19,6 +18,5 @@ kotlin {
 repositories {
   mavenCentral()
   maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
-  maven("https://jitpack.io")
 }
 

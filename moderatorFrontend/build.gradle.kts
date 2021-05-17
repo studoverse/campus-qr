@@ -57,13 +57,13 @@ tasks {
   register<Copy>("copyProductionBuildToPreProcessedResources") {
     dependsOn("browserProductionWebpack") // Build production version
     from("build/distributions")
-    into("../server/src/main/resources/studo-connect/")
+    into("../server/src/main/resources/moderatorFrontend/")
   }
 
   register<Copy>("copyProductionBuildToPostProcessedResources") {
     dependsOn("browserProductionWebpack") // Build production version
     from("build/distributions")
-    into("../server/build/resources/main/studo-connect/")
+    into("../server/build/resources/main/moderatorFrontend/")
   }
 
   register("copyProductionBuildToAllResources") {
@@ -71,7 +71,3 @@ tasks {
     dependsOn("copyProductionBuildToPreProcessedResources")
   }
 }
-
-
-/*
-tasks*/

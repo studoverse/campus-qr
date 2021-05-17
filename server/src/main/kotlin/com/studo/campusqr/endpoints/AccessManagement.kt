@@ -218,10 +218,10 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
           BackendAccess::locationId setTo locationId
         }
         if (allowedEmails != null) {
-          BackendAccess::allowedEmails setTo allowedEmails.toList()
+          BackendAccess::allowedEmails setTo allowedEmails!!.toList()
         }
         if (dateRanges != null) {
-          BackendAccess::dateRanges setTo dateRanges.map { DateRange(it) }
+          BackendAccess::dateRanges setTo dateRanges!!.map { DateRange(it) }
         }
         if (note != null) {
           BackendAccess::note setTo note

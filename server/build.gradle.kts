@@ -35,29 +35,24 @@ application {
 }
 
 tasks {
-
-  getByName<Jar>("shadowJar") {
-    /*
-    dependsOn(tasks.getByName("moderatorFrontendBrowserProductionWebpack"))
-    val moderatorFrontendBrowserProductionWebpack =
-      tasks.getByName<KotlinWebpack>("moderatorFrontendBrowserProductionWebpack")
-    from(
-      File(
-        moderatorFrontendBrowserProductionWebpack.destinationDirectory,
-        moderatorFrontendBrowserProductionWebpack.outputFileName
-      )
-    )*/
+  compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
   }
+  compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+  }
+
   getByName<JavaExec>("run") {
     dependsOn(shadowJar)
     classpath(shadowJar)
   }
 
   shadowJar {
+    dependsOn(":moderatorFrontend:copyProductionBuildToAllResources")
     setProperty("archiveFileName", "Server.jar")
   }
 
-// Copy Server.jar from build folder to root folder so we can delete all other folders
+  // Copy Server.jar from build folder to root folder so we can delete all other folders
   register<Copy>("copyServer") {
     dependsOn(shadowJar)
     from(file("build/libs/Server.jar"))
@@ -68,5 +63,4 @@ tasks {
     group = "distribution"
     dependsOn(getByName("copyServer"))
   }
-
 }

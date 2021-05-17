@@ -9,7 +9,7 @@ import io.ktor.html.*
 import io.ktor.http.*
 import kotlinx.html.*
 import java.util.*
-
+import com.studo.campusqr.extensions.get
 
 suspend fun ApplicationCall.userFrontend() {
   val fullLocationId = parameters["l"]

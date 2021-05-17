@@ -16,6 +16,7 @@ import kotlin.collections.getValue
 import kotlin.collections.listOfNotNull
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
+import com.studo.campusqr.extensions.get
 
 suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
   if (!sessionToken.isAuthenticated) {
@@ -147,11 +148,11 @@ fun FlowContent.renderLocation(location: ClientLocation, configs: Map<String, St
   if (location.seatCount != null) {
     if (multiSeatLocationsUseSmallCheckinPages) {
       // Put two portrait A5 pages side by side on each landscape A4 sheet
-      for (skippedSeat in 1..location.seatCount step 2) {
+      for (skippedSeat in 1..location.seatCount!! step 2) {
         div("small-pages-container") { // Crops the inner container
           div("small-pages-scaling-container") { // Scales content to 0.5
             // Render the two pages as if they were full-size
-            for (seat in listOfNotNull(skippedSeat, if (skippedSeat < location.seatCount) skippedSeat + 1 else null)) {
+            for (seat in listOfNotNull(skippedSeat, if (skippedSeat < location.seatCount!!) skippedSeat + 1 else null)) {
               val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
               renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs, smallPage = true)
             }
@@ -159,7 +160,7 @@ fun FlowContent.renderLocation(location: ClientLocation, configs: Map<String, St
         }
       }
     } else {
-      for (seat in 1..location.seatCount) {
+      for (seat in 1..location.seatCount!!) {
         val paddedSeat = seat.toString().padStart(location.seatCount.toString().length, '0')
         renderQrCodePage("${location.name} #$paddedSeat", "${location.id}-$seat", configs, smallPage = false)
         div("break") {}
