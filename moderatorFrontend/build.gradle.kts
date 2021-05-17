@@ -10,15 +10,14 @@ repositories {
 kotlin {
   js {
     useCommonJs()
-    browser {
-      binaries.executable()
-    }
+    browser()
   }
 }
 
 dependencies {
   implementation(kotlin("stdlib-js"))
   implementation(project(":common"))
+
   implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.3")
   api("org.jetbrains:kotlin-react:16.13.1-pre.123-kotlin-1.4.10")
   api("org.jetbrains:kotlin-react-dom:16.13.1-pre.123-kotlin-1.4.10")
