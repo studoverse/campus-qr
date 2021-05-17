@@ -7,7 +7,6 @@ plugins {
 
 repositories {
   mavenCentral()
-  maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
   maven("https://jitpack.io")
 }
 
@@ -48,7 +47,7 @@ tasks {
   }
 
   shadowJar {
-    dependsOn(":moderatorFrontend:copyProductionBuildToAllResources")
+    dependsOn(getByPath(":moderatorFrontend:copyProductionBuildToAllResources"))
     setProperty("archiveFileName", "Server.jar")
   }
 
@@ -62,5 +61,13 @@ tasks {
   register("stage") {
     group = "distribution"
     dependsOn(getByName("copyServer"))
+  }
+
+  build {
+    mustRunAfter(clean)
+  }
+
+  processResources {
+    dependsOn(getByPath(":moderatorFrontend:copyProductionBuildToAllResources"))
   }
 }
