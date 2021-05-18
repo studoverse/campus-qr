@@ -47,7 +47,6 @@ tasks {
   }
 
   shadowJar {
-    dependsOn(getByPath(":moderatorFrontend:copyProductionBuildToAllResources"))
     setProperty("archiveFileName", "Server.jar")
   }
 
