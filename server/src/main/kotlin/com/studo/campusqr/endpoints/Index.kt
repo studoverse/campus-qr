@@ -1,12 +1,11 @@
 package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.utils.LocalizedString
-import com.studo.campusqr.extensions.get
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.http.*
 import kotlinx.html.*
-
+import com.studo.campusqr.extensions.get
 
 suspend fun ApplicationCall.index() {
   respondHtml(HttpStatusCode.OK) {

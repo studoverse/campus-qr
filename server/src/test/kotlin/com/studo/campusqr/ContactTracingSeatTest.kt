@@ -6,12 +6,7 @@ import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.endpoints.generateContactTracingReport
 import com.studo.campusqr.extensions.addDays
-import com.studo.campusqr.extensions.addMinutes
-import com.studo.campusqr.extensions.addSeconds
-import com.studo.campusqr.extensions.runOnDb
-import com.moshbit.katerbase.MongoMainEntry
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import java.util.*

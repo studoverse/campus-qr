@@ -1,10 +1,10 @@
 package com.studo.campusqr
 
+import com.moshbit.katerbase.greater
 import com.studo.campusqr.database.CheckIn
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.automaticCheckOut
 import com.studo.campusqr.extensions.addMinutes
-import com.moshbit.katerbase.greater
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.util.*

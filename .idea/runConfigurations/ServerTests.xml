@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ServerTests" type="JUnit" factoryName="JUnit">
-    <module name="CampusQR.serverTest" />
+    <module name="CampusQR.server.test" />
     <useClassPathOnly />
     <option name="PACKAGE_NAME" value="com.studo.campusqr" />
     <option name="MAIN_CLASS_NAME" value="com.studo.campusqr.CampusQrTestSuite" />
