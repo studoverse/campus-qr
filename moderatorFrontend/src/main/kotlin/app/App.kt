@@ -324,7 +324,7 @@ interface AppClasses : RProps {
   var verticalCentered: String
 }
 
-private val styles = { _: dynamic ->
+private val style = { _: dynamic ->
   js {
     verticalCentered = js {
       display = "flex"
@@ -348,6 +348,6 @@ object GlobalCss {
   const val fullWidth = "fullWidth"
 }
 
-private val styledApp = withStyles<AppProps, App>(styles = styles)
+private val styledApp = withStyles<AppProps, App>(styles = style)
 
 fun RBuilder.app() = styledApp {}

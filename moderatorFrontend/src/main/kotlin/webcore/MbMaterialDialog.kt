@@ -83,7 +83,7 @@ class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
   }
 }
 
-private val styles = { _: dynamic ->
+private val style = { _: dynamic ->
   js {
     dialogStyle = js {
       margin = "12px"
@@ -96,7 +96,7 @@ private val styles = { _: dynamic ->
   }
 }
 
-private val styledMbMaterialDialog = withStyles<MbDialogProps, MbMaterialDialog>(styles)
+private val styledMbMaterialDialog = withStyles<MbDialogProps, MbMaterialDialog>(style)
 
 fun RBuilder.mbMaterialDialog(
     show: Boolean = false,

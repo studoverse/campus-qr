@@ -67,7 +67,7 @@ class MbSnackbar : RComponent<MbSnackbarProps, RState>() {
 }
 
 
-private val styles = { theme: dynamic ->
+private val style = { theme: dynamic ->
   js {
     root = js {
       marginBottom = "20px"
@@ -103,7 +103,7 @@ private val styles = { theme: dynamic ->
   }
 }
 
-private val styledSnackbar = withStyles<MbSnackbarProps, MbSnackbar>(styles, options = js { withTheme = true })
+private val styledSnackbar = withStyles<MbSnackbarProps, MbSnackbar>(style, options = js { withTheme = true })
 
 // you only need to define one snackbar in your page
 // control the message, type, positions through state variables

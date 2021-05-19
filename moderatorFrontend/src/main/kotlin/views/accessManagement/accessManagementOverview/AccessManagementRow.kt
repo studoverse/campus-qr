@@ -204,10 +204,10 @@ private fun Date.format(showDate: Boolean = true): String {
 
 interface AccessManagementTableRowClasses
 
-private val styles = { _: dynamic ->
+private val style = { _: dynamic ->
 }
 
-private val styled = withStyles<AccessManagementTableRowProps, AccessManagementTableRow>(styles)
+private val styled = withStyles<AccessManagementTableRowProps, AccessManagementTableRow>(style)
 
 fun RBuilder.renderAccessManagementRow(config: Config) = styled {
   attrs.config = config

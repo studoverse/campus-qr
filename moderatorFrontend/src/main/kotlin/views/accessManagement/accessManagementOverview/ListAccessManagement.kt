@@ -192,10 +192,10 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
 
 interface ListAccessManagementClasses
 
-private val styles = { _: dynamic ->
+private val style = { _: dynamic ->
 }
 
-private val styled = withStyles<ListAccessManagementProps, ListAccessManagement>(styles)
+private val styled = withStyles<ListAccessManagementProps, ListAccessManagement>(style)
 
 fun RBuilder.renderAccessManagementList(locationId: String?) = styled {
   // Set component attrs here

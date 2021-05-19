@@ -95,7 +95,7 @@ class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
   }
 }
 
-private val styles = { _: dynamic ->
+private val style = { _: dynamic ->
   js {
     menuItemStyle = js {
       fontSize = 14
@@ -106,7 +106,7 @@ private val styles = { _: dynamic ->
   }
 }
 
-private val styledChatDrawer = withStyles<MaterialMenuProps, MaterialMenu>(styles)
+private val styledChatDrawer = withStyles<MaterialMenuProps, MaterialMenu>(style)
 
 fun RBuilder.materialMenu(fontSize: String? = null, className: String = "", menuItems: List<MenuItem>) =
   styledChatDrawer {
