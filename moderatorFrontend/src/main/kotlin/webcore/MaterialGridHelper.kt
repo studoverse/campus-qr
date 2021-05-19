@@ -15,7 +15,8 @@ fun RBuilder.gridContainer(
   spacing: Int = 1,
   alignItems: String = "baseline",
   containerStyle: String? = null,
-  items: RBuilder.() -> Unit) {
+  items: RBuilder.() -> Unit
+) {
   grid {
     attrs.className = containerStyle
     attrs.container = true

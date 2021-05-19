@@ -28,8 +28,8 @@ interface AccessManagementTableRowProps : RProps {
   }
 
   class Config(
-      val accessManagement: ClientAccessManagement,
-      val onOperationFinished: (operation: Operation, success: Boolean) -> Unit
+    val accessManagement: ClientAccessManagement,
+    val onOperationFinished: (operation: Operation, success: Boolean) -> Unit
   )
 
   var config: Config
@@ -51,24 +51,26 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
   }
 
   private fun RBuilder.renderEditAccessManagementDialog() = mbMaterialDialog(
-      show = true,
-      title = Strings.location_edit.get(),
-      customContent = {
-        renderAccessManagementDetails(AccessManagementDetailsProps.Config.Edit(
-            accessManagement = props.config.accessManagement,
-            onEdited = { success ->
-              props.config.onOperationFinished(Operation.Edit, success)
-              setState {
-                showAccessManagementEditDialog = false
-              }
-            }))
-      },
-      buttons = null,
-      onClose = {
-        setState {
-          showAccessManagementEditDialog = false
-        }
+    show = true,
+    title = Strings.location_edit.get(),
+    customContent = {
+      renderAccessManagementDetails(
+        AccessManagementDetailsProps.Config.Edit(
+          accessManagement = props.config.accessManagement,
+          onEdited = { success ->
+            props.config.onOperationFinished(Operation.Edit, success)
+            setState {
+              showAccessManagementEditDialog = false
+            }
+          })
+      )
+    },
+    buttons = null,
+    onClose = {
+      setState {
+        showAccessManagementEditDialog = false
       }
+    }
   )
 
   private fun RBuilder.renderDetailsAccessManagementDialog() = mbMaterialDialog(

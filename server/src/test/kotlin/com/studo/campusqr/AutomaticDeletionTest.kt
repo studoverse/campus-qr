@@ -21,16 +21,16 @@ class AutomaticDeletionTest {
       assertEquals(0, count())
 
       val sessionTokens = listOf(
-          SessionToken().apply {
-            _id = randomId()
-            userId = testUserId
-            expiryDate = past
-          },
-          SessionToken().apply {
-            _id = randomId()
-            userId = testUserId
-            expiryDate = future
-          }
+        SessionToken().apply {
+          _id = randomId()
+          userId = testUserId
+          expiryDate = past
+        },
+        SessionToken().apply {
+          _id = randomId()
+          userId = testUserId
+          expiryDate = future
+        }
       )
 
       sessionTokens.forEach { insertOne(it, upsert = false) }
@@ -65,8 +65,8 @@ class AutomaticDeletionTest {
       assertEquals(0, count())
 
       val checkIns = listOf(
-          createTestCheckIn(oneWeekAgo),
-          createTestCheckIn(twoMonthAgo)
+        createTestCheckIn(oneWeekAgo),
+        createTestCheckIn(twoMonthAgo)
       )
 
       checkIns.forEach { insertOne(it, upsert = false) }
@@ -109,18 +109,18 @@ class AutomaticDeletionTest {
       assertEquals(0, count())
 
       val accesses = listOf(
-          // To Date is in the future
-          createTestAccess(
-              allowedEmails = testEmails,
-              dateRanges = listOf(DateRange(from = twoMonthAgo, to = future)),
-              createdDate = twoMonthAgo
-          ),
-          // To Date is in the past
-          createTestAccess(
-              allowedEmails = testEmails,
-              dateRanges = listOf(DateRange(from = threeMonthAgo, to = twoMonthAgo)),
-              createdDate = twoMonthAgo
-          ),
+        // To Date is in the future
+        createTestAccess(
+          allowedEmails = testEmails,
+          dateRanges = listOf(DateRange(from = twoMonthAgo, to = future)),
+          createdDate = twoMonthAgo
+        ),
+        // To Date is in the past
+        createTestAccess(
+          allowedEmails = testEmails,
+          dateRanges = listOf(DateRange(from = threeMonthAgo, to = twoMonthAgo)),
+          createdDate = twoMonthAgo
+        ),
       )
 
       accesses.forEach { insertOne(it, upsert = false) }

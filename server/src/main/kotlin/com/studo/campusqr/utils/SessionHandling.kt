@@ -31,9 +31,9 @@ suspend fun ApplicationCall.getAuthenticatedCall(): AuthenticatedApplicationCall
 }
 
 class AuthenticatedApplicationCall(
-    private val call: ApplicationCall,
-    val sessionToken: SessionToken,
-    val user: BackendUser
+  private val call: ApplicationCall,
+  val sessionToken: SessionToken,
+  val user: BackendUser
 ) : ApplicationCall by call
 
 suspend fun ApplicationCall.createNewSessionToken(): SessionToken {

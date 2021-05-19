@@ -30,16 +30,16 @@ class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(
   override fun RBuilder.render() {
 
     renderAppShellDrawer(
-        AppShellDrawerProps.Config(
-            props.mobileNavOpen,
-            props.hideDrawer,
-            props.drawerList,
-            props.toolbarIcon,
-            props.themeColor,
-            props.smallToolbar,
-            props.stickyNavigation,
-            props.appBarElevation
-        )
+      AppShellDrawerProps.Config(
+        props.mobileNavOpen,
+        props.hideDrawer,
+        props.drawerList,
+        props.toolbarIcon,
+        props.themeColor,
+        props.smallToolbar,
+        props.stickyNavigation,
+        props.appBarElevation
+      )
     )
 
     val contentClasses = "${props.classes.content}" +

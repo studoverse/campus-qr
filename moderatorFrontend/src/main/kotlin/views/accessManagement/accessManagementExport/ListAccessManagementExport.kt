@@ -47,8 +47,8 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
   }
 
   override fun componentDidUpdate(
-      prevProps: ListAccessManagementExportProps, prevState: ListAccessManagementExportState,
-      snapshot: Any
+    prevProps: ListAccessManagementExportProps, prevState: ListAccessManagementExportState,
+    snapshot: Any
   ) {
     if (prevProps.locationId != props.locationId) {
       setState {

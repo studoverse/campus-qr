@@ -36,11 +36,13 @@ class ContactTracingSeatTest {
     with(MainDatabase.getCollection<BackendSeatFilter>()) {
       clear()
       assertEquals(0, count())
-      insertOne(createTestFilter(
-        locationId = location1,
-        seat = 2,
-        filteredSeats = listOf(1, 3)
-      ), upsert = true)
+      insertOne(
+        createTestFilter(
+          locationId = location1,
+          seat = 2,
+          filteredSeats = listOf(1, 3)
+        ), upsert = true
+      )
       assertEquals(1, count())
     }
 
@@ -59,11 +61,13 @@ class ContactTracingSeatTest {
     with(MainDatabase.getCollection<BackendSeatFilter>()) {
       clear()
       assertEquals(0, count())
-      insertOne(createTestFilter(
-        locationId = location1,
-        seat = 1,
-        filteredSeats = listOf(2, 3)
-      ), upsert = true)
+      insertOne(
+        createTestFilter(
+          locationId = location1,
+          seat = 1,
+          filteredSeats = listOf(2, 3)
+        ), upsert = true
+      )
       assertEquals(1, count())
     }
 
@@ -82,11 +86,13 @@ class ContactTracingSeatTest {
     with(MainDatabase.getCollection<BackendSeatFilter>()) {
       clear()
       assertEquals(0, count())
-      insertOne(createTestFilter(
-        locationId = location2,
-        seat = 2,
-        filteredSeats = listOf(1, 3)
-      ), upsert = true)
+      insertOne(
+        createTestFilter(
+          locationId = location2,
+          seat = 2,
+          filteredSeats = listOf(1, 3)
+        ), upsert = true
+      )
       assertEquals(1, count())
     }
 

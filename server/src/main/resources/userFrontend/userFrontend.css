@@ -420,7 +420,7 @@ a, a:visited {
   text-align: center;
 }
 
-#live-check-in-count  {
+#live-check-in-count {
   font-size: 120px;
 }
 
@@ -446,6 +446,7 @@ footer a {
     opacity: 0.2;
   }
 }
+
 @-webkit-keyframes blink-animation {
   50% {
     opacity: 0.2;

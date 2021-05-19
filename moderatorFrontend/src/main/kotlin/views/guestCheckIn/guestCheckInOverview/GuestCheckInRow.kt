@@ -22,6 +22,7 @@ import kotlin.js.json
 interface GuestCheckInRowProps : RProps {
   var classes: GuestCheckInRowClasses
   var config: Config
+
   class Config(
     val activeCheckIn: ActiveCheckIn,
     val onCheckedOut: () -> Unit,

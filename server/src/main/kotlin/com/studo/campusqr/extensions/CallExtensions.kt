@@ -18,7 +18,7 @@ suspend fun ApplicationCall.respondError(message: String) = respond(HttpStatusCo
 
 // Special handling for Enums, we just represent them as Strings
 suspend fun <T : Enum<T>> ApplicationCall.respondEnum(enum: T, status: HttpStatusCode? = null) =
-    respondText(enum.name, status = status)
+  respondText(enum.name, status = status)
 
 // Convert response using Jackson
 private suspend fun ApplicationCall.respondAnyObject(payload: Any) {

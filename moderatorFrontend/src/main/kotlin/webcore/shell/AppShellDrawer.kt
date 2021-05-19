@@ -6,14 +6,14 @@ import webcore.materialUI.*
 
 interface AppShellDrawerProps : RProps {
   class Config(
-      var mobileNavOpen: Boolean,
-      var hideDrawer: Boolean,
-      var drawerList: RElementBuilder<DrawerProps>.() -> Unit,
-      var toolbarIcon: (RElementBuilder<ToolbarProps>.() -> Unit)?,
-      var themeColor: String,
-      var smallToolbar: Boolean,
-      var stickyNavigation: Boolean,
-      var appBarElevation: Int?
+    var mobileNavOpen: Boolean,
+    var hideDrawer: Boolean,
+    var drawerList: RElementBuilder<DrawerProps>.() -> Unit,
+    var toolbarIcon: (RElementBuilder<ToolbarProps>.() -> Unit)?,
+    var themeColor: String,
+    var smallToolbar: Boolean,
+    var stickyNavigation: Boolean,
+    var appBarElevation: Int?
   )
 
   var classes: AppShellDrawerClasses
@@ -166,7 +166,7 @@ private val AppShellDrawerStyle: (dynamic) -> dynamic = { theme ->
 }
 
 private val styled =
-    withStyles<AppShellDrawerProps, AppShellDrawer>(AppShellDrawerStyle, options = js { withTheme = true })
+  withStyles<AppShellDrawerProps, AppShellDrawer>(AppShellDrawerStyle, options = js { withTheme = true })
 
 fun RBuilder.renderAppShellDrawer(config: AppShellDrawerProps.Config) = styled {
   attrs.config = config

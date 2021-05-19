@@ -29,8 +29,8 @@ internal suspend fun automaticCheckOut() {
     val autoCheckOutMinutes: Int = getConfig("autoCheckOutMinutes")
 
     val updateResult = getCollection<CheckIn>().updateMany(
-        CheckIn::checkOutDate equal null,
-        CheckIn::date lower now.addMinutes(-autoCheckOutMinutes)
+      CheckIn::checkOutDate equal null,
+      CheckIn::date lower now.addMinutes(-autoCheckOutMinutes)
     ) {
       CheckIn::checkOutDate setTo now
       CheckIn::autoCheckOut setTo true
