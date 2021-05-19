@@ -1,6 +1,5 @@
 package views.users
 
-import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emailRegex
@@ -11,6 +10,7 @@ import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
 import util.Strings
+import util.apiBase
 import util.get
 import util.localizedString
 import views.common.spacer
@@ -239,7 +239,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
             formControlLabel {
               attrs.control = mCheckbox {
                 attrs.checked = userPermission in state.userPermissions
-                attrs.onChange = { event, checked ->
+                attrs.onChange = { _, checked ->
                   val existingPermissions = state.userPermissions
                   if (checked) {
                     setState { userPermissions = existingPermissions + userPermission }
@@ -284,13 +284,11 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 }
 
 interface AddUserClasses {
-  // Keep in sync with AddUserStyle!
   var addButton: String
   var userPermissionsSwitch: String
 }
 
-private val AddUserStyle = { theme: dynamic ->
-  // Keep in sync with AddUserClasses!
+private val style = { _: dynamic ->
   js {
     addButton = js {
       marginBottom = 16
@@ -304,7 +302,7 @@ private val AddUserStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<AddUserProps, AddUser>(AddUserStyle)
+private val styled = withStyles<AddUserProps, AddUser>(style)
 
 fun RBuilder.renderAddUser(config: Config, userData: UserData) = styled {
   attrs.config = config

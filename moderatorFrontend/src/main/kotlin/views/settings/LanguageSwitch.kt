@@ -46,7 +46,7 @@ interface LanguageSwitchClasses {
   var root: String
 }
 
-private val LanguageSwitchStyle = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     root = js {
       display = "flex"
@@ -57,6 +57,6 @@ private val LanguageSwitchStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<LanguageSwitchProps, LanguageSwitch>(LanguageSwitchStyle)
+private val styled = withStyles<LanguageSwitchProps, LanguageSwitch>(style)
 
 fun RBuilder.renderLanguageSwitch() = styled {}

@@ -69,16 +69,13 @@ class LoginView : RComponent<LoginViewProps, LoginViewState>() {
 }
 
 interface LoginViewClasses {
-  // Keep in sync with views.login.getLoginViewStyle!
   var cardOuter: String
   var cardHeader: String
   var logoImg: String
   var companyInfo: String
-  var companyInfoHeart: String
 }
 
-private val LoginViewStyle = { theme: dynamic ->
-  // Keep in sync with views.login.LoginViewClasses!
+private val style = { _: dynamic ->
   js {
     cardOuter = js {
       maxWidth = 450
@@ -106,7 +103,7 @@ private val LoginViewStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<LoginViewProps, LoginView>(LoginViewStyle)
+private val styled = withStyles<LoginViewProps, LoginView>(style)
 
 fun RBuilder.renderLoginView(studoUserData: UserData, mode: LoginMode) = styled {
   // Set component attrs here

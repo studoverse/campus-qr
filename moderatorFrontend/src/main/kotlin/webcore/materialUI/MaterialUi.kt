@@ -1,3 +1,5 @@
+@file:Suppress("UnsafeCastFromDynamic", "unused", "PropertyName") // Don't warn about api design of external lib
+
 package webcore.materialUI
 
 import org.w3c.dom.HTMLButtonElement
@@ -805,39 +807,41 @@ fun useTheme() = importedUseTheme.default()
 @JsModule("@material-ui/core/styles/withStyles")
 external val importedWithStyles: dynamic
 
+@Suppress("UNUSED_PARAMETER")
 private fun <T : RClass<*>> importedWithStyles(styles: dynamic, options: dynamic = undefined): (T) -> T =
-    importedWithStyles.default(styles)
+  importedWithStyles.default(styles)
 
 
 fun <P : RProps, T : RClass<P>> withStyles(
-    styles: dynamic,
-    component: T,
-    options: dynamic = undefined
+  styles: dynamic,
+  component: T,
+  options: dynamic = undefined
 ): T {
   return ((importedWithStyles<T>(styles, options))(component))
 }
 
 fun <P : RProps, T : RClass<P>> RBuilder.withStyles(
-    styles: dynamic,
-    component: T,
-    options: dynamic = undefined,
-    handler: RElementBuilder<P>.() -> Unit
+  styles: dynamic,
+  component: T,
+  options: dynamic = undefined,
+  handler: RElementBuilder<P>.() -> Unit
 ): T {
   return ((importedWithStyles<T>(styles, options))(component)).also { it.invoke(handler) }
 }
 
+@Suppress("UnnecessaryVariable", "FunctionName")
 fun <P : RProps, C : Component<P, *>> withStyles_compilerBug(
-    styles: dynamic,
-    options: dynamic = undefined,
-    kClass: KClass<C>
+  styles: dynamic,
+  options: dynamic = undefined,
+  kClass: KClass<C>
 ): RClass<P> {
   val higherOrderComponent: RClass<P> = importedWithStyles.default(styles, options)(kClass.js)
   return higherOrderComponent
 }
 
 inline fun <P : RProps, reified C : Component<P, *>> withStyles(
-    styles: dynamic,
-    options: dynamic = undefined
+  styles: dynamic,
+  options: dynamic = undefined
 ): RClass<P> {
   return withStyles_compilerBug(styles, options, C::class)
 }

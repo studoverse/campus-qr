@@ -1,6 +1,5 @@
 package views.common
 
-import Url
 import app.GlobalCss
 import app.RouteContext
 import app.routeContext
@@ -10,6 +9,7 @@ import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.div
+import util.Url
 import util.toRoute
 import webcore.materialUI.*
 
@@ -81,11 +81,9 @@ interface ToolbarViewClasses {
   var headerButton: String
   var headerButtonsWrapper: String
   var backButton: String
-  // Keep in sync with ToolbarViewStyle!
 }
 
-private val ToolbarViewStyle = { theme: dynamic ->
-  // Keep in sync with ToolbarViewClasses!
+private val style = { _: dynamic ->
   js {
     header = js {
       margin = 16
@@ -106,7 +104,7 @@ private val ToolbarViewStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<ToolbarViewProps, ToolbarView>(ToolbarViewStyle)
+private val styled = withStyles<ToolbarViewProps, ToolbarView>(style)
 
 fun RBuilder.renderToolbarView(config: ToolbarViewProps.Config) = styled {
   attrs.config = config

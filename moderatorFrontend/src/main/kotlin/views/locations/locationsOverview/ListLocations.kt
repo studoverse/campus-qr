@@ -1,6 +1,5 @@
 package views.locations.locationsOverview
 
-import apiBase
 import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.UserData
 import com.studo.campusqr.common.canEditLocations
@@ -9,6 +8,7 @@ import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
 import util.Strings
+import util.apiBase
 import util.get
 import views.common.*
 import views.locations.AddLocationProps.Config
@@ -209,17 +209,14 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
   }
 }
 
-interface ListLocationsClasses {
-  // Keep in sync with ListLocationsStyle!
-}
+interface ListLocationsClasses
 
-private val ListLocationsStyle = { theme: dynamic ->
-  // Keep in sync with ListLocationsClasses!
+private val style = { _: dynamic ->
   js {
   }
 }
 
-private val styled = withStyles<ListLocationsProps, ListLocations>(ListLocationsStyle)
+private val styled = withStyles<ListLocationsProps, ListLocations>(style)
 
 fun RBuilder.renderListLocations(userData: UserData) = styled {
   // Set component attrs here

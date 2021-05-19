@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package webcore.extensions
 
 import kotlin.js.Date
@@ -51,15 +53,16 @@ fun Date.parse(year: Int, month: Int, day: Int): Date {
   return this
 }
 
-fun Date.setFullYear(yearValue: Int, monthValue: Int?, dayValue: Int?): Double {
+@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
+private fun Date.setFullYear(yearValue: Int, monthValue: Int?, dayValue: Int?): Double {
   val d = this
-  return js("d.setFullYear(yearValue, monthValue, dayValue)")
+  return js("d.setFullYear(yearValue, monthValue, dayValue)") as Double
 }
 
 fun Date.onSameDayAs(other: Date) =
-    (this.getFullYear() == other.getFullYear() &&
-        this.getDate() == other.getDate() &&
-        this.getMonth() == other.getMonth())
+  (this.getFullYear() == other.getFullYear() &&
+      this.getDate() == other.getDate() &&
+      this.getMonth() == other.getMonth())
 
 fun Date.utcToLocalDate(): Date = Date(getTime() + getTimezoneOffset() * 60 * 1000)
 
@@ -70,11 +73,11 @@ fun Date.localToUtcDate(): Date = Date(getTime() - getTimezoneOffset() * 60 * 10
  * @param month 0 based
  */
 fun Date.with(year: Int? = null, month: Int? = null, day: Int? = null, hour: Int? = null, minute: Int? = null) = Date(
-    year = year ?: this.getFullYear(),
-    month = month ?: this.getMonth(),
-    day = day ?: this.getDate(),
-    hour = hour ?: this.getHours(),
-    minute = minute ?: this.getMinutes()
+  year = year ?: this.getFullYear(),
+  month = month ?: this.getMonth(),
+  day = day ?: this.getDate(),
+  hour = hour ?: this.getHours(),
+  minute = minute ?: this.getMinutes()
 )
 
 

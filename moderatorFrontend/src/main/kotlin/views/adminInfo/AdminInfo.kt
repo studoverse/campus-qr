@@ -65,7 +65,7 @@ interface AdminInfoClasses {
   var container: String
 }
 
-private val AdminInfoStyle = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     header = js {
       marginTop = 8
@@ -88,7 +88,7 @@ private val AdminInfoStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<AdminInfoProps, AdminInfo>(AdminInfoStyle)
+private val styled = withStyles<AdminInfoProps, AdminInfo>(style)
 
 fun RBuilder.renderAdminInfo() = styled {
   // Set component attrs here

@@ -1,23 +1,23 @@
 package views.accessManagement.accessManagementOverview
 
-import MenuItem
-import apiBase
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.ClientDateRange
 import kotlinx.browser.window
-import materialMenu
 import react.*
 import react.dom.br
 import react.dom.strong
 import util.Strings
+import util.apiBase
 import util.get
 import views.accessManagement.AccessManagementDetailsProps
 import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Config
 import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Operation
 import views.accessManagement.renderAccessManagementDetails
+import webcore.MenuItem
 import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.extensions.twoDigitString
+import webcore.materialMenu
 import webcore.materialUI.*
 import webcore.mbMaterialDialog
 import kotlin.js.Date
@@ -202,15 +202,12 @@ private fun Date.format(showDate: Boolean = true): String {
 }
 
 
-interface AccessManagementTableRowClasses {
-  // Keep in sync with LocationTableRowStyle!
+interface AccessManagementTableRowClasses
+
+private val styles = { _: dynamic ->
 }
 
-private val LocationTableRowStyle = { theme: dynamic ->
-  // Keep in sync with LocationTableRowClasses!
-}
-
-private val styled = withStyles<AccessManagementTableRowProps, AccessManagementTableRow>(LocationTableRowStyle)
+private val styled = withStyles<AccessManagementTableRowProps, AccessManagementTableRow>(styles)
 
 fun RBuilder.renderAccessManagementRow(config: Config) = styled {
   attrs.config = config

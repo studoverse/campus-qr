@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package webcore.extensions
 
 import kotlinext.js.js
@@ -12,7 +14,7 @@ fun Double.toFixed(digits: Int): String = this.asDynamic().toFixed(digits)
 fun Float.toFixed(digits: Int): String = this.asDynamic().toFixed(digits)
 
 fun Int.toLocaleString(locale: String = "en", options: dynamic = js { }): String =
-    this.asDynamic().toLocaleString(locale, options) as String
+  this.asDynamic().toLocaleString(locale, options) as String
 
 fun Int.twoDigitString(): String = toLocaleString(options = js {
   minimumIntegerDigits = 2

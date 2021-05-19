@@ -1,6 +1,5 @@
 package views.users
 
-import apiBase
 import com.studo.campusqr.common.ClientUser
 import com.studo.campusqr.common.UserData
 import kotlinext.js.js
@@ -8,6 +7,7 @@ import kotlinx.browser.window
 import react.*
 import react.dom.div
 import util.Strings
+import util.apiBase
 import util.get
 import views.common.*
 import webcore.*
@@ -188,18 +188,12 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 }
 
 interface ListUsersClasses {
-  var subtitle: String
   var dialogContent: String
   var info: String
-  // Keep in sync with ListUsersStyle!
 }
 
-private val ListUsersStyle = { theme: dynamic ->
-  // Keep in sync with ListUsersClasses!
+private val style = { _: dynamic ->
   js {
-    subtitle = js {
-      margin = 16
-    }
     dialogContent = js {
       color = "rgba(0, 0, 0, 0.54)"
     }
@@ -214,7 +208,7 @@ private val ListUsersStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<ListUsersProps, ListUsers>(ListUsersStyle)
+private val styled = withStyles<ListUsersProps, ListUsers>(style)
 
 fun RBuilder.renderUsers(userData: UserData) = styled {
   attrs.userData = userData

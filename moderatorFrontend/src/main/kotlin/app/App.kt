@@ -1,8 +1,6 @@
 package app
 
 import MuiPickersUtilsProvider
-import Url
-import apiBase
 import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emptyToNull
 import kotlinext.js.js
@@ -29,7 +27,7 @@ data class LanguageState(
   val onLanguageChange: (newLang: MbLocalizedStringConfig.SupportedLanguage) -> Unit
 )
 
-val baseUrl = window.location.href.substringBeforeLast("/admin")
+val baseUrl = window.location.href.substringBefore("/admin")
 
 data class RouteContext(val pushRoute: (AppRoute) -> Unit)
 
@@ -37,7 +35,7 @@ val languageContext = createContext(LanguageState(MbLocalizedStringConfig.select
 val routeContext = createContext<RouteContext>()
 
 interface AppProps : RProps {
-  var classes: AppStyles
+  var classes: AppClasses
 }
 
 interface AppState : RState {
@@ -322,11 +320,11 @@ class App : RComponent<AppProps, AppState>() {
   }
 }
 
-interface AppStyles : RProps {
+interface AppClasses : RProps {
   var verticalCentered: String
 }
 
-private val styles = { theme: dynamic ->
+private val styles = { _: dynamic ->
   js {
     verticalCentered = js {
       display = "flex"

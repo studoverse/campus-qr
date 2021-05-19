@@ -50,16 +50,12 @@ class AccessManagementExportTableRow :
   }
 }
 
-interface AccessManagementExportTableRowClasses {
-  // Keep in sync with LocationTableRowStyle!
+interface AccessManagementExportTableRowClasses
+
+private val style = { _: dynamic ->
 }
 
-private val LocationTableRowStyle = { theme: dynamic ->
-  // Keep in sync with LocationTableRowClasses!
-}
-
-private val styled =
-  withStyles<AccessManagementExportTableRowProps, AccessManagementExportTableRow>(LocationTableRowStyle)
+private val styled = withStyles<AccessManagementExportTableRowProps, AccessManagementExportTableRow>(style)
 
 fun RBuilder.renderAccessManagementExportRow(config: AccessManagementExportTableRowProps.Config) = styled {
   attrs.config = config

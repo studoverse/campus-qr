@@ -49,14 +49,14 @@ class MbSnackbar : RComponent<MbSnackbarProps, RState>() {
       snackbarContent {
         attrs {
           className = when (props.config.snackbarType) {
-            MbSnackbarProps.SnackbarType.SUCCESS -> props.classes.success
-            MbSnackbarProps.SnackbarType.ERROR -> props.classes.error
-            MbSnackbarProps.SnackbarType.INFO -> props.classes.info
-            MbSnackbarProps.SnackbarType.WARNING -> props.classes.warning
+            MbSnackbarProps.SnackbarType.SUCCESS -> props.classes.success as String
+            MbSnackbarProps.SnackbarType.ERROR -> props.classes.error as String
+            MbSnackbarProps.SnackbarType.INFO -> props.classes.info as String
+            MbSnackbarProps.SnackbarType.WARNING -> props.classes.warning as String
             null -> ""
           }
-          message = span(classes = props.classes.message) {
-            props.config.snackbarType?.icon?.let { it { attrs.className = props.classes.icon } }
+          message = span(classes = props.classes.message as String) {
+            props.config.snackbarType?.icon?.let { it { attrs.className = props.classes.icon as String } }
             +props.config.message
           }
           props.config.complexMessage?.let { message = it() }

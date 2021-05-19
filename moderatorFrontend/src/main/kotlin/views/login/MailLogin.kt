@@ -1,6 +1,5 @@
 package views.login
 
-import apiBase
 import com.studo.campusqr.common.LoginResult
 import kotlinext.js.js
 import kotlinx.browser.document
@@ -13,6 +12,7 @@ import react.dom.div
 import react.dom.form
 import react.setState
 import util.Strings
+import util.apiBase
 import util.get
 import views.common.spacer
 import webcore.NetworkManager
@@ -143,15 +143,12 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
 }
 
 interface MailLoginClasses {
-  // Keep in sync with MailLoginStyle!
   var inputWrapper: String
   var description: String
   var link: String
-  var logo: String
 }
 
-private val MailLoginStyle = { theme: dynamic ->
-  // Keep in sync with MailLoginClasses!
+private val style = { _: dynamic ->
   js {
     inputWrapper = js {
       padding = 16
@@ -163,15 +160,10 @@ private val MailLoginStyle = { theme: dynamic ->
     link = js {
       color = "white"
     }
-    logo = js {
-      width = 200
-      display = "block"
-      margin = "auto"
-    }
   }
 }
 
-private val styled = withStyles<MailLoginProps, MailLogin>(MailLoginStyle)
+private val styled = withStyles<MailLoginProps, MailLogin>(style)
 
 fun RBuilder.renderMailLogin() = styled {
 }

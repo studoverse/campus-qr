@@ -67,12 +67,10 @@ class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
 }
 
 interface MyAccountClasses {
-  // Keep in sync with MyAccountStyle!
   var container: String
 }
 
-private val MyAccountStyle = { theme: dynamic ->
-  // Keep in sync with MyAccountClasses!
+private val style = { _: dynamic ->
   js {
     container = js {
       marginTop = 32
@@ -83,7 +81,7 @@ private val MyAccountStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<MyAccountProps, MyAccount>(MyAccountStyle)
+private val styled = withStyles<MyAccountProps, MyAccount>(style)
 
 fun RBuilder.renderMyAccount(config: MyAccountProps.Config) = styled {
   // Set component attrs here

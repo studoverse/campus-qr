@@ -1,3 +1,5 @@
+@file:Suppress("unused", "UnsafeCastFromDynamic")
+
 import kotlin.js.Date
 
 @JsModule("@date-io/luxon")

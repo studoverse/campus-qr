@@ -1,6 +1,5 @@
 package views.locations
 
-import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.LocationAccessType
@@ -11,6 +10,7 @@ import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
 import util.Strings
+import util.apiBase
 import util.get
 import util.localizedString
 import views.common.spacer
@@ -173,13 +173,11 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
 }
 
 interface AddLocationClasses {
-  // Keep in sync with AddLocationStyle!
   var addButton: String
   var accessTypeSwitch: String
 }
 
-private val AddLocationStyle = { theme: dynamic ->
-  // Keep in sync with AddLocationClasses!
+private val style = { _: dynamic ->
   js {
     addButton = js {
       marginBottom = 16
@@ -193,7 +191,7 @@ private val AddLocationStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<AddLocationProps, AddLocation>(AddLocationStyle)
+private val styled = withStyles<AddLocationProps, AddLocation>(style)
 
 fun RBuilder.renderAddLocation(config: Config) = styled {
   attrs.config = config

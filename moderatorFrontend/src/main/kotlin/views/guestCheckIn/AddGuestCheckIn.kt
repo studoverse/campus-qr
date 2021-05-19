@@ -1,6 +1,5 @@
 package views.guestCheckIn
 
-import apiBase
 import app.GlobalCss
 import app.baseUrl
 import com.studo.campusqr.common.ClientLocation
@@ -9,6 +8,7 @@ import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
 import util.Strings
+import util.apiBase
 import util.get
 import views.common.centeredProgress
 import views.common.networkErrorView
@@ -17,7 +17,10 @@ import views.common.spacer
 import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
-import webcore.materialUI.*
+import webcore.materialUI.muiAutocomplete
+import webcore.materialUI.muiButton
+import webcore.materialUI.textField
+import webcore.materialUI.withStyles
 import kotlin.js.json
 
 interface AddGuestCheckInProps : RProps {
@@ -240,13 +243,11 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
 fun locationIdWithSeat(locationId: String, seat: Int?) = "$locationId${seat?.let { "-$it" } ?: ""}"
 
 interface AddGuestCheckInClasses {
-  // Keep in sync with AddGuestCheckInStyle!
   var addButton: String
   var form: String
 }
 
-private val AddGuestCheckInStyle = { theme: dynamic ->
-  // Keep in sync with AddGuestCheckInClasses!
+private val style = { _: dynamic ->
   js {
     addButton = js {
       marginBottom = 16
@@ -257,7 +258,7 @@ private val AddGuestCheckInStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<AddGuestCheckInProps, AddGuestCheckIn>(AddGuestCheckInStyle)
+private val styled = withStyles<AddGuestCheckInProps, AddGuestCheckIn>(style)
 
 fun RBuilder.renderAddGuestCheckIn(config: AddGuestCheckInProps.Config) = styled {
   attrs.config = config

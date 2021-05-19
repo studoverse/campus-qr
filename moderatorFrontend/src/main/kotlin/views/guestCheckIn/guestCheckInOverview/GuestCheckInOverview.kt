@@ -1,9 +1,9 @@
 package views.guestCheckIn.guestCheckInOverview
 
-import apiBase
 import com.studo.campusqr.common.ActiveCheckIn
 import react.*
 import util.Strings
+import util.apiBase
 import util.get
 import views.common.*
 import views.guestCheckIn.AddGuestCheckInProps
@@ -142,15 +142,12 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
   }
 }
 
-interface GuestCheckInOverviewClasses {
-  // Keep in sync with ListGuestCheckInStyle!
+interface GuestCheckInOverviewClasses
+
+private val style = { _: dynamic ->
 }
 
-private val GuestCheckInOverviewStyle = { theme: dynamic ->
-  // Keep in sync with ListGuestCheckInClasses!
-}
-
-private val styled = withStyles<GuestCheckinOverviewProps, GuestCheckInOverview>(GuestCheckInOverviewStyle)
+private val styled = withStyles<GuestCheckinOverviewProps, GuestCheckInOverview>(style)
 
 fun RBuilder.renderGuestCheckInOverview() = styled {
   // Set component attrs here

@@ -17,7 +17,7 @@ import webcore.materialUI.withStyles
 interface GenericErrorViewProps : RProps {
   var title: String
   var subtitle: String
-  var classes: PathNotFoundStyles
+  var classes: PathNotFoundClasses
 }
 
 class PathNotFound : RComponent<GenericErrorViewProps, RState>() {
@@ -60,12 +60,12 @@ class GenericErrorView : RComponent<GenericErrorViewProps, RState>() {
   }
 }
 
-interface PathNotFoundStyles {
+interface PathNotFoundClasses {
   var centeredText: String
   var centeredDiv: String
 }
 
-private val styles = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     centeredText = js {
       paddingLeft = 16
@@ -78,10 +78,10 @@ private val styles = { theme: dynamic ->
   }
 }
 
-private val styledPathNotFound = withStyles<GenericErrorViewProps, PathNotFound>(styles)
+private val styledPathNotFound = withStyles<GenericErrorViewProps, PathNotFound>(style)
 fun RBuilder.pathNotFoundView() = styledPathNotFound {}
 
-private val styledGenericError = withStyles<GenericErrorViewProps, GenericErrorView>(styles)
+private val styledGenericError = withStyles<GenericErrorViewProps, GenericErrorView>(style)
 fun RBuilder.genericErrorView(title: String, subtitle: String) = styledGenericError {
   attrs.title = title
   attrs.subtitle = subtitle

@@ -24,12 +24,8 @@ object MbLocalizedStringConfig {
     return if (cachedCookieLang == null) {
       //language=JavaScript
       val langFromCookie =
-          js("""document.cookie.replace(/(?:(?:^|.*;\s*)MbLang\s*\=\s*([^;]*).*$)|^.*$/, "$1")""") as String
-      val newLang = if (langFromCookie.isBlank()) {
-        defaultLanguage.langCode
-      } else {
-        langFromCookie
-      }
+        js("""document.cookie.replace(/(?:(?:^|.*;\s*)MbLang\s*\=\s*([^;]*).*$)|^.*$/, "$1")""") as String
+      val newLang = langFromCookie.ifBlank { defaultLanguage.langCode }
 
       val parsed = SupportedLanguage.fromLangCode(newLang) ?: defaultLanguage
       cachedCookieLang = parsed

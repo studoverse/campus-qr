@@ -1,6 +1,5 @@
 package views.guestCheckIn.guestCheckInOverview
 
-import apiBase
 import com.studo.campusqr.common.ActiveCheckIn
 import com.studo.campusqr.common.extensions.format
 import kotlinx.browser.window
@@ -9,6 +8,7 @@ import react.RComponent
 import react.RProps
 import react.RState
 import util.Strings
+import util.apiBase
 import util.get
 import views.guestCheckIn.locationIdWithSeat
 import webcore.NetworkManager
@@ -73,12 +73,9 @@ class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>()
   }
 }
 
-interface GuestCheckInRowClasses {
-  // Keep in sync with GuestCheckInRowStyle!
-}
+interface GuestCheckInRowClasses
 
-private val GuestCheckInRowStyle = { theme: dynamic ->
-  // Keep in sync with GuestCheckInRowClasses!
+private val GuestCheckInRowStyle = { _: dynamic ->
 }
 
 private val styled = withStyles<GuestCheckInRowProps, GuestCheckInRow>(GuestCheckInRowStyle)

@@ -1,6 +1,5 @@
 package app
 
-import Url
 import com.studo.campusqr.common.UserData
 import kotlinext.js.js
 import react.RBuilder
@@ -8,6 +7,7 @@ import react.RComponent
 import react.RProps
 import react.RState
 import util.AppRoute
+import util.Url
 import views.accessManagement.accessManagementExport.renderAccessManagementExportList
 import views.accessManagement.accessManagementOverview.renderAccessManagementList
 import views.adminInfo.renderAdminInfo
@@ -62,17 +62,14 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
   }
 }
 
-interface AppContentClasses {
-  // Keep in sync with AppContentStyle!
-}
+interface AppContentClasses
 
-private val AppContentStyle = { theme: dynamic ->
-  // Keep in sync with AppContentClasses!
+private val style = { _: dynamic ->
   js {
   }
 }
 
-private val styled = withStyles<AppContentProps, AppContent>(AppContentStyle)
+private val styled = withStyles<AppContentProps, AppContent>(style)
 
 fun RBuilder.renderAppContent(config: AppContentProps.Config) = styled {
   this.attrs.config = config
