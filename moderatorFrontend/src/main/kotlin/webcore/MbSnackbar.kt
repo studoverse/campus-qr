@@ -7,14 +7,14 @@ import webcore.materialUI.*
 
 interface MbSnackbarProps : RProps {
   data class Config(
-      var message: String = "",
-      var show: Boolean = false,
-      var position: Alignment = Alignment("bottom", "center"),
-      var snackbarType: SnackbarType? = null,
-      var onClose: () -> Unit, // must be provided. managing the state must be handled outside the component
-      // provide more than a simple text to show in snackbar
-      // it will override previous message variable
-      var complexMessage: (RBuilder.() -> ReactElement)? = null
+    var message: String = "",
+    var show: Boolean = false,
+    var position: Alignment = Alignment("bottom", "center"),
+    var snackbarType: SnackbarType? = null,
+    var onClose: () -> Unit, // must be provided. managing the state must be handled outside the component
+    // provide more than a simple text to show in snackbar
+    // it will override previous message variable
+    var complexMessage: (RBuilder.() -> ReactElement)? = null
   )
 
   data class Alignment(val vertical: String, val horizontal: String)

@@ -64,9 +64,9 @@ class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, RState>(prop
 }
 
 fun RBuilder.logoBadge(logoUrl: String, logoAlt: String, badgeTitle: String, badgeSubtitle: String? = null) =
-    child(LogoBadge::class) {
-      attrs.badgeTitle = badgeTitle
-      attrs.logoUrl = logoUrl
-      attrs.logoAlt = logoAlt
-      attrs.badgeSubtitle = badgeSubtitle
-    }
+  child(LogoBadge::class) {
+    attrs.badgeTitle = badgeTitle
+    attrs.logoUrl = logoUrl
+    attrs.logoAlt = logoAlt
+    attrs.badgeSubtitle = badgeSubtitle
+  }

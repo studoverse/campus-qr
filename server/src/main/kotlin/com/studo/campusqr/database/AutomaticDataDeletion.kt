@@ -32,9 +32,9 @@ internal suspend fun automaticDataDeletion() {
     getCollection<SessionToken>().deleteMany(SessionToken::expiryDate lower now)
     getCollection<CheckIn>().deleteMany(CheckIn::date lower now.addDays(-deleteDays))
     getCollection<BackendAccess>().deleteMany(
-        BackendAccess::dateRanges.none(
-            DateRange::to greaterEquals now.addDays(-deleteDays)
-        )
+      BackendAccess::dateRanges.none(
+        DateRange::to greaterEquals now.addDays(-deleteDays)
+      )
     )
   }
   println("Deleted ${deleteResult.deletedCount} check-ins that were older than $deleteDays days.")

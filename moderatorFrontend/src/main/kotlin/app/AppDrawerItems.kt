@@ -55,13 +55,13 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
     }
 
     fun drawerListItem(
-        label: String,
-        url: String? = null,
-        onClick: ((event: Event) -> Unit)? = null,
-        icon: RClass<IconProps>? = null,
-        selected: Boolean = false,
-        openInNewTab: Boolean = false,
-        showLoadingIndicator: Boolean = false
+      label: String,
+      url: String? = null,
+      onClick: ((event: Event) -> Unit)? = null,
+      icon: RClass<IconProps>? = null,
+      selected: Boolean = false,
+      openInNewTab: Boolean = false,
+      showLoadingIndicator: Boolean = false
     ) {
       if (url != null && onClick != null) {
         throw IllegalArgumentException("Either specify url or onClick")
@@ -94,10 +94,10 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
               primary = props.classes.drawerItemText
             }
             +label
-                .replace("_", "_\u00ad") // Add soft hyphen after some gender-gap characters for long gendered words
-                .replace("*", "*\u00ad")
-                .replace("/", "/\u00ad")
-                .replace(":", ":\u00ad")
+              .replace("_", "_\u00ad") // Add soft hyphen after some gender-gap characters for long gendered words
+              .replace("*", "*\u00ad")
+              .replace("/", "/\u00ad")
+              .replace(":", ":\u00ad")
           }
         }
       }
@@ -110,10 +110,10 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         }
         props.config.checkInSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-              label = sideDrawerItem.label.get(),
-              icon = sideDrawerItem.icon,
-              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-              url = sideDrawerItem.url.path
+            label = sideDrawerItem.label.get(),
+            icon = sideDrawerItem.icon,
+            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+            url = sideDrawerItem.url.path
           )
         }
       }
@@ -125,10 +125,10 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         }
         props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-              label = sideDrawerItem.label.get(),
-              icon = sideDrawerItem.icon,
-              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-              url = sideDrawerItem.url.path
+            label = sideDrawerItem.label.get(),
+            icon = sideDrawerItem.icon,
+            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+            url = sideDrawerItem.url.path
           )
         }
       }
@@ -140,10 +140,10 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         }
         props.config.adminSideDrawerItems.forEach { sideDrawerItem ->
           drawerListItem(
-              label = sideDrawerItem.label.get(),
-              icon = sideDrawerItem.icon,
-              selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
-              url = sideDrawerItem.url.path
+            label = sideDrawerItem.label.get(),
+            icon = sideDrawerItem.icon,
+            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+            url = sideDrawerItem.url.path
           )
         }
       }

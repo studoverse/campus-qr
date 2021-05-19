@@ -122,8 +122,8 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
                         showProgress = true
                       }
                       val visitData =
-                          NetworkManager.get<LocationVisitData>("$apiBase/location/${props.config.location.id}/visitsCsv")
-                              ?: return@launch
+                        NetworkManager.get<LocationVisitData>("$apiBase/location/${props.config.location.id}/visitsCsv")
+                          ?: return@launch
                       fileDownload(data = visitData.csvData, fileName = visitData.csvFileName)
                       setState {
                         showProgress = false

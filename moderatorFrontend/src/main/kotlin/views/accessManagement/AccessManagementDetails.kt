@@ -75,10 +75,10 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
       val fromDate = Date().addHours(1).with(minute = 0)
       timeSlots = accessManagement?.dateRanges?.toList() ?: listOf(
-          ClientDateRange(
-              from = fromDate.getTime(),
-              to = fromDate.addHours(2).getTime()
-          )
+        ClientDateRange(
+          from = fromDate.getTime(),
+          to = fromDate.addHours(2).getTime()
+        )
       )
     }
 
@@ -118,17 +118,17 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   private fun createAccessControl() = launch {
     setState { showProgress = true }
     val response = NetworkManager.post<String>(
-        url = "$apiBase/access/create",
-        json = JSON.stringify(
-            NewAccess(
-                locationId = state.selectedLocation!!.id,
-                // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
-                allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
-                dateRanges = state.timeSlots.toTypedArray(),
-                note = state.accessControlNoteTextFieldValue,
-                reason = state.accessControlReasonTextFieldValue
-            )
+      url = "$apiBase/access/create",
+      json = JSON.stringify(
+        NewAccess(
+          locationId = state.selectedLocation!!.id,
+          // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
+          allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
+          dateRanges = state.timeSlots.toTypedArray(),
+          note = state.accessControlNoteTextFieldValue,
+          reason = state.accessControlReasonTextFieldValue
         )
+      )
     )
     setState {
       showProgress = false
@@ -140,17 +140,17 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     setState { showProgress = true }
     val accessManagementId = (props.config as Config.Edit).accessManagement.id
     val response = NetworkManager.post<String>(
-        url = "$apiBase/access/$accessManagementId/edit",
-        json = JSON.stringify(
-            EditAccess(
-                locationId = state.selectedLocation?.id,
-                // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
-                allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
-                dateRanges = state.timeSlots.toTypedArray(),
-                note = state.accessControlNoteTextFieldValue,
-                reason = state.accessControlReasonTextFieldValue
-            )
+      url = "$apiBase/access/$accessManagementId/edit",
+      json = JSON.stringify(
+        EditAccess(
+          locationId = state.selectedLocation?.id,
+          // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
+          allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
+          dateRanges = state.timeSlots.toTypedArray(),
+          note = state.accessControlNoteTextFieldValue,
+          reason = state.accessControlReasonTextFieldValue
         )
+      )
     )
     setState {
       showProgress = false
@@ -188,7 +188,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 
   private fun AccessManagementDetailsState.getPermittedEmailsFromTextField() =
-      personEmailTextFieldValue.toLowerCase().split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
+    personEmailTextFieldValue.toLowerCase().split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
 
   private fun submitPermittedPeopleToState() = setState {
     permittedPeopleList += getPermittedEmailsFromTextField()
@@ -303,8 +303,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                       selectedDateTime.toJSDate().addHours(2).getTime()
                     } else clientDateRange.to
                     ClientDateRange(
-                        from = from,
-                        to = to
+                      from = from,
+                      to = to
                     )
                   } else timeSlot
                 }
@@ -327,8 +327,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 timeSlots = timeSlots.map { timeSlot ->
                   if (timeSlot == clientDateRange) {
                     ClientDateRange(
-                        from = clientDateRange.from,
-                        to = selectedDateTime.toJSDate().getTime()
+                      from = clientDateRange.from,
+                      to = selectedDateTime.toJSDate().getTime()
                     )
                   } else timeSlot
                 }

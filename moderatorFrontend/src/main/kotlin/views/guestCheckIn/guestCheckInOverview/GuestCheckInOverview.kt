@@ -113,7 +113,7 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
             mTableCell { +Strings.location_name.get() }
             mTableCell { +Strings.email_address.get() }
             mTableCell { +Strings.report_checkin_seat.get() }
-            mTableCell {  }
+            mTableCell { }
           }
         }
         mTableBody {

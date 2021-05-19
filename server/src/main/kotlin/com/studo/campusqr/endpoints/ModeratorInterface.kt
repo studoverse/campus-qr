@@ -40,10 +40,10 @@ private fun ApplicationCall.addLanguageCookieIfNeeded(language: String) {
   // Set a language cookie if not already set
   if (request.cookies["MbLang"] == null) {
     response.cookies.append(
-        name = "MbLang",
-        value = language,
-        expires = GMTDate(59, 59, 23, 31, Month.DECEMBER, 9999), // Don't expire
-        path = "/"
+      name = "MbLang",
+      value = language,
+      expires = GMTDate(59, 59, 23, 31, Month.DECEMBER, 9999), // Don't expire
+      path = "/"
     )
   }
 }

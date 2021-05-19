@@ -7,17 +7,17 @@ class LocalizedString(val en: String, val de: String? = null) {
   }
 
   infix operator fun plus(other: LocalizedString) = LocalizedString(
-      en = en + other.en,
-      de = de + other.de
+    en = en + other.en,
+    de = de + other.de
   )
 
   infix operator fun plus(other: String) = LocalizedString(
-      en = en + other,
-      de = de + other
+    en = en + other,
+    de = de + other
   )
 }
 
 infix operator fun String.plus(other: LocalizedString) = LocalizedString(
-    en = this + other.en,
-    de = this + other.de
+  en = this + other.en,
+  de = this + other.de
 )

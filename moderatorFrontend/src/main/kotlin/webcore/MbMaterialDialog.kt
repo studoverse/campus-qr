@@ -17,21 +17,21 @@ interface MbDialogProps : RProps {
 interface MbDialogState : RState
 
 class MbMaterialDialogConfig(
-    var show: Boolean,
-    var title: String?,
-    var titleIcon: RClass<IconProps>?,
-    var textContent: String?,
-    var customContent: (RDOMBuilder<DIV>.() -> Unit)?,
-    var buttons: List<DialogButton>?,
-    var onClose: (() -> Unit)?,
-    var disableAutoFocus: Boolean
+  var show: Boolean,
+  var title: String?,
+  var titleIcon: RClass<IconProps>?,
+  var textContent: String?,
+  var customContent: (RDOMBuilder<DIV>.() -> Unit)?,
+  var buttons: List<DialogButton>?,
+  var onClose: (() -> Unit)?,
+  var disableAutoFocus: Boolean
 )
 
 open class DialogButton(val text: String, val disabled: Boolean = false, val onClick: () -> Unit)
 
 fun positiveButton(text: String = "OK", onClick: () -> Unit) = DialogButton(text = text, onClick = onClick)
 fun negativeButton(text: String = LocalizedString("Cancel", "Abbrechen").get(), onClick: () -> Unit) =
-    DialogButton(text = text, onClick = onClick)
+  DialogButton(text = text, onClick = onClick)
 
 class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
 
@@ -99,46 +99,46 @@ private val style = { _: dynamic ->
 private val styledMbMaterialDialog = withStyles<MbDialogProps, MbMaterialDialog>(style)
 
 fun RBuilder.mbMaterialDialog(
-    show: Boolean = false,
-    title: String? = null,
-    titleIcon: RClass<IconProps>? = null,
-    textContent: String? = null,
-    customContent: (RDOMBuilder<DIV>.() -> Unit)? = null,
-    buttons: List<DialogButton>? = null,
-    onClose: (() -> Unit)? = null,
-    disableAutoFocus: Boolean = false
+  show: Boolean = false,
+  title: String? = null,
+  titleIcon: RClass<IconProps>? = null,
+  textContent: String? = null,
+  customContent: (RDOMBuilder<DIV>.() -> Unit)? = null,
+  buttons: List<DialogButton>? = null,
+  onClose: (() -> Unit)? = null,
+  disableAutoFocus: Boolean = false
 ) = styledMbMaterialDialog {
   attrs.config = MbMaterialDialogConfig(
-      show,
-      title,
-      titleIcon,
-      textContent,
-      customContent,
-      buttons,
-      onClose,
-      disableAutoFocus
-  )
-}
-
-@Deprecated("Use buttons, insead of positiveButton and negativeButtion")
-fun RBuilder.mbMaterialDialog(
-    show: Boolean = false,
-    title: String? = null,
-    titleIcon: RClass<IconProps>? = null,
-    textContent: String? = null,
-    customContent: (RDOMBuilder<DIV>.() -> Unit)? = null,
-    positiveButton: DialogButton? = positiveButton {},
-    negativeButton: DialogButton? = negativeButton {},
-    onClose: (() -> Unit)? = null
-) = mbMaterialDialog(
     show,
     title,
     titleIcon,
     textContent,
     customContent,
-    mutableListOf<DialogButton>().apply {
-      positiveButton?.let { this.add(it) }
-      negativeButton?.let { this.add(it) }
-    },
-    onClose
+    buttons,
+    onClose,
+    disableAutoFocus
+  )
+}
+
+@Deprecated("Use buttons, insead of positiveButton and negativeButtion")
+fun RBuilder.mbMaterialDialog(
+  show: Boolean = false,
+  title: String? = null,
+  titleIcon: RClass<IconProps>? = null,
+  textContent: String? = null,
+  customContent: (RDOMBuilder<DIV>.() -> Unit)? = null,
+  positiveButton: DialogButton? = positiveButton {},
+  negativeButton: DialogButton? = negativeButton {},
+  onClose: (() -> Unit)? = null
+) = mbMaterialDialog(
+  show,
+  title,
+  titleIcon,
+  textContent,
+  customContent,
+  mutableListOf<DialogButton>().apply {
+    positiveButton?.let { this.add(it) }
+    negativeButton?.let { this.add(it) }
+  },
+  onClose
 )

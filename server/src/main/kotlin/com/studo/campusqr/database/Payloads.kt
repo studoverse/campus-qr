@@ -61,11 +61,11 @@ class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
   var seatCount: Int? = null // If != null, then valid seats on CheckIn are 1 to seatCount
 
   override fun toClientClass(language: String) = ClientLocation(
-      id = _id,
-      name = name,
-      checkInCount = checkInCount,
-      accessType = accessType.name,
-      seatCount = seatCount
+    id = _id,
+    name = name,
+    checkInCount = checkInCount,
+    accessType = accessType.name,
+    seatCount = seatCount
   )
 }
 
@@ -89,10 +89,10 @@ class BackendSeatFilter : MongoMainEntry(), ClientPayloadable<ClientSeatFilter> 
   lateinit var filteredSeats: List<Int>
 
   override fun toClientClass(language: String) = ClientSeatFilter(
-      id = _id,
-      locationId = locationId,
-      seat = seat,
-      filteredSeats = filteredSeats.toTypedArray()
+    id = _id,
+    locationId = locationId,
+    seat = seat,
+    filteredSeats = filteredSeats.toTypedArray()
   )
 }
 

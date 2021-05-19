@@ -9,7 +9,8 @@ val austriaTimeZoneId: ZoneId = TimeZone.getTimeZone("Europe/Vienna").toZoneId()
 
 val utcTimeZone: TimeZone = TimeZone.getTimeZone("UTC")
 
-fun Date.toIsoString(): String = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.GERMANY).apply { timeZone = utcTimeZone }.format(this)
+fun Date.toIsoString(): String =
+  SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.GERMANY).apply { timeZone = utcTimeZone }.format(this)
 
 fun Date.toAustrianTime(pattern: String): String {
   return SimpleDateFormat(pattern).apply { timeZone = austriaTimeZone }.format(this)

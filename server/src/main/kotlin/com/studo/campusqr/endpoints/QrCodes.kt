@@ -4,19 +4,14 @@ import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.database.getConfigs
+import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import io.ktor.html.*
 import io.ktor.http.*
 import kotlinx.html.*
-import kotlin.collections.Map
-import kotlin.collections.MutableMap
-import kotlin.collections.getValue
-import kotlin.collections.listOfNotNull
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
-import com.studo.campusqr.extensions.get
 
 suspend fun AuthenticatedApplicationCall.viewSingleQrCode() {
   if (!sessionToken.isAuthenticated) {
@@ -182,11 +177,11 @@ fun FlowContent.renderQrCodePage(
 ) {
   val htmlResourcePath = if (smallPage) "viewQR/qrcode_print_template_a5.html" else "viewQR/qrcode_print_template_a4.html"
   val htmlString = (HtmlTemplateCache[htmlResourcePath] ?: "template missing")
-      .replace("%%NAME%%", name)
-      .replace("%%ID%%", id)
-      .replace("%%SUBTEXT_1%%", subtext1)
-      .replace("%%SUBTEXT_2%%", subtext2)
-      .replace("%%SUBTITLE%%", subtitle)
+    .replace("%%NAME%%", name)
+    .replace("%%ID%%", id)
+    .replace("%%SUBTEXT_1%%", subtext1)
+    .replace("%%SUBTEXT_2%%", subtext2)
+    .replace("%%SUBTITLE%%", subtitle)
 
   div { unsafe { raw(htmlString) } }
 }

@@ -8,11 +8,11 @@ import com.studo.campusqr.database.MainDatabase
 import java.util.*
 
 internal fun createTestCheckIn(
-    checkInDate: Date,
-    checkOutDate: Date? = null,
-    email: String = "test@test.com",
-    locationId: String,
-    seat: Int? = null
+  checkInDate: Date,
+  checkOutDate: Date? = null,
+  email: String = "test@test.com",
+  locationId: String,
+  seat: Int? = null
 ) = CheckIn().apply {
   _id = randomId()
   this.locationId = locationId

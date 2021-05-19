@@ -7,28 +7,28 @@ import com.studo.campusqr.common.utils.LocalizedString
 object Strings {
 
   val edit = LocalizedString(
-      "Edit",
-      "Bearbeiten"
+    "Edit",
+    "Bearbeiten"
   )
 
   val delete = LocalizedString(
-      "Delete",
-      "Löschen"
+    "Delete",
+    "Löschen"
   )
 
   val copy = LocalizedString(
-      "Copy",
-      "Kopieren"
+    "Copy",
+    "Kopieren"
   )
 
   val duplicate = LocalizedString(
-      "Duplicate",
-      "Duplizieren"
+    "Duplicate",
+    "Duplizieren"
   )
 
   val undefined = LocalizedString(
-      "Not set",
-      "Nicht angegeben"
+    "Not set",
+    "Nicht angegeben"
   )
 
   val apply = LocalizedString(
@@ -36,7 +36,7 @@ object Strings {
     "Anwenden",
   )
 
-  val other = LocalizedString (
+  val other = LocalizedString(
     "Other",
     "Sonstige",
   )
@@ -47,28 +47,28 @@ object Strings {
   )
 
   val locations_element_download_qr_code = LocalizedString(
-      "Print / download QR code",
-      "QR-Code drucken / herunterladen"
+    "Print / download QR code",
+    "QR-Code drucken / herunterladen"
   )
 
   val locations_element_simulate_scan = LocalizedString(
-      "Simulate QR code scan",
-      "Scan des QR-Codes simulieren"
+    "Simulate QR code scan",
+    "Scan des QR-Codes simulieren"
   )
 
   val locations_element_download_csv = LocalizedString(
-      "Download check ins as Excel .csv file",
-      "Check-Ins als Excel .csv Datei herunterladen"
+    "Download check ins as Excel .csv file",
+    "Check-Ins als Excel .csv Datei herunterladen"
   )
 
   val error_try_again = LocalizedString(
-      "Something went wrong. Please try again.",
-      "Etwas lief schief. Bitte versuchen Sie es nochmal."
+    "Something went wrong. Please try again.",
+    "Etwas lief schief. Bitte versuchen Sie es nochmal."
   )
 
   val locations = LocalizedString(
-      "Locations",
-      "Orte"
+    "Locations",
+    "Orte"
   )
 
   val location_delete = LocalizedString(
@@ -106,18 +106,18 @@ object Strings {
   )
 
   val more_about_studo = LocalizedString(
-      "More about Studo",
-      "Mehr über Studo"
+    "More about Studo",
+    "Mehr über Studo"
   )
 
   val location_create = LocalizedString(
-      "Create new location",
-      "Neuen Ort hinzufügen"
+    "Create new location",
+    "Neuen Ort hinzufügen"
   )
 
   val location_created = LocalizedString(
-      "Location successfully created",
-      "Ort erfolgreich erstellt"
+    "Location successfully created",
+    "Ort erfolgreich erstellt"
   )
 
   val location_edited = LocalizedString(
@@ -131,88 +131,88 @@ object Strings {
   )
 
   val location_name = LocalizedString(
-      "Location",
-      "Ort"
+    "Location",
+    "Ort"
   )
 
   val location_access_type = LocalizedString(
-      "Access Type",
-      "Zugangsart"
+    "Access Type",
+    "Zugangsart"
   )
 
   val location_check_in_count = LocalizedString(
-      "Total check ins",
-      "Gesamtanzahl der Check-Ins"
+    "Total check ins",
+    "Gesamtanzahl der Check-Ins"
   )
 
   val actions = LocalizedString(
-      "Actions",
-      "Aktionen"
+    "Actions",
+    "Aktionen"
   )
 
   val location_add = LocalizedString(
-      "Create location",
-      "Ort erstellen"
+    "Create location",
+    "Ort erstellen"
   )
 
   val location_edit = LocalizedString(
-      "Edit location",
-      "Ort bearbeiten"
+    "Edit location",
+    "Ort bearbeiten"
   )
 
   val location_update = LocalizedString(
-      "Save location",
-      "Ort speichern"
+    "Save location",
+    "Ort speichern"
   )
 
   val location_no_locations_title = LocalizedString(
-      "No locations yet",
-      "Noch keine Orte"
+    "No locations yet",
+    "Noch keine Orte"
   )
 
   val location_access_type_free = LocalizedString(
-      "Free",
-      "Frei"
+    "Free",
+    "Frei"
   )
 
   val location_access_type_restricted = LocalizedString(
-      "Restricted",
-      "Beschränkt"
+    "Restricted",
+    "Beschränkt"
   )
 
   val location_no_locations_subtitle = LocalizedString(
-      "Click on \"create new location\" button in the top right corner to create the first location.",
-      "Klicken Sie rechts oben auf \"Neuen Ort hinzufügen\" um den ersten Ort zu erstellen."
+    "Click on \"create new location\" button in the top right corner to create the first location.",
+    "Klicken Sie rechts oben auf \"Neuen Ort hinzufügen\" um den ersten Ort zu erstellen."
   )
 
   val location_create_name_cannot_be_empty = LocalizedString(
-      "Name cannot be empty",
-      "Name kann nicht leer sein"
+    "Name cannot be empty",
+    "Name kann nicht leer sein"
   )
 
   val location_number_of_seats = LocalizedString(
-      "Seat count",
-      "Anzahl der Sitzplätze"
+    "Seat count",
+    "Anzahl der Sitzplätze"
   )
 
   val location_number_of_seats_hint = LocalizedString(
-      "Seat count at this location",
-      "Anzahl der Sitzplätze an diesem Ort"
+    "Seat count at this location",
+    "Anzahl der Sitzplätze an diesem Ort"
   )
 
   val name = LocalizedString(
-      "Name",
-      "Name"
+    "Name",
+    "Name"
   )
 
   val parameter_cannot_be_empty_format = LocalizedString(
-      "%s cannot be empty",
-      "%s kann nicht leer sein"
+    "%s cannot be empty",
+    "%s kann nicht leer sein"
   )
 
   val parameter_too_short_format = LocalizedString(
-      "%s is too short",
-      "%s ist zu kurz"
+    "%s is too short",
+    "%s ist zu kurz"
   )
 
   val report = LocalizedString(
@@ -251,23 +251,23 @@ object Strings {
   )
 
   val report_checkin_email = LocalizedString(
-      "E-mail Address",
-      "E-Mail Adresse"
+    "E-mail Address",
+    "E-Mail Adresse"
   )
 
   val report_checkin_date = LocalizedString(
-      "Check in Date",
-      "Check-In Zeitpunkt"
+    "Check in Date",
+    "Check-In Zeitpunkt"
   )
 
   val report_checkin_location = LocalizedString(
-      "Location",
-      "Ort"
+    "Location",
+    "Ort"
   )
 
   val report_checkin_seat = LocalizedString(
-      "Seat",
-      "Sitzplatz",
+    "Seat",
+    "Sitzplatz",
   )
 
   val report_checkin_filter = LocalizedString(
@@ -296,103 +296,103 @@ object Strings {
   )
 
   val report_affected_people = LocalizedString(
-      "%s people (%s contacts) between %s and %s were potentially in contact with the infected person.",
-      "%s Personen (%s Kontakte) zwischen %s und %s waren potentiell in Kontakt mit der infizierten Person."
+    "%s people (%s contacts) between %s and %s were potentially in contact with the infected person.",
+    "%s Personen (%s Kontakte) zwischen %s und %s waren potentiell in Kontakt mit der infizierten Person."
   )
 
   val report_export_via_csv = LocalizedString(
-      "Export all affected people via Excel .csv file",
-      "Alle betroffene Personen als Excel .csv Datei exportieren"
+    "Export all affected people via Excel .csv file",
+    "Alle betroffene Personen als Excel .csv Datei exportieren"
   )
 
   val report_export_infected_user_checkins_csv = LocalizedString(
-      "Export all check-ins of the infected person via Excel .csv file",
-      "Alle Check-ins der infizierten Person als Excel .csv Datei exportieren"
+    "Export all check-ins of the infected person via Excel .csv file",
+    "Alle Check-ins der infizierten Person als Excel .csv Datei exportieren"
   )
 
   val account_settings = LocalizedString(
-      "My Account",
-      "Mein Konto"
+    "My Account",
+    "Mein Konto"
   )
 
   val logout = LocalizedString(
-      "Logout",
-      "Abmelden"
+    "Logout",
+    "Abmelden"
   )
 
   val back = LocalizedString(
-      "Back",
-      "Zurück"
+    "Back",
+    "Zurück"
   )
 
   val next = LocalizedString(
-      "Next",
-      "Weiter"
+    "Next",
+    "Weiter"
   )
 
   val email_address = LocalizedString(
-      "Email address",
-      "E-Mail Adresse"
+    "Email address",
+    "E-Mail Adresse"
   )
 
   val network_error = LocalizedString(
-      "Network error",
-      "Netzwerkfehler"
+    "Network error",
+    "Netzwerkfehler"
   )
 
   val network_error_description = LocalizedString(
-      "Could not establish a connection. Please ensure a good internet connection and reload the page.",
-      "Verbindung konnte nicht hergestellt werden. Bitte stellen Sie eine gute Internetverbindung her und aktualisiere Sie die Seite."
+    "Could not establish a connection. Please ensure a good internet connection and reload the page.",
+    "Verbindung konnte nicht hergestellt werden. Bitte stellen Sie eine gute Internetverbindung her und aktualisiere Sie die Seite."
   )
 
   val login_info = LocalizedString(
-      "Information about Campus QR",
-      "Informationen über Campus QR"
+    "Information about Campus QR",
+    "Informationen über Campus QR"
   )
 
   val login_unknown_error = LocalizedString(
-      "An unknown error has occoured. Please try again or contact your administrator.",
-      "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie ihren Administrator."
+    "An unknown error has occoured. Please try again or contact your administrator.",
+    "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie ihren Administrator."
   )
 
   val login_wrong_email_and_pw = LocalizedString(
-      "Wrong email or password",
-      "E-Mail Adresse oder Passwort ungültig"
+    "Wrong email or password",
+    "E-Mail Adresse oder Passwort ungültig"
   )
 
   val login_email_form_body = LocalizedString(
-      "Staff login",
-      "Login für Bedienstete"
+    "Staff login",
+    "Login für Bedienstete"
   )
 
   val login_email_form_pw_label = LocalizedString(
-      "Password",
-      "Passwort"
+    "Password",
+    "Passwort"
   )
 
   val login_email_form_new_pw_label = LocalizedString(
-      "New password",
-      "Neues Passwort"
+    "New password",
+    "Neues Passwort"
   )
 
   val login_login_button = LocalizedString(
-      "Login",
-      "Einloggen"
+    "Login",
+    "Einloggen"
   )
 
   val login_forgot_pw_text = LocalizedString(
-      "Forgot your password? Contact an administrator to have your password reset.",
-      "Passwort vergessen? Wenden Sie sich an einen Administrator, um Ihr Passwort zurückzusetzen."
+    "Forgot your password? Contact an administrator to have your password reset.",
+    "Passwort vergessen? Wenden Sie sich an einen Administrator, um Ihr Passwort zurückzusetzen."
   )
 
   val login_register_email_not_valid = LocalizedString(
-      "Email address is not valid.",
-      "E-Mail Adresse ungültig."
+    "Email address is not valid.",
+    "E-Mail Adresse ungültig."
   )
 
   val user_management = LocalizedString(
-      "User Management",
-      "Userverwaltung"
+    "User Management",
+    "Userverwaltung"
   )
 
   val user_administration_external_auth_provider = LocalizedString(
@@ -421,43 +421,43 @@ object Strings {
   )
 
   val user_edit = LocalizedString(
-      "Edit user",
-      "User bearbeiten"
+    "Edit user",
+    "User bearbeiten"
   )
 
   val user_update = LocalizedString(
-      "Save user",
-      "User speichern"
+    "Save user",
+    "User speichern"
   )
 
   val user_delete = LocalizedString(
-      "Delete user",
-      "User löschen"
+    "Delete user",
+    "User löschen"
   )
 
   val user_delete_are_you_sure = LocalizedString(
-      "Are you sure you want to delete this user? This will not delete locations or access permissions created by this user.",
-      "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Dies löscht keine vom Benutzer erstellen Orte oder Zugangsberechtigungen."
+    "Are you sure you want to delete this user? This will not delete locations or access permissions created by this user.",
+    "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Dies löscht keine vom Benutzer erstellen Orte oder Zugangsberechtigungen."
   )
 
   val user_created = LocalizedString(
-      "User successfully created",
-      "User erfolgreich erstellt"
+    "User successfully created",
+    "User erfolgreich erstellt"
   )
 
   val user_already_exists = LocalizedString(
-      "User with this email already exists.",
-      "Ein User mit dieser E-Mail Addresse existiert bereits."
+    "User with this email already exists.",
+    "Ein User mit dieser E-Mail Addresse existiert bereits."
   )
 
   val user_permission_edit_users = LocalizedString(
-      "User & permission management",
-      "Benutzer- & Rechteverwaltung"
+    "User & permission management",
+    "Benutzer- & Rechteverwaltung"
   )
 
   val user_type_admin_action = LocalizedString(
-      "Administration",
-      "Administration"
+    "Administration",
+    "Administration"
   )
 
   val user_permission_edit_location = LocalizedString(
@@ -471,18 +471,18 @@ object Strings {
   )
 
   val user_type_moderator_action = LocalizedString(
-      "Moderation",
-      "Moderation"
+    "Moderation",
+    "Moderation"
   )
 
   val access_control = LocalizedString(
-      "Access control",
-      "Zugangskontrolle"
+    "Access control",
+    "Zugangskontrolle"
   )
 
   val access_control_my = LocalizedString(
-      "My authorizations",
-      "Meine Genehmigungen"
+    "My authorizations",
+    "Meine Genehmigungen"
   )
 
   val user_permission_edit_own_access = LocalizedString(
@@ -496,123 +496,123 @@ object Strings {
   )
 
   val access_control_export = LocalizedString(
-      "Visitor list",
-      "Besucherliste"
+    "Visitor list",
+    "Besucherliste"
   )
 
   val access_control_create = LocalizedString(
-      "Create access control",
-      "Zugangskontrolle erstellen"
+    "Create access control",
+    "Zugangskontrolle erstellen"
   )
 
   val access_control_save = LocalizedString(
-      "Save access control",
-      "Zugangskontrolle speichern"
+    "Save access control",
+    "Zugangskontrolle speichern"
   )
 
   val access_control_not_configured_yet = LocalizedString(
-      "Access control not configured yet.",
-      "Die Zugangskontrolle ist noch nicht konfiguriert."
+    "Access control not configured yet.",
+    "Die Zugangskontrolle ist noch nicht konfiguriert."
   )
 
   val access_control_not_configured_yet_subtitle = LocalizedString(
-      "Click on \"create access control\" button in the top right corner to create an access control.",
-      "Klicken Sie rechts oben auf \"Zugangskontrolle erstellen\" um eine Zugangskontrolle zu erstellen."
+    "Click on \"create access control\" button in the top right corner to create an access control.",
+    "Klicken Sie rechts oben auf \"Zugangskontrolle erstellen\" um eine Zugangskontrolle zu erstellen."
   )
 
   val access_control_permitted_person = LocalizedString(
-      "Permitted person",
-      "Zugelassene Person"
+    "Permitted person",
+    "Zugelassene Person"
   )
 
   val access_control_permitted_people = LocalizedString(
-      "Permitted people",
-      "Zugelassene Personen"
+    "Permitted people",
+    "Zugelassene Personen"
   )
 
   val access_control_note = LocalizedString(
-      "Note",
-      "Notiz"
+    "Note",
+    "Notiz"
   )
 
   val access_control_reason = LocalizedString(
-      "Reason",
-      "Begründung"
+    "Reason",
+    "Begründung"
   )
 
   val access_control_time_slot = LocalizedString(
-      "Time slot",
-      "Zeitfenster"
+    "Time slot",
+    "Zeitfenster"
   )
 
   val access_control_time_slots = LocalizedString(
-      "Time slots",
-      "Zeitfenster"
+    "Time slots",
+    "Zeitfenster"
   )
 
   val access_control_time_slot_add = LocalizedString(
-      "Add time slot",
-      "Zeitfenster hinzufügen"
+    "Add time slot",
+    "Zeitfenster hinzufügen"
   )
 
   val access_control_time_slot_remove = LocalizedString(
-      "Remove this timeslot",
-      "Dieses Zeitfenster entfernen"
+    "Remove this timeslot",
+    "Dieses Zeitfenster entfernen"
   )
 
   val access_control_from = LocalizedString(
-      "From",
-      "Von"
+    "From",
+    "Von"
   )
 
   val access_control_to = LocalizedString(
-      "To",
-      "Bis"
+    "To",
+    "Bis"
   )
 
   val access_control_add_permitted_people = LocalizedString(
-      "Add person",
-      "Person hinzufügen"
+    "Add person",
+    "Person hinzufügen"
   )
 
   val access_control_add_permitted_people_tip = LocalizedString(
-      "Multiple e-mail addresses can be added by separating them with a comma.",
-      "Mehrere E-Mail Adressen können hinzugefügt werden, indem sie durch einen Beistrich getrennt angegeben werden."
+    "Multiple e-mail addresses can be added by separating them with a comma.",
+    "Mehrere E-Mail Adressen können hinzugefügt werden, indem sie durch einen Beistrich getrennt angegeben werden."
   )
 
   val access_control_created_successfully = LocalizedString(
-      "Access control created successfully!",
-      "Zugangskontrolle erfolgreich erstellt!"
+    "Access control created successfully!",
+    "Zugangskontrolle erfolgreich erstellt!"
   )
 
   val access_control_duplicated_successfully = LocalizedString(
-      "Access control duplicated successfully!",
-      "Zugangskontrolle erfolgreich dupliziert!"
+    "Access control duplicated successfully!",
+    "Zugangskontrolle erfolgreich dupliziert!"
   )
 
   val access_control_deleted_successfully = LocalizedString(
-      "Access control deleted successfully!",
-      "Zugangskontrolle erfolgreich gelöscht!"
+    "Access control deleted successfully!",
+    "Zugangskontrolle erfolgreich gelöscht!"
   )
 
   val access_control_edited_successfully = LocalizedString(
-      "Access control edited successfully!",
-      "Zugangskontrolle erfolgreich bearbeitet!"
+    "Access control edited successfully!",
+    "Zugangskontrolle erfolgreich bearbeitet!"
   )
 
   val access_control_delete_are_your_sure = LocalizedString(
-      "Are you sure you want to delete this access control?",
-      "Sind Sie sicher, dass Sie diese Zugangskontrolle löschen möchten?"
+    "Are you sure you want to delete this access control?",
+    "Sind Sie sicher, dass Sie diese Zugangskontrolle löschen möchten?"
   )
 
   val access_control_please_select_location = LocalizedString(
-      "Please select a location",
-      "Bitte wählen Sie einen Ort"
+    "Please select a location",
+    "Bitte wählen Sie einen Ort"
   )
 
   val access_control_end_date_before_start_date = LocalizedString(
-      "End date cannot be before start date",
-      "Das Enddatum kann nicht vor dem Anfangsdatum liegen"
+    "End date cannot be before start date",
+    "Das Enddatum kann nicht vor dem Anfangsdatum liegen"
   )
 
   val guest_checkin = LocalizedString(
@@ -679,23 +679,23 @@ object Strings {
   )
 
   val user_sso_info_details2 = LocalizedString(
-      "Further customization requests for your university can also be ordered directly from your Studo contact person.",
-      "Weiter Anpassungswünsche für Ihre Hochschule können auch direkt bei Ihrem Studo Ansprechpartner beauftragt werden."
+    "Further customization requests for your university can also be ordered directly from your Studo contact person.",
+    "Weiter Anpassungswünsche für Ihre Hochschule können auch direkt bei Ihrem Studo Ansprechpartner beauftragt werden."
   )
 
   val user_updated_account_details = LocalizedString(
-      "Updated account details",
-      "Account Details wurden aktualisiert"
+    "Updated account details",
+    "Account Details wurden aktualisiert"
   )
 
   val admin_info = LocalizedString(
-      "App Configuration",
-      "App-Konfiguration"
+    "App Configuration",
+    "App-Konfiguration"
   )
 
   val admin_info_configuration = LocalizedString(
-      "Configuration flags",
-      "Konfigurations-Flags"
+    "Configuration flags",
+    "Konfigurations-Flags"
   )
 
   val admin_info_configuration_details = LocalizedString(

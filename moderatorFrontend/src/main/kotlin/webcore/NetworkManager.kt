@@ -21,10 +21,10 @@ object NetworkManager {
   }
 
   suspend inline fun <reified T : Any> post(url: String, params: Json? = null, headers: Json? = null): T? =
-      post(url, params, T::class, headers)
+    post(url, params, T::class, headers)
 
   suspend inline fun <reified T : Any> post(url: String, json: String? = null, headers: Json? = null): T? =
-      post(url, json, T::class, headers)
+    post(url, json, T::class, headers)
 
   suspend fun <T : Any> post(url: String, params: Json? = null, kClass: KClass<T>, headers: Json? = null): T? {
     return post(url, JSON.stringify(params), kClass, headers)
@@ -99,7 +99,7 @@ object NetworkManager {
       return null
     }
     return mutableMapOf<String, Any?>()
-        .apply { json.getOwnPropertyNames().forEach { key -> this[key] = json[key] } }
+      .apply { json.getOwnPropertyNames().forEach { key -> this[key] = json[key] } }
   }
 
   private suspend fun Response.toStringMessage(): String? {

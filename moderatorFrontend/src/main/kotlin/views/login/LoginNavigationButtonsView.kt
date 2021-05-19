@@ -15,11 +15,11 @@ import webcore.materialUI.withStyles
 
 interface LoginNavigationButtonsViewProps : RProps {
   class Config(
-      var networkRequestInProgress: Boolean,
-      var backEnabled: Boolean,
-      var nextButtonText: String,
-      var nextButtonDisabled: Boolean,
-      var onNextAction: () -> Unit
+    var networkRequestInProgress: Boolean,
+    var backEnabled: Boolean,
+    var nextButtonText: String,
+    var nextButtonDisabled: Boolean,
+    var onNextAction: () -> Unit
   )
 
   var config: Config
