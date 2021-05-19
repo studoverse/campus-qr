@@ -1,16 +1,13 @@
 package views.accessManagement.accessManagementOverview
 
-import Url
-import apiBase
 import com.studo.campusqr.common.AccessManagementData
 import com.studo.campusqr.common.ClientAccessManagement
 import com.studo.campusqr.common.ClientLocation
 import react.*
-import util.Strings
-import util.get
-import util.toRoute
+import util.*
 import views.accessManagement.AccessManagementDetailsProps
-import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.*
+import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Config
+import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Operation
 import views.accessManagement.renderAccessManagementDetails
 import views.common.*
 import webcore.MbSnackbarProps
@@ -21,7 +18,7 @@ import webcore.mbMaterialDialog
 import webcore.mbSnackbar
 
 interface ListAccessManagementProps : RProps {
-  var classes: ListAccessClasses
+  var classes: ListAccessManagementClasses
   var locationId: String?
 }
 
@@ -193,15 +190,12 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 }
 
-interface ListAccessClasses {
-  // Keep in sync with ListLocationsStyle!
+interface ListAccessManagementClasses
+
+private val style = { _: dynamic ->
 }
 
-private val ListLocationsStyle = { theme: dynamic ->
-  // Keep in sync with ListLocationsClasses!
-}
-
-private val styled = withStyles<ListAccessManagementProps, ListAccessManagement>(ListLocationsStyle)
+private val styled = withStyles<ListAccessManagementProps, ListAccessManagement>(style)
 
 fun RBuilder.renderAccessManagementList(locationId: String?) = styled {
   // Set component attrs here

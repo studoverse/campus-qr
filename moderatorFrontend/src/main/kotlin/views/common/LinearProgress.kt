@@ -30,12 +30,10 @@ class LinearProgress : RComponent<LinearProgressProps, LinearProgressState>() {
 }
 
 interface LinearProgressClasses {
-  // Keep in sync with LinearProgressStyle!
   var holder: String
 }
 
-private val LinearProgressStyle = { theme: dynamic ->
-  // Keep in sync with LinearProgressClasses!
+private val style = { _: dynamic ->
   js {
     holder = js {
       height = 8
@@ -43,7 +41,7 @@ private val LinearProgressStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<LinearProgressProps, LinearProgress>(LinearProgressStyle)
+private val styled = withStyles<LinearProgressProps, LinearProgress>(style)
 
 fun RBuilder.renderLinearProgress(show: Boolean) = styled {
   attrs.show = show

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package webcore
 
 import react.RBuilder
@@ -7,13 +9,13 @@ import react.dom.span
 import webcore.materialUI.grid
 
 fun RBuilder.gridContainer(
-    direction: GridDirection,
-    rowGravity: ItemsGravity = ItemsGravity.START, // used when direction == ROW
-    columnGravity: ItemsGravity = ItemsGravity.START, // used when direction == COLUMN
-    spacing: Int = 1,
-    alignItems: String = "baseline",
-    containerStyle: String? = null,
-    items: RBuilder.() -> Unit) {
+  direction: GridDirection,
+  rowGravity: ItemsGravity = ItemsGravity.START, // used when direction == ROW
+  columnGravity: ItemsGravity = ItemsGravity.START, // used when direction == COLUMN
+  spacing: Int = 1,
+  alignItems: String = "baseline",
+  containerStyle: String? = null,
+  items: RBuilder.() -> Unit) {
   grid {
     attrs.className = containerStyle
     attrs.container = true
@@ -31,16 +33,16 @@ fun RBuilder.gridContainer(
 /**
  * must called inside a gridContainer
  * @param size configure how much columns this item will take from its parent container
- * @param itemStyle used to override how item is positioned within the container or to align item's children
+ * @param item used to override how item is positioned within the container or to align item's children
  * example style: {
  *     alignSelf = "center" || "stretch" || "baseline" etc. // align grid item inside the grid container
  *     textAlign = "center" || "start" etc.                 // align items within the grid items
  * }
  */
 fun RBuilder.gridItem(
-    size: GridSize = GridSize(xs = false),
-    className: String? = null,
-    item: RBuilder.() -> Unit
+  size: GridSize = GridSize(xs = false),
+  className: String? = null,
+  item: RBuilder.() -> Unit
 ) {
   grid {
     attrs.className = className
@@ -64,11 +66,11 @@ fun RBuilder.gridItem(
  * false : item will not expand
  */
 data class GridSize(
-    val xs: Any? = "auto",
-    val sm: Any? = null,
-    val md: Any? = null,
-    val lg: Any? = null,
-    val xl: Any? = null
+  val xs: Any? = "auto",
+  val sm: Any? = null,
+  val md: Any? = null,
+  val lg: Any? = null,
+  val xl: Any? = null
 )
 
 enum class GridDirection(val value: String) {

@@ -75,7 +75,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
                   val seatNumber = value.trim().removeSuffix(",").toIntOrNull()
                   if (seatNumber != null && seatNumber in state.filterOptions && seatNumber !in state.filteredSeats) {
                     setState {
-                      filteredSeats += seatNumber
+                      filteredSeats = filteredSeats + seatNumber
                     }
                   }
                 }
@@ -86,7 +86,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
               attrs.openOnFocus = true
               attrs.options = state.filterOptions.map { it.toString() }.toTypedArray()
               attrs.value = state.filteredSeats.map { it.toString() }.toTypedArray()
-              attrs.getOptionLabel = { it }
+              attrs.getOptionLabel = { it as String }
               attrs.renderOption = { option, state ->
                 Fragment {
                   mCheckbox {
@@ -98,11 +98,11 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
               }
               attrs.renderInput = { params: dynamic ->
                 textField {
-                  attrs.id = params.id
+                  attrs.id = params.id as String
                   attrs.InputProps = params.InputProps
                   attrs.inputProps = params.inputProps
-                  attrs.disabled = params.disabled
-                  attrs.fullWidth = params.fullWidth
+                  attrs.disabled = params.disabled as Boolean
+                  attrs.fullWidth = params.fullWidth as Boolean
                   attrs.variant = "outlined"
                   attrs.label = Strings.report_checkin_seat_filter.get()
                 }
@@ -181,11 +181,9 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
 
 interface ReportTableRowClasses {
   var autocompleteWrapper: String
-  // Keep in sync with ReportItemStyle!
 }
 
-private val ReportTableRowStyle = { theme: dynamic ->
-  // Keep in sync with ReportItemClasses!
+private val style = { _: dynamic ->
   js {
     autocompleteWrapper = js {
       // Make sure that dialog's apply button doesn't get overlaid by autocomplete's dropdown
@@ -194,7 +192,7 @@ private val ReportTableRowStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<ReportTableRowProps, ReportTableRow>(ReportTableRowStyle)
+private val styled = withStyles<ReportTableRowProps, ReportTableRow>(style)
 
 fun RBuilder.renderReportTableRow(config: ReportTableRowProps.Config) = styled {
   attrs.config = config

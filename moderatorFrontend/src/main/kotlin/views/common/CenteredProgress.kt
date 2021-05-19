@@ -10,7 +10,7 @@ import webcore.materialUI.circularProgress
 import webcore.materialUI.withStyles
 
 interface CenteredProgressProps : RProps {
-  var classes: CenteredProgressStyle
+  var classes: CenteredProgressClasses
 }
 
 class CenteredProgress : RComponent<CenteredProgressProps, RState>() {
@@ -21,11 +21,11 @@ class CenteredProgress : RComponent<CenteredProgressProps, RState>() {
   }
 }
 
-interface CenteredProgressStyle : RProps {
+interface CenteredProgressClasses : RProps {
   var centered: String
 }
 
-private val styles = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     centered = js {
       display = "flex"
@@ -37,6 +37,6 @@ private val styles = { theme: dynamic ->
   }
 }
 
-val styledCenteredProgress = withStyles<CenteredProgressProps, CenteredProgress>(styles)
+val styledCenteredProgress = withStyles<CenteredProgressProps, CenteredProgress>(style)
 
 fun RBuilder.centeredProgress() = styledCenteredProgress {}

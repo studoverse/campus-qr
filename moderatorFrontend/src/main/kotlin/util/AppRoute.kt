@@ -1,6 +1,5 @@
 package util
 
-import Url
 import org.w3c.dom.Location
 import org.w3c.dom.url.URL
 import webcore.extensions.decodeURIComponent
@@ -66,12 +65,11 @@ private fun String.toRoute(
 
   // Construct a map of query parameters
   val allQueryParams = this
-      .substringAfter("?", missingDelimiterValue = "")
-      .split("&")
-      .map { it.split("=") } // List<String> -> List<List<String>>
-      .mapNotNull { it.takeIf { it.count() == 2 } } // Only take key-value params
-      .map { (key, value) -> decodeURIComponent(key) to decodeURIComponent(value) } // List<String> -> key - value
-      .toMap() + queryParams
+    .substringAfter("?", missingDelimiterValue = "")
+    .split("&")
+    .map { it.split("=") } // List<String> -> List<List<String>>
+    .mapNotNull { it.takeIf { it.count() == 2 } } // Only take key-value params
+    .associate { (key, value) -> decodeURIComponent(key) to decodeURIComponent(value) } + queryParams
 
   return AppRoute(matchingView, allPathParams, allQueryParams)
 }

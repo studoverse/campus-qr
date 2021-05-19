@@ -1,10 +1,8 @@
 package views.settings
 
 import app.baseUrl
-import com.studo.campusqr.common.UserData
 import kotlinext.js.js
 import kotlinx.browser.window
-import pathBase
 import react.RBuilder
 import react.RComponent
 import react.RProps
@@ -40,7 +38,7 @@ interface SettingsClasses {
   var button: String
 }
 
-private val SettingsStyle = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     button = js {
       textTransform = "initial"
@@ -48,7 +46,7 @@ private val SettingsStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<SettingsProps, Settings>(SettingsStyle)
+private val styled = withStyles<SettingsProps, Settings>(style)
 
 fun RBuilder.renderSettings() = styled {
   // Set component attrs here

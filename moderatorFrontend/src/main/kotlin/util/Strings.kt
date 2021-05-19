@@ -300,11 +300,6 @@ object Strings {
       "%s Personen (%s Kontakte) zwischen %s und %s waren potentiell in Kontakt mit der infizierten Person."
   )
 
-  val report_export_via_mail = LocalizedString(
-      "Contact all affected people via e-mail",
-      "Alle betroffene Personen per E-Mail kontaktieren"
-  )
-
   val report_export_via_csv = LocalizedString(
       "Export all affected people via Excel .csv file",
       "Alle betroffene Personen als Excel .csv Datei exportieren"
@@ -328,11 +323,6 @@ object Strings {
   val back = LocalizedString(
       "Back",
       "Zurück"
-  )
-
-  val submit = LocalizedString(
-      "Submit",
-      "OK"
   )
 
   val next = LocalizedString(
@@ -393,16 +383,6 @@ object Strings {
   val login_forgot_pw_text = LocalizedString(
       "Forgot your password? Contact an administrator to have your password reset.",
       "Passwort vergessen? Wenden Sie sich an einen Administrator, um Ihr Passwort zurückzusetzen."
-  )
-
-  val login_reset_pw_link = LocalizedString(
-      "Reset password",
-      "Passwort zurücksetzen"
-  )
-
-  val login_create_account_link = LocalizedString(
-      "Create new partner account",
-      "Neuen Partner-Account erstellen"
   )
 
   val login_register_email_not_valid = LocalizedString(

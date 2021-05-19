@@ -1,6 +1,5 @@
 package app
 
-import Url
 import com.studo.campusqr.common.UserData
 import com.studo.campusqr.common.utils.LocalizedString
 import kotlinext.js.js
@@ -12,11 +11,12 @@ import react.dom.div
 import react.dom.jsStyle
 import util.AppRoute
 import util.Strings
+import util.Url
 import util.get
 import views.common.spacer
 import views.settings.renderSettings
+import webcore.logoBadge
 import webcore.materialUI.*
-import webcore.ui.logoBadge
 
 class SideDrawerItem(
   val label: LocalizedString,
@@ -182,10 +182,9 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
 interface AppDrawerClasses {
   val drawerLink: String
   val drawerItemText: String
-  val footerImage: String
 }
 
-private val AppDrawerStyle = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     drawerLink = js {
       textDecoration = "none!important"
@@ -195,17 +194,10 @@ private val AppDrawerStyle = { theme: dynamic ->
       fontSize = "14px"
       hyphens = "auto"
     }
-    footerImage = js {
-      width = "60%"
-      marginLeft = "auto"
-      marginRight = "auto"
-      marginBottom = "20px"
-      marginTop = "20px"
-    }
   }
 }
 
-private val styled = withStyles<AppDrawerItemsProps, AppDrawerItems>(AppDrawerStyle)
+private val styled = withStyles<AppDrawerItemsProps, AppDrawerItems>(style)
 
 fun RBuilder.renderAppDrawerItems(config: AppDrawerItemsProps.Config) = styled {
   attrs.config = config

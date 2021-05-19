@@ -1,25 +1,20 @@
 package views.users
 
-import MenuItem
-import apiBase
 import com.studo.campusqr.common.ClientUser
 import com.studo.campusqr.common.UserData
 import com.studo.campusqr.common.permissions
 import kotlinext.js.js
 import kotlinx.browser.window
-import materialMenu
 import react.*
 import react.dom.li
 import react.dom.ul
 import util.Strings
+import util.apiBase
 import util.get
 import util.localizedString
-import webcore.MbSnackbarProps
-import webcore.NetworkManager
+import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
-import webcore.mbMaterialDialog
-import webcore.mbSnackbar
 import kotlin.js.json
 
 interface UserTableRowProps : RProps {
@@ -133,12 +128,10 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
 }
 
 interface UserTableRowClasses {
-  // Keep in sync with UserItemStyle!
   var permissionsList: String
 }
 
-private val UserTableRowStyle = { theme: dynamic ->
-  // Keep in sync with UserItemClasses!
+private val style = { _: dynamic ->
   js {
     permissionsList = js {
       margin = 0
@@ -147,7 +140,7 @@ private val UserTableRowStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<UserTableRowProps, UserTableRow>(UserTableRowStyle)
+private val styled = withStyles<UserTableRowProps, UserTableRow>(style)
 
 fun RBuilder.renderUserTableRow(config: UserTableRowProps.Config, userData: UserData) = styled {
   attrs.config = config

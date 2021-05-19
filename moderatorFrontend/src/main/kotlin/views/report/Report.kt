@@ -1,6 +1,5 @@
 package views.report
 
-import apiBase
 import com.studo.campusqr.common.ReportData
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.extensions.emptyToNull
@@ -13,6 +12,7 @@ import react.*
 import react.dom.div
 import react.dom.form
 import util.Strings
+import util.apiBase
 import util.fileDownload
 import util.get
 import views.common.centeredProgress
@@ -278,14 +278,10 @@ class Report : RComponent<ReportProps, ReportState>() {
 interface ReportClasses {
   var content: String
   var searchButton: String
-  var inputHolder: String
   var inputForm: String
-  var emailTextField: String
-  // Keep in sync with ReportStyle!
 }
 
-private val ReportStyle = { theme: dynamic ->
-  // Keep in sync with ReportClasses!
+private val style = { _: dynamic ->
   js {
     content = js {
       margin = 16
@@ -293,19 +289,13 @@ private val ReportStyle = { theme: dynamic ->
     searchButton = js {
       margin = 16
     }
-    inputHolder = js {
-      margin = 8
-    }
     inputForm = js {
       margin = 16
-    }
-    emailTextField = js {
-      minWidth = 300
     }
   }
 }
 
-private val styled = withStyles<ReportProps, Report>(ReportStyle)
+private val styled = withStyles<ReportProps, Report>(style)
 
 fun RBuilder.renderReport() = styled {
   // Set component attrs here

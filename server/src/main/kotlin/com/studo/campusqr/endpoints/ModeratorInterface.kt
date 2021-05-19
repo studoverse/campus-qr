@@ -85,7 +85,7 @@ private fun HTML.moderatorIndex(call: ApplicationCall, csrfToken: String) {
     }
     script {
       src = when {
-        localDebug -> "/CampusQR.js"
+        localDebug -> "/moderatorFrontend.js"
         else -> "/admin/campusqr-admin.js"
       }
     }

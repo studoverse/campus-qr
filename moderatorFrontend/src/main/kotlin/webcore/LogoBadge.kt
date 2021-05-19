@@ -1,4 +1,4 @@
-package webcore.ui
+package webcore
 
 import react.RBuilder
 import react.RComponent

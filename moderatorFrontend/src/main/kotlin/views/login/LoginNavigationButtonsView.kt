@@ -61,16 +61,13 @@ class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, L
   }
 }
 
-interface LoginNavigationButtonsViewClasses {
-  // Keep in sync with LoginNavigationButtonsViewStyle!
-}
+interface LoginNavigationButtonsViewClasses
 
-private val LoginNavigationButtonsViewStyle = { theme: dynamic ->
-  // Keep in sync with LoginNavigationButtonsViewClasses!
+private val style = { _: dynamic ->
 }
 
 private val styled =
-    withStyles<LoginNavigationButtonsViewProps, LoginNavigationButtonsView>(LoginNavigationButtonsViewStyle)
+  withStyles<LoginNavigationButtonsViewProps, LoginNavigationButtonsView>(style)
 
 fun RBuilder.renderLoginNavigationButtonsView(config: LoginNavigationButtonsViewProps.Config) = styled {
   attrs.config = config

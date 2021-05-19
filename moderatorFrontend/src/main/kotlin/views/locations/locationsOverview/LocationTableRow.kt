@@ -1,19 +1,17 @@
 package views.locations.locationsOverview
 
-import MenuItem
-import Url
-import apiBase
 import app.baseUrl
 import app.routeContext
 import com.studo.campusqr.common.*
 import kotlinx.browser.window
-import materialMenu
 import react.*
 import util.*
 import views.locations.AddLocationProps
 import views.locations.renderAddLocation
+import webcore.MenuItem
 import webcore.NetworkManager
 import webcore.extensions.launch
+import webcore.materialMenu
 import webcore.materialUI.*
 import webcore.mbMaterialDialog
 
@@ -155,15 +153,12 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
   }
 }
 
-interface LocationTableRowClasses {
-  // Keep in sync with LocationTableRowStyle!
+interface LocationTableRowClasses
+
+private val style = { _: dynamic ->
 }
 
-private val LocationTableRowStyle = { theme: dynamic ->
-  // Keep in sync with LocationTableRowClasses!
-}
-
-private val styled = withStyles<LocationTableRowProps, LocationTableRow>(LocationTableRowStyle)
+private val styled = withStyles<LocationTableRowProps, LocationTableRow>(style)
 
 fun RBuilder.renderLocationTableRow(config: LocationTableRowProps.Config) = styled {
   attrs.config = config

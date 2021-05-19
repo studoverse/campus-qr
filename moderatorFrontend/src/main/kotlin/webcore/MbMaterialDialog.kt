@@ -50,7 +50,7 @@ class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
       props.config.title?.let { title ->
         muiDialogTitle {
           props.config.titleIcon?.let { titleIcon ->
-            div(props.classes.dialogIconStyle) {
+            div(props.classes.dialogIconStyle as String) {
               titleIcon {}
             }
           }
@@ -83,7 +83,7 @@ class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
   }
 }
 
-private val styles = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     dialogStyle = js {
       margin = "12px"
@@ -96,7 +96,7 @@ private val styles = { theme: dynamic ->
   }
 }
 
-private val styledMbMaterialDialog = withStyles<MbDialogProps, MbMaterialDialog>(styles)
+private val styledMbMaterialDialog = withStyles<MbDialogProps, MbMaterialDialog>(style)
 
 fun RBuilder.mbMaterialDialog(
     show: Boolean = false,

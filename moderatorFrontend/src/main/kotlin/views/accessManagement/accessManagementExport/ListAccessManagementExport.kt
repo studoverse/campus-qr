@@ -1,13 +1,12 @@
 package views.accessManagement.accessManagementExport
 
-import apiBase
-import app.GlobalCss
 import com.studo.campusqr.common.AccessManagementExportData
 import com.studo.campusqr.common.ClientLocation
 import kotlinext.js.js
 import react.*
-import react.dom.div
 import util.Strings
+import util.Url
+import util.apiBase
 import util.get
 import views.common.ToolbarViewProps
 import views.common.networkErrorView
@@ -106,7 +105,7 @@ interface ListAccessManagementExportClasses {
   var header: String
 }
 
-private val ListAccessManagementExportStyle = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     header = js {
       margin = 16
@@ -114,8 +113,7 @@ private val ListAccessManagementExportStyle = { theme: dynamic ->
   }
 }
 
-private val styled =
-    withStyles<ListAccessManagementExportProps, ListAccessManagementExport>(ListAccessManagementExportStyle)
+private val styled = withStyles<ListAccessManagementExportProps, ListAccessManagementExport>(style)
 
 fun RBuilder.renderAccessManagementExportList(locationId: String?) = styled {
   // Set component attrs here

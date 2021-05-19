@@ -1,6 +1,7 @@
+package util
+
 import app.baseUrl
 import com.studo.campusqr.common.utils.LocalizedString
-import util.Strings
 
 val pathBase = baseUrl.substringAfter("://").dropWhile { it != '/' }.substringBefore("/admin") + "/admin"
 val apiBase = baseUrl

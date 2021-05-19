@@ -1,3 +1,5 @@
+package webcore
+
 import kotlinext.js.js
 import org.w3c.dom.events.EventTarget
 import react.*
@@ -6,10 +8,10 @@ import webcore.materialUI.*
 import kotlin.random.Random
 
 class MenuItem(
-    val text: String,
-    val enabled: Boolean = true,
-    val icon: RClass<IconProps>? = null,
-    val onClick: () -> Unit
+  val text: String,
+  val enabled: Boolean = true,
+  val icon: RClass<IconProps>? = null,
+  val onClick: () -> Unit
 )
 
 interface MaterialMenuProps : RProps {
@@ -93,7 +95,7 @@ class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
   }
 }
 
-val styles = { theme: dynamic ->
+private val style = { _: dynamic ->
   js {
     menuItemStyle = js {
       fontSize = 14
@@ -104,10 +106,11 @@ val styles = { theme: dynamic ->
   }
 }
 
-private val styledChatDrawer = withStyles<MaterialMenuProps, MaterialMenu>(styles)
+private val styledChatDrawer = withStyles<MaterialMenuProps, MaterialMenu>(style)
+
 fun RBuilder.materialMenu(fontSize: String? = null, className: String = "", menuItems: List<MenuItem>) =
-    styledChatDrawer {
-      attrs.menuItems = menuItems
-      attrs.className = className
-      attrs.fontSize = fontSize
-    }
+  styledChatDrawer {
+    attrs.menuItems = menuItems
+    attrs.className = className
+    attrs.fontSize = fontSize
+  }

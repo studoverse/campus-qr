@@ -1,6 +1,5 @@
 package views.accessManagement
 
-import apiBase
 import app.GlobalCss
 import com.studo.campusqr.common.*
 import kotlinext.js.js
@@ -11,6 +10,7 @@ import react.*
 import react.dom.div
 import react.dom.form
 import util.Strings
+import util.apiBase
 import util.get
 import views.accessManagement.AccessManagementDetailsProps.Config
 import views.common.centeredProgress
@@ -33,7 +33,7 @@ interface AccessManagementDetailsProps : RProps {
   }
 
   var config: Config
-  var classes: AddLocationClasses
+  var classes: AccessManagementDetailsClasses
 }
 
 interface AccessManagementDetailsState : RState {
@@ -522,16 +522,14 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 }
 
-interface AddLocationClasses {
-  // Keep in sync with AddLocationStyle!
+interface AccessManagementDetailsClasses {
   var addButton: String
   var form: String
   var addTimeSlotButton: String
   var removeTimeSlotButton: String
 }
 
-private val AddLocationStyle = { theme: dynamic ->
-  // Keep in sync with AddLocationClasses!
+private val style = { _: dynamic ->
   js {
     addButton = js {
       marginBottom = 16
@@ -550,7 +548,7 @@ private val AddLocationStyle = { theme: dynamic ->
   }
 }
 
-private val styled = withStyles<AccessManagementDetailsProps, AddLocation>(AddLocationStyle)
+private val styled = withStyles<AccessManagementDetailsProps, AddLocation>(style)
 
 fun RBuilder.renderAccessManagementDetails(config: Config) = styled {
   attrs.config = config

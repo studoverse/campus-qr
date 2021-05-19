@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 import react.RClass
 import react.RProps
 import kotlin.js.Date
