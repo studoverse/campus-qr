@@ -87,7 +87,7 @@ the `Start dev webserver` IntelliJ run configurations. The default admin email a
 password `admin`. Please change it immediately after your first login to the moderation frontend.
 
 Change at least the following values in the `configurations` collection in the connected MongoDB. Note that this collection will be automatically created after the first launch of the application:
-* `userTosUrl_en` / `userTosUrl_dn`: Links at the check-in view.
+* `userTosUrl_en` / `userTosUrl_de`: Links at the check-in view.
 * `imprintUrl_en` / `imprintUrl_de`: Links at the check-in view.
 * `baseUrl`: Needed for CORS protection and logout redirect URL.
 * `qrCodeBaseUrl`: URL prefix for generating QR codes.
