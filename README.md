@@ -86,6 +86,13 @@ with `java -jar build/libs/Server.jar`. Alternatively the backend can be started
 the `Start dev webserver` IntelliJ run configurations. The default admin email address is `admin@example.org` with
 password `admin`. Please change it immediately after your first login to the moderation frontend.
 
+Change at least the following values in the `configurations` collection in the connected MongoDB. Note that this collection will be automatically created after the first launch of the application:
+* `userTosUrl_en` / `userTosUrl_en`: Links at the check-in view.
+* `imprintUrl_en` / `imprintUrl_de`: Links at the check-in view.
+* `baseUrl`: Needed for CORS protection and logout redirect URL.
+* `qrCodeBaseUrl`: URL prefix for generating QR codes.
+White-labeling, LDAP configuration, privacy settings and futher configuration parameters can also be tweaked by changing the appropirate `stringValue` and `intValue` in the `configurations` collection.
+
 ## Deployment
 When self-hosting Campus QR, create a setup that ensures at least weekly updates of the upstream source code to quickly react on updates.
 
