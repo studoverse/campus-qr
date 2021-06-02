@@ -7,7 +7,7 @@ An optimal implementation in terms of data protection and security are goals of 
 Campus QR can additionally be used as access management system: Access to locations like department buildings is only granted by explicit invite.
 Users scan the QR code attached to the entrance.
 If access is granted, a unique animation with access information is shown at the users mobile device to allow entrance by a doorman or web-hook based door unlocking systems.
-Access control or successful check-ins can also be verified by an employee during a lecutre in bulk, so lecturers can validate within seconds if hundreds of students have successfully checked in.
+Access control or successful check-ins can also be verified by an employee during a lecture in bulk, so lecturers can validate within seconds if hundreds of students have successfully checked in.
 
 The system is open source and can be hosted by the university itself.
 The web app is available as stand-alone application.
@@ -91,7 +91,7 @@ Change at least the following values in the `configurations` collection in the c
 * `imprintUrl_en` / `imprintUrl_de`: Links at the check-in view.
 * `baseUrl`: Needed for CORS protection and logout redirect URL.
 * `qrCodeBaseUrl`: URL prefix for generating QR codes.
-White-labeling, LDAP configuration, privacy settings and futher configuration parameters can also be tweaked by changing the appropriate `stringValue` and `intValue` in the `configurations` collection.
+White-labeling, LDAP configuration, privacy settings and further configuration parameters can also be tweaked by changing the appropriate `stringValue` and `intValue` in the `configurations` collection.
 
 ## Deployment
 When self-hosting Campus QR, create a setup that ensures at least weekly updates of the upstream source code to quickly react on updates.
