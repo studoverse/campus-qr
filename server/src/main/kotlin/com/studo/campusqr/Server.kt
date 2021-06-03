@@ -18,6 +18,7 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.sessions.*
+import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -59,6 +60,10 @@ suspend fun main() {
             "magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
       )
     }
+    if (System.getenv("ENABLE_CALL_LOGGING") == "true") {
+      setLogLevel("ktor.application", Level.TRACE)
+      install(CallLogging)
+    }
     install(StatusPages) {
       exception<Throwable> { cause ->
         println(cause) // For easier error debugging print all errors that happen on the server side
@@ -68,8 +73,12 @@ suspend fun main() {
     install(Compression) {
       default()
     }
+    install(IgnoreTrailingSlash)
     install(Sessions) {
-      cookie<Session>("SESSION_CAMPUS_QR")
+      val key = hex(MainDatabase.getConfig<String>("sessionHmacSecret"))
+      cookie<Session>("SESSION_CAMPUS_QR") {
+        transform(SessionTransportTransformerMessageAuthentication(key))
+      }
     }
 
     install(CORS) {

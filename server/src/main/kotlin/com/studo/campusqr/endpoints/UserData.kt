@@ -10,6 +10,7 @@ import com.studo.campusqr.common.UserData
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
+import com.studo.campusqr.localDebug
 import com.studo.campusqr.utils.*
 import io.ktor.application.*
 import io.ktor.response.*
@@ -49,7 +50,13 @@ suspend fun AuthenticatedApplicationCall.logout() {
     }
   }
   sessions.clear<Session>()
-  respondRedirect(baseUrl, permanent = false)
+
+  // Reload page, so we get a new session and csrf token
+  if (localDebug && this.request.headers["host"] == "localhost:8072") {
+    respondRedirect("http://localhost:8072/") // Custom URL for dev-webserver
+  } else {
+    respondRedirect(baseUrl, permanent = false)
+  }
 }
 
 suspend fun ApplicationCall.login() {
@@ -85,6 +92,10 @@ suspend fun ApplicationCall.login() {
   }
 
   val sessionToken = (getSessionToken() ?: createNewSessionToken()).apply {
+    // Security precaution
+    if (userId != null && userId != loginResult.user._id) throw IllegalStateException("Wanted to update existing session for another user")
+
+    // Set/Upgrade session token to logged in session
     userId = loginResult.user._id
   }
 

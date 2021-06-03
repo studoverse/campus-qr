@@ -1,21 +1,8 @@
-config.devServer = {
-  "inline": true,
-  "lazy": false,
-  "noInfo": true,
-  "open": true,
-  "overlay": false,
-  "port": 8072,
-  historyApiFallback: true, // Use this to server the base path on a 404, this is needed for react-router
+config.devServer = config.devServer || {};
 
-  openPage: 'admin/', // Initial URL after starting webpack
-
-  // Add url paths here which needs to be proxied to the backend
-  proxy: {
-    '/admin': 'http://localhost:8070',
-    '/user': 'http://localhost:8070',
-    '/location': 'http://localhost:8070',
-    '/access': 'http://localhost:8070',
-    '/report': 'http://localhost:8070',
-    '/static': 'http://localhost:8070',
-  }
+config.devServer.port = 8072;
+//config.devServer.historyApiFallback = true; // Use this to server the base path on a 404, this is needed for react-router
+config.devServer.proxy = { // Add url paths here which needs to be proxied to the backend
+  '!/moderatorFrontend.js': 'http://localhost:8070',
 };
+config.devServer.open = '/admin'; // Initial URL after starting webpack
