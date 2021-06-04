@@ -12,8 +12,8 @@ repositories {
 
 dependencies {
   implementation(project(":common"))
-  implementation("io.ktor:ktor-server-netty:1.4.0")
-  implementation("io.ktor:ktor-html-builder:1.4.0")
+  implementation("io.ktor:ktor-server-netty:1.6.0")
+  implementation("io.ktor:ktor-html-builder:1.6.0")
   implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
   implementation("org.mongodb:mongodb-driver-sync:4.1.0")

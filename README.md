@@ -75,23 +75,42 @@ Employees of a university can login, create locations, report infections to noti
 ![accessControl](https://i.imgur.com/JAiMK8g.png)
 
 # Self hosting
+
 ## Setup
+
 The following environment variables need to be configured:
+
 * `PORT` (default: `8070`): Port where the web application will listen to
-* `HOST` (default: `0.0.0.0`): By default the web application is accessible from every host. Set it to `127.0.0.1` if the web application should only be accessible from localhost.
-* `MONGO_URI` (default: `mongodb://localhost:27017/campus-qr)`: Database URI to store further configuration, locations, check-ins and moderation users. Make sure that the database is either not accessible from another host or provide authentication parameters in the URI.
+* `HOST` (default: `0.0.0.0`): By default the web application is accessible from every host. Set it to `127.0.0.1` if the web application
+  should only be accessible from localhost.
+* `MONGO_URI` (default: `mongodb://localhost:27017/campus-qr)`: Database URI to store further configuration, locations, check-ins and
+  moderation users. Make sure that the database is either not accessible from another host or provide authentication parameters in the URI.
 
-Start the application by `./gradlew run` or build the application with `./gradlew stage` to run it
-with `java -jar Server.jar`. Alternatively the backend can be started by running the `Debug Backend` and
-the `Start dev webserver` IntelliJ run configurations. The default admin email address is `admin@example.org` with
-password `admin`. Please change it immediately after your first login to the moderation frontend.
+## Development compilation
 
-Change at least the following values in the `configurations` collection in the connected MongoDB. Note that this collection will be automatically created after the first launch of the application:
+Start the backend application by the IntelliJ run configuration **Debug Backend** or alternatively with `./gradlew server:run`. After having
+the backend running, start the moderator frontend application by the IntelliJ run configuration **Start dev webserver** or alternatively
+with `./gradlew browserDevelopmentRun -t`. You can now access the moderator frontend with the proxied local backend
+via https://localhost:8072.
+
+## Production compilation
+
+Build the whole application with `./gradlew stage` to run it with `java -jar Server.jar`. This also compiles the moderator frontend and
+bundles it into the jar.
+
+## First time setup
+
+The default admin email address is `admin@example.org` with password `admin`. Please change it immediately after your first login to the
+moderation frontend.
+
+Change at least the following values in the `configurations` collection in the connected MongoDB. Note that this collection will be
+automatically created after the first launch of the application:
+
 * `userTosUrl_en` / `userTosUrl_de`: Links at the check-in view.
 * `imprintUrl_en` / `imprintUrl_de`: Links at the check-in view.
 * `baseUrl`: Needed for CORS protection and logout redirect URL.
-* `qrCodeBaseUrl`: URL prefix for generating QR codes.
-White-labeling, LDAP configuration, privacy settings and further configuration parameters can also be tweaked by changing the appropriate `stringValue` and `intValue` in the `configurations` collection.
+* `qrCodeBaseUrl`: URL prefix for generating QR codes. White-labeling, LDAP configuration, privacy settings and further configuration
+  parameters can also be tweaked by changing the appropriate `stringValue` and `intValue` in the `configurations` collection.
 
 ## Deployment
 When self-hosting Campus QR, create a setup that ensures at least weekly updates of the upstream source code to quickly react on updates.

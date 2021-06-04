@@ -1,6 +1,7 @@
 package com.studo.campusqr.utils
 
 import com.moshbit.katerbase.equal
+import com.moshbit.katerbase.greater
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
@@ -66,8 +67,8 @@ suspend fun ApplicationCall.getSessionToken(): SessionToken? {
 
     // Default auth with session cookie
     else -> {
-      val webSession = sessions.get<Session>() ?: return null
-      runOnDb { getCollection<SessionToken>().findOne(SessionToken::_id equal webSession.token) }
+      val sessionToken = sessions.get<Session>()?.token?.takeIf { it != sharedSecretSessionId } ?: return null
+      runOnDb { getCollection<SessionToken>().findOne(SessionToken::_id equal sessionToken, SessionToken::expiryDate greater Date()) }
     }
   }
 }
@@ -84,7 +85,7 @@ private const val sharedSecretUserId = "sharedSecretUser"
 private const val sharedSecretSessionId = "sharedSecretSessionToken"
 
 private suspend fun getOrCreateSharedSecretSessionToken(): SessionToken = runOnDb {
-  getCollection<SessionToken>().findOneOrInsert(SessionToken::_id equal sharedSecretSessionId) {
+  getCollection<SessionToken>().findOneOrInsert(SessionToken::_id equal sharedSecretSessionId, SessionToken::expiryDate greater Date()) {
     SessionToken().apply {
       val now = Date()
       creationDate = now

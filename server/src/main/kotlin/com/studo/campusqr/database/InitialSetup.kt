@@ -73,6 +73,7 @@ suspend fun initialDatabaseSetup() {
       insert("transitThresholdSeconds", 2 * 60) // 2 Minutes
 
       insert("csrfHashSecret", Algorithm.secureRandom.longs(64).toList().joinToString().sha256())
+      insert("sessionHmacSecret", Algorithm.secureRandom.longs(64).toList().joinToString().sha256())
 
       insert("ldapUrl", "") // "" = ldap disabled. E.g. "ldap://ldap.forumsys.com:389"
       insert("ldapSearchFilter", "(uid=%s,dc=example,dc=com)") // For user authentication. ";"-separated
