@@ -143,7 +143,7 @@ class Report : RComponent<ReportProps, ReportState>() {
     }
 
     div(props.classes.inputForm) {
-      gridContainer(GridDirection.ROW, alignItems = "end") {
+      gridContainer(GridDirection.ROW, alignItems = "flex-end") {
         gridItem(GridSize(xs = 12, sm = 3)) {
           muiDatePicker {
             attrs.fullWidth = true

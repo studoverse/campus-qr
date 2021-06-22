@@ -98,7 +98,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
               }
               attrs.renderInput = { params: dynamic ->
                 textField {
-                  attrs.id = params.id as String
+                  attrs.id = params.id
                   attrs.InputProps = params.InputProps
                   attrs.inputProps = params.inputProps
                   attrs.disabled = params.disabled as Boolean
