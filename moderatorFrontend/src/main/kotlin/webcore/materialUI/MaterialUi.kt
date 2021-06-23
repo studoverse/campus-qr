@@ -1217,6 +1217,7 @@ val textField: RClass<TextFieldProps> = importedTextField.default
 private external val importedAutocomplete: dynamic
 
 interface AutocompleteProps<T> : RProps {
+  var id: String
   var autoHighlight: Boolean
   var autoSelect: Boolean
   var blurOnSelect: dynamic // 'mouse' | 'touch' | bool

@@ -18,24 +18,24 @@ dependencies {
   implementation(kotlin("stdlib-js"))
   implementation(project(":common"))
 
-  implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.3")
-  api("org.jetbrains:kotlin-react:16.13.1-pre.123-kotlin-1.4.10")
-  api("org.jetbrains:kotlin-react-dom:16.13.1-pre.123-kotlin-1.4.10")
-  api("org.jetbrains:kotlin-extensions:1.0.1-pre.144-kotlin-1.4.10")
+  api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.3")
+  api("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.212-kotlin-1.5.10")
+  api("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.212-kotlin-1.5.10")
+  api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
   implementation(npm("normalize.css", "^8.0.1"))
-  implementation(devNpm("style-loader", "^1.2.1"))
-  implementation(devNpm("css-loader", "^4.3.0"))
+  implementation(devNpm("style-loader", "^2.0.0"))
+  implementation(devNpm("css-loader", "^5.2.6"))
 
-  api(npm("react", "^16.5.2"))
-  api(npm("react-dom", "^16.5.2"))
+  api(npm("react", "17.0.2"))
+  api(npm("react-dom", "17.0.2"))
 
-  api(npm("@material-ui/core", "^4.10.2"))
+  api(npm("@material-ui/core", "^4.11.4"))
 
   // Needed for MuiAutocomplete. Can be removed if it gets merged into @material-ui/core
-  api(npm("@material-ui/lab", "^4.0.0-alpha.56"))
+  api(npm("@material-ui/lab", "^4.0.0-alpha.58"))
 
-  api(npm("@material-ui/icons", "^3.0.1"))
+  api(npm("@material-ui/icons", "^4.11.2"))
 
   // Don't update to latest version until @material-ui/pickers v4 comes out
   api(npm("@material-ui/pickers", "3.2.10"))
