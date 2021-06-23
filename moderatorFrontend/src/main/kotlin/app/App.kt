@@ -119,7 +119,7 @@ class App : RComponent<AppProps, AppState>() {
       val mouseEvent = event as MouseEvent
       val target = mouseEvent.target
       if (target != null && !mouseEvent.altKey && !mouseEvent.ctrlKey && !mouseEvent.metaKey && !mouseEvent.shiftKey) {
-        val linkNode = (target as Node).findParent { it.nodeName.toLowerCase() == "a" } ?: return@addEventListener
+        val linkNode = (target as Node).findParent { it.nodeName.lowercase() == "a" } ?: return@addEventListener
         val anchor = linkNode as HTMLAnchorElement
         val parsedUrl = try {
           URL(anchor.href)

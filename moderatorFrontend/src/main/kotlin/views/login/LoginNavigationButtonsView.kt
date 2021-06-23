@@ -38,7 +38,7 @@ class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, L
           attrs.onClick = {
             window.history.back()
           }
-          +Strings.back.get().toUpperCase()
+          +Strings.back.get().uppercase()
         }
       }
       div(GlobalCss.flexEnd) {
