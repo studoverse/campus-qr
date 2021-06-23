@@ -212,7 +212,7 @@ class Report : RComponent<ReportProps, ReportState>() {
             +Strings.report_affected_people.get()
               .format(
                 reportData.impactedUsersCount.toString(),
-                reportData.reportedUserLocations.sumBy { it.potentialContacts }.toString(),
+                reportData.reportedUserLocations.sumOf { it.potentialContacts }.toString(),
                 reportData.startDate,
                 reportData.endDate
               )
