@@ -23,19 +23,19 @@ dependencies {
   api("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.212-kotlin-1.5.10")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
-  implementation(npm("normalize.css", "^8.0.1"))
-  implementation(devNpm("style-loader", "^2.0.0"))
-  implementation(devNpm("css-loader", "^5.2.6"))
+  implementation(npm("normalize.css", "8.0.1"))
+  implementation(devNpm("style-loader", "2.0.0"))
+  implementation(devNpm("css-loader", "5.2.6"))
 
   api(npm("react", "17.0.2"))
   api(npm("react-dom", "17.0.2"))
 
-  api(npm("@material-ui/core", "^4.11.4"))
+  api(npm("@material-ui/core", "4.11.4"))
 
   // Needed for MuiAutocomplete. Can be removed if it gets merged into @material-ui/core
-  api(npm("@material-ui/lab", "^4.0.0-alpha.58"))
+  api(npm("@material-ui/lab", "4.0.0-alpha.58"))
 
-  api(npm("@material-ui/icons", "^4.11.2"))
+  api(npm("@material-ui/icons", "4.11.2"))
 
   // Don't update to latest version until @material-ui/pickers v4 comes out
   api(npm("@material-ui/pickers", "3.2.10"))
@@ -43,7 +43,7 @@ dependencies {
   api(npm("@date-io/luxon", "1.3.13"))
   api(npm("luxon", "1.24.1"))
 
-  api(npm("js-file-download", "^0.4.12"))
+  api(npm("js-file-download", "0.4.12"))
 
   testImplementation(kotlin("test-js"))
 }
