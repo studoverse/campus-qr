@@ -9,10 +9,6 @@ import react.*
 import kotlin.reflect.KClass
 
 
-@JsModule("@material-ui/core/styles/colorManipulator")
-private external val importedColorManipulator: dynamic
-val fade: (color: dynamic, opacity: dynamic) -> dynamic = importedColorManipulator.fade
-
 @JsModule("@material-ui/core/colors/red")
 private external val importedRed: dynamic
 val redColor: dynamic = importedRed.default
@@ -92,7 +88,7 @@ interface IconButtonProps : RProps {
   var classes: dynamic
   var disableRipple: Boolean
   var component: dynamic
-  var buttonRef: (HTMLButtonElement) -> Unit
+  var ref: (HTMLButtonElement) -> Unit
 }
 
 val iconButton: RClass<IconButtonProps> = importedIconButton.default
@@ -791,9 +787,9 @@ interface BackdropProps : RProps {
 
 val backdrop: RClass<BackdropProps> = importedBackdrop.default
 
-@JsModule("@material-ui/core/styles/createMuiTheme")
+@JsModule("@material-ui/core/styles/createTheme")
 private external val importedCreateMuiTheme: dynamic
-val createMuiTheme: (dynamic) -> dynamic = importedCreateMuiTheme.default
+val createTheme: (dynamic) -> dynamic = importedCreateMuiTheme.default
 
 @JsModule("@material-ui/core/styles/createPalette")
 private external val importedCreatePalette: dynamic
@@ -1599,7 +1595,7 @@ external interface GridProps : RProps {
   var container: Boolean? get() = definedExternally; set(value) = definedExternally
   var direction: dynamic /* String /* "row" */ | String /* "row-reverse" */ | String /* "column" */ | String /* "column-reverse" */ */ get() = definedExternally; set(value) = definedExternally
   var item: Boolean? get() = definedExternally; set(value) = definedExternally
-  var justify: dynamic /* String /* "center" */ | String /* "flex-start" */ | String /* "flex-end" */ | String /* "space-between" */ | String /* "space-around" */ */ get() = definedExternally; set(value) = definedExternally
+  var justifyContent: dynamic /* String /* "center" */ | String /* "flex-start" */ | String /* "flex-end" */ | String /* "space-between" */ | String /* "space-around" */ */ get() = definedExternally; set(value) = definedExternally
   var spacing: dynamic /* Number /* 0 */ | Number /* 8 */ | Number /* 16 */ | Number /* 24 */ | Number /* 32 */ | Number /* 40 */ */ get() = definedExternally; set(value) = definedExternally
   var wrap: dynamic /* String /* "wrap" */ | String /* "nowrap" */ | String /* "wrap-reverse" */ */ get() = definedExternally; set(value) = definedExternally
   var zeroMinWidth: Boolean? get() = definedExternally; set(value) = definedExternally

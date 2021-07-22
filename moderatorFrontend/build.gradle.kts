@@ -30,10 +30,10 @@ dependencies {
   api(npm("react", "17.0.2"))
   api(npm("react-dom", "17.0.2"))
 
-  api(npm("@material-ui/core", "4.11.4"))
+  api(npm("@material-ui/core", "4.12.2"))
 
   // Needed for MuiAutocomplete. Can be removed if it gets merged into @material-ui/core
-  api(npm("@material-ui/lab", "4.0.0-alpha.58"))
+  api(npm("@material-ui/lab", "4.0.0-alpha.60"))
 
   api(npm("@material-ui/icons", "4.11.2"))
 
