@@ -33,7 +33,7 @@ dependencies {
   api(npm("@material-ui/core", "4.11.4"))
 
   // Needed for MuiAutocomplete. Can be removed if it gets merged into @material-ui/core
-  api(npm("@material-ui/lab", "4.0.0-alpha.58"))
+  api(npm("@material-ui/lab", "4.0.0-alpha.59"))
 
   api(npm("@material-ui/icons", "4.11.2"))
 
