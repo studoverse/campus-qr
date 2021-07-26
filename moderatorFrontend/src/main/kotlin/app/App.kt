@@ -223,7 +223,7 @@ class App : RComponent<AppProps, AppState>() {
     }
   }
 
-  private val theme = createMuiTheme(js {
+  private val theme = createTheme(js {
     this.typography = js {
       useNextVariants = true
     }

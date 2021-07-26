@@ -9,6 +9,7 @@ import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
 import react.dom.form
+import react.dom.span
 import util.Strings
 import util.apiBase
 import util.get
@@ -340,16 +341,18 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           gridItem(GridSize(xs = 1)) {
             muiTooltip {
               attrs.title = Strings.access_control_time_slot_remove.get()
-              iconButton {
-                attrs.classes = js {
-                  root = props.classes.removeTimeSlotButton
-                }
-                // At least one time slot must be set
-                attrs.disabled = state.timeSlots.count() == 1
-                closeIcon {}
-                attrs.onClick = {
-                  setState {
-                    timeSlots = timeSlots.filter { it != clientDateRange }
+              span {
+                iconButton {
+                  attrs.classes = js {
+                    root = props.classes.removeTimeSlotButton
+                  }
+                  // At least one time slot must be set
+                  attrs.disabled = state.timeSlots.count() == 1
+                  closeIcon {}
+                  attrs.onClick = {
+                    setState {
+                      timeSlots = timeSlots.filter { it != clientDateRange }
+                    }
                   }
                 }
               }

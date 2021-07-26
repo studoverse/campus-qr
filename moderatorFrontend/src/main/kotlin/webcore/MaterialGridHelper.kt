@@ -22,7 +22,7 @@ fun RBuilder.gridContainer(
     attrs.container = true
     attrs.item = false
     attrs.alignContent = columnGravity.value
-    attrs.justify = rowGravity.value
+    attrs.justifyContent = rowGravity.value
     attrs.direction = direction.value
     attrs.alignItems = alignItems
     attrs.spacing = spacing
