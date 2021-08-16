@@ -9,11 +9,9 @@ class ClientLocation(
   val id: String,
   val name: String,
   var checkInCount: Int?,
-  val accessType: String,
+  val accessType: LocationAccessType,
   val seatCount: Int?,
 ) : ClientPayload
-
-val ClientLocation.accessTypeEnum get() = LocationAccessType.valueOf(accessType)
 
 @Serializable
 class UserData(
@@ -61,11 +59,9 @@ class ClientUser(
   val id: String,
   val email: String,
   val name: String,
-  val permissionsRaw: List<String>,
+  val permissions: Set<UserPermission>,
   val firstLoginDate: String,
 ) : ClientPayload
-
-val ClientUser.permissions: Set<UserPermission> get() = permissionsRaw.map { UserPermission.valueOf(it) }.toSet()
 
 // Keep in sync with BackendUser
 val ClientUser.canEditUsers get() = UserPermission.EDIT_USERS in permissions

@@ -77,7 +77,7 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
         }
       }
       mTableCell {
-        +props.config.location.accessTypeEnum.localizedString.get()
+        +props.config.location.accessType.localizedString.get()
       }
       mTableCell {
         +(props.config.location.seatCount?.toString() ?: Strings.undefined.get())

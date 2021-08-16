@@ -3,7 +3,6 @@ package views.locations
 import app.GlobalCss
 import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.accessTypeEnum
 import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
 import org.w3c.dom.events.Event
@@ -44,7 +43,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     locationCreationInProgress = false
     locationTextFieldError = ""
     locationTextFieldValue = (props.config as? Config.Edit)?.location?.name ?: ""
-    locationAccessType = (props.config as? Config.Edit)?.location?.accessTypeEnum ?: LocationAccessType.FREE
+    locationAccessType = (props.config as? Config.Edit)?.location?.accessType ?: LocationAccessType.FREE
     locationSeatCount = (props.config as? Config.Edit)?.location?.seatCount
   }
 

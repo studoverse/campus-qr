@@ -27,7 +27,7 @@ class BackendUser() : MongoMainEntry(), ClientPayloadable<ClientUser> {
     id = _id,
     email = email,
     name = name,
-    permissionsRaw = permissions.map { it.name },
+    permissions = permissions,
     firstLoginDate = firstLoginDate?.toAustrianTime("dd.MM.yyyy")
       ?: LocalizedString(
         "Not logged in yet",
@@ -64,7 +64,7 @@ class BackendLocation : MongoMainEntry(), ClientPayloadable<ClientLocation> {
     id = _id,
     name = name,
     checkInCount = checkInCount,
-    accessType = accessType.name,
+    accessType = accessType,
     seatCount = seatCount
   )
 }
