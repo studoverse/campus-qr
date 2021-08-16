@@ -18,80 +18,80 @@ import java.util.*
 
 //@formatter:off
 /**
-  Contact tracing by time (without seat filtering): See ContactTracingTest.kt
+Contact tracing by time (without seat filtering): See ContactTracingTest.kt
 
-                checkIn               checkOut
-                  +       infected      +
-                  +---------------------+
-                  +                     +
+checkIn               checkOut
++       infected      +
++---------------------+
++                     +
 
-                    +     a     +  +    b
-                    +-----------+  +---------->
-                    +           +  +
++     a     +  +    b
++-----------+  +---------->
++           +  +
 
-             +    c    +           +    d    +
-             +---------+           +---------+
-             +         +           +         +
++    c    +           +    d    +
++---------+           +---------+
++         +           +         +
 
-     +   e   +                               +    f    +
-     +-------+                               +---------+
-     +       +                               +         +
++   e   +                               +    f    +
++-------+                               +---------+
++       +                               +         +
 
-              +               g               +
-              +-------------------------------+
-              +                               +
-  |----------------------------------------------------> time
++               g               +
++-------------------------------+
++                               +
+|----------------------------------------------------> time
 
-  We treat the following cases as k1 contact person:
-  - a, c, d and g because their time range intersect the infected persons time range
-  - b because his time range intersects the infected persons time range, although not having a [CheckIn.checkOutDate]
-  We do NOT treat the following cases as k1 contact person:
-  - e and f because their time range doesn't intersect the infected persons time range
+We treat the following cases as k1 contact person:
+- a, c, d and g because their time range intersect the infected persons time range
+- b because his time range intersects the infected persons time range, although not having a [CheckIn.checkOutDate]
+We do NOT treat the following cases as k1 contact person:
+- e and f because their time range doesn't intersect the infected persons time range
 
- Note that infected checkIn and checkOut timestamp get extened by [transitThresholdSeconds]
+Note that infected checkIn and checkOut timestamp get extened by [transitThresholdSeconds]
  */
 
 /**
-  Contact tracing with additional seat filtering (#2 = seat 2): See ContactTracingSeatTest.kt
+Contact tracing with additional seat filtering (#2 = seat 2): See ContactTracingSeatTest.kt
 
-  1:00 - 2:00
-    location 1:    #1       #2       #3       #4
-                   a        b        c        d
-
-
-  3:00 - 4:00
-    location 1:    #1       #2       #3       #4
-                   e     infected    f        g
-
-    location 2:    #1       #2       #3       #4
-                   h        i        j        k
+1:00 - 2:00
+location 1:    #1       #2       #3       #4
+a        b        c        d
 
 
-  5:00 - 6:00
-    location 1:    #1       #2       #3       #4
-                   l        m        n        o
+3:00 - 4:00
+location 1:    #1       #2       #3       #4
+e     infected    f        g
+
+location 2:    #1       #2       #3       #4
+h        i        j        k
 
 
-  Without seat filtering:
-  - e, f and g are treated as k1 contact person because they were in the same LOCATION as the infected person
-    at the same time.
-  - All other people are not treated as k1 contact person.
+5:00 - 6:00
+location 1:    #1       #2       #3       #4
+l        m        n        o
 
-  With seat filter in location 1: (#2 -> {#1, #3}):
-  - e and f are treated as k1 contact person because of the filter.
-  - All other people are not treated as k1 contact person.
 
-  With seat filter in location 1: (#1 -> {#2, #3}):
-  - e, f and g are treated as k1 contact person because no seat filter applied for seat #2.
-  - All other people are not treated as k1 contact person.
+Without seat filtering:
+- e, f and g are treated as k1 contact person because they were in the same LOCATION as the infected person
+at the same time.
+- All other people are not treated as k1 contact person.
 
-  With seat filter in location 2: (#2 -> {#1, #3}):
-  - e, f and g are treated as k1 contact person because no seat filter applied for seat #2 in location 1.
-  - All other people are not treated as k1 contact person.
+With seat filter in location 1: (#2 -> {#1, #3}):
+- e and f are treated as k1 contact person because of the filter.
+- All other people are not treated as k1 contact person.
 
-  - a, b, c, d, l, m, n and o are NOT treated as k1 contact person because
-    their time range did not not intersect with the infected person.
-  - h, i, j and k are NOT treated as k1 contact person because they were in a different location as the infected person.
+With seat filter in location 1: (#1 -> {#2, #3}):
+- e, f and g are treated as k1 contact person because no seat filter applied for seat #2.
+- All other people are not treated as k1 contact person.
+
+With seat filter in location 2: (#2 -> {#1, #3}):
+- e, f and g are treated as k1 contact person because no seat filter applied for seat #2 in location 1.
+- All other people are not treated as k1 contact person.
+
+- a, b, c, d, l, m, n and o are NOT treated as k1 contact person because
+their time range did not not intersect with the infected person.
+- h, i, j and k are NOT treated as k1 contact person because they were in a different location as the infected person.
 
  */
 //@formatter:on
@@ -209,12 +209,10 @@ internal suspend fun generateContactTracingReport(emails: List<String>, oldestDa
     impactedUsersEmailsCsvData = impactedUsersEmails.joinToString("\n"),
     impactedUsersEmailsCsvFileName = "${csvFilePrefix?.plus("-emails") ?: "emails"}.csv",
     reportedUserLocationsCsv = "sep=;\n" + reportedUserCheckIns.joinToString("\n") {
-      "${it.email};${it.date.toAustrianTime(yearAtBeginning = false)};\"${
-        locationIdToLocationMap.getValue(it.locationId).name.replace(
-          "\"",
-          "\"\""
-        )
-      }\";${it.seat ?: "-"}"
+      "${it.email};" +
+          "${it.date.toAustrianTime(yearAtBeginning = false)};" +
+          "\"${locationIdToLocationMap.getValue(it.locationId).name.replace("\"", "\"\"")}\";" +
+          (it.seat ?: "-")
     },
     reportedUserLocationsCsvFileName = "${csvFilePrefix?.plus("-checkins") ?: "checkins"}.csv",
     startDate = oldestDate.toAustrianTime("dd.MM.yyyy"),
