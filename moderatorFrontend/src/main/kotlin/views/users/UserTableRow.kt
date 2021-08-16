@@ -2,7 +2,6 @@ package views.users
 
 import com.studo.campusqr.common.ClientUser
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.permissions
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
