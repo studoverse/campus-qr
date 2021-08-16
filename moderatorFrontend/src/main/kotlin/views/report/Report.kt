@@ -78,10 +78,8 @@ class Report : RComponent<ReportProps, ReportState>() {
       deleteFilter(userLocation)
     } else {
       val response = NetworkManager.post<String>(
-        "$apiBase/location/${userLocation.locationId}/editSeatFilter", params = json(
-          "seat" to userLocation.seat,
-          "filteredSeats" to filteredSeats
-        )
+        "$apiBase/location/${userLocation.locationId}/editSeatFilter",
+        urlParams = mapOf("seat" to userLocation.seat, "filteredSeats" to filteredSeats)
       )
       setState {
         if (response == "ok") {
@@ -98,9 +96,8 @@ class Report : RComponent<ReportProps, ReportState>() {
   private fun deleteFilter(userLocation: ReportData.UserLocation) = launch {
     setState { showProgress = true }
     val response = NetworkManager.post<String>(
-      "$apiBase/location/${userLocation.locationId}/deleteSeatFilter", params = json(
-        "seat" to userLocation.seat
-      )
+      "$apiBase/location/${userLocation.locationId}/deleteSeatFilter",
+      urlParams = mapOf("seat" to userLocation.seat)
     )
     setState {
       if (response == "ok") {
@@ -116,10 +113,8 @@ class Report : RComponent<ReportProps, ReportState>() {
   private fun traceContacts() = launch {
     setState { showProgress = true }
     val response = NetworkManager.post<ReportData>(
-      "$apiBase/report/list", params = json(
-        "email" to state.emailTextFieldValue,
-        "oldestDate" to state.infectionDate.getTime().toString()
-      )
+      "$apiBase/report/list",
+      urlParams = mapOf("email" to state.emailTextFieldValue, "oldestDate" to state.infectionDate.getTime().toString())
     )
     setState {
       showProgress = false

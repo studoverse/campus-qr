@@ -83,7 +83,7 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
     val locationId = locationIdWithSeat(state.selectedLocation!!.id, state.seatInputValue)
     val response = NetworkManager.post<String>(
       url = "$baseUrl/location/$locationId/guestCheckIn",
-      params = json("email" to state.personEmailTextFieldValue)
+      urlParams = mapOf("email" to state.personEmailTextFieldValue)
     )
     setState {
       showProgress = false

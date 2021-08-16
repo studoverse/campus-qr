@@ -67,14 +67,12 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     setState { userCreationInProgress = true }
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/create",
-      json = JSON.stringify(
-        NewUserData(
+      body = NewUserData(
           email = state.userEmailTextFieldValue,
           password = state.userPasswordTextFieldValue,
           name = state.userNameTextFieldValue,
           permissions = state.userPermissions.map { it.name }.toTypedArray()
         )
-      )
     )
     setState {
       userCreationInProgress = false
@@ -86,8 +84,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     setState { userCreationInProgress = true }
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/edit",
-      json = JSON.stringify(
-        EditUserData(
+      body = EditUserData(
           userId = (props.config as Config.Edit).user.id,
           name = state.userNameTextFieldValue.emptyToNull(),
           password = state.userPasswordTextFieldValue.emptyToNull(),
@@ -96,7 +93,6 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
             ?.map { it.name }
             ?.toTypedArray()
         )
-      )
     )
     setState {
       userCreationInProgress = false

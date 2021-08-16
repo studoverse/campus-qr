@@ -23,6 +23,11 @@ dependencies {
   api("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.212-kotlin-1.5.10")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
+  // kotlinx-serialization + Ktor client
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+  implementation("io.ktor:ktor-client-core:1.6.1")
+  implementation("io.ktor:ktor-client-serialization:1.6.1")
+
   implementation(npm("normalize.css", "8.0.1"))
   implementation(devNpm("style-loader", "2.0.0"))
   implementation(devNpm("css-loader", "5.2.6"))

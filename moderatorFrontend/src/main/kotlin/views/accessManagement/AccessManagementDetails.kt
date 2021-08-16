@@ -119,8 +119,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     setState { showProgress = true }
     val response = NetworkManager.post<String>(
       url = "$apiBase/access/create",
-      json = JSON.stringify(
-        NewAccess(
+      body = NewAccess(
           locationId = state.selectedLocation!!.id,
           // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
           allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
@@ -129,7 +128,6 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           reason = state.accessControlReasonTextFieldValue
         )
       )
-    )
     setState {
       showProgress = false
     }
@@ -141,8 +139,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     val accessManagementId = (props.config as Config.Edit).accessManagement.id
     val response = NetworkManager.post<String>(
       url = "$apiBase/access/$accessManagementId/edit",
-      json = JSON.stringify(
-        EditAccess(
+      body = EditAccess(
           locationId = state.selectedLocation?.id,
           // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
           allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
@@ -150,7 +147,6 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           note = state.accessControlNoteTextFieldValue,
           reason = state.accessControlReasonTextFieldValue
         )
-      )
     )
     setState {
       showProgress = false

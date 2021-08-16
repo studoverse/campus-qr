@@ -57,7 +57,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     }
     val response = NetworkManager.post<String>(
       url = url,
-      params = json(
+      urlParams = mapOf(
         "name" to state.locationTextFieldValue,
         "accessType" to state.locationAccessType.name,
         "seatCount" to state.locationSeatCount

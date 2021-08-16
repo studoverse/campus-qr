@@ -1,6 +1,5 @@
 package com.studo.campusqr.common
 
-
 interface ClientPayload
 
 class ClientLocation(

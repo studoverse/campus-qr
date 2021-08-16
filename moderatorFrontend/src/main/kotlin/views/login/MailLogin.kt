@@ -47,11 +47,11 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
     launch {
       val response: LoginResult? = NetworkManager.post<String>(
         url = "$apiBase/user/login",
-        params = json(
+        urlParams = mapOf(
           "email" to state.email,
           "password" to state.password
         ),
-        headers = json(
+        headers = mapOf(
           "csrfToken" to document.querySelector("meta[name='csrfToken']")!!.getAttribute("content")!!
         )
       )?.let { result -> LoginResult.values().find { it.name == result } ?: LoginResult.UNKNOWN_ERROR }

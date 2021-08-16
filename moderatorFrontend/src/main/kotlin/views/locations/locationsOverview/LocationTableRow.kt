@@ -135,10 +135,7 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
                   MenuItem(text = Strings.location_delete.get(), icon = deleteIcon, onClick = {
                     if (window.confirm(Strings.location_delete_are_you_sure.get())) {
                       launch {
-                        val response = NetworkManager.post<String>(
-                          "$apiBase/location/${props.config.location.id}/delete",
-                          params = null
-                        )
+                        val response = NetworkManager.post<String>("$apiBase/location/${props.config.location.id}/delete")
                         props.config.onDeleteFinished(response)
                       }
                     }
