@@ -1,7 +1,10 @@
 package com.studo.campusqr.common
 
+import kotlinx.serialization.Serializable
+
 interface ClientPayload
 
+@Serializable
 class ClientLocation(
   val id: String,
   val name: String,
@@ -12,6 +15,7 @@ class ClientLocation(
 
 val ClientLocation.accessTypeEnum get() = LocationAccessType.valueOf(accessType)
 
+@Serializable
 class UserData(
   var appName: String,
   var clientUser: ClientUser? = null, // Null when unauthenticated
@@ -21,17 +25,19 @@ class UserData(
 
 val UserData.isAuthenticated get() = clientUser != null
 
+@Serializable
 class ReportData(
   val impactedUsersCount: Int,
-  val impactedUsersEmails: Array<String>,
+  val impactedUsersEmails: List<String>,
   val impactedUsersEmailsCsvData: String,
-  val reportedUserLocations: Array<UserLocation>,
+  val reportedUserLocations: List<UserLocation>,
   val reportedUserLocationsCsv: String,
   val reportedUserLocationsCsvFileName: String,
   val startDate: String,
   val endDate: String,
   val impactedUsersEmailsCsvFileName: String,
 ) : ClientPayload {
+  @Serializable
   class UserLocation(
     val locationId: String,
     val locationName: String,
@@ -40,20 +46,22 @@ class ReportData(
     val date: String,
     val seat: Int?,
     val potentialContacts: Int,
-    val filteredSeats: Array<Int>?,
+    val filteredSeats: List<Int>?,
   )
 }
 
+@Serializable
 class LocationVisitData(
   val csvData: String,
   val csvFileName: String,
 ) : ClientPayload
 
+@Serializable
 class ClientUser(
   val id: String,
   val email: String,
   val name: String,
-  val permissionsRaw: Array<String>,
+  val permissionsRaw: List<String>,
   val firstLoginDate: String,
 ) : ClientPayload
 
@@ -67,85 +75,98 @@ val ClientUser.canEditAnyLocationAccess get() = canEditOwnLocationAccess || canE
 val ClientUser.canEditOwnLocationAccess get() = UserPermission.EDIT_OWN_ACCESS in permissions
 val ClientUser.canEditAllLocationAccess get() = UserPermission.EDIT_ALL_ACCESS in permissions
 
+@Serializable
 class AccessManagementData(
-  val accessManagement: Array<ClientAccessManagement>,
+  val accessManagement: List<ClientAccessManagement>,
   val clientLocation: ClientLocation?,
 ) : ClientPayload
 
+@Serializable
 class AccessManagementExportData(
-  val permits: Array<Permit>,
+  val permits: List<Permit>,
   val clientLocation: ClientLocation?,
 ) : ClientPayload {
+  @Serializable
   class Permit(
     val dateRange: ClientDateRange,
     val email: String,
   )
 }
 
+@Serializable
 class ClientAccessManagement(
   val id: String,
   val locationName: String,
   val locationId: String,
-  val allowedEmails: Array<String>,
-  val dateRanges: Array<ClientDateRange>,
+  val allowedEmails: List<String>,
+  val dateRanges: List<ClientDateRange>,
   val note: String,
   val reason: String,
 ) : ClientPayload
 
+@Serializable
 class ClientDateRange(
   val from: Double,
   val to: Double,
 ) : ClientPayload
 
+@Serializable
 class NewAccess(
   val locationId: String,
-  val allowedEmails: Array<String>,
-  val dateRanges: Array<ClientDateRange>,
+  val allowedEmails: List<String>,
+  val dateRanges: List<ClientDateRange>,
   val note: String,
   val reason: String,
 ) : ClientPayload
 
+@Serializable
 class NewUserData(
   val email: String,
   val name: String,
   val password: String,
-  val permissions: Array<String>,
+  val permissions: List<String>,
 ) : ClientPayload
 
+@Serializable
 class EditUserData(
   val userId: String? = null,
   val name: String?,
   val password: String?,
-  val permissions: Array<String>?,
+  val permissions: List<String>?,
 ) : ClientPayload
 
+@Serializable
 class EditAccess(
   val locationId: String? = null,
-  val allowedEmails: Array<String>? = null,
-  val dateRanges: Array<ClientDateRange>? = null,
+  val allowedEmails: List<String>? = null,
+  val dateRanges: List<ClientDateRange>? = null,
   val note: String? = null,
   val reason: String? = null,
 ) : ClientPayload
 
+@Serializable
 class CreateLocation(
   val name: String,
   val accessType: LocationAccessType,
   val seatCount: Int?,
 ) : ClientPayload
 
+@Serializable
 class EditLocation(
   val name: String,
   val accessType: LocationAccessType,
   val seatCount: Int?,
 ) : ClientPayload
 
+@Serializable
 class ClientSeatFilter(
   val id: String,
   val locationId: String,
   val seat: Int,
-  val filteredSeats: Array<Int>,
+  val filteredSeats: List<Int>,
 ) : ClientPayload
 
+@Serializable
 class ActiveCheckIn(
   val id: String,
   val locationId: String,
@@ -155,15 +176,18 @@ class ActiveCheckIn(
   val email: String,
 ) : ClientPayload
 
+@Serializable
 class EditSeatFilter(
   val seat: Int,
   val filteredSeats: List<Int>,
 ) : ClientPayload
 
+@Serializable
 class DeleteSeatFilter(
   val seat: Int,
 ) : ClientPayload
 
+@Serializable
 class LiveCheckIn(
   val activeCheckIns: Int,
   val qrCodeContent: String?

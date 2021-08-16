@@ -120,13 +120,13 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     val response = NetworkManager.post<String>(
       url = "$apiBase/access/create",
       body = NewAccess(
-          locationId = state.selectedLocation!!.id,
-          // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
-          allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
-          dateRanges = state.timeSlots.toTypedArray(),
-          note = state.accessControlNoteTextFieldValue,
-          reason = state.accessControlReasonTextFieldValue
-        )
+        locationId = state.selectedLocation!!.id,
+        // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
+        allowedEmails = state.permittedPeopleList + state.getPermittedEmailsFromTextField(),
+        dateRanges = state.timeSlots,
+        note = state.accessControlNoteTextFieldValue,
+        reason = state.accessControlReasonTextFieldValue
+      )
       )
     setState {
       showProgress = false
@@ -140,13 +140,13 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     val response = NetworkManager.post<String>(
       url = "$apiBase/access/$accessManagementId/edit",
       body = EditAccess(
-          locationId = state.selectedLocation?.id,
-          // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
-          allowedEmails = state.permittedPeopleList.toTypedArray() + state.getPermittedEmailsFromTextField(),
-          dateRanges = state.timeSlots.toTypedArray(),
-          note = state.accessControlNoteTextFieldValue,
-          reason = state.accessControlReasonTextFieldValue
-        )
+        locationId = state.selectedLocation?.id,
+        // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
+        allowedEmails = state.permittedPeopleList + state.getPermittedEmailsFromTextField(),
+        dateRanges = state.timeSlots,
+        note = state.accessControlNoteTextFieldValue,
+        reason = state.accessControlReasonTextFieldValue
+      )
     )
     setState {
       showProgress = false

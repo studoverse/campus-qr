@@ -21,7 +21,6 @@ import webcore.materialUI.muiAutocomplete
 import webcore.materialUI.muiButton
 import webcore.materialUI.textField
 import webcore.materialUI.withStyles
-import kotlin.js.json
 
 interface AddGuestCheckInProps : RProps {
   class Config(
@@ -83,7 +82,7 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
     val locationId = locationIdWithSeat(state.selectedLocation!!.id, state.seatInputValue)
     val response = NetworkManager.post<String>(
       url = "$baseUrl/location/$locationId/guestCheckIn",
-      urlParams = mapOf("email" to state.personEmailTextFieldValue)
+      body = mapOf("email" to state.personEmailTextFieldValue)
     )
     setState {
       showProgress = false

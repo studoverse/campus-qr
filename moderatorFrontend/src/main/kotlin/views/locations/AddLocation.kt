@@ -19,7 +19,6 @@ import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
-import kotlin.js.json
 
 interface AddLocationProps : RProps {
   sealed class Config(val onFinished: (response: String?) -> Unit) {
@@ -57,7 +56,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     }
     val response = NetworkManager.post<String>(
       url = url,
-      urlParams = mapOf(
+      body = mapOf(
         "name" to state.locationTextFieldValue,
         "accessType" to state.locationAccessType.name,
         "seatCount" to state.locationSeatCount

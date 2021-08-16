@@ -15,7 +15,6 @@ import util.localizedString
 import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
-import kotlin.js.json
 
 interface UserTableRowProps : RProps {
   class Config(
@@ -114,7 +113,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
                 launch {
                   val response = NetworkManager.post<String>(
                     "$apiBase/user/delete",
-                    urlParams = mapOf("userId" to props.config.user.id)
+                    body = mapOf("userId" to props.config.user.id)
                   )
                   props.config.onEditFinished(response)
                 }

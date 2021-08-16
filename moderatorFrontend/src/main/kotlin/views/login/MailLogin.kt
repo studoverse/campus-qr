@@ -21,7 +21,6 @@ import webcore.extensions.launch
 import webcore.materialUI.textField
 import webcore.materialUI.typography
 import webcore.materialUI.withStyles
-import kotlin.js.json
 
 interface MailLoginProps : RProps {
   var classes: MailLoginClasses
@@ -47,7 +46,7 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
     launch {
       val response: LoginResult? = NetworkManager.post<String>(
         url = "$apiBase/user/login",
-        urlParams = mapOf(
+        body = mapOf(
           "email" to state.email,
           "password" to state.password
         ),

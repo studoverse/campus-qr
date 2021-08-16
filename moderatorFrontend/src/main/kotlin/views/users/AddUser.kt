@@ -71,7 +71,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
           email = state.userEmailTextFieldValue,
           password = state.userPasswordTextFieldValue,
           name = state.userNameTextFieldValue,
-          permissions = state.userPermissions.map { it.name }.toTypedArray()
+          permissions = state.userPermissions.map { it.name }
         )
     )
     setState {
@@ -91,7 +91,6 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
           permissions = state.userPermissions
             .takeIf { (props.config as Config.Edit).user.permissions != it }
             ?.map { it.name }
-            ?.toTypedArray()
         )
     )
     setState {
