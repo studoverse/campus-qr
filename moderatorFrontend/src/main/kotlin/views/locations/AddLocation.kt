@@ -3,7 +3,6 @@ package views.locations
 import app.GlobalCss
 import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.accessTypeEnum
 import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
 import org.w3c.dom.events.Event
@@ -19,7 +18,6 @@ import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
-import kotlin.js.json
 
 interface AddLocationProps : RProps {
   sealed class Config(val onFinished: (response: String?) -> Unit) {
@@ -45,7 +43,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     locationCreationInProgress = false
     locationTextFieldError = ""
     locationTextFieldValue = (props.config as? Config.Edit)?.location?.name ?: ""
-    locationAccessType = (props.config as? Config.Edit)?.location?.accessTypeEnum ?: LocationAccessType.FREE
+    locationAccessType = (props.config as? Config.Edit)?.location?.accessType ?: LocationAccessType.FREE
     locationSeatCount = (props.config as? Config.Edit)?.location?.seatCount
   }
 
@@ -57,7 +55,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     }
     val response = NetworkManager.post<String>(
       url = url,
-      params = json(
+      body = mapOf(
         "name" to state.locationTextFieldValue,
         "accessType" to state.locationAccessType.name,
         "seatCount" to state.locationSeatCount

@@ -2,7 +2,6 @@ package views.users
 
 import com.studo.campusqr.common.ClientUser
 import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.permissions
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
@@ -15,7 +14,6 @@ import util.localizedString
 import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
-import kotlin.js.json
 
 interface UserTableRowProps : RProps {
   class Config(
@@ -113,9 +111,8 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
               if (window.confirm(Strings.user_delete_are_you_sure.get())) {
                 launch {
                   val response = NetworkManager.post<String>(
-                    "$apiBase/user/delete", params = json(
-                      "userId" to props.config.user.id
-                    )
+                    "$apiBase/user/delete",
+                    body = mapOf("userId" to props.config.user.id)
                   )
                   props.config.onEditFinished(response)
                 }

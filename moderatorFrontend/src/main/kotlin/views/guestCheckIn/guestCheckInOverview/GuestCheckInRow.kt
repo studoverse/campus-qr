@@ -17,7 +17,6 @@ import webcore.materialUI.mTableCell
 import webcore.materialUI.mTableRow
 import webcore.materialUI.muiButton
 import webcore.materialUI.withStyles
-import kotlin.js.json
 
 interface GuestCheckInRowProps : RProps {
   var classes: GuestCheckInRowClasses
@@ -55,9 +54,8 @@ class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>()
               val locationId = with(props.config.activeCheckIn) { locationIdWithSeat(locationId, seat) }
               launch {
                 val response = NetworkManager.post<String>(
-                  "$apiBase/location/$locationId/checkout", params = json(
-                    "email" to props.config.activeCheckIn.email
-                  )
+                  "$apiBase/location/$locationId/checkout",
+                  body = mapOf("email" to props.config.activeCheckIn.email)
                 )
                 if (response == "ok") {
                   props.config.onCheckedOut()

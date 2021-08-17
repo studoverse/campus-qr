@@ -24,7 +24,6 @@ import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
 import kotlin.js.Date
-import kotlin.js.json
 
 interface ReportProps : RProps {
   var classes: ReportClasses
@@ -78,10 +77,8 @@ class Report : RComponent<ReportProps, ReportState>() {
       deleteFilter(userLocation)
     } else {
       val response = NetworkManager.post<String>(
-        "$apiBase/location/${userLocation.locationId}/editSeatFilter", params = json(
-          "seat" to userLocation.seat,
-          "filteredSeats" to filteredSeats
-        )
+        "$apiBase/location/${userLocation.locationId}/editSeatFilter",
+        body = mapOf("seat" to userLocation.seat, "filteredSeats" to filteredSeats)
       )
       setState {
         if (response == "ok") {
@@ -98,9 +95,8 @@ class Report : RComponent<ReportProps, ReportState>() {
   private fun deleteFilter(userLocation: ReportData.UserLocation) = launch {
     setState { showProgress = true }
     val response = NetworkManager.post<String>(
-      "$apiBase/location/${userLocation.locationId}/deleteSeatFilter", params = json(
-        "seat" to userLocation.seat
-      )
+      "$apiBase/location/${userLocation.locationId}/deleteSeatFilter",
+      body = mapOf("seat" to userLocation.seat)
     )
     setState {
       if (response == "ok") {
@@ -116,10 +112,8 @@ class Report : RComponent<ReportProps, ReportState>() {
   private fun traceContacts() = launch {
     setState { showProgress = true }
     val response = NetworkManager.post<ReportData>(
-      "$apiBase/report/list", params = json(
-        "email" to state.emailTextFieldValue,
-        "oldestDate" to state.infectionDate.getTime().toString()
-      )
+      "$apiBase/report/list",
+      body = mapOf("email" to state.emailTextFieldValue, "oldestDate" to state.infectionDate.getTime().toString())
     )
     setState {
       showProgress = false

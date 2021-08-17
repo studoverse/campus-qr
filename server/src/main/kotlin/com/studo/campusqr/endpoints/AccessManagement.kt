@@ -18,8 +18,8 @@ private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAcces
   id = _id,
   locationName = location.name,
   locationId = location._id,
-  allowedEmails = allowedEmails.toTypedArray(),
-  dateRanges = dateRanges.map { it.toClientClass() }.toTypedArray(),
+  allowedEmails = allowedEmails,
+  dateRanges = dateRanges.map { it.toClientClass() },
   note = note,
   reason = reason
 )
@@ -55,7 +55,7 @@ suspend fun AuthenticatedApplicationCall.listAccess() {
 
   respondObject(
     AccessManagementData(
-      accessManagement = accessManagement.toTypedArray(),
+      accessManagement = accessManagement,
       clientLocation = if (locationId != null) locations.values.firstOrNull()?.toClientClass(language) else null
     )
   )
@@ -105,7 +105,7 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
 
   respondObject(
     AccessManagementExportData(
-      permits = permits.toTypedArray(),
+      permits = permits,
       clientLocation = location?.toClientClass(language)
     )
   )
