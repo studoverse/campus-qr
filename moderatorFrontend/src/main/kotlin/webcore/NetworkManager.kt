@@ -24,10 +24,12 @@ object NetworkManager {
 
   suspend inline fun <reified T : Any> get(
     url: String,
+    urlParams: Map<String, Any?> = emptyMap(),
     headers: Map<String, Any?> = emptyMap(),
   ): T? = try {
     val response: HttpResponse = client.get(url) {
       headers.forEach { header(it.key, it.value) }
+      urlParams.forEach { parameter(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
     response.receive<T>()
@@ -37,6 +39,7 @@ object NetworkManager {
 
   suspend inline fun <reified T : Any> post(
     url: String,
+    urlParams: Map<String, Any?> = emptyMap(),
     body: Any? = null,
     headers: Map<String, Any?> = emptyMap(),
   ): T? = try {
@@ -46,6 +49,7 @@ object NetworkManager {
         this.body = body
       }
       headers.forEach { header(it.key, it.value) }
+      urlParams.forEach { parameter(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
     response.receive<T>()
@@ -55,10 +59,12 @@ object NetworkManager {
 
   suspend inline fun <reified T : Any> put(
     url: String,
+    urlParams: Map<String, Any?> = emptyMap(),
     headers: Map<String, Any?> = emptyMap(),
   ): T? = try {
     val response: HttpResponse = client.put(url) {
       headers.forEach { header(it.key, it.value) }
+      urlParams.forEach { parameter(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
     response.receive<T>()
