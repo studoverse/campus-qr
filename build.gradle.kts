@@ -3,14 +3,14 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30")
   }
 }
 
 plugins {
-  kotlin("multiplatform") version "1.5.10" apply false
-  kotlin("js") version "1.5.10" apply false
-  kotlin("jvm") version "1.5.10" apply false
+  kotlin("multiplatform") version "1.5.30" apply false
+  kotlin("js") version "1.5.30" apply false
+  kotlin("jvm") version "1.5.30" apply false
 }
 
 // Workaround. Hardcode the webpack version: 4rc0 works fine while 5 doesn't.

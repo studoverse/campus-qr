@@ -1,6 +1,6 @@
 plugins {
   kotlin("multiplatform")
-  kotlin("plugin.serialization") version "1.5.20"
+  kotlin("plugin.serialization") version "1.5.30"
 }
 
 kotlin {
@@ -13,7 +13,7 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+        api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
       }
     }
     val commonTest by getting

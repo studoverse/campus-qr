@@ -12,8 +12,8 @@ repositories {
 
 dependencies {
   implementation(project(":common"))
-  implementation("io.ktor:ktor-server-netty:1.6.0")
-  implementation("io.ktor:ktor-html-builder:1.6.0")
+  implementation("io.ktor:ktor-server-netty:1.6.3")
+  implementation("io.ktor:ktor-html-builder:1.6.3")
   implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
   implementation("org.mongodb:mongodb-driver-sync:4.1.0")
@@ -35,10 +35,10 @@ application {
 
 tasks {
   compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
   }
   compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
   }
 
   getByName<JavaExec>("run") {
