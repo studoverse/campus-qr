@@ -1,7 +1,6 @@
 package views.report
 
-import com.studo.campusqr.common.ReportData
-import com.studo.campusqr.common.emailSeparators
+import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
@@ -78,7 +77,10 @@ class Report : RComponent<ReportProps, ReportState>() {
     } else {
       val response = NetworkManager.post<String>(
         "$apiBase/location/${userLocation.locationId}/editSeatFilter",
-        body = mapOf("seat" to userLocation.seat, "filteredSeats" to filteredSeats)
+        body = EditSeatFilterData(
+          seat = userLocation.seat,
+          filteredSeats = filteredSeats
+        )
       )
       setState {
         if (response == "ok") {
@@ -96,7 +98,7 @@ class Report : RComponent<ReportProps, ReportState>() {
     setState { showProgress = true }
     val response = NetworkManager.post<String>(
       "$apiBase/location/${userLocation.locationId}/deleteSeatFilter",
-      body = mapOf("seat" to userLocation.seat)
+      body = DeleteSeatFilterData(seat = userLocation.seat)
     )
     setState {
       if (response == "ok") {
@@ -113,7 +115,10 @@ class Report : RComponent<ReportProps, ReportState>() {
     setState { showProgress = true }
     val response = NetworkManager.post<ReportData>(
       "$apiBase/report/list",
-      body = mapOf("email" to state.emailTextFieldValue, "oldestDate" to state.infectionDate.getTime().toString())
+      body = TraceContactsReportData(
+        email = state.emailTextFieldValue,
+        oldestDate = state.infectionDate.getTime().toString()
+      )
     )
     setState {
       showProgress = false

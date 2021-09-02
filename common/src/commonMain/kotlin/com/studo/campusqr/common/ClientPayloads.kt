@@ -188,3 +188,54 @@ class LiveCheckIn(
   val activeCheckIns: Int,
   val qrCodeContent: String?
 ) : ClientPayload
+
+@Serializable
+class GuestCheckInData(
+  val email: String
+) : ClientPayload
+
+@Serializable
+class GuestCheckOutData(
+  val email: String
+) : ClientPayload
+
+// TODO: @mh Use separate functions to send different payloads? (CreateLocation & EditLocation exist already)
+@Serializable
+class CreateOrUpdateLocationData(
+  val name: String,
+  val accessType: LocationAccessType,
+  val seatCount: Int?
+) : ClientPayload
+
+@Serializable
+class MailLoginData(
+  val email: String,
+  val password: String
+) : ClientPayload
+
+// TODO: @mh EditSeatFilter is already used in the backend with seat non-nullable but frontend seat can be null
+//       -> throw exception if null because backend expects the guest to have a seat (null gets implicitly converted to 0 which obviously is not expected behaviour)
+@Serializable
+class EditSeatFilterData(
+  val seat: Int?,
+  val filteredSeats: List<Int>
+) : ClientPayload
+
+// TODO: @mh DeleteSeatFilter is already used in the backend with seat non-nullable but frontend seat can be null
+//       -> throw exception if null because backend expects the guest to have a seat
+@Serializable
+class DeleteSeatFilterData(
+  val seat: Int?
+) : ClientPayload
+
+// TODO: @mh Change type of oldestDate from String to Date once the server uses receiveClientPayload()
+@Serializable
+class TraceContactsReportData(
+  val email: String,
+  val oldestDate: String
+) : ClientPayload
+
+@Serializable
+class DeleteUserData(
+  val userId: String
+) : ClientPayload
