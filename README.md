@@ -88,10 +88,12 @@ The following environment variables need to be configured:
 
 ## Development compilation
 
-Start the backend application by the IntelliJ run configuration **Debug Backend** or alternatively with `./gradlew server:run`. After having
-the backend running, start the moderator frontend application by the IntelliJ run configuration **Start dev webserver** or alternatively
+Start the backend application by the IntelliJ run configuration **Server** or alternatively with `./gradlew server:run`. After having the
+backend running, start the moderator frontend application by the IntelliJ run configuration **Debug Web-Frontend** or alternatively
 with `./gradlew browserDevelopmentRun -t`. You can now access the moderator frontend with the proxied local backend
-via https://localhost:8072.
+via https://localhost:8072. When debugging with the **Debug Web-Frontend** run configuration, you can also set breakpoints in IntelliJ while
+testing the web-frontend in the newly opened Chrome window (first compilation might take a while). Hot reloading of the moderator web
+frontend is also enabled.
 
 ## Production compilation
 

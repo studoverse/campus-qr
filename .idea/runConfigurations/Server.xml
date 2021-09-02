@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Server" type="JetRunConfigurationType">
+    <envs>
+      <env name="DEBUG" value="true" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.studo.campusqr.ServerKt" />
+    <module name="CampusQR.server.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

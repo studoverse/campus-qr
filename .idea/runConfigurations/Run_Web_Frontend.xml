@@ -1,19 +1,17 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Start dev webserver" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Run Web-Frontend" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/moderatorFrontend" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="-t" />
+      <option name="scriptParameters" value="browserDevelopmentRun -t" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
-        <list>
-          <option value="browserDevelopmentRun" />
-        </list>
+        <list />
       </option>
-      <option name="vmOptions" value="" />
+      <option name="vmOptions" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
