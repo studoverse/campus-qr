@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Debug in Chrome" type="JavascriptDebugType" uri="http://localhost:8072/admin/">
+    <method v="2" />
+  </configuration>
+</component>
