@@ -3,7 +3,7 @@ package views.guestCheckIn
 import app.GlobalCss
 import app.baseUrl
 import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.GuestCheckInData
+import com.studo.campusqr.common.payloads.GuestCheckInData
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*

@@ -1,8 +1,12 @@
 package views.report
 
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
+import com.studo.campusqr.common.payloads.DeleteSeatFilter
+import com.studo.campusqr.common.payloads.EditSeatFilter
+import com.studo.campusqr.common.payloads.ReportData
+import com.studo.campusqr.common.payloads.TraceContactsReportData
 import kotlinext.js.js
 import kotlinx.html.js.onSubmitFunction
 import muiDatePicker
@@ -77,8 +81,8 @@ class Report : RComponent<ReportProps, ReportState>() {
     } else {
       val response = NetworkManager.post<String>(
         "$apiBase/location/${userLocation.locationId}/editSeatFilter",
-        body = EditSeatFilterData(
-          seat = userLocation.seat,
+        body = EditSeatFilter(
+          seat = userLocation.seat!!,
           filteredSeats = filteredSeats
         )
       )
@@ -98,7 +102,7 @@ class Report : RComponent<ReportProps, ReportState>() {
     setState { showProgress = true }
     val response = NetworkManager.post<String>(
       "$apiBase/location/${userLocation.locationId}/deleteSeatFilter",
-      body = DeleteSeatFilterData(seat = userLocation.seat)
+      body = DeleteSeatFilter(seat = userLocation.seat!!)
     )
     setState {
       if (response == "ok") {

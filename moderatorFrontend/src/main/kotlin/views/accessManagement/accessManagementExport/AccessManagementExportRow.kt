@@ -1,6 +1,6 @@
 package views.accessManagement.accessManagementExport
 
-import com.studo.campusqr.common.AccessManagementExportData
+import com.studo.campusqr.common.payloads.AccessManagementExportData
 import react.RBuilder
 import react.RComponent
 import react.RProps

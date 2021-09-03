@@ -1,14 +1,17 @@
 package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.*
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
+import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
+import com.studo.campusqr.common.payloads.LiveCheckIn
+import com.studo.campusqr.common.payloads.LocationVisitData
 import com.studo.campusqr.database.*
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.campusqr.utils.getAuthenticatedCall
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -35,7 +38,7 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
     return
   }
 
-  val params: CreateLocation = receiveClientPayload()
+  val params: CreateOrUpdateLocationData = receiveClientPayload()
 
   val room = BackendLocation().apply {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
@@ -239,7 +242,7 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
   val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
   val location = getLocation(locationId)
 
-  val params: EditLocation = receiveClientPayload()
+  val params: CreateOrUpdateLocationData = receiveClientPayload()
 
   runOnDb {
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal locationId) {

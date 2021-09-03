@@ -1,7 +1,7 @@
 package views.accessManagement.accessManagementExport
 
-import com.studo.campusqr.common.AccessManagementExportData
 import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.payloads.AccessManagementExportData
 import kotlinext.js.js
 import react.*
 import util.Strings

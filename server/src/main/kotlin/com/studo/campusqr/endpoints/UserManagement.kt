@@ -3,9 +3,9 @@ package com.studo.campusqr.endpoints
 import com.moshbit.katerbase.MongoDatabase
 import com.moshbit.katerbase.MongoMainEntry
 import com.moshbit.katerbase.equal
-import com.studo.campusqr.common.EditUserData
-import com.studo.campusqr.common.NewUserData
 import com.studo.campusqr.common.UserPermission
+import com.studo.campusqr.common.payloads.EditUserData
+import com.studo.campusqr.common.payloads.NewUserData
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.MainDatabase
 import com.studo.campusqr.database.SessionToken

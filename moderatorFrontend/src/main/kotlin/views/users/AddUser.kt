@@ -1,10 +1,15 @@
 package views.users
 
 import app.GlobalCss
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.ClientUser
+import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.UserPermission
+import com.studo.campusqr.common.canEditUsers
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
+import com.studo.campusqr.common.payloads.EditUserData
+import com.studo.campusqr.common.payloads.NewUserData
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*

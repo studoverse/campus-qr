@@ -2,9 +2,9 @@ package views.locations
 
 import app.GlobalCss
 import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.CreateOrUpdateLocationData
 import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.format
+import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*

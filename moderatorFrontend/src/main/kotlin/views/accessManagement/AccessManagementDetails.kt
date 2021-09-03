@@ -1,7 +1,12 @@
 package views.accessManagement
 
 import app.GlobalCss
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.emailSeparators
+import com.studo.campusqr.common.payloads.ClientAccessManagement
+import com.studo.campusqr.common.payloads.ClientDateRange
+import com.studo.campusqr.common.payloads.EditAccess
+import com.studo.campusqr.common.payloads.NewAccess
 import kotlinext.js.js
 import kotlinx.html.js.onSubmitFunction
 import muiDateTimePicker

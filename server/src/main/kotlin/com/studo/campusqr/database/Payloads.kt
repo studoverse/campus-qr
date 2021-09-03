@@ -3,6 +3,9 @@ package com.studo.campusqr.database
 import com.moshbit.katerbase.MongoMainEntry
 import com.moshbit.katerbase.MongoSubEntry
 import com.studo.campusqr.common.*
+import com.studo.campusqr.common.payloads.ClientAccessManagement
+import com.studo.campusqr.common.payloads.ClientDateRange
+import com.studo.campusqr.common.payloads.ClientSeatFilter
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.extensions.toAustrianTime
 import java.util.*

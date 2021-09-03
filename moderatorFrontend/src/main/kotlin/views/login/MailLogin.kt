@@ -1,7 +1,7 @@
 package views.login
 
 import com.studo.campusqr.common.LoginResult
-import com.studo.campusqr.common.MailLoginData
+import com.studo.campusqr.common.payloads.MailLoginData
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.html.js.onSubmitFunction

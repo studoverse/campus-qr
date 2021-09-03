@@ -1,8 +1,8 @@
 package views.guestCheckIn.guestCheckInOverview
 
-import com.studo.campusqr.common.ActiveCheckIn
-import com.studo.campusqr.common.GuestCheckOutData
 import com.studo.campusqr.common.extensions.format
+import com.studo.campusqr.common.payloads.ActiveCheckIn
+import com.studo.campusqr.common.payloads.GuestCheckOutData
 import kotlinx.browser.window
 import react.RBuilder
 import react.RComponent

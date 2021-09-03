@@ -1,7 +1,7 @@
 package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.*
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.payloads.*
 import com.studo.campusqr.database.BackendAccess
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.DateRange
