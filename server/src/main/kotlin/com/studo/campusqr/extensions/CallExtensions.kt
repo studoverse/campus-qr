@@ -1,7 +1,7 @@
 package com.studo.campusqr.extensions
 
 import com.fasterxml.jackson.core.JsonProcessingException
-import com.studo.campusqr.common.ClientPayload
+import com.studo.campusqr.common.payloads.ClientPayload
 import com.studo.campusqr.utils.JsonHandler
 import io.ktor.application.*
 import io.ktor.features.*

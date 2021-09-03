@@ -4,6 +4,7 @@ import com.moshbit.katerbase.MongoDatabase
 import com.moshbit.katerbase.MongoMainEntry
 import com.moshbit.katerbase.equal
 import com.studo.campusqr.common.UserPermission
+import com.studo.campusqr.common.payloads.DeleteUserData
 import com.studo.campusqr.common.payloads.EditUserData
 import com.studo.campusqr.common.payloads.NewUserData
 import com.studo.campusqr.database.BackendUser
@@ -58,8 +59,8 @@ suspend fun AuthenticatedApplicationCall.deleteUser() {
     return
   }
 
-  val params = receiveJsonStringMap()
-  val userId = params.getValue("userId")
+  val params: DeleteUserData = receiveClientPayload()
+  val userId = params.userId
 
   runOnDb {
     MainDatabase.getCollection<SessionToken>().deleteMany(SessionToken::userId equal userId)

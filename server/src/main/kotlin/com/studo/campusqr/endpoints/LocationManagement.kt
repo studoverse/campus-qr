@@ -1,13 +1,10 @@
 package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.*
-import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
-import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
-import com.studo.campusqr.common.payloads.LiveCheckIn
-import com.studo.campusqr.common.payloads.LocationVisitData
+import com.studo.campusqr.common.payloads.*
 import com.studo.campusqr.database.*
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.extensions.*
@@ -106,7 +103,7 @@ suspend fun AuthenticatedApplicationCall.guestCheckIn() {
 }
 
 private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) {
-  val params = receiveJsonStringMap()
+  val params: CheckInData = receiveClientPayload()
 
   val (locationId, seat) = getUserLocation()
 
@@ -115,13 +112,13 @@ private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) 
   // Validate seat argument
   validateSeatForLocation(location, seat)
 
-  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
+  val email = params.email.trim().toLowerCase()
   val now = Date()
 
   // Clients can send a custom visit date
   // This is useful for offline dispatching, we want to save the date of the visit and not when the
   // request arrives on the server.
-  val visitDate = params["date"]?.let { Date(it.toLong()) }
+  val visitDate = params.date?.let { Date(it.toLong()) }
 
   // Don't allow dates older than 7 days
   if (visitDate != null && visitDate > now.addDays(days = -7)) {
@@ -184,7 +181,7 @@ private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) 
 }
 
 suspend fun ApplicationCall.checkOutLocation() {
-  val params = receiveJsonStringMap()
+  val params: CheckOutData = receiveClientPayload()
   val (locationId, seat) = getUserLocation()
 
   val location = getLocation(locationId)
@@ -192,7 +189,7 @@ suspend fun ApplicationCall.checkOutLocation() {
   // Validate seat argument
   validateSeatForLocation(location, seat)
 
-  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
+  val email = params.email.trim().toLowerCase()
 
   runOnDb {
     // Use updateMany here, user could check-in multiple times

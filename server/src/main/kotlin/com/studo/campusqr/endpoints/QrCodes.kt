@@ -1,6 +1,6 @@
 package com.studo.campusqr.endpoints
 
-import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.database.getConfigs

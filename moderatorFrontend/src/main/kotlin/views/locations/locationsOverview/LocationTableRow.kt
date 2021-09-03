@@ -2,8 +2,7 @@ package views.locations.locationsOverview
 
 import app.baseUrl
 import app.routeContext
-import com.studo.campusqr.common.*
-import com.studo.campusqr.common.payloads.LocationVisitData
+import com.studo.campusqr.common.payloads.*
 import kotlinx.browser.window
 import react.*
 import util.*

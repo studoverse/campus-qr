@@ -1,6 +1,6 @@
 package views.users
 
-import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.payloads.UserData
 import kotlinext.js.js
 import react.*
 import react.dom.div

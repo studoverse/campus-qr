@@ -1,6 +1,5 @@
 package com.studo.campusqr.common.payloads
 
-import com.studo.campusqr.common.ClientPayload
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,12 +13,13 @@ class ActiveCheckIn(
 ) : ClientPayload
 
 @Serializable
-class GuestCheckInData(
-  val email: String
+class CheckInData(
+  val email: String,
+  val date: String? = null
 ) : ClientPayload
 
 @Serializable
-class GuestCheckOutData(
+class CheckOutData(
   val email: String
 ) : ClientPayload
 

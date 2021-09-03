@@ -1,8 +1,8 @@
 package views.users
 
-import com.studo.campusqr.common.ClientUser
-import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.DeleteUserData
+import com.studo.campusqr.common.payloads.UserData
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
