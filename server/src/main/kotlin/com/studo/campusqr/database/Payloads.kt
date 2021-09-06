@@ -76,7 +76,7 @@ class BackendAccess : MongoMainEntry(), ClientPayloadable<ClientAccessManagement
   lateinit var createdBy: String // userId
   lateinit var createdDate: Date
   lateinit var allowedEmails: List<String>
-  lateinit var backendDateRanges: List<BackendDateRange>
+  lateinit var dateRanges: List<BackendDateRange>
   lateinit var note: String
   lateinit var reason: String
 

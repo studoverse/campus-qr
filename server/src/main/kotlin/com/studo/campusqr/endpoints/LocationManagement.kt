@@ -142,7 +142,7 @@ private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) 
       getCollection<BackendAccess>().findOne(
         BackendAccess::locationId equal location._id,
         BackendAccess::allowedEmails has email,
-        BackendAccess::backendDateRanges.any(
+        BackendAccess::dateRanges.any(
           BackendDateRange::from lowerEquals now,
           BackendDateRange::to greaterEquals now
         )

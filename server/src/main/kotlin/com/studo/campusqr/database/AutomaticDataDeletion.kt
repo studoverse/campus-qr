@@ -32,7 +32,7 @@ internal suspend fun automaticDataDeletion() {
     getCollection<SessionToken>().deleteMany(SessionToken::expiryDate lower now)
     getCollection<CheckIn>().deleteMany(CheckIn::date lower now.addDays(-deleteDays))
     getCollection<BackendAccess>().deleteMany(
-      BackendAccess::backendDateRanges.none(
+      BackendAccess::dateRanges.none(
         BackendDateRange::to greaterEquals now.addDays(-deleteDays)
       )
     )

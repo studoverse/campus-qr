@@ -94,7 +94,7 @@ class AutomaticDeletionTest {
         createdBy = "testUser"
         this.createdDate = createdDate
         this.allowedEmails = allowedEmails
-        this.backendDateRanges = backendDateRanges
+        this.dateRanges = backendDateRanges
         note = ""
         reason = ""
       }
@@ -133,7 +133,7 @@ class AutomaticDeletionTest {
     with(MainDatabase.getCollection<BackendAccess>()) {
       assertEquals(1, count())
 
-      assertEquals(future, find().single().backendDateRanges.single().to)
+      assertEquals(future, find().single().dateRanges.single().to)
     }
   }
 }
