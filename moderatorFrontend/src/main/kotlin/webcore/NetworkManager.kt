@@ -2,7 +2,6 @@ package webcore
 
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
@@ -19,11 +18,6 @@ object NetworkManager {
   val client = HttpClient {
     install(JsonFeature) {
       serializer = KotlinxSerializer()
-    }
-    defaultRequest {
-      if (this.url.host == "localhost" && window.location.hostname == "localhost") {
-        port = window.location.port.toInt()
-      }
     }
   }
 
