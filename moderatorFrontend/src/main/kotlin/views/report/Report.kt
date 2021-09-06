@@ -5,8 +5,8 @@ import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.DeleteSeatFilter
 import com.studo.campusqr.common.payloads.EditSeatFilter
+import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
-import com.studo.campusqr.common.payloads.TraceContactsReportData
 import kotlinext.js.js
 import kotlinx.html.js.onSubmitFunction
 import muiDatePicker
@@ -119,7 +119,7 @@ class Report : RComponent<ReportProps, ReportState>() {
     setState { showProgress = true }
     val response = NetworkManager.post<ReportData>(
       "$apiBase/report/list",
-      body = TraceContactsReportData(
+      body = GetContactTracingReport(
         email = state.emailTextFieldValue,
         oldestDate = state.infectionDate.getTime()
       )
