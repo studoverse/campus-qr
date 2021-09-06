@@ -3,9 +3,9 @@ package com.studo.campusqr.endpoints
 import com.moshbit.katerbase.*
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.payloads.ActiveCheckIn
-import com.studo.campusqr.common.payloads.AllActiveCheckIns
+import com.studo.campusqr.common.payloads.GetAllActiveCheckInsForSingleUser
+import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
-import com.studo.campusqr.common.payloads.TraceContactsReportData
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.BackendSeatFilter
 import com.studo.campusqr.database.CheckIn
@@ -228,7 +228,7 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     return
   }
 
-  val params: TraceContactsReportData = receiveClientPayload()
+  val params: GetContactTracingReport = receiveClientPayload()
 
   val emails = params.email.split(*emailSeparators).filter { it.isNotEmpty() }
   val oldestDate = params.oldestDate.toLong().let { Date(it) }
@@ -246,7 +246,7 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
     return
   }
 
-  val params: AllActiveCheckIns = receiveClientPayload()
+  val params: GetAllActiveCheckInsForSingleUser = receiveClientPayload()
 
   val checkIns = runOnDb {
     getCollection<CheckIn>()

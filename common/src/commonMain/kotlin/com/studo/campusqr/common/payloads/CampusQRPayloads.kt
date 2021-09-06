@@ -2,6 +2,10 @@ package com.studo.campusqr.common.payloads
 
 import kotlinx.serialization.Serializable
 
+// Used to mark payloads that are sent between server and client
+// All ClientPayload implementations are required to be @Serializable
+interface ClientPayload
+
 @Serializable
 class UserData(
   var appName: String,
@@ -9,7 +13,5 @@ class UserData(
   var externalAuthProvider: Boolean = false,
   var liveCheckInsViewEnabled: Boolean,
 ) : ClientPayload
-
-interface ClientPayload
 
 val UserData.isAuthenticated get() = clientUser != null

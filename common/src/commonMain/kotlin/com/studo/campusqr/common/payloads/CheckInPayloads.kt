@@ -30,6 +30,6 @@ class LiveCheckIn(
 ) : ClientPayload
 
 @Serializable
-class AllActiveCheckIns(
+class GetAllActiveCheckInsForSingleUser(
   val emailAddress: String
 ) : ClientPayload

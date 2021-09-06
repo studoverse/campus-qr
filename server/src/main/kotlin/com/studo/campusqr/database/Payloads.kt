@@ -76,7 +76,7 @@ class BackendAccess : MongoMainEntry(), ClientPayloadable<ClientAccessManagement
   lateinit var createdBy: String // userId
   lateinit var createdDate: Date
   lateinit var allowedEmails: List<String>
-  lateinit var dateRanges: List<DateRange>
+  lateinit var backendDateRanges: List<BackendDateRange>
   lateinit var note: String
   lateinit var reason: String
 
@@ -141,7 +141,7 @@ class Configuration : MongoMainEntry {
   }
 }
 
-class DateRange(var from: Date, var to: Date) : MongoSubEntry(), ClientPayloadable<ClientDateRange> {
+class BackendDateRange(var from: Date, var to: Date) : MongoSubEntry(), ClientPayloadable<ClientDateRange> {
   constructor(dateRange: ClientDateRange) : this(from = Date(dateRange.from.toLong()), to = Date(dateRange.to.toLong()))
 
   override fun toClientClass(language: String) = toClientClass()

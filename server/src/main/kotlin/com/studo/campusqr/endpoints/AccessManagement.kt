@@ -3,8 +3,8 @@ package com.studo.campusqr.endpoints
 import com.moshbit.katerbase.*
 import com.studo.campusqr.common.payloads.*
 import com.studo.campusqr.database.BackendAccess
+import com.studo.campusqr.database.BackendDateRange
 import com.studo.campusqr.database.BackendLocation
-import com.studo.campusqr.database.DateRange
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import io.ktor.features.*
@@ -19,7 +19,7 @@ private fun BackendAccess.toClientClass(location: BackendLocation) = ClientAcces
   locationName = location.name,
   locationId = location._id,
   allowedEmails = allowedEmails,
-  dateRanges = dateRanges.map { it.toClientClass() },
+  dateRanges = backendDateRanges.map { it.toClientClass() },
   note = note,
   reason = reason
 )
@@ -75,13 +75,13 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
         locationId != null && user.canEditAllLocationAccess -> {
           find(
             BackendAccess::locationId equal locationId,
-            BackendAccess::dateRanges.any(DateRange::to greater now)
+            BackendAccess::backendDateRanges.any(BackendDateRange::to greater now)
           ).toList()
         }
         else -> {
           find(
             BackendAccess::createdBy equal user._id,
-            BackendAccess::dateRanges.any(DateRange::to greater now)
+            BackendAccess::backendDateRanges.any(BackendDateRange::to greater now)
           ).toList()
         }
       }
@@ -92,7 +92,7 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
 
   val permits = accessPayloads
     .flatMap { access ->
-      access.dateRanges
+      access.backendDateRanges
         .filter { it.to > now } // A BackendAccess can have multiple dateRanges, and at least one is (by the query) not in the past
         .flatMap { dateRange ->
           access.allowedEmails.map { allowedEmail ->
@@ -142,7 +142,7 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
     createdDate = Date()
     locationId = newAccessPayload.locationId
     allowedEmails = newAccessPayload.allowedEmails.toList()
-    dateRanges = newAccessPayload.dateRanges.map { DateRange(it) }
+    backendDateRanges = newAccessPayload.dateRanges.map { BackendDateRange(it) }
     note = newAccessPayload.note
     reason = newAccessPayload.reason
   }
@@ -221,7 +221,7 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
           BackendAccess::allowedEmails setTo allowedEmails!!.toList()
         }
         if (dateRanges != null) {
-          BackendAccess::dateRanges setTo dateRanges!!.map { DateRange(it) }
+          BackendAccess::backendDateRanges setTo dateRanges!!.map { BackendDateRange(it) }
         }
         if (note != null) {
           BackendAccess::note setTo note
