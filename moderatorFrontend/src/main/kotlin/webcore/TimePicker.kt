@@ -1,6 +1,7 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
+import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.html.InputType
 import org.w3c.dom.HTMLInputElement
@@ -181,11 +182,11 @@ interface TimePickerClasses {
 }
 
 private val TimePickerStyle = { theme: dynamic ->
-  kotlinext.js.js {
-    container = kotlinext.js.js {
+  js {
+    container = js {
       width = "100%"
     }
-    textFieldLabel = kotlinext.js.js {
+    textFieldLabel = js {
       paddingTop = theme.spacing(2)
     }
   }

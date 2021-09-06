@@ -1,6 +1,7 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
+import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.html.InputType
 import org.w3c.dom.HTMLInputElement
@@ -90,7 +91,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
     textField {
       attrs.type = InputType.date.toString()
       attrs.value = state.dateTimeInputValue
-      attrs.inputProps = kotlinext.js.js {
+      attrs.inputProps = js {
         props.min?.let { minProp ->
           min = minProp.toInputTypeDateValueString()
         }
@@ -134,14 +135,14 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
       textField {
         attrs.disabled = props.disabled
         attrs.error = props.error || state.fieldError
-        attrs.style = kotlinext.js.js { flex = 1 }
-        attrs.classes = kotlinext.js.js {
+        attrs.style = js { flex = 1 }
+        attrs.classes = js {
           root = props.classes.textFieldLabel
         }
         attrs.type = InputType.number.toString()
         attrs.placeholder = dayString
         attrs.label = dayString
-        attrs.inputProps = kotlinext.js.js {
+        attrs.inputProps = js {
           min = 1
           max = 31
         }
@@ -155,14 +156,14 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
       textField {
         attrs.disabled = props.disabled
         attrs.error = props.error || state.fieldError
-        attrs.style = kotlinext.js.js { flex = 2 }
-        attrs.classes = kotlinext.js.js {
+        attrs.style = js { flex = 2 }
+        attrs.classes = js {
           root = props.classes.textFieldLabel
         }
         attrs.type = InputType.number.toString()
         attrs.placeholder = monthString
         attrs.label = monthString
-        attrs.inputProps = kotlinext.js.js {
+        attrs.inputProps = js {
           min = 1
           max = 12
         }
@@ -176,8 +177,8 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
       textField {
         attrs.disabled = props.disabled
         attrs.error = props.error || state.fieldError
-        attrs.style = kotlinext.js.js { flex = 2 }
-        attrs.classes = kotlinext.js.js {
+        attrs.style = js { flex = 2 }
+        attrs.classes = js {
           root = props.classes.textFieldLabel
         }
         attrs.type = InputType.number.toString()
@@ -210,12 +211,12 @@ interface DatePickerClasses {
 }
 
 private val styles = { theme: dynamic ->
-  kotlinext.js.js {
-    flex = kotlinext.js.js {
+  js {
+    flex = js {
       display = "flex"
       width = "100%"
     }
-    textFieldLabel = kotlinext.js.js {
+    textFieldLabel = js {
       paddingTop = theme.spacing(2)
     }
   }
