@@ -65,7 +65,7 @@ suspend fun AuthenticatedApplicationCall.viewCheckoutCode() {
           "checkout",
           configs,
           subtext1 = configs.getValue("scanCheckoutSubtext1"),
-          subtext2 = configs.getValue("scanCheckoutSubtext1"),
+          subtext2 = configs.getValue("scanCheckoutSubtext2"),
           subtitle = "",
           smallPage = false
         )
