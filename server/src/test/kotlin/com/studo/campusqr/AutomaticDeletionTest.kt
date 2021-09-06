@@ -87,14 +87,14 @@ class AutomaticDeletionTest {
   fun testAccessDeletion() {
     val now = Date()
 
-    fun createTestAccess(allowedEmails: List<String>, backendDateRanges: List<BackendDateRange>, createdDate: Date = now) =
+    fun createTestAccess(allowedEmails: List<String>, dateRanges: List<BackendDateRange>, createdDate: Date = now) =
       BackendAccess().apply {
         _id = randomId()
         locationId = "testLocation"
         createdBy = "testUser"
         this.createdDate = createdDate
         this.allowedEmails = allowedEmails
-        this.dateRanges = backendDateRanges
+        this.dateRanges = dateRanges
         note = ""
         reason = ""
       }
@@ -113,13 +113,13 @@ class AutomaticDeletionTest {
         // To Date is in the future
         createTestAccess(
           allowedEmails = testEmails,
-          backendDateRanges = listOf(BackendDateRange(from = twoMonthAgo, to = future)),
+          dateRanges = listOf(BackendDateRange(from = twoMonthAgo, to = future)),
           createdDate = twoMonthAgo
         ),
         // To Date is in the past
         createTestAccess(
           allowedEmails = testEmails,
-          backendDateRanges = listOf(BackendDateRange(from = threeMonthAgo, to = twoMonthAgo)),
+          dateRanges = listOf(BackendDateRange(from = threeMonthAgo, to = twoMonthAgo)),
           createdDate = twoMonthAgo
         ),
       )
