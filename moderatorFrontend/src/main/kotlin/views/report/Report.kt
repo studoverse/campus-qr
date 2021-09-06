@@ -121,7 +121,7 @@ class Report : RComponent<ReportProps, ReportState>() {
       "$apiBase/report/list",
       body = TraceContactsReportData(
         email = state.emailTextFieldValue,
-        oldestDate = state.infectionDate.getTime().toString()
+        oldestDate = state.infectionDate.getTime()
       )
     )
     setState {

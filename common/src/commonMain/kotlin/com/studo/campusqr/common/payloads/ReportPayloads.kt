@@ -41,7 +41,7 @@ class DeleteSeatFilter(
 @Serializable
 class TraceContactsReportData(
   val email: String,
-  val oldestDate: String
+  val oldestDate: Double
 ) : ClientPayload
 
 @Serializable
