@@ -3,6 +3,7 @@ package com.studo.campusqr.endpoints
 import com.moshbit.katerbase.*
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.payloads.ActiveCheckIn
+import com.studo.campusqr.common.payloads.AllActiveCheckIns
 import com.studo.campusqr.common.payloads.ReportData
 import com.studo.campusqr.common.payloads.TraceContactsReportData
 import com.studo.campusqr.database.BackendLocation
@@ -245,12 +246,11 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
     return
   }
 
-  val params = receiveJsonStringMap()
-  val emailAddress = params.getValue("emailAddress")
+  val params: AllActiveCheckIns = receiveClientPayload()
 
   val checkIns = runOnDb {
     getCollection<CheckIn>()
-      .find(CheckIn::email equal emailAddress, CheckIn::checkOutDate equal null)
+      .find(CheckIn::email equal params.emailAddress, CheckIn::checkOutDate equal null)
       .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
       .toList()
   }

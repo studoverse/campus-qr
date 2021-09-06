@@ -28,3 +28,8 @@ class LiveCheckIn(
   val activeCheckIns: Int,
   val qrCodeContent: String?
 ) : ClientPayload
+
+@Serializable
+class AllActiveCheckIns(
+  val emailAddress: String
+) : ClientPayload
