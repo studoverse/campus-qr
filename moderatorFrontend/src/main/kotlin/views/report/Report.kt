@@ -6,7 +6,6 @@ import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
 import kotlinext.js.js
 import kotlinx.html.js.onSubmitFunction
-import muiDatePicker
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
@@ -127,6 +126,7 @@ class Report : RComponent<ReportProps, ReportState>() {
   }
 
   override fun RBuilder.render() {
+    val now = Date()
     val showEmailAddress = state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
     renderSnackbar()
@@ -139,19 +139,19 @@ class Report : RComponent<ReportProps, ReportState>() {
     div(props.classes.inputForm) {
       gridContainer(GridDirection.ROW) {
         gridItem(GridSize(xs = 12, sm = 3)) {
-          muiDatePicker {
-            attrs.fullWidth = true
-            attrs.format = "dd.MM.yyyy"
-            attrs.inputVariant = "outlined"
-            attrs.label = Strings.report_infection_date.get()
-            attrs.value = state.infectionDate
-            attrs.helperText = Strings.report_infection_date_tip.get()
-            attrs.onChange = {
+          datePicker(
+            date = state.infectionDate,
+            label = Strings.report_infection_date.get(),
+            helperText = Strings.report_infection_date_tip.get(),
+            fullWidth = true,
+            variant = "outlined",
+            max = now,
+            onChange = { selectedDate, _ ->
               setState {
-                infectionDate = it.toJSDate()
+                infectionDate = selectedDate
               }
-            }
-          }
+            },
+          )
         }
         gridItem(GridSize(xs = 12, sm = 6)) {
           form {

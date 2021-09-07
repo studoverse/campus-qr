@@ -4,7 +4,6 @@ import app.GlobalCss
 import com.studo.campusqr.common.*
 import kotlinext.js.js
 import kotlinx.html.js.onSubmitFunction
-import muiDateTimePicker
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
@@ -256,6 +255,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 
   private fun RBuilder.renderTimeSlotPickers() {
+    val now = Date()
     div(GlobalCss.flex) {
       typography {
         +Strings.access_control_time_slots.get()
@@ -281,7 +281,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     state.timeSlots.forEach { clientDateRange ->
       gridContainer(GridDirection.ROW, alignItems = "center", spacing = 1) {
         gridItem(GridSize(xs = 12, sm = true)) {
-          muiDateTimePicker {
+          /*muiDateTimePicker {
             attrs.disabled = props.config is Config.Details
             attrs.format = "dd.MM.yyyy HH:mm"
             attrs.ampm = false
@@ -307,10 +307,63 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 }
               }
             }
+          }*/
+          div {
+            datePicker(
+              disabled = props.config is Config.Details,
+              date = Date(clientDateRange.from),
+              label = Strings.access_control_from.get(),
+              fullWidth = true,
+              variant = "outlined",
+              min = if (props.config is Config.Create) now else null,
+              onChange = { selectedDate, _ ->
+                setState {
+                  timeSlots = timeSlots.map { timeSlot ->
+                    if (timeSlot == clientDateRange) {
+                      // Default end date is start date + 2h
+                      val from = selectedDate.getTime()
+                      val to = if (from >= clientDateRange.to) {
+                        selectedDate.addHours(2).getTime()
+                      } else clientDateRange.to
+                      ClientDateRange(
+                        from = from,
+                        to = to
+                      )
+                    } else timeSlot
+                  }
+                }
+              },
+            )
+          }
+          div {
+            timePicker(
+              disabled = props.config is Config.Details,
+              time = Date(clientDateRange.from),
+              fullWidth = true,
+              variant = "outlined",
+              min = if (props.config is Config.Create) now else null,
+              onChange = { selectedTime ->
+                setState {
+                  timeSlots = timeSlots.map { timeSlot ->
+                    if (timeSlot == clientDateRange) {
+                      // Default end date is start date + 2h
+                      val from = selectedTime.getTime()
+                      val to = if (from >= clientDateRange.to) {
+                        selectedTime.addHours(2).getTime()
+                      } else clientDateRange.to
+                      ClientDateRange(
+                        from = from,
+                        to = to
+                      )
+                    } else timeSlot
+                  }
+                }
+              },
+            )
           }
         }
         gridItem(GridSize(xs = 12, sm = true)) {
-          muiDateTimePicker {
+          /*muiDateTimePicker {
             attrs.disabled = props.config is Config.Details
             attrs.format = "dd.MM.yyyy HH:mm"
             attrs.ampm = false
@@ -331,6 +384,49 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 }
               }
             }
+          }*/
+          div {
+            datePicker(
+              disabled = props.config is Config.Details,
+              date = Date(clientDateRange.to),
+              label = Strings.access_control_to.get(),
+              fullWidth = true,
+              variant = "outlined",
+              min = if (props.config is Config.Create) now else null,
+              onChange = { selectedDate, _ ->
+                setState {
+                  timeSlots = timeSlots.map { timeSlot ->
+                    if (timeSlot == clientDateRange) {
+                      ClientDateRange(
+                        from = clientDateRange.from,
+                        to = selectedDate.getTime()
+                      )
+                    } else timeSlot
+                  }
+                }
+              },
+            )
+          }
+          div {
+            timePicker(
+              disabled = props.config is Config.Details,
+              time = Date(clientDateRange.to),
+              fullWidth = true,
+              variant = "outlined",
+              min = if (props.config is Config.Create) now else null,
+              onChange = { selectedTime ->
+                setState {
+                  timeSlots = timeSlots.map { timeSlot ->
+                    if (timeSlot == clientDateRange) {
+                      ClientDateRange(
+                        from = clientDateRange.from,
+                        to = selectedTime.getTime()
+                      )
+                    } else timeSlot
+                  }
+                }
+              },
+            )
           }
         }
         if (props.config !is Config.Details) {
