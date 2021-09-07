@@ -1,6 +1,6 @@
 package views.report
 
-import com.studo.campusqr.common.ReportData
+import com.studo.campusqr.common.payloads.ReportData
 import kotlinext.js.js
 import react.*
 import react.dom.div

@@ -1,9 +1,11 @@
 package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.*
-import com.studo.campusqr.common.ActiveCheckIn
-import com.studo.campusqr.common.ReportData
 import com.studo.campusqr.common.emailSeparators
+import com.studo.campusqr.common.payloads.ActiveCheckIn
+import com.studo.campusqr.common.payloads.GetAllActiveCheckInsForSingleUser
+import com.studo.campusqr.common.payloads.GetContactTracingReport
+import com.studo.campusqr.common.payloads.ReportData
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.database.BackendSeatFilter
 import com.studo.campusqr.database.CheckIn
@@ -226,11 +228,10 @@ suspend fun AuthenticatedApplicationCall.returnReportData() {
     return
   }
 
-  val params = receiveJsonStringMap()
+  val params: GetContactTracingReport = receiveClientPayload()
 
-  val now = Date()
-  val emails = params.getValue("email").split(*emailSeparators).filter { it.isNotEmpty() }
-  val oldestDate = params["oldestDate"]?.toLong()?.let { Date(it) } ?: now.addDays(-14)
+  val emails = params.email.split(*emailSeparators).filter { it.isNotEmpty() }
+  val oldestDate = params.oldestDate.toLong().let { Date(it) }
 
   respondObject(generateContactTracingReport(emails, oldestDate))
 }
@@ -245,12 +246,11 @@ suspend fun AuthenticatedApplicationCall.listAllActiveCheckIns() {
     return
   }
 
-  val params = receiveJsonStringMap()
-  val emailAddress = params.getValue("emailAddress")
+  val params: GetAllActiveCheckInsForSingleUser = receiveClientPayload()
 
   val checkIns = runOnDb {
     getCollection<CheckIn>()
-      .find(CheckIn::email equal emailAddress, CheckIn::checkOutDate equal null)
+      .find(CheckIn::email equal params.emailAddress, CheckIn::checkOutDate equal null)
       .sortByDescending(CheckIn::date) // No need for an index here, this is probably a very small list
       .toList()
   }

@@ -1,10 +1,10 @@
 package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.*
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.payloads.*
 import com.studo.campusqr.database.BackendAccess
+import com.studo.campusqr.database.BackendDateRange
 import com.studo.campusqr.database.BackendLocation
-import com.studo.campusqr.database.DateRange
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
 import io.ktor.features.*
@@ -75,13 +75,13 @@ suspend fun AuthenticatedApplicationCall.listExportAccess() {
         locationId != null && user.canEditAllLocationAccess -> {
           find(
             BackendAccess::locationId equal locationId,
-            BackendAccess::dateRanges.any(DateRange::to greater now)
+            BackendAccess::dateRanges.any(BackendDateRange::to greater now)
           ).toList()
         }
         else -> {
           find(
             BackendAccess::createdBy equal user._id,
-            BackendAccess::dateRanges.any(DateRange::to greater now)
+            BackendAccess::dateRanges.any(BackendDateRange::to greater now)
           ).toList()
         }
       }
@@ -142,7 +142,7 @@ suspend fun AuthenticatedApplicationCall.createAccess() {
     createdDate = Date()
     locationId = newAccessPayload.locationId
     allowedEmails = newAccessPayload.allowedEmails.toList()
-    dateRanges = newAccessPayload.dateRanges.map { DateRange(it) }
+    dateRanges = newAccessPayload.dateRanges.map { BackendDateRange(it) }
     note = newAccessPayload.note
     reason = newAccessPayload.reason
   }
@@ -221,7 +221,7 @@ suspend fun AuthenticatedApplicationCall.editAccess() {
           BackendAccess::allowedEmails setTo allowedEmails!!.toList()
         }
         if (dateRanges != null) {
-          BackendAccess::dateRanges setTo dateRanges!!.map { DateRange(it) }
+          BackendAccess::dateRanges setTo dateRanges!!.map { BackendDateRange(it) }
         }
         if (note != null) {
           BackendAccess::note setTo note

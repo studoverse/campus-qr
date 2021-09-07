@@ -1,8 +1,8 @@
 package views.accessManagement.accessManagementOverview
 
-import com.studo.campusqr.common.AccessManagementData
-import com.studo.campusqr.common.ClientAccessManagement
-import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.payloads.AccessManagementData
+import com.studo.campusqr.common.payloads.ClientAccessManagement
+import com.studo.campusqr.common.payloads.ClientLocation
 import react.*
 import util.*
 import views.accessManagement.AccessManagementDetailsProps

@@ -1,10 +1,11 @@
 package views.users
 
 import app.GlobalCss
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
+import com.studo.campusqr.common.payloads.*
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*
@@ -68,11 +69,11 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/create",
       body = NewUserData(
-          email = state.userEmailTextFieldValue,
-          password = state.userPasswordTextFieldValue,
-          name = state.userNameTextFieldValue,
-          permissions = state.userPermissions.map { it.name }
-        )
+        email = state.userEmailTextFieldValue,
+        password = state.userPasswordTextFieldValue,
+        name = state.userNameTextFieldValue,
+        permissions = state.userPermissions.map { it.name }
+      )
     )
     setState {
       userCreationInProgress = false
@@ -85,13 +86,13 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/edit",
       body = EditUserData(
-          userId = (props.config as Config.Edit).user.id,
-          name = state.userNameTextFieldValue.emptyToNull(),
-          password = state.userPasswordTextFieldValue.emptyToNull(),
-          permissions = state.userPermissions
-            .takeIf { (props.config as Config.Edit).user.permissions != it }
-            ?.map { it.name }
-        )
+        userId = (props.config as Config.Edit).user.id,
+        name = state.userNameTextFieldValue.emptyToNull(),
+        password = state.userPasswordTextFieldValue.emptyToNull(),
+        permissions = state.userPermissions
+          .takeIf { (props.config as Config.Edit).user.permissions != it }
+          ?.map { it.name }
+      )
     )
     setState {
       userCreationInProgress = false

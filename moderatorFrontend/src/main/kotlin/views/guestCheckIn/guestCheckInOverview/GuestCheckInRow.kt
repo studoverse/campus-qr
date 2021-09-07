@@ -1,7 +1,8 @@
 package views.guestCheckIn.guestCheckInOverview
 
-import com.studo.campusqr.common.ActiveCheckIn
 import com.studo.campusqr.common.extensions.format
+import com.studo.campusqr.common.payloads.ActiveCheckIn
+import com.studo.campusqr.common.payloads.CheckOutData
 import kotlinx.browser.window
 import react.RBuilder
 import react.RComponent
@@ -55,7 +56,7 @@ class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>()
               launch {
                 val response = NetworkManager.post<String>(
                   "$apiBase/location/$locationId/checkout",
-                  body = mapOf("email" to props.config.activeCheckIn.email)
+                  body = CheckOutData(email = props.config.activeCheckIn.email)
                 )
                 if (response == "ok") {
                   props.config.onCheckedOut()

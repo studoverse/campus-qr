@@ -1,14 +1,14 @@
 package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.*
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
+import com.studo.campusqr.common.payloads.*
 import com.studo.campusqr.database.*
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import com.studo.campusqr.utils.getAuthenticatedCall
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -35,7 +35,7 @@ suspend fun AuthenticatedApplicationCall.createLocation() {
     return
   }
 
-  val params: CreateLocation = receiveClientPayload()
+  val params: CreateOrUpdateLocationData = receiveClientPayload()
 
   val room = BackendLocation().apply {
     this._id = randomId().take(20) // 20 Characters per code to make it better detectable
@@ -103,7 +103,7 @@ suspend fun AuthenticatedApplicationCall.guestCheckIn() {
 }
 
 private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) {
-  val params = receiveJsonStringMap()
+  val params: CheckInData = receiveClientPayload()
 
   val (locationId, seat) = getUserLocation()
 
@@ -112,13 +112,13 @@ private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) 
   // Validate seat argument
   validateSeatForLocation(location, seat)
 
-  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
+  val email = params.email.trim().toLowerCase()
   val now = Date()
 
   // Clients can send a custom visit date
   // This is useful for offline dispatching, we want to save the date of the visit and not when the
   // request arrives on the server.
-  val visitDate = params["date"]?.let { Date(it.toLong()) }
+  val visitDate = params.date?.let { Date(it.toLong()) }
 
   // Don't allow dates older than 7 days
   if (visitDate != null && visitDate > now.addDays(days = -7)) {
@@ -143,8 +143,8 @@ private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) 
         BackendAccess::locationId equal location._id,
         BackendAccess::allowedEmails has email,
         BackendAccess::dateRanges.any(
-          DateRange::from lowerEquals now,
-          DateRange::to greaterEquals now
+          BackendDateRange::from lowerEquals now,
+          BackendDateRange::to greaterEquals now
         )
       )
     }
@@ -181,7 +181,7 @@ private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) 
 }
 
 suspend fun ApplicationCall.checkOutLocation() {
-  val params = receiveJsonStringMap()
+  val params: CheckOutData = receiveClientPayload()
   val (locationId, seat) = getUserLocation()
 
   val location = getLocation(locationId)
@@ -189,7 +189,7 @@ suspend fun ApplicationCall.checkOutLocation() {
   // Validate seat argument
   validateSeatForLocation(location, seat)
 
-  val email = params["email"]?.trim()?.toLowerCase() ?: throw BadRequestException("No email was provided")
+  val email = params.email.trim().toLowerCase()
 
   runOnDb {
     // Use updateMany here, user could check-in multiple times
@@ -239,7 +239,7 @@ suspend fun AuthenticatedApplicationCall.editLocation() {
   val locationId = parameters["id"] ?: throw BadRequestException("No locationId provided")
   val location = getLocation(locationId)
 
-  val params: EditLocation = receiveClientPayload()
+  val params: CreateOrUpdateLocationData = receiveClientPayload()
 
   runOnDb {
     getCollection<BackendLocation>().updateOne(BackendLocation::_id equal locationId) {

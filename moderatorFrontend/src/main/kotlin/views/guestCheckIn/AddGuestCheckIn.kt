@@ -2,7 +2,8 @@ package views.guestCheckIn
 
 import app.GlobalCss
 import app.baseUrl
-import com.studo.campusqr.common.ClientLocation
+import com.studo.campusqr.common.payloads.CheckInData
+import com.studo.campusqr.common.payloads.ClientLocation
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*
@@ -82,7 +83,7 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
     val locationId = locationIdWithSeat(state.selectedLocation!!.id, state.seatInputValue)
     val response = NetworkManager.post<String>(
       url = "$baseUrl/location/$locationId/guestCheckIn",
-      body = mapOf("email" to state.personEmailTextFieldValue)
+      body = CheckInData(email = state.personEmailTextFieldValue)
     )
     setState {
       showProgress = false

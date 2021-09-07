@@ -6,7 +6,8 @@ import com.studo.campusqr.auth.CampusQrAuth
 import com.studo.campusqr.authProvider
 import com.studo.campusqr.baseUrl
 import com.studo.campusqr.common.LoginResult
-import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.payloads.MailLoginData
+import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.database.BackendUser
 import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
@@ -62,15 +63,9 @@ suspend fun AuthenticatedApplicationCall.logout() {
 suspend fun ApplicationCall.login() {
   validateCsrfToken()
 
-  val params = receiveJsonStringMap()
-  val email = params["email"]?.trim()?.toLowerCase() ?: run {
-    respondEnum(LoginResult.LOGIN_FAILED)
-    return
-  }
-  val password = params["password"] ?: run {
-    respondEnum(LoginResult.LOGIN_FAILED)
-    return
-  }
+  val params: MailLoginData = receiveClientPayload()
+  val email = params.email.trim().toLowerCase()
+  val password = params.password
 
   val loginResult = authProvider.login(email, password)
 

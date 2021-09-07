@@ -1,9 +1,9 @@
 package views.locations.locationsOverview
 
-import com.studo.campusqr.common.ClientLocation
-import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.canEditLocations
-import com.studo.campusqr.common.canViewCheckIns
+import com.studo.campusqr.common.payloads.ClientLocation
+import com.studo.campusqr.common.payloads.UserData
+import com.studo.campusqr.common.payloads.canEditLocations
+import com.studo.campusqr.common.payloads.canViewCheckIns
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*

@@ -1,6 +1,6 @@
 package app
 
-import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.common.utils.LocalizedString
 import kotlinext.js.js
 import kotlinx.html.js.onClickFunction

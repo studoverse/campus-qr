@@ -1,6 +1,6 @@
 package views.guestCheckIn.guestCheckInOverview
 
-import com.studo.campusqr.common.ActiveCheckIn
+import com.studo.campusqr.common.payloads.ActiveCheckIn
 import react.*
 import util.Strings
 import util.apiBase

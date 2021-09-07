@@ -1,7 +1,7 @@
 package views.accessManagement.accessManagementOverview
 
-import com.studo.campusqr.common.ClientAccessManagement
-import com.studo.campusqr.common.ClientDateRange
+import com.studo.campusqr.common.payloads.ClientAccessManagement
+import com.studo.campusqr.common.payloads.ClientDateRange
 import kotlinx.browser.window
 import react.*
 import react.dom.br

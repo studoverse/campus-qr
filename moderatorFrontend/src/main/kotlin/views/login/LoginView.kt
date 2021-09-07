@@ -2,8 +2,8 @@ package views.login
 
 import app.ColorPalette
 import app.baseUrl
-import com.studo.campusqr.common.UserData
-import com.studo.campusqr.common.isAuthenticated
+import com.studo.campusqr.common.payloads.UserData
+import com.studo.campusqr.common.payloads.isAuthenticated
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.browser.window

@@ -15,7 +15,6 @@ import kotlinx.browser.window
  * All functions in this object check the "x-version-hash" header and reload the application if necessary.
  */
 object NetworkManager {
-
   val client = HttpClient {
     install(JsonFeature) {
       serializer = KotlinxSerializer()
@@ -28,32 +27,34 @@ object NetworkManager {
     headers: Map<String, Any?> = emptyMap(),
   ): T? = try {
     val response: HttpResponse = client.get(url) {
-      headers.forEach { header(it.key, it.value) }
       urlParams.forEach { parameter(it.key, it.value) }
+      headers.forEach { header(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
     response.receive<T>()
   } catch (e: Exception) {
+    console.log("get", e)
     null
   }
 
   suspend inline fun <reified T : Any> post(
     url: String,
-    urlParams: Map<String, Any?> = emptyMap(),
     body: Any? = null,
+    urlParams: Map<String, Any?> = emptyMap(),
     headers: Map<String, Any?> = emptyMap(),
   ): T? = try {
     val response: HttpResponse = client.post(url) {
       body?.let {
         contentType(ContentType.Application.Json)
-        this.body = body
+        this.body = body // Let the Ktor client handle @Serializable classes.
       }
-      headers.forEach { header(it.key, it.value) }
       urlParams.forEach { parameter(it.key, it.value) }
+      headers.forEach { header(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
     response.receive<T>()
   } catch (e: Exception) {
+    console.log("post", e)
     null
   }
 
@@ -63,12 +64,13 @@ object NetworkManager {
     headers: Map<String, Any?> = emptyMap(),
   ): T? = try {
     val response: HttpResponse = client.put(url) {
-      headers.forEach { header(it.key, it.value) }
       urlParams.forEach { parameter(it.key, it.value) }
+      headers.forEach { header(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
     response.receive<T>()
   } catch (e: Exception) {
+    console.log("put", e)
     null
   }
 
