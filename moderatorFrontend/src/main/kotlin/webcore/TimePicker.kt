@@ -25,6 +25,10 @@ interface TimePickerProps : RProps {
   var min: Date?
   var max: Date?
   var stepMinutes: Int
+  var fullWidth: Boolean
+  var label: String?
+  var helperText: String?
+  var variant: String
 }
 
 interface TimePickerState : RState {
@@ -74,7 +78,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
     div(props.classes.container) {
       textField {
         attrs.value = props.time.toInputTypeTimeValueString()
-        attrs.inputProps = kotlinext.js.js {
+        attrs.inputProps = js {
           props.min?.let { minProp ->
             min = minProp.toInputTypeTimeValueString()
           }
@@ -83,6 +87,10 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
           }
           list = stepListId
         }
+        attrs.label = props.label
+        attrs.helperText = props.helperText
+        attrs.fullWidth = props.fullWidth
+        attrs.variant = props.variant
         attrs.disabled = props.disabled
         attrs.error = props.error
         attrs.type = InputType.time.toString()
@@ -127,14 +135,14 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
       textField {
         attrs.disabled = props.disabled
         attrs.error = props.error
-        attrs.style = kotlinext.js.js { flex = 1 }
-        attrs.classes = kotlinext.js.js {
+        attrs.style = js { flex = 1 }
+        attrs.classes = js {
           root = props.classes.textFieldLabel
         }
         attrs.type = InputType.number.toString()
         attrs.placeholder = hourString
         attrs.label = hourString
-        attrs.inputProps = kotlinext.js.js {
+        attrs.inputProps = js {
           min = 0
           max = 23
         }
@@ -147,14 +155,14 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
       textField {
         attrs.disabled = props.disabled
         attrs.error = props.error
-        attrs.style = kotlinext.js.js { flex = 1 }
-        attrs.classes = kotlinext.js.js {
+        attrs.style = js { flex = 1 }
+        attrs.classes = js {
           root = props.classes.textFieldLabel
         }
         attrs.type = InputType.number.toString()
         attrs.placeholder = minuteString
         attrs.label = minuteString
-        attrs.inputProps = kotlinext.js.js {
+        attrs.inputProps = js {
           min = 0
           max = 59
         }
@@ -201,7 +209,11 @@ fun RBuilder.timePicker(
   error: Boolean = false,
   min: Date? = null,
   max: Date? = null,
-  stepMinutes: Int = 1
+  stepMinutes: Int = 1,
+  fullWidth: Boolean = false,
+  label: String? = null,
+  helperText: String? = null,
+  variant: String = "standard",
 ) = styled {
   attrs.time = time
   attrs.onChange = onChange
@@ -210,4 +222,8 @@ fun RBuilder.timePicker(
   attrs.min = min
   attrs.max = max
   attrs.stepMinutes = stepMinutes
+  attrs.fullWidth = fullWidth
+  attrs.label = label
+  attrs.helperText = helperText
+  attrs.variant = variant
 }

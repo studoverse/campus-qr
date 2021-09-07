@@ -25,6 +25,10 @@ interface DatePickerProps : RProps {
   var error: Boolean
   var min: Date?
   var max: Date?
+  var fullWidth: Boolean
+  var label: String?
+  var helperText: String?
+  var variant: String
 }
 
 interface DatePickerState : RState {
@@ -99,6 +103,10 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
           max = maxProp.toInputTypeDateValueString()
         }
       }
+      attrs.label = props.label
+      attrs.helperText = props.helperText
+      attrs.fullWidth = props.fullWidth
+      attrs.variant = props.variant
       attrs.disabled = props.disabled
       attrs.error = props.error || state.fieldError
       attrs.onChange = { event: Event ->
@@ -231,6 +239,10 @@ fun RBuilder.datePicker(
   error: Boolean = false,
   min: Date? = null,
   max: Date? = null,
+  fullWidth: Boolean = false,
+  label: String? = null,
+  helperText: String? = null,
+  variant: String = "standard",
 ) = styled {
   attrs.date = date
   attrs.onChange = onChange
@@ -238,4 +250,8 @@ fun RBuilder.datePicker(
   attrs.error = error
   attrs.min = min
   attrs.max = max
+  attrs.fullWidth = fullWidth
+  attrs.label = label
+  attrs.helperText = helperText
+  attrs.variant = variant
 }
