@@ -2,7 +2,9 @@ package com.studo.campusqr.database
 
 import com.moshbit.katerbase.MongoMainEntry
 import com.moshbit.katerbase.MongoSubEntry
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.LocationAccessType
+import com.studo.campusqr.common.UserPermission
+import com.studo.campusqr.common.payloads.*
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.extensions.toAustrianTime
 import java.util.*
@@ -74,7 +76,7 @@ class BackendAccess : MongoMainEntry(), ClientPayloadable<ClientAccessManagement
   lateinit var createdBy: String // userId
   lateinit var createdDate: Date
   lateinit var allowedEmails: List<String>
-  lateinit var dateRanges: List<DateRange>
+  lateinit var dateRanges: List<BackendDateRange>
   lateinit var note: String
   lateinit var reason: String
 
@@ -139,7 +141,7 @@ class Configuration : MongoMainEntry {
   }
 }
 
-class DateRange(var from: Date, var to: Date) : MongoSubEntry(), ClientPayloadable<ClientDateRange> {
+class BackendDateRange(var from: Date, var to: Date) : MongoSubEntry(), ClientPayloadable<ClientDateRange> {
   constructor(dateRange: ClientDateRange) : this(from = Date(dateRange.from.toLong()), to = Date(dateRange.to.toLong()))
 
   override fun toClientClass(language: String) = toClientClass()

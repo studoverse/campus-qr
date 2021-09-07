@@ -1,7 +1,8 @@
 package views.users
 
-import com.studo.campusqr.common.ClientUser
-import com.studo.campusqr.common.UserData
+import com.studo.campusqr.common.payloads.ClientUser
+import com.studo.campusqr.common.payloads.DeleteUserData
+import com.studo.campusqr.common.payloads.UserData
 import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
@@ -112,7 +113,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
                 launch {
                   val response = NetworkManager.post<String>(
                     "$apiBase/user/delete",
-                    body = mapOf("userId" to props.config.user.id)
+                    body = DeleteUserData(userId = props.config.user.id)
                   )
                   props.config.onEditFinished(response)
                 }

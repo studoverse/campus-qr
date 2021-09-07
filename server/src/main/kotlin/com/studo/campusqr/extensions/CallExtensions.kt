@@ -1,7 +1,7 @@
 package com.studo.campusqr.extensions
 
 import com.fasterxml.jackson.core.JsonProcessingException
-import com.studo.campusqr.common.ClientPayload
+import com.studo.campusqr.common.payloads.ClientPayload
 import com.studo.campusqr.utils.JsonHandler
 import io.ktor.application.*
 import io.ktor.features.*
@@ -46,11 +46,11 @@ val ApplicationCall.language: String
   }
 
 /**
- * Loads the request body, and converts from JSON to a map,
- * This can be only called once per ApplicationCall
+ * Loads the request body. Can only be called once per ApplicationCall
  */
-@Deprecated("Use receiveClientPayload to statically type the request params", ReplaceWith("receiveClientPayload<>()"))
-suspend fun ApplicationCall.receiveJsonStringMap(): Map<String, String> = JsonHandler.fromJson(receiveText())
+suspend inline fun <reified T : ClientPayload> ApplicationCall.receiveClientPayload(): T {
+  return receiveClientPayload(T::class)
+}
 
 suspend fun <T : ClientPayload> ApplicationCall.receiveClientPayload(payloadClass: KClass<T>): T {
   val json = receiveText()
@@ -59,8 +59,4 @@ suspend fun <T : ClientPayload> ApplicationCall.receiveClientPayload(payloadClas
   } catch (e: JsonProcessingException) {
     throw BadRequestException(json, e)
   }
-}
-
-suspend inline fun <reified T : ClientPayload> ApplicationCall.receiveClientPayload(): T {
-  return receiveClientPayload(T::class)
 }

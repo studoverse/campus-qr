@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Debug Web-Frontend" type="CompoundRunConfigurationType">
+    <toRun name="Start dev webserver" type="GradleRunConfiguration" />
+    <toRun name="Debug in Chrome" type="JavascriptDebugType" />
+    <method v="2" />
+  </configuration>
+</component>

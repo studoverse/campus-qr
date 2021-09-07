@@ -1,9 +1,10 @@
 package views.locations
 
 import app.GlobalCss
-import com.studo.campusqr.common.ClientLocation
 import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.format
+import com.studo.campusqr.common.payloads.ClientLocation
+import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
 import kotlinext.js.js
 import org.w3c.dom.events.Event
 import react.*
@@ -55,10 +56,10 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     }
     val response = NetworkManager.post<String>(
       url = url,
-      body = mapOf(
-        "name" to state.locationTextFieldValue,
-        "accessType" to state.locationAccessType.name,
-        "seatCount" to state.locationSeatCount
+      body = CreateOrUpdateLocationData(
+        name = state.locationTextFieldValue,
+        accessType = state.locationAccessType,
+        seatCount = state.locationSeatCount
       )
     )
     setState {

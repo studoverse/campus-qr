@@ -1,6 +1,7 @@
 package views.login
 
 import com.studo.campusqr.common.LoginResult
+import com.studo.campusqr.common.payloads.MailLoginData
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.html.js.onSubmitFunction
@@ -46,9 +47,9 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
     launch {
       val response: LoginResult? = NetworkManager.post<String>(
         url = "$apiBase/user/login",
-        body = mapOf(
-          "email" to state.email,
-          "password" to state.password
+        body = MailLoginData(
+          email = state.email,
+          password = state.password
         ),
         headers = mapOf(
           "csrfToken" to document.querySelector("meta[name='csrfToken']")!!.getAttribute("content")!!

@@ -33,7 +33,7 @@ internal suspend fun automaticDataDeletion() {
     getCollection<CheckIn>().deleteMany(CheckIn::date lower now.addDays(-deleteDays))
     getCollection<BackendAccess>().deleteMany(
       BackendAccess::dateRanges.none(
-        DateRange::to greaterEquals now.addDays(-deleteDays)
+        BackendDateRange::to greaterEquals now.addDays(-deleteDays)
       )
     )
   }

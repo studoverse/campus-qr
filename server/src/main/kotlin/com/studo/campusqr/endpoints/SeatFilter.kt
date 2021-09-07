@@ -2,8 +2,8 @@ package com.studo.campusqr.endpoints
 
 import com.moshbit.katerbase.MongoMainEntry
 import com.moshbit.katerbase.equal
-import com.studo.campusqr.common.DeleteSeatFilter
-import com.studo.campusqr.common.EditSeatFilter
+import com.studo.campusqr.common.payloads.DeleteSeatFilter
+import com.studo.campusqr.common.payloads.EditSeatFilter
 import com.studo.campusqr.database.BackendSeatFilter
 import com.studo.campusqr.extensions.receiveClientPayload
 import com.studo.campusqr.extensions.respondForbidden
