@@ -320,8 +320,14 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 setState {
                   timeSlots = timeSlots.map { timeSlot ->
                     if (timeSlot == clientDateRange) {
+                      val startDateBefore = Date(clientDateRange.from)
+                      val from = selectedDate.with(
+                        hour = startDateBefore.getHours(),
+                        minute = startDateBefore.getMinutes(),
+                        second = startDateBefore.getSeconds(),
+                        millisecond = startDateBefore.getMilliseconds()
+                      ).getTime()
                       // Default end date is start date + 2h
-                      val from = selectedDate.getTime()
                       val to = if (from >= clientDateRange.to) {
                         selectedDate.addHours(2).getTime()
                       } else clientDateRange.to
@@ -346,8 +352,13 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 setState {
                   timeSlots = timeSlots.map { timeSlot ->
                     if (timeSlot == clientDateRange) {
+                      val startDateBefore = Date(clientDateRange.from)
+                      val from = selectedTime.with(
+                        year = startDateBefore.getFullYear(),
+                        month = startDateBefore.getMonth(),
+                        day = startDateBefore.getDate()
+                      ).getTime()
                       // Default end date is start date + 2h
-                      val from = selectedTime.getTime()
                       val to = if (from >= clientDateRange.to) {
                         selectedTime.addHours(2).getTime()
                       } else clientDateRange.to
@@ -397,9 +408,15 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 setState {
                   timeSlots = timeSlots.map { timeSlot ->
                     if (timeSlot == clientDateRange) {
+                      val endDateBefore = Date(clientDateRange.to)
                       ClientDateRange(
                         from = clientDateRange.from,
-                        to = selectedDate.getTime()
+                        to = selectedDate.with(
+                          hour = endDateBefore.getHours(),
+                          minute = endDateBefore.getMinutes(),
+                          second = endDateBefore.getSeconds(),
+                          millisecond = endDateBefore.getMilliseconds()
+                        ).getTime()
                       )
                     } else timeSlot
                   }
@@ -418,9 +435,14 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 setState {
                   timeSlots = timeSlots.map { timeSlot ->
                     if (timeSlot == clientDateRange) {
+                      val endDateBefore = Date(clientDateRange.to)
                       ClientDateRange(
                         from = clientDateRange.from,
-                        to = selectedTime.getTime()
+                        to = selectedTime.with(
+                          year = endDateBefore.getFullYear(),
+                          month = endDateBefore.getMonth(),
+                          day = endDateBefore.getDate()
+                        ).getTime()
                       )
                     } else timeSlot
                   }
