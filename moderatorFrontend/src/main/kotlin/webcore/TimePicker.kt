@@ -12,6 +12,7 @@ import react.dom.div
 import react.dom.option
 import util.get
 import webcore.extensions.*
+import webcore.materialUI.TextFieldVariant
 import webcore.materialUI.textField
 import webcore.materialUI.withStyles
 import kotlin.js.Date
@@ -28,7 +29,7 @@ interface TimePickerProps : RProps {
   var fullWidth: Boolean
   var label: String?
   var helperText: String?
-  var variant: String
+  var variant: TextFieldVariant
 }
 
 interface TimePickerState : RState {
@@ -90,7 +91,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         attrs.label = props.label
         attrs.helperText = props.helperText
         attrs.fullWidth = props.fullWidth
-        attrs.variant = props.variant
+        attrs.variant = props.variant.value
         attrs.disabled = props.disabled
         attrs.error = props.error
         attrs.type = InputType.time.toString()
@@ -133,6 +134,8 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
     ).get()
     div(props.classes.container) {
       textField {
+        attrs.fullWidth = props.fullWidth
+        attrs.variant = props.variant.value
         attrs.disabled = props.disabled
         attrs.error = props.error
         attrs.style = js { flex = 1 }
@@ -153,6 +156,8 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         }
       }
       textField {
+        attrs.fullWidth = props.fullWidth
+        attrs.variant = props.variant.value
         attrs.disabled = props.disabled
         attrs.error = props.error
         attrs.style = js { flex = 1 }
@@ -213,7 +218,7 @@ fun RBuilder.timePicker(
   fullWidth: Boolean = false,
   label: String? = null,
   helperText: String? = null,
-  variant: String = "standard",
+  variant: TextFieldVariant = TextFieldVariant.STANDARD,
 ) = styled {
   attrs.time = time
   attrs.onChange = onChange

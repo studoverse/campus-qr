@@ -13,6 +13,7 @@ import webcore.extensions.emptyToNull
 import webcore.extensions.inputValue
 import webcore.extensions.setFullYear
 import webcore.extensions.toInputTypeDateValueString
+import webcore.materialUI.TextFieldVariant
 import webcore.materialUI.textField
 import webcore.materialUI.withStyles
 import kotlin.js.Date
@@ -28,7 +29,7 @@ interface DatePickerProps : RProps {
   var fullWidth: Boolean
   var label: String?
   var helperText: String?
-  var variant: String
+  var variant: TextFieldVariant
 }
 
 interface DatePickerState : RState {
@@ -106,7 +107,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
       attrs.label = props.label
       attrs.helperText = props.helperText
       attrs.fullWidth = props.fullWidth
-      attrs.variant = props.variant
+      attrs.variant = props.variant.value
       attrs.disabled = props.disabled
       attrs.error = props.error || state.fieldError
       attrs.onChange = { event: Event ->
@@ -141,6 +142,8 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
     ).get()
     div(props.classes.flex) {
       textField {
+        attrs.fullWidth = props.fullWidth
+        attrs.variant = props.variant.value
         attrs.disabled = props.disabled
         attrs.error = props.error || state.fieldError
         attrs.style = js { flex = 1 }
@@ -162,6 +165,8 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
       }
       textField {
+        attrs.fullWidth = props.fullWidth
+        attrs.variant = props.variant.value
         attrs.disabled = props.disabled
         attrs.error = props.error || state.fieldError
         attrs.style = js { flex = 2 }
@@ -183,6 +188,8 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
       }
       textField {
+        attrs.fullWidth = props.fullWidth
+        attrs.variant = props.variant.value
         attrs.disabled = props.disabled
         attrs.error = props.error || state.fieldError
         attrs.style = js { flex = 2 }
@@ -242,7 +249,7 @@ fun RBuilder.datePicker(
   fullWidth: Boolean = false,
   label: String? = null,
   helperText: String? = null,
-  variant: String = "standard",
+  variant: TextFieldVariant = TextFieldVariant.STANDARD,
 ) = styled {
   attrs.date = date
   attrs.onChange = onChange

@@ -42,12 +42,6 @@ dependencies {
 
   api(npm("@material-ui/icons", "4.11.2"))
 
-  // Don't update to latest version until @material-ui/pickers v4 comes out
-  api(npm("@material-ui/pickers", "3.2.10"))
-
-  api(npm("@date-io/luxon", "1.3.13"))
-  api(npm("luxon", "1.24.1"))
-
   api(npm("js-file-download", "0.4.12"))
 
   testImplementation(kotlin("test-js"))

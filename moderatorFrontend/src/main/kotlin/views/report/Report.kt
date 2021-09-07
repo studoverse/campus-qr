@@ -19,6 +19,7 @@ import views.common.renderLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.addDays
+import webcore.extensions.coerceAtMost
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -144,11 +145,11 @@ class Report : RComponent<ReportProps, ReportState>() {
             label = Strings.report_infection_date.get(),
             helperText = Strings.report_infection_date_tip.get(),
             fullWidth = true,
-            variant = "outlined",
+            variant = TextFieldVariant.OUTLINED,
             max = now,
             onChange = { selectedDate, _ ->
               setState {
-                infectionDate = selectedDate
+                infectionDate = selectedDate.coerceAtMost(now)
               }
             },
           )

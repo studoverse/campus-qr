@@ -1,12 +1,10 @@
 package app
 
-import MuiPickersUtilsProvider
 import com.studo.campusqr.common.*
 import com.studo.campusqr.common.extensions.emptyToNull
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.browser.window
-import luxonUtils
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
@@ -281,36 +279,32 @@ class App : RComponent<AppProps, AppState>() {
     document.body?.style?.backgroundColor = "white"
     muiThemeProvider {
       attrs.theme = theme
-
-      MuiPickersUtilsProvider {
-        attrs.utils = luxonUtils
-        routeContext.Provider(RouteContext(::pushAppRoute)) {
-          languageContext.Provider(LanguageState(state.activeLanguage, ::onLangChange)) {
-            // Render content without side drawer and toolbar, if no shell option is activated via url hash
-            if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
-              renderViewContent()
-            } else {
-              appShell {
-                attrs.appBarElevation = 0
-                attrs.mobileNavOpen = state.mobileNavOpen
-                attrs.smallToolbar = true
-                attrs.stickyNavigation = true
-                attrs.viewContent = {
-                  renderViewContent()
-                }
-                attrs.drawerList = {
-                  renderAppDrawerItems(AppDrawerItemsProps.Config(
-                    userData = state.userData,
-                    currentAppRoute = state.currentAppRoute,
-                    checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
-                    moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
-                    adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
-                    loading = false,
-                    onCloseMobileNav = {
-                      setState { mobileNavOpen = false }
-                    }
-                  ))
-                }
+      routeContext.Provider(RouteContext(::pushAppRoute)) {
+        languageContext.Provider(LanguageState(state.activeLanguage, ::onLangChange)) {
+          // Render content without side drawer and toolbar, if no shell option is activated via url hash
+          if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
+            renderViewContent()
+          } else {
+            appShell {
+              attrs.appBarElevation = 0
+              attrs.mobileNavOpen = state.mobileNavOpen
+              attrs.smallToolbar = true
+              attrs.stickyNavigation = true
+              attrs.viewContent = {
+                renderViewContent()
+              }
+              attrs.drawerList = {
+                renderAppDrawerItems(AppDrawerItemsProps.Config(
+                  userData = state.userData,
+                  currentAppRoute = state.currentAppRoute,
+                  checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
+                  moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
+                  adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
+                  loading = false,
+                  onCloseMobileNav = {
+                    setState { mobileNavOpen = false }
+                  }
+                ))
               }
             }
           }
