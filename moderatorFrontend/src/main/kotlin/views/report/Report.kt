@@ -174,7 +174,7 @@ class Report : RComponent<ReportProps, ReportState>() {
             }
             textField {
               attrs.fullWidth = true
-              attrs.variant = "outlined"
+              attrs.variant = TextFieldVariant.OUTLINED.value
               attrs.label = Strings.report_email.get()
               attrs.value = state.emailTextFieldValue
               attrs.error = state.emailTextFieldError.isNotEmpty()

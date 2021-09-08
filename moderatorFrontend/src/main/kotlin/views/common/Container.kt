@@ -11,3 +11,5 @@ fun RBuilder.container(block: RDOMBuilder<DIV>.() -> Unit): ReactElement =
   div(classes = "genericContainer", block = block)
 
 fun RBuilder.spacer(size: Int = 8) = div { attrs.jsStyle { height = size } }
+
+fun RBuilder.horizontalSpacer(size: Int = 8) = div { attrs.jsStyle { width = size } }

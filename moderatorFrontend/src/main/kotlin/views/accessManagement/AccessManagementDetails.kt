@@ -14,10 +14,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.accessManagement.AccessManagementDetailsProps.Config
-import views.common.centeredProgress
-import views.common.networkErrorView
-import views.common.renderLinearProgress
-import views.common.spacer
+import views.common.*
 import webcore.*
 import webcore.extensions.*
 import webcore.materialUI.*
@@ -125,7 +122,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         note = state.accessControlNoteTextFieldValue,
         reason = state.accessControlReasonTextFieldValue
       )
-      )
+    )
     setState {
       showProgress = false
     }
@@ -212,7 +209,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           attrs.disabled = params.disabled
           attrs.fullWidth = params.fullWidth
           attrs.fullWidth = true
-          attrs.variant = "outlined"
+          attrs.variant = TextFieldVariant.OUTLINED.value
           attrs.label = Strings.location_name.get()
         }
       }
@@ -223,7 +220,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     textField {
       attrs.disabled = props.config is Config.Details
       attrs.fullWidth = true
-      attrs.variant = "outlined"
+      attrs.variant = TextFieldVariant.OUTLINED.value
       attrs.label = Strings.access_control_note.get()
       attrs.value = state.accessControlNoteTextFieldValue
       attrs.onChange = { event: Event ->
@@ -239,7 +236,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     textField {
       attrs.disabled = props.config is Config.Details
       attrs.fullWidth = true
-      attrs.variant = "outlined"
+      attrs.variant = TextFieldVariant.OUTLINED.value
       attrs.label = Strings.access_control_reason.get()
       attrs.value = state.accessControlReasonTextFieldValue
       attrs.onChange = { event: Event ->
@@ -281,128 +278,133 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     state.timeSlots.forEach { clientDateRange ->
       gridContainer(GridDirection.ROW, alignItems = "center", spacing = 1) {
         gridItem(GridSize(xs = 12, sm = true)) {
-          div(props.classes.datePickerContainer) {
-            datePicker(
-              disabled = props.config is Config.Details,
-              date = Date(clientDateRange.from),
-              label = Strings.access_control_from.get(),
-              fullWidth = true,
-              variant = TextFieldVariant.OUTLINED,
-              min = if (props.config is Config.Create) now else null,
-              max = inThreeYears,
-              onChange = { selectedDate, _ ->
-                setState {
-                  timeSlots = timeSlots.map { timeSlot ->
-                    if (timeSlot == clientDateRange) {
-                      val startDateBefore = Date(clientDateRange.from)
-                      val from = selectedDate.with(
-                        hour = startDateBefore.getHours(),
-                        minute = startDateBefore.getMinutes(),
-                        second = startDateBefore.getSeconds(),
-                        millisecond = startDateBefore.getMilliseconds()
-                      ).coerceAtMost(inThreeYears).getTime()
-
-                      // Default end date is start date + 2h
-                      val to = if (from >= clientDateRange.to) {
-                        selectedDate.coerceAtMost(inThreeYears).addHours(2).getTime()
-                      } else clientDateRange.to
-                      ClientDateRange(
-                        from = from,
-                        to = to
-                      )
-                    } else timeSlot
-                  }
-                }
-              },
-            )
-          }
-          div(props.classes.datePickerContainer) {
-            datePicker(
-              disabled = props.config is Config.Details,
-              date = Date(clientDateRange.to),
-              label = Strings.access_control_to.get(),
-              fullWidth = true,
-              variant = TextFieldVariant.OUTLINED,
-              min = if (props.config is Config.Create) now else null,
-              max = inThreeYears,
-              onChange = { selectedDate, _ ->
-                setState {
-                  timeSlots = timeSlots.map { timeSlot ->
-                    if (timeSlot == clientDateRange) {
-                      val endDateBefore = Date(clientDateRange.to)
-                      ClientDateRange(
-                        from = clientDateRange.from,
-                        to = selectedDate.with(
-                          hour = endDateBefore.getHours(),
-                          minute = endDateBefore.getMinutes(),
-                          second = endDateBefore.getSeconds(),
-                          millisecond = endDateBefore.getMilliseconds()
+          div(props.classes.timeSlotRow) {
+            div(props.classes.timeSlotColumn) {
+              datePicker(
+                disabled = props.config is Config.Details,
+                date = Date(clientDateRange.from),
+                label = Strings.access_control_from.get(),
+                fullWidth = true,
+                variant = TextFieldVariant.OUTLINED,
+                min = if (props.config is Config.Create) now else null,
+                max = inThreeYears,
+                onChange = { selectedDate, _ ->
+                  setState {
+                    timeSlots = timeSlots.map { timeSlot ->
+                      if (timeSlot == clientDateRange) {
+                        val startDateBefore = Date(clientDateRange.from)
+                        val from = selectedDate.with(
+                          hour = startDateBefore.getHours(),
+                          minute = startDateBefore.getMinutes(),
+                          second = startDateBefore.getSeconds(),
+                          millisecond = startDateBefore.getMilliseconds()
                         ).coerceAtMost(inThreeYears).getTime()
-                      )
-                    } else timeSlot
+
+                        // Default end date is start date + 2h
+                        val to = if (from >= clientDateRange.to) {
+                          selectedDate.coerceAtMost(inThreeYears).addHours(2).getTime()
+                        } else clientDateRange.to
+                        ClientDateRange(
+                          from = from,
+                          to = to
+                        )
+                      } else timeSlot
+                    }
                   }
-                }
-              },
-            )
-          }
-        }
-        gridItem(GridSize(xs = 12, sm = true)) {
-          div(props.classes.timePickerContainer) {
-            timePicker(
-              disabled = props.config is Config.Details,
-              time = Date(clientDateRange.from),
-              fullWidth = true,
-              variant = TextFieldVariant.OUTLINED,
-              min = if (props.config is Config.Create) now else null,
-              onChange = { selectedTime ->
-                setState {
-                  timeSlots = timeSlots.map { timeSlot ->
-                    if (timeSlot == clientDateRange) {
-                      val startDateBefore = Date(clientDateRange.from)
-                      val from = selectedTime.with(
-                        year = startDateBefore.getFullYear(),
-                        month = startDateBefore.getMonth(),
-                        day = startDateBefore.getDate()
-                      ).getTime()
-                      // Default end date is start date + 2h
-                      val to = if (from >= clientDateRange.to) {
-                        selectedTime.addHours(2).getTime()
-                      } else clientDateRange.to
-                      ClientDateRange(
-                        from = from,
-                        to = to
-                      )
-                    } else timeSlot
-                  }
-                }
-              },
-            )
-          }
-          div(props.classes.timePickerContainer) {
-            timePicker(
-              disabled = props.config is Config.Details,
-              time = Date(clientDateRange.to),
-              fullWidth = true,
-              variant = TextFieldVariant.OUTLINED,
-              min = if (props.config is Config.Create) now else null,
-              onChange = { selectedTime ->
-                setState {
-                  timeSlots = timeSlots.map { timeSlot ->
-                    if (timeSlot == clientDateRange) {
-                      val endDateBefore = Date(clientDateRange.to)
-                      ClientDateRange(
-                        from = clientDateRange.from,
-                        to = selectedTime.with(
-                          year = endDateBefore.getFullYear(),
-                          month = endDateBefore.getMonth(),
-                          day = endDateBefore.getDate()
+                },
+              )
+            }
+            horizontalSpacer(12) // TODO @mh find other horizontal spacers
+            div(props.classes.timeSlotColumn) {
+              timePicker(
+                disabled = props.config is Config.Details,
+                time = Date(clientDateRange.from),
+                fullWidth = true,
+                variant = TextFieldVariant.OUTLINED,
+                min = if (props.config is Config.Create) now else null,
+                onChange = { selectedTime ->
+                  setState {
+                    timeSlots = timeSlots.map { timeSlot ->
+                      if (timeSlot == clientDateRange) {
+                        val startDateBefore = Date(clientDateRange.from)
+                        val from = selectedTime.with(
+                          year = startDateBefore.getFullYear(),
+                          month = startDateBefore.getMonth(),
+                          day = startDateBefore.getDate()
                         ).getTime()
-                      )
-                    } else timeSlot
+                        // Default end date is start date + 2h
+                        val to = if (from >= clientDateRange.to) {
+                          selectedTime.addHours(2).getTime()
+                        } else clientDateRange.to
+                        ClientDateRange(
+                          from = from,
+                          to = to
+                        )
+                      } else timeSlot
+                    }
                   }
-                }
-              },
-            )
+                },
+              )
+            }
+          }
+          spacer(16)
+          div(props.classes.timeSlotRow) {
+            div(props.classes.timeSlotColumn) {
+              datePicker(
+                disabled = props.config is Config.Details,
+                date = Date(clientDateRange.to),
+                label = Strings.access_control_to.get(),
+                fullWidth = true,
+                variant = TextFieldVariant.OUTLINED,
+                min = if (props.config is Config.Create) now else null,
+                max = inThreeYears,
+                onChange = { selectedDate, _ ->
+                  setState {
+                    timeSlots = timeSlots.map { timeSlot ->
+                      if (timeSlot == clientDateRange) {
+                        val endDateBefore = Date(clientDateRange.to)
+                        ClientDateRange(
+                          from = clientDateRange.from,
+                          to = selectedDate.with(
+                            hour = endDateBefore.getHours(),
+                            minute = endDateBefore.getMinutes(),
+                            second = endDateBefore.getSeconds(),
+                            millisecond = endDateBefore.getMilliseconds()
+                          ).coerceAtMost(inThreeYears).getTime()
+                        )
+                      } else timeSlot
+                    }
+                  }
+                },
+              )
+            }
+            horizontalSpacer(12)
+            div(props.classes.timeSlotColumn) {
+              timePicker(
+                disabled = props.config is Config.Details,
+                time = Date(clientDateRange.to),
+                fullWidth = true,
+                variant = TextFieldVariant.OUTLINED,
+                min = if (props.config is Config.Create) now else null,
+                onChange = { selectedTime ->
+                  setState {
+                    timeSlots = timeSlots.map { timeSlot ->
+                      if (timeSlot == clientDateRange) {
+                        val endDateBefore = Date(clientDateRange.to)
+                        ClientDateRange(
+                          from = clientDateRange.from,
+                          to = selectedTime.with(
+                            year = endDateBefore.getFullYear(),
+                            month = endDateBefore.getMonth(),
+                            day = endDateBefore.getDate()
+                          ).getTime()
+                        )
+                      } else timeSlot
+                    }
+                  }
+                },
+              )
+            }
           }
         }
         if (props.config !is Config.Details) {
@@ -472,7 +474,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.disabled = props.config is Config.Details
             attrs.helperText = Strings.access_control_add_permitted_people_tip.get()
             attrs.fullWidth = true
-            attrs.variant = "outlined"
+            attrs.variant = TextFieldVariant.OUTLINED.value
             attrs.label = Strings.email_address.get()
             attrs.value = state.personEmailTextFieldValue
             attrs.onChange = { event: Event ->
@@ -598,8 +600,8 @@ interface AccessManagementDetailsClasses {
   var form: String
   var addTimeSlotButton: String
   var removeTimeSlotButton: String
-  var datePickerContainer: String
-  var timePickerContainer: String
+  var timeSlotRow: String
+  var timeSlotColumn: String
 }
 
 private val style = { _: dynamic ->
@@ -618,13 +620,12 @@ private val style = { _: dynamic ->
       marginLeft = 4
       marginRight = 8
     }
-    datePickerContainer = js {
+    timeSlotRow = js {
       display = "flex"
-      flexDirection = "column"
+      flexDirection = "row"
     }
-    timePickerContainer = js {
-      display = "flex"
-      flexDirection = "column"
+    timeSlotColumn = js {
+      flex = "50%"
     }
   }
 }
