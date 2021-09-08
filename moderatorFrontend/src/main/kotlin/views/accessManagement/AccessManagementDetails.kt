@@ -314,7 +314,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
                 },
               )
             }
-            horizontalSpacer(12) // TODO @mh find other horizontal spacers
+            horizontalSpacer(12)
             div(props.classes.timeSlotColumn) {
               timePicker(
                 disabled = props.config is Config.Details,
