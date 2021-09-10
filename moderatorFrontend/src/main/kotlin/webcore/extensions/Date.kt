@@ -26,6 +26,10 @@ fun Date.addDays(days: Int): Date {
   return Date(this.getTime() + (days.toDouble() * 24 * 60 * 60 * 1000))
 }
 
+fun Date.addYears(years: Int): Date {
+  return this.with(year = this.getFullYear() + years)
+}
+
 fun Date.addHours(hours: Int): Date {
   return Date(this.getTime() + (hours.toDouble() * 60 * 60 * 1000))
 }

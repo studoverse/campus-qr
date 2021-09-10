@@ -251,8 +251,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
   private fun RBuilder.renderTimeSlotPickers() {
     val now = Date()
-    val DAYS_PER_YEAR = 365
-    val inThreeYears = now.addDays(DAYS_PER_YEAR * 3)
+    val inThreeYears = now.addYears(3)
     div(GlobalCss.flex) {
       typography {
         +Strings.access_control_time_slots.get()
