@@ -9,8 +9,25 @@ import kotlin.js.Date
  * This ensures an easier Date-API usage, avoids bugs and produces the same effects like on the backend on Kotlin/JVM.
  */
 
+// @Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
+fun Date.setFullYear(yearValue: Int, monthValue: Int, dayValue: Int): Date {
+  val d = Date(this.getTime())
+  js("d.setFullYear(yearValue, monthValue, dayValue)")
+  return d
+}
+
+fun Date.setTime(hours: Int, minutes: Int, seconds: Int, milliseconds: Int): Date {
+  val t = Date(this.getTime())
+  js("t.setHours(hours); t.setMinutes(minutes); t.setSeconds(seconds); t.setMilliseconds(milliseconds)")
+  return t
+}
+
 fun Date.addDays(days: Int): Date {
   return Date(this.getTime() + (days.toDouble() * 24 * 60 * 60 * 1000))
+}
+
+fun Date.addYears(years: Int): Date {
+  return this.with(year = this.getFullYear() + years)
 }
 
 fun Date.addHours(hours: Int): Date {
@@ -37,26 +54,15 @@ fun Date.isToday(): Boolean {
 
 fun Date.toInputTypeDateValueString(): String {
   val year = this.getFullYear()
-  val month = this.getMonth() + 1
+  val month = this.getMonth() + 1 // + 1 because month is 0 based
   val day = this.getDate()
-  return "$year-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}"
+  return "${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}"
 }
 
 fun Date.toInputTypeTimeValueString(): String {
   val hour = this.getHours()
   val minute = this.getMinutes()
   return "${hour.twoDigitString()}:${minute.twoDigitString()}"
-}
-
-fun Date.parse(year: Int, month: Int, day: Int): Date {
-  this.setFullYear(year, month, day)
-  return this
-}
-
-@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
-private fun Date.setFullYear(yearValue: Int, monthValue: Int?, dayValue: Int?): Double {
-  val d = this
-  return js("d.setFullYear(yearValue, monthValue, dayValue)") as Double
 }
 
 fun Date.onSameDayAs(other: Date) =
@@ -72,18 +78,54 @@ fun Date.localToUtcDate(): Date = Date(getTime() - getTimezoneOffset() * 60 * 10
  * Creates a new [Date] object with given parameters, defaults to given date.
  * @param month 0 based
  */
-fun Date.with(year: Int? = null, month: Int? = null, day: Int? = null, hour: Int? = null, minute: Int? = null) = Date(
-  year = year ?: this.getFullYear(),
-  month = month ?: this.getMonth(),
-  day = day ?: this.getDate(),
-  hour = hour ?: this.getHours(),
-  minute = minute ?: this.getMinutes()
-)
+fun Date.with(
+  year: Int? = null,
+  month: Int? = null,
+  day: Int? = null,
+  hour: Int? = null,
+  minute: Int? = null,
+  second: Int? = null,
+  millisecond: Int? = null
+): Date {
+  var date = this.setFullYear(
+    year ?: this.getFullYear(),
+    month ?: this.getMonth(),
+    day ?: this.getDate(),
+  )
+  date = date.setTime(
+    hour ?: this.getHours(),
+    minute ?: this.getMinutes(),
+    second ?: this.getSeconds(),
+    millisecond ?: this.getMilliseconds()
+  )
+  return date
+}
 
+fun Date.startOfTheDay() = this.with(hour = 0, minute = 0, second = 0, millisecond = 0)
+
+fun Date.endOfTheDay() = this.with(hour = 23, minute = 59, second = 59, millisecond = 999)
 
 /** Copied from java.util.date */
 infix operator fun Date.compareTo(other: Date): Int {
   val thisTime = this.getTime()
   val anotherTime = other.getTime()
   return if (thisTime < anotherTime) -1 else (if (thisTime == anotherTime) 0 else 1)
+}
+
+/** Ensures that this date is not after the specified maximumDate. */
+fun Date.coerceAtMost(maximumDate: Date): Date {
+  return if (this <= maximumDate) {
+    Date(this.getTime())
+  } else {
+    Date(maximumDate.getTime())
+  }
+}
+
+/** Ensures that this date is not before the specified minimumDate. */
+fun Date.coerceAtLeast(minimumDate: Date): Date {
+  return if (this >= minimumDate) {
+    Date(this.getTime())
+  } else {
+    Date(minimumDate.getTime())
+  }
 }

@@ -9,7 +9,6 @@ import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
 import kotlinext.js.js
 import kotlinx.html.js.onSubmitFunction
-import muiDatePicker
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.div
@@ -23,6 +22,7 @@ import views.common.renderLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.addDays
+import webcore.extensions.coerceAtMost
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -136,6 +136,7 @@ class Report : RComponent<ReportProps, ReportState>() {
   }
 
   override fun RBuilder.render() {
+    val now = Date()
     val showEmailAddress = state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
     renderSnackbar()
@@ -148,19 +149,19 @@ class Report : RComponent<ReportProps, ReportState>() {
     div(props.classes.inputForm) {
       gridContainer(GridDirection.ROW) {
         gridItem(GridSize(xs = 12, sm = 3)) {
-          muiDatePicker {
-            attrs.fullWidth = true
-            attrs.format = "dd.MM.yyyy"
-            attrs.inputVariant = "outlined"
-            attrs.label = Strings.report_infection_date.get()
-            attrs.value = state.infectionDate
-            attrs.helperText = Strings.report_infection_date_tip.get()
-            attrs.onChange = {
+          datePicker(
+            date = state.infectionDate,
+            label = Strings.report_infection_date.get(),
+            helperText = Strings.report_infection_date_tip.get(),
+            fullWidth = true,
+            variant = TextFieldVariant.OUTLINED,
+            max = now,
+            onChange = { selectedDate, _ ->
               setState {
-                infectionDate = it.toJSDate()
+                infectionDate = selectedDate.coerceAtMost(now)
               }
-            }
-          }
+            },
+          )
         }
         gridItem(GridSize(xs = 12, sm = 6)) {
           form {
@@ -173,7 +174,7 @@ class Report : RComponent<ReportProps, ReportState>() {
             }
             textField {
               attrs.fullWidth = true
-              attrs.variant = "outlined"
+              attrs.variant = TextFieldVariant.OUTLINED.value
               attrs.label = Strings.report_email.get()
               attrs.value = state.emailTextFieldValue
               attrs.error = state.emailTextFieldError.isNotEmpty()

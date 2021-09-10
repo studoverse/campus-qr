@@ -1201,12 +1201,18 @@ interface TextFieldProps : InputBaseProps {
   var label: dynamic
   var select: Boolean
   var SelectProps: dynamic
+
+  /** See [TextFieldVariant] */
   var variant: String
   var style: dynamic
   var InputProps: dynamic
 }
 
 val textField: RClass<TextFieldProps> = importedTextField.default
+
+enum class TextFieldVariant(val value: String) {
+  STANDARD("standard"), OUTLINED("outlined"), FILLED("filled")
+}
 
 
 @JsModule("@material-ui/lab/Autocomplete")
