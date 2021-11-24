@@ -37,7 +37,7 @@ val ApplicationCall.language: String
       cookieLang
 
     } else {
-      val acceptLanguages = request.headers["accept-language"]?.toLowerCase()?.split(';', ',') ?: emptyList()
+      val acceptLanguages = request.headers["accept-language"]?.lowercase()?.split(';', ',') ?: emptyList()
       when {
         "de" in acceptLanguages -> "de"
         else -> "en"

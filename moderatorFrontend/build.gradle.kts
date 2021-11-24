@@ -2,6 +2,11 @@ plugins {
   kotlin("js")
 }
 
+val ktor_version: String = "1.6.4"
+val kotlinx_html_version: String = "0.7.3"
+val kotlinx_serialization_version: String = "1.3.0"
+val kotlinx_coroutines_version: String = "1.5.2"
+
 repositories {
   mavenCentral()
   maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
@@ -18,15 +23,15 @@ dependencies {
   implementation(kotlin("stdlib-js"))
   implementation(project(":common"))
 
-  api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.3")
+  api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
   api("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.212-kotlin-1.5.10")
   api("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.212-kotlin-1.5.10")
-  api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+  api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
 
   // kotlinx-serialization + Ktor client
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-  implementation("io.ktor:ktor-client-core:1.6.3")
-  implementation("io.ktor:ktor-client-serialization:1.6.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
+  implementation("io.ktor:ktor-client-core:$ktor_version")
+  implementation("io.ktor:ktor-client-serialization:$ktor_version")
 
   implementation(npm("normalize.css", "8.0.1"))
   implementation(devNpm("style-loader", "2.0.0"))
