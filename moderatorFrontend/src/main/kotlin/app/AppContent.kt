@@ -57,7 +57,6 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
       )
       Url.BLANK -> Unit
       null -> pathNotFoundView()
-      else -> throw IllegalStateException("Path not found: ${url.path}")
     }
   }
 }
