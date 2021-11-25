@@ -112,7 +112,7 @@ private suspend fun ApplicationCall.performCheckIn(checkedInBy: String? = null) 
   // Validate seat argument
   validateSeatForLocation(location, seat)
 
-  val email = params.email.trim().toLowerCase()
+  val email = params.email.trim().lowercase()
   val now = Date()
 
   // Clients can send a custom visit date
@@ -189,7 +189,7 @@ suspend fun ApplicationCall.checkOutLocation() {
   // Validate seat argument
   validateSeatForLocation(location, seat)
 
-  val email = params.email.trim().toLowerCase()
+  val email = params.email.trim().lowercase()
 
   runOnDb {
     // Use updateMany here, user could check-in multiple times

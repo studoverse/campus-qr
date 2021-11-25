@@ -30,7 +30,7 @@ suspend fun AuthenticatedApplicationCall.createNewUser() {
 
   val params: NewUserData = receiveClientPayload()
 
-  val email = params.email.trim().toLowerCase()
+  val email = params.email.trim().lowercase()
   val newUser = BackendUser(
     userId = MongoMainEntry.generateId(email), // Use email as primary key. Email can not be changed.
     email = email,

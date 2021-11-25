@@ -2,6 +2,7 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.database.getConfigs
+import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.extensions.runOnDb
 import io.ktor.application.*
@@ -9,7 +10,6 @@ import io.ktor.html.*
 import io.ktor.http.*
 import kotlinx.html.*
 import java.util.*
-import com.studo.campusqr.extensions.get
 
 suspend fun ApplicationCall.userFrontend() {
   val fullLocationId = parameters["l"]
@@ -26,8 +26,6 @@ suspend fun ApplicationCall.userFrontend() {
   val showVerificationAnimation = runOnDb { getConfig<Boolean>("showVerificationAnimation") }
   val autoCheckoutMs = runOnDb { getConfig<Int>("autoCheckOutMinutes") } * 60 * 1000
   val liveCheckInsViewEnabled = runOnDb { getConfig<Boolean>("liveCheckInsViewEnabled") }
-
-  val now = Date()
 
   respondHtml(HttpStatusCode.OK) {
     lang = language
@@ -175,7 +173,7 @@ suspend fun ApplicationCall.userFrontend() {
                             <svg>
                               <symbol id="s-text">
                                 <text text-anchor="middle" x="50%" y="90%">${
-                              now.date.toString().padStart(2, '0')
+                              Calendar.getInstance().apply { time = Date() }.get(Calendar.DAY_OF_MONTH).toString().padStart(2, '0')
                             }</text>
                               </symbol>
           

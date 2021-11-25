@@ -64,7 +64,7 @@ suspend fun ApplicationCall.login() {
   validateCsrfToken()
 
   val params: MailLoginData = receiveClientPayload()
-  val email = params.email.trim().toLowerCase()
+  val email = params.email.trim().lowercase()
   val password = params.password
 
   val loginResult = authProvider.login(email, password)

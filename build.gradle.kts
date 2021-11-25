@@ -3,12 +3,14 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
   }
 }
 
 plugins {
-  kotlin("multiplatform") version "1.5.30" apply false
-  kotlin("js") version "1.5.30" apply false
-  kotlin("jvm") version "1.5.30" apply false
+  val kotlinVersion = "1.6.0"
+  kotlin("multiplatform") version kotlinVersion apply false
+  kotlin("jvm") version kotlinVersion apply false
+  kotlin("js") version kotlinVersion apply false
+  kotlin("plugin.serialization") version kotlinVersion apply false
 }

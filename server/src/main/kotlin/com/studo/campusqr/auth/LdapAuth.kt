@@ -142,7 +142,9 @@ class LdapAuth(private val ldapUrl: String) : AuthProvider {
               .substringBefore("@")
               .replace(".", " ")
               .split(" ")
-              .joinToString(separator = " ", transform = { it.capitalize() }),
+              .joinToString(separator = " ", transform = { name ->
+                name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+              }),
             permissions = ldapDefaultUserPermissions.toSet()
           )
         }
@@ -239,7 +241,7 @@ private fun ldapEscapeImpl(string: String, firstIndex: Int): String = buildStrin
 
 private val ESCAPE_CHARACTERS = charArrayOf(' ', '"', '#', '+', ',', ';', '<', '=', '>', '\\')
 
-private fun Char.shouldEscape(): Boolean = this.toInt().let { codepoint ->
+private fun Char.shouldEscape(): Boolean = this.code.let { codepoint ->
   when (codepoint) {
     in 0x3f..0x7e -> codepoint == 0x5c // the only forbidden character is backslash
     in 0x2d..0x3a -> false // minus, point, slash (allowed), digits + colon :
