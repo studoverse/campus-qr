@@ -58,6 +58,8 @@ tasks {
   }
 
   register("stage") {
+    // Only copy production resources in stage command. During development, we don't need the Kotlin/JS production resources.
+    rootProject.extra["runCopyProductionBuildToAllResources"] = true
     group = "distribution"
     dependsOn(getByName("copyServer"))
   }
@@ -67,6 +69,8 @@ tasks {
   }
 
   processResources {
-    dependsOn(getByPath(":moderatorFrontend:copyProductionBuildToAllResources"))
+    if (rootProject.extra.has("runCopyProductionBuildToAllResources")) {
+      dependsOn(getByPath(":moderatorFrontend:copyProductionBuildToAllResources"))
+    }
   }
 }
