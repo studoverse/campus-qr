@@ -134,7 +134,15 @@ tasks.register("validateYarnLock") {
 
 // Disable the execution of Yarn’s lifecycle scripts
 allprojects {
-  tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask> {
+  rootProject.tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask> {
     args += "--ignore-scripts"
+  }
+}
+
+///////
+// Hack for 50% faster Kotlin/JS builds: Uncomment the `onlyIf { false }` line after first-time project setup.
+allprojects {
+  rootProject.tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask> {
+    // onlyIf { false }
   }
 }
