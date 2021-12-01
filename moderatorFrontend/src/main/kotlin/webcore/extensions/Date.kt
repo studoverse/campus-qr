@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("UNUSED_PARAMETER")
 
 package webcore.extensions
 
@@ -9,7 +9,6 @@ import kotlin.js.Date
  * This ensures an easier Date-API usage, avoids bugs and produces the same effects like on the backend on Kotlin/JVM.
  */
 
-// @Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
 fun Date.setFullYear(yearValue: Int, monthValue: Int, dayValue: Int): Date {
   val d = Date(this.getTime())
   js("d.setFullYear(yearValue, monthValue, dayValue)")
