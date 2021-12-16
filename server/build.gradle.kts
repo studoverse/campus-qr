@@ -12,8 +12,10 @@ repositories {
 
 dependencies {
   implementation(project(":common"))
-  implementation("io.ktor:ktor-server-netty:1.6.3")
-  implementation("io.ktor:ktor-html-builder:1.6.4")
+  testImplementation(kotlin("test-junit"))
+
+  implementation("io.ktor:ktor-server-netty:1.6.7")
+  implementation("io.ktor:ktor-html-builder:1.6.7")
   implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
   implementation("org.mongodb:mongodb-driver-sync:4.1.0")
@@ -24,9 +26,7 @@ dependencies {
   implementation("ch.qos.logback:logback-classic:1.2.3")
 
   implementation("commons-codec:commons-codec:1.14")
-  implementation("com.github.studo-app:katerbase:418f2e6ce2")
-
-  testImplementation(kotlin("test-junit"))
+  implementation("com.github.studo-app:katerbase:13741464f6")
 }
 
 application {
