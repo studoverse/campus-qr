@@ -40,7 +40,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
   override fun RBuilder.render() {
     val currentAppRoute = props.config.currentAppRoute
 
-    when (val url = currentAppRoute?.url) {
+    when (currentAppRoute?.url) {
       Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(locationId = null)
       Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList(locationId = currentAppRoute.pathParams["id"])
       Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
