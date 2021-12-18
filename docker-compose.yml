@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  campus-qr:
+    container_name: campus-qr
+    restart: unless-stopped
+    #not advised to use http in production, using it behind a proxy with https, would be better
+    ports:
+      - 8070:8070
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/campus-qr
+    #need Dockerfile in same directory
+    build: .
+
+  mongo:
+    #maybe needs updating to newer version, when 4-xenial is not supported anymore
+    image: mongo:4-xenial
+    container_name: mongo
+    restart: unless-stopped
+    #if you want, you can change this to a docker volume
+    volumes:
+      - ./mongo-database:/data/db
+
+  #web ui to change parameters in mongodb
+  mongo-express-campus:
+    image: mongo-express
+    container_name: mongo-express
+    restart: unless-stopped
+    #this should be ip restricted as it gives access to the database via web ui
+    ports:
+      - 127.0.0.1:8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongo:27017/campus-qr
+      - ME_CONFIG_BASICAUTH_USERNAME=please-change-admin-name
+      - ME_CONFIG_BASICAUTH_PASSWORD=please-change-this-to-strong-secret-password
