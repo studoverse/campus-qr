@@ -15,7 +15,7 @@ RUN chown -R $APPLICATION_USER /src-code
 USER $APPLICATION_USER
 
 WORKDIR /src-code
-RUN ./gradlew stage
+RUN ./gradlew stage # Stage command will also be used by Heroku/Scalingo file
 
 RUN cp Server.jar /app/Server.jar
 WORKDIR /app
