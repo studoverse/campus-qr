@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  campus-qr:
+    container_name: campus-qr
+    restart: unless-stopped
+    # To run in production, running a reverse-proxy/loadbalancer/gateway with https-termination is required
+    ports:
+      - 8070:8070
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/campus-qr
+    #need Dockerfile in same directory
+    build: .
+
+  mongo:
+    #maybe needs updating to newer version, when 4-xenial is not supported anymore
+    image: mongo:4-xenial
+    container_name: mongo
+    restart: unless-stopped
+    #if you want, you can change this to a docker volume
+    volumes:
+      - ./mongo-database:/data/db

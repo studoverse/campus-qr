@@ -1,14 +1,23 @@
-FROM openjdk:8-jre-alpine
+#debian based
+FROM openjdk:11-jdk
 
 ENV APPLICATION_USER ktor
-RUN adduser -D -g '' $APPLICATION_USER
+RUN echo $APPLICATION_USER
+RUN adduser --disabled-password --gecos '' $APPLICATION_USER
 
 RUN mkdir /app
 RUN chown -R $APPLICATION_USER /app
 
+RUN git clone https://github.com/studo-app/campus-qr.git /src-code
+
+RUN chown -R $APPLICATION_USER /src-code
+
 USER $APPLICATION_USER
 
-COPY Server.jar /app/Server.jar
+WORKDIR /src-code
+RUN ./gradlew stage # Stage command will also be used by Heroku/Scalingo file
+
+RUN cp Server.jar /app/Server.jar
 WORKDIR /app
 
-CMD ["java", "-server", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:InitialRAMFraction=2", "-XX:MinRAMFraction=2", "-XX:MaxRAMFraction=2", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-jar", "Server.jar"]
+CMD ["java", "-jar", "Server.jar"]
