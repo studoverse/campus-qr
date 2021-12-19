@@ -127,7 +127,9 @@ The server assumes that the PaaS provider provides all necessary environment var
 ### Deployment on self-hosted hardware with Docker
 Download the Dockerfile and docker-compose.yml.\
 Adjust the provided **docker-compose.yml**, change all default values and define all necessary environment variables mentioned in the [Setup](#Setup) section.\
-Start server via docker-compose up -d --build and use mongo-express or another tool to change the params mentioned in [First time setup](#first-time-setup) section.
+Start server via `docker-compose up -d --build` and use MongoDB Compass, mongo-express or another tool to change the params mentioned in [First time setup](#first-time-setup) section.
+
+To run in production, running a reverse-proxy/loadbalancer/gateway with https-termination is required.
 
 # Project structure
 This Git repository is a Kotlin Multiplatform Project using Gradle. Opening the project in IntelliJ works out of the box.
