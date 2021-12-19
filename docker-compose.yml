@@ -20,16 +20,3 @@ services:
     #if you want, you can change this to a docker volume
     volumes:
       - ./mongo-database:/data/db
-
-  #web ui to change parameters in mongodb
-  mongo-express-campus:
-    image: mongo-express
-    container_name: mongo-express
-    restart: unless-stopped
-    #this should be ip restricted as it gives access to the database via web ui
-    ports:
-      - 127.0.0.1:8081:8081
-    environment:
-      - ME_CONFIG_MONGODB_URL=mongodb://mongo:27017/campus-qr
-      - ME_CONFIG_BASICAUTH_USERNAME=please-change-admin-name
-      - ME_CONFIG_BASICAUTH_PASSWORD=please-change-this-to-strong-secret-password
