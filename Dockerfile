@@ -2,7 +2,7 @@
 FROM openjdk:11-jdk
 
 ENV APPLICATION_USER ktor
-RUN echo  $APPLICATION_USER
+RUN echo $APPLICATION_USER
 RUN adduser --disabled-password --gecos '' $APPLICATION_USER
 
 RUN mkdir /app
