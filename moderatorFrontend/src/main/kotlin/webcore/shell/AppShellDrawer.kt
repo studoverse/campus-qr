@@ -4,21 +4,21 @@ import kotlinext.js.js
 import react.*
 import webcore.materialUI.*
 
+class AppShellDrawerConfig(
+  var mobileNavOpen: Boolean,
+  var hideDrawer: Boolean,
+  var drawerList: RElementBuilder<DrawerProps>.() -> Unit,
+  var toolbarIcon: (RElementBuilder<ToolbarProps>.() -> Unit)?,
+  var themeColor: String,
+  var smallToolbar: Boolean,
+  var stickyNavigation: Boolean,
+  var appBarElevation: Int?
+)
+
 // TODO: @mh Make external & refactor receiver function to normal function
 interface AppShellDrawerProps : RProps {
-  class Config(
-    var mobileNavOpen: Boolean,
-    var hideDrawer: Boolean,
-    var drawerList: RElementBuilder<DrawerProps>.() -> Unit,
-    var toolbarIcon: (RElementBuilder<ToolbarProps>.() -> Unit)?,
-    var themeColor: String,
-    var smallToolbar: Boolean,
-    var stickyNavigation: Boolean,
-    var appBarElevation: Int?
-  )
-
   var classes: AppShellDrawerClasses
-  var config: Config
+  var config: AppShellDrawerConfig
 }
 
 external interface AppShellDrawerState : RState {
@@ -179,7 +179,7 @@ private val AppShellDrawerStyle: (dynamic) -> dynamic = { theme ->
 private val styled =
   withStyles<AppShellDrawerProps, AppShellDrawer>(AppShellDrawerStyle, options = js { withTheme = true })
 
-fun RBuilder.renderAppShellDrawer(config: AppShellDrawerProps.Config) = styled {
+fun RBuilder.renderAppShellDrawer(config: AppShellDrawerConfig) = styled {
   attrs.config = config
 }
   

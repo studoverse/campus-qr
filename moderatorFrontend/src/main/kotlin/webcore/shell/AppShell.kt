@@ -31,7 +31,7 @@ class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(
   override fun RBuilder.render() {
 
     renderAppShellDrawer(
-      AppShellDrawerProps.Config(
+      AppShellDrawerConfig(
         props.mobileNavOpen,
         props.hideDrawer,
         props.drawerList,
