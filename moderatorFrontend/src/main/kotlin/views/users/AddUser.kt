@@ -15,24 +15,23 @@ import util.apiBase
 import util.get
 import util.localizedString
 import views.common.spacer
-import views.users.AddUserProps.Config
 import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
 
-interface AddUserProps : RProps {
-  sealed class Config(val onFinished: (response: String?) -> Unit) {
-    class Create(onFinished: (response: String?) -> Unit) : Config(onFinished)
-    class Edit(val user: ClientUser, onFinished: (response: String?) -> Unit) : Config(onFinished)
-  }
+sealed class AddUserConfig(val onFinished: (response: String?) -> Unit) {
+  class Create(onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
+  class Edit(val user: ClientUser, onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
+}
 
-  var config: Config
+external interface AddUserProps : RProps {
+  var config: AddUserConfig
   var userData: UserData
   var classes: AddUserClasses
 }
 
-interface AddUserState : RState {
+external interface AddUserState : RState {
   var userCreationInProgress: Boolean
 
   var userEmailTextFieldValue: String
@@ -52,16 +51,16 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
   override fun AddUserState.init(props: AddUserProps) {
     userCreationInProgress = false
 
-    userEmailTextFieldValue = (props.config as? Config.Edit)?.user?.email ?: ""
+    userEmailTextFieldValue = (props.config as? AddUserConfig.Edit)?.user?.email ?: ""
     userEmailTextFieldError = ""
 
     userPasswordTextFieldValue = ""
     userPasswordTextFieldError = ""
 
-    userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
+    userNameTextFieldValue = (props.config as? AddUserConfig.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userPermissions = (props.config as? Config.Edit)?.user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS)
+    userPermissions = (props.config as? AddUserConfig.Edit)?.user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS)
   }
 
   private fun createNewUser() = launch {
@@ -86,11 +85,11 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/edit",
       body = EditUserData(
-        userId = (props.config as Config.Edit).user.id,
+        userId = (props.config as AddUserConfig.Edit).user.id,
         name = state.userNameTextFieldValue.emptyToNull(),
         password = state.userPasswordTextFieldValue.emptyToNull(),
         permissions = state.userPermissions
-          .takeIf { (props.config as Config.Edit).user.permissions != it }
+          .takeIf { (props.config as AddUserConfig.Edit).user.permissions != it }
           ?.map { it.name }
       )
     )
@@ -163,7 +162,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
       attrs.autoComplete = "username"
       attrs.label = Strings.email_address.get()
       attrs.type = "email"
-      if (props.config is Config.Edit) {
+      if (props.config is AddUserConfig.Edit) {
         attrs.disabled = true
       }
       attrs.onChange = { event: Event ->
@@ -184,7 +183,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
         attrs.fullWidth = true
         attrs.type = "password"
         attrs.variant = "outlined"
-        if (props.config is Config.Create) {
+        if (props.config is AddUserConfig.Create) {
           attrs.label = Strings.login_email_form_pw_label.get()
         } else {
           attrs.label = Strings.login_email_form_new_pw_label.get()
@@ -263,15 +262,15 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
           attrs.color = "primary"
           attrs.onClick = {
             when (props.config) {
-              is Config.Create -> if (validateNameInput() && validatePasswordInput() && validateEmailInput()) {
+              is AddUserConfig.Create -> if (validateNameInput() && validatePasswordInput() && validateEmailInput()) {
                 createNewUser()
               }
-              is Config.Edit -> editUser()
+              is AddUserConfig.Edit -> editUser()
             }
           }
           +when (props.config) {
-            is Config.Create -> Strings.user_add.get()
-            is Config.Edit -> Strings.user_update.get()
+            is AddUserConfig.Create -> Strings.user_add.get()
+            is AddUserConfig.Edit -> Strings.user_update.get()
           }
         }
       }
@@ -300,7 +299,7 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<AddUserProps, AddUser>(style)
 
-fun RBuilder.renderAddUser(config: Config, userData: UserData) = styled {
+fun RBuilder.renderAddUser(config: AddUserConfig, userData: UserData) = styled {
   attrs.config = config
   attrs.userData = userData
 }

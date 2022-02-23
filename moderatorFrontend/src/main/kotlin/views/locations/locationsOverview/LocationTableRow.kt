@@ -6,7 +6,7 @@ import com.studo.campusqr.common.payloads.*
 import kotlinx.browser.window
 import react.*
 import util.*
-import views.locations.AddLocationProps
+import views.locations.AddLocationConfig
 import views.locations.renderAddLocation
 import webcore.MenuItem
 import webcore.NetworkManager
@@ -45,7 +45,7 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
     show = true,
     title = Strings.location_edit.get(),
     customContent = {
-      renderAddLocation(AddLocationProps.Config.Edit(props.config.location, onFinished = { response ->
+      renderAddLocation(AddLocationConfig.Edit(props.config.location, onFinished = { response ->
         if (response == "ok") {
           setState {
             showEditLocationDialog = false

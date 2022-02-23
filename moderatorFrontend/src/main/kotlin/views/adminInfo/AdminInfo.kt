@@ -15,11 +15,11 @@ import webcore.materialUI.muiButton
 import webcore.materialUI.typography
 import webcore.materialUI.withStyles
 
-interface AdminInfoProps : RProps {
+external interface AdminInfoProps : RProps {
   var classes: AdminInfoClasses
 }
 
-interface AdminInfoState : RState
+external interface AdminInfoState : RState
 
 class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
   override fun RBuilder.render() {

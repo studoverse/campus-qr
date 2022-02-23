@@ -48,7 +48,7 @@ class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
           })
       )
       renderAddUser(
-        config = AddUserProps.Config.Edit(
+        config = AddUserConfig.Edit(
           props.config.userData.clientUser!!,
           onFinished = { result ->
             setState {

@@ -14,23 +14,22 @@ import util.apiBase
 import util.get
 import util.localizedString
 import views.common.spacer
-import views.locations.AddLocationProps.Config
 import webcore.NetworkManager
 import webcore.extensions.inputValue
 import webcore.extensions.launch
 import webcore.materialUI.*
 
-interface AddLocationProps : RProps {
-  sealed class Config(val onFinished: (response: String?) -> Unit) {
-    class Create(onFinished: (response: String?) -> Unit) : Config(onFinished)
-    class Edit(val location: ClientLocation, onFinished: (response: String?) -> Unit) : Config(onFinished)
-  }
+sealed class AddLocationConfig(val onFinished: (response: String?) -> Unit) {
+  class Create(onFinished: (response: String?) -> Unit) : AddLocationConfig(onFinished)
+  class Edit(val location: ClientLocation, onFinished: (response: String?) -> Unit) : AddLocationConfig(onFinished)
+}
 
-  var config: Config
+external interface AddLocationProps : RProps {
+  var config: AddLocationConfig
   var classes: AddLocationClasses
 }
 
-interface AddLocationState : RState {
+external interface AddLocationState : RState {
   var locationCreationInProgress: Boolean
   var locationTextFieldValue: String
   var locationTextFieldError: String
@@ -43,16 +42,16 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
   override fun AddLocationState.init(props: AddLocationProps) {
     locationCreationInProgress = false
     locationTextFieldError = ""
-    locationTextFieldValue = (props.config as? Config.Edit)?.location?.name ?: ""
-    locationAccessType = (props.config as? Config.Edit)?.location?.accessType ?: LocationAccessType.FREE
-    locationSeatCount = (props.config as? Config.Edit)?.location?.seatCount
+    locationTextFieldValue = (props.config as? AddLocationConfig.Edit)?.location?.name ?: ""
+    locationAccessType = (props.config as? AddLocationConfig.Edit)?.location?.accessType ?: LocationAccessType.FREE
+    locationSeatCount = (props.config as? AddLocationConfig.Edit)?.location?.seatCount
   }
 
   private fun createOrUpdateLocation() = launch {
     setState { locationCreationInProgress = true }
     val url = when (val config = props.config) {
-      is Config.Create -> "$apiBase/location/create"
-      is Config.Edit -> "$apiBase/location/${config.location.id}/edit"
+      is AddLocationConfig.Create -> "$apiBase/location/create"
+      is AddLocationConfig.Edit -> "$apiBase/location/${config.location.id}/edit"
     }
     val response = NetworkManager.post<String>(
       url = url,
@@ -160,7 +159,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
               createOrUpdateLocation()
             }
           }
-          +if (props.config is Config.Create) {
+          +if (props.config is AddLocationConfig.Create) {
             Strings.location_add.get()
           } else {
             Strings.location_update.get()
@@ -192,7 +191,7 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<AddLocationProps, AddLocation>(style)
 
-fun RBuilder.renderAddLocation(config: Config) = styled {
+fun RBuilder.renderAddLocation(config: AddLocationConfig) = styled {
   attrs.config = config
 }
   

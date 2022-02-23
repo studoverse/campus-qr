@@ -11,7 +11,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
-import views.locations.AddLocationProps.Config
+import views.locations.AddLocationConfig
 import views.locations.renderAddLocation
 import webcore.*
 import webcore.extensions.launch
@@ -71,7 +71,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     title = Strings.location_add.get(),
     customContent = {
       renderAddLocation(
-        Config.Create(
+        AddLocationConfig.Create(
           onFinished = { response ->
             handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
           }

@@ -69,7 +69,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     title = Strings.user_add.get(),
     customContent = {
       renderAddUser(
-        config = AddUserProps.Config.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
+        config = AddUserConfig.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
         userData = props.userData
       )
     },

@@ -44,7 +44,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
     title = Strings.user_edit.get(),
     customContent = {
       renderAddUser(
-        AddUserProps.Config.Edit(props.config.user, onFinished = { response ->
+        AddUserConfig.Edit(props.config.user, onFinished = { response ->
           setState {
             if (response == "ok") {
               showEditUserDialog = false
