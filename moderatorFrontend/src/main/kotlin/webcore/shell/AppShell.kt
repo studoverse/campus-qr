@@ -23,7 +23,7 @@ interface AppShellProps : RProps {
   var stickyNavigation: Boolean
 }
 
-interface AppShellState : RState
+external interface AppShellState : RState
 
 class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(props) {
 

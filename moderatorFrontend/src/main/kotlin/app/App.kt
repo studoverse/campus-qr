@@ -261,7 +261,7 @@ class App : RComponent<AppProps, AppState>() {
       }
     } else {
       renderAppContent(
-        AppContentProps.Config(
+        AppContentConfig(
           currentAppRoute = state.currentAppRoute,
           userData = state.userData
         )

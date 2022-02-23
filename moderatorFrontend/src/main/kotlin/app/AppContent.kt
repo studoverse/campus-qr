@@ -22,18 +22,18 @@ import views.users.renderMyAccount
 import views.users.renderUsers
 import webcore.materialUI.withStyles
 
-interface AppContentProps : RProps {
-  class Config(
-    val currentAppRoute: AppRoute?,
-    val userData: UserData?,
-  )
+class AppContentConfig(
+  val currentAppRoute: AppRoute?,
+  val userData: UserData?,
+)
 
-  var config: Config
+external interface AppContentProps : RProps {
+  var config: AppContentConfig
 
   var classes: AppContentClasses
 }
 
-interface AppContentState : RState
+external interface AppContentState : RState
 
 class AppContent : RComponent<AppContentProps, AppContentState>() {
 
@@ -70,6 +70,6 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<AppContentProps, AppContent>(style)
 
-fun RBuilder.renderAppContent(config: AppContentProps.Config) = styled {
+fun RBuilder.renderAppContent(config: AppContentConfig) = styled {
   this.attrs.config = config
 }
