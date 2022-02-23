@@ -4,6 +4,7 @@ import kotlinext.js.js
 import react.*
 import webcore.materialUI.*
 
+// TODO: @mh Make external & refactor receiver function to normal function
 interface AppShellDrawerProps : RProps {
   class Config(
     var mobileNavOpen: Boolean,
