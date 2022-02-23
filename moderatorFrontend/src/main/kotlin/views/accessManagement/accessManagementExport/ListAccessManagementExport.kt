@@ -8,7 +8,7 @@ import util.Strings
 import util.Url
 import util.apiBase
 import util.get
-import views.common.ToolbarViewProps
+import views.common.ToolbarViewConfig
 import views.common.networkErrorView
 import views.common.renderLinearProgress
 import views.common.renderToolbarView
@@ -64,7 +64,7 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
 
   override fun RBuilder.render() {
     renderToolbarView(
-      ToolbarViewProps.Config(
+      ToolbarViewConfig(
         title = StringBuilder().apply {
           append(Strings.access_control_export.get())
           append(" - ")

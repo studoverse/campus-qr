@@ -28,11 +28,11 @@ import webcore.extensions.launch
 import webcore.materialUI.*
 import kotlin.js.Date
 
-interface ReportProps : RProps {
+external interface ReportProps : RProps {
   var classes: ReportClasses
 }
 
-interface ReportState : RState {
+external interface ReportState : RState {
   var emailTextFieldValue: String
   var emailTextFieldError: String
   var reportData: ReportData?
@@ -53,7 +53,7 @@ class Report : RComponent<ReportProps, ReportState>() {
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(
+    MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
       onClose = {
@@ -238,7 +238,7 @@ class Report : RComponent<ReportProps, ReportState>() {
             mTableBody {
               reportData.reportedUserLocations.forEach { userLocation ->
                 renderReportTableRow(
-                  ReportTableRowProps.Config(
+                  ReportTableRowConfig(
                     userLocation = userLocation,
                     showEmailAddress = showEmailAddress,
                     onApplyFilterChange = this@Report::applyFilter,

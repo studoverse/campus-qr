@@ -8,7 +8,7 @@ import util.get
 import views.common.*
 import views.guestCheckIn.AddGuestCheckInConfig
 import views.guestCheckIn.renderAddGuestCheckIn
-import webcore.MbSnackbarProps
+import webcore.MbSnackbarConfig
 import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -79,7 +79,7 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
   )
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(
+    MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
       onClose = {
@@ -90,10 +90,10 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
   override fun RBuilder.render() {
     renderSnackbar()
     renderAddGuestCheckInDialog()
-    renderToolbarView(ToolbarViewProps.Config(
+    renderToolbarView(ToolbarViewConfig(
       title = Strings.guest_checkin.get(),
       buttons = listOf(
-        ToolbarViewProps.ToolbarButton(
+        ToolbarViewButton(
           text = Strings.guest_checkin_add_guest.get(),
           variant = "contained",
           onClick = {

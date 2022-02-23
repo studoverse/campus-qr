@@ -110,7 +110,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(
+    MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
       onClose = {
@@ -123,17 +123,17 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     renderImportButtonDialog()
     renderSnackbar()
     renderToolbarView(
-      ToolbarViewProps.Config(
+      ToolbarViewConfig(
         title = Strings.locations.get(),
         buttons = listOfNotNull(
-          ToolbarViewProps.ToolbarButton(
+          ToolbarViewButton(
             text = Strings.print_checkout_code.get(),
             variant = "outlined",
             onClick = {
               window.open("/location/qr-codes/checkout", "_blank")
             }
           ),
-          ToolbarViewProps.ToolbarButton(
+          ToolbarViewButton(
             text = Strings.print_all_qrcodes.get(),
             variant = "outlined",
             onClick = {
@@ -141,7 +141,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
             }
           ),
           if (props.userData.clientUser!!.canEditLocations) {
-            ToolbarViewProps.ToolbarButton(
+            ToolbarViewButton(
               text = Strings.location_import.get(),
               variant = "outlined",
               onClick = {
@@ -152,7 +152,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
             )
           } else null,
           if (props.userData.clientUser!!.canEditLocations) {
-            ToolbarViewProps.ToolbarButton(
+            ToolbarViewButton(
               text = Strings.location_create.get(),
               variant = "contained",
               onClick = {

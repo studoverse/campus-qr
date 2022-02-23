@@ -9,12 +9,12 @@ import react.dom.div
 import util.get
 import webcore.materialUI.*
 
-interface MbDialogProps : RProps {
+external interface MbDialogProps : RProps {
   var classes: dynamic
   var config: MbMaterialDialogConfig
 }
 
-interface MbDialogState : RState
+external interface MbDialogState : RState
 
 class MbMaterialDialogConfig(
   var show: Boolean,

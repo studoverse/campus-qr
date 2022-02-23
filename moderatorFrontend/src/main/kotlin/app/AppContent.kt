@@ -17,7 +17,7 @@ import views.locations.locationsOverview.renderListLocations
 import views.login.LoginMode
 import views.login.renderLoginView
 import views.report.renderReport
-import views.users.MyAccountProps
+import views.users.MyAccountConfig
 import views.users.renderMyAccount
 import views.users.renderUsers
 import webcore.materialUI.withStyles
@@ -49,7 +49,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
       Url.LOCATIONS_LIST -> renderListLocations(userData = props.config.userData!!)
       Url.REPORT -> renderReport()
       Url.USERS -> renderUsers(userData = props.config.userData!!)
-      Url.ACCOUNT_SETTINGS -> renderMyAccount(MyAccountProps.Config(props.config.userData!!))
+      Url.ACCOUNT_SETTINGS -> renderMyAccount(MyAccountConfig(props.config.userData!!))
       Url.ADMIN_INFO -> renderAdminInfo()
       Url.LOGIN_EMAIL -> renderLoginView(
         studoUserData = props.config.userData!!,

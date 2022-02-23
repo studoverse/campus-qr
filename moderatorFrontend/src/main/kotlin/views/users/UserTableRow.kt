@@ -16,18 +16,18 @@ import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
 
-interface UserTableRowProps : RProps {
-  class Config(
-    val user: ClientUser,
-    val onEditFinished: (response: String?) -> Unit
-  )
+class UserTableRowConfig(
+  val user: ClientUser,
+  val onEditFinished: (response: String?) -> Unit
+)
 
-  var config: Config
+external interface UserTableRowProps : RProps {
+  var config: UserTableRowConfig
   var userData: UserData
   var classes: UserTableRowClasses
 }
 
-interface UserTableRowState : RState {
+external interface UserTableRowState : RState {
   var showEditUserDialog: Boolean
   var snackbarText: String
 }
@@ -68,7 +68,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
 
   override fun RBuilder.render() {
     mbSnackbar(
-      MbSnackbarProps.Config(
+      MbSnackbarConfig(
         show = state.snackbarText.isNotEmpty(),
         message = state.snackbarText,
         onClose = {
@@ -141,7 +141,7 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<UserTableRowProps, UserTableRow>(style)
 
-fun RBuilder.renderUserTableRow(config: UserTableRowProps.Config, userData: UserData) = styled {
+fun RBuilder.renderUserTableRow(config: UserTableRowConfig, userData: UserData) = styled {
   attrs.config = config
   attrs.userData = userData
 }

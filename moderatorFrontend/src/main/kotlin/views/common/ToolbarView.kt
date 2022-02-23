@@ -13,24 +13,24 @@ import util.Url
 import util.toRoute
 import webcore.materialUI.*
 
-interface ToolbarViewProps : RProps {
+class ToolbarViewButton(
+  val text: String,
+  val variant: String, // outlined|contained
+  val onClick: (routeContext: RouteContext) -> Unit
+)
+
+class ToolbarViewConfig(
+  val title: String,
+  val backButtonUrl: Url? = null,
+  val buttons: List<ToolbarViewButton> = emptyList()
+)
+
+external interface ToolbarViewProps : RProps {
   var classes: ToolbarViewClasses
-  var config: Config
-
-  class ToolbarButton(
-    val text: String,
-    val variant: String, // outlined|contained
-    val onClick: (routeContext: RouteContext) -> Unit
-  )
-
-  class Config(
-    val title: String,
-    val backButtonUrl: Url? = null,
-    val buttons: List<ToolbarButton> = emptyList()
-  )
+  var config: ToolbarViewConfig
 }
 
-interface ToolbarViewState : RState
+external interface ToolbarViewState : RState
 
 class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   override fun RBuilder.render() {
@@ -106,7 +106,7 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<ToolbarViewProps, ToolbarView>(style)
 
-fun RBuilder.renderToolbarView(config: ToolbarViewProps.Config) = styled {
+fun RBuilder.renderToolbarView(config: ToolbarViewConfig) = styled {
   attrs.config = config
 }
   

@@ -114,7 +114,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
+    MbSnackbarConfig(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
       setState { snackbarText = "" }
     })
   )
@@ -124,10 +124,10 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     renderSsoInfoButtonDialog()
     renderSnackbar()
     renderToolbarView(
-      ToolbarViewProps.Config(
+      ToolbarViewConfig(
         title = Strings.user_management.get(),
         buttons = listOfNotNull(
-          ToolbarViewProps.ToolbarButton(
+          ToolbarViewButton(
             text = Strings.user_sso_info.get(),
             variant = "outlined",
             onClick = {
@@ -136,7 +136,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
               }
             }
           ),
-          if (props.userData.externalAuthProvider) null else ToolbarViewProps.ToolbarButton(
+          if (props.userData.externalAuthProvider) null else ToolbarViewButton(
             text = Strings.user_add.get(),
             variant = "contained",
             onClick = {
@@ -171,7 +171,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         mTableBody {
           state.userList!!.forEach { user ->
             renderUserTableRow(
-              UserTableRowProps.Config(user, onEditFinished = { response ->
+              UserTableRowConfig(user, onEditFinished = { response ->
                 handleCreateOrAddUserResponse(response)
               }),
               userData = props.userData

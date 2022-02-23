@@ -5,30 +5,30 @@ import react.*
 import react.dom.span
 import webcore.materialUI.*
 
-interface MbSnackbarProps : RProps {
-  data class Config(
-    var message: String = "",
-    var show: Boolean = false,
-    var position: Alignment = Alignment("bottom", "center"),
-    var snackbarType: SnackbarType? = null,
-    var onClose: () -> Unit, // must be provided. managing the state must be handled outside the component
-    // provide more than a simple text to show in snackbar
-    // it will override previous message variable
-    var complexMessage: (RBuilder.() -> ReactElement)? = null
-  )
+data class MbSnackbarConfig(
+  var message: String = "",
+  var show: Boolean = false,
+  var position: MbSnackbarAlignment = MbSnackbarAlignment("bottom", "center"),
+  var snackbarType: MbSnackbarType? = null,
+  var onClose: () -> Unit, // must be provided. managing the state must be handled outside the component
+  // provide more than a simple text to show in snackbar
+  // it will override previous message variable
+  var complexMessage: (RBuilder.() -> ReactElement)? = null
+)
 
-  data class Alignment(val vertical: String, val horizontal: String)
+data class MbSnackbarAlignment(val vertical: String, val horizontal: String)
 
-  enum class SnackbarType(val icon: RClass<IconProps>?) {
-    SUCCESS(checkCircleIcon),
-    ERROR(errorIcon),
-    INFO(infoIcon),
-    WARNING(warningIcon)
-  }
+enum class MbSnackbarType(val icon: RClass<IconProps>?) {
+  SUCCESS(checkCircleIcon),
+  ERROR(errorIcon),
+  INFO(infoIcon),
+  WARNING(warningIcon)
+}
 
+external interface MbSnackbarProps : RProps {
   var theme: dynamic
   var classes: dynamic
-  var config: Config
+  var config: MbSnackbarConfig
 }
 
 class MbSnackbar : RComponent<MbSnackbarProps, RState>() {
@@ -49,10 +49,10 @@ class MbSnackbar : RComponent<MbSnackbarProps, RState>() {
       snackbarContent {
         attrs {
           className = when (props.config.snackbarType) {
-            MbSnackbarProps.SnackbarType.SUCCESS -> props.classes.success as String
-            MbSnackbarProps.SnackbarType.ERROR -> props.classes.error as String
-            MbSnackbarProps.SnackbarType.INFO -> props.classes.info as String
-            MbSnackbarProps.SnackbarType.WARNING -> props.classes.warning as String
+            MbSnackbarType.SUCCESS -> props.classes.success as String
+            MbSnackbarType.ERROR -> props.classes.error as String
+            MbSnackbarType.INFO -> props.classes.info as String
+            MbSnackbarType.WARNING -> props.classes.warning as String
             null -> ""
           }
           message = span(classes = props.classes.message as String) {
@@ -107,6 +107,6 @@ private val styledSnackbar = withStyles<MbSnackbarProps, MbSnackbar>(style, opti
 
 // you only need to define one snackbar in your page
 // control the message, type, positions through state variables
-fun RBuilder.mbSnackbar(config: MbSnackbarProps.Config) = styledSnackbar {
+fun RBuilder.mbSnackbar(config: MbSnackbarConfig) = styledSnackbar {
   attrs.config = config
 }

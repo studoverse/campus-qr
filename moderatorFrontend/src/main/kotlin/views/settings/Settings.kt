@@ -13,11 +13,11 @@ import util.get
 import webcore.materialUI.muiButton
 import webcore.materialUI.withStyles
 
-interface SettingsProps : RProps {
+external interface SettingsProps : RProps {
   var classes: SettingsClasses
 }
 
-interface SettingsState : RState
+external interface SettingsState : RState
 
 class Settings : RComponent<SettingsProps, SettingsState>() {
   override fun RBuilder.render() {

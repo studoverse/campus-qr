@@ -11,19 +11,19 @@ import webcore.DialogButton
 import webcore.materialUI.*
 import webcore.mbMaterialDialog
 
-interface ReportTableRowProps : RProps {
-  class Config(
-    val userLocation: ReportData.UserLocation,
-    val showEmailAddress: Boolean,
-    val onApplyFilterChange: (userLocation: ReportData.UserLocation, filteredSeats: List<Int>) -> Unit,
-    val onDeleteFilter: (userLocation: ReportData.UserLocation) -> Unit
-  )
+class ReportTableRowConfig(
+  val userLocation: ReportData.UserLocation,
+  val showEmailAddress: Boolean,
+  val onApplyFilterChange: (userLocation: ReportData.UserLocation, filteredSeats: List<Int>) -> Unit,
+  val onDeleteFilter: (userLocation: ReportData.UserLocation) -> Unit
+)
 
-  var config: Config
+external interface ReportTableRowProps : RProps {
+  var config: ReportTableRowConfig
   var classes: ReportTableRowClasses
 }
 
-interface ReportTableRowState : RState {
+external interface ReportTableRowState : RState {
   var showProgress: Boolean
   var showApplyFilterDialog: Boolean
   var filterOptions: List<Int>
@@ -194,7 +194,7 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<ReportTableRowProps, ReportTableRow>(style)
 
-fun RBuilder.renderReportTableRow(config: ReportTableRowProps.Config) = styled {
+fun RBuilder.renderReportTableRow(config: ReportTableRowConfig) = styled {
   attrs.config = config
 }
   

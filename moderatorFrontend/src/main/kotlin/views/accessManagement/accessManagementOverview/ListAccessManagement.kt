@@ -8,7 +8,7 @@ import util.*
 import views.accessManagement.AccessManagementDetailsConfig
 import views.accessManagement.renderAccessManagementDetails
 import views.common.*
-import webcore.MbSnackbarProps
+import webcore.MbSnackbarConfig
 import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.materialUI.*
@@ -96,7 +96,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   )
 
   private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(
+    MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
       onClose = {
@@ -108,7 +108,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
     renderAddAccessManagementDialog()
     renderSnackbar()
     renderToolbarView(
-      ToolbarViewProps.Config(
+      ToolbarViewConfig(
         title = StringBuilder().apply {
           append(Strings.access_control.get())
           append(" - ")
@@ -119,7 +119,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
           }
         }.toString(),
         buttons = listOf(
-          ToolbarViewProps.ToolbarButton(
+          ToolbarViewButton(
             text = Strings.access_control_export.get(),
             variant = "outlined",
             onClick = { routeContext ->
@@ -130,7 +130,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
               }
             }
           ),
-          ToolbarViewProps.ToolbarButton(
+          ToolbarViewButton(
             text = Strings.access_control_create.get(),
             variant = "contained",
             onClick = { _ ->

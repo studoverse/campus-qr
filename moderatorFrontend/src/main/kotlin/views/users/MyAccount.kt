@@ -6,20 +6,20 @@ import react.*
 import react.dom.div
 import util.Strings
 import util.get
-import views.common.ToolbarViewProps
+import views.common.ToolbarViewConfig
 import views.common.renderToolbarView
-import webcore.MbSnackbarProps
+import webcore.MbSnackbarConfig
 import webcore.materialUI.withStyles
 import webcore.mbSnackbar
 
-interface MyAccountProps : RProps {
-  var classes: MyAccountClasses
-  var config: Config
+class MyAccountConfig(val userData: UserData)
 
-  class Config(val userData: UserData)
+external interface MyAccountProps : RProps {
+  var classes: MyAccountClasses
+  var config: MyAccountConfig
 }
 
-interface MyAccountState : RState {
+external interface MyAccountState : RState {
   var snackbarText: String
 }
 
@@ -31,14 +31,14 @@ class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
 
   override fun RBuilder.render() {
     renderToolbarView(
-      ToolbarViewProps.Config(
+      ToolbarViewConfig(
         title = Strings.account_settings.get(),
         buttons = emptyList()
       )
     )
     div(classes = props.classes.container) {
       mbSnackbar(
-        MbSnackbarProps.Config(
+        MbSnackbarConfig(
           show = state.snackbarText.isNotEmpty(),
           message = state.snackbarText,
           onClose = {
@@ -83,7 +83,7 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<MyAccountProps, MyAccount>(style)
 
-fun RBuilder.renderMyAccount(config: MyAccountProps.Config) = styled {
+fun RBuilder.renderMyAccount(config: MyAccountConfig) = styled {
   // Set component attrs here
   attrs.config = config
 }
