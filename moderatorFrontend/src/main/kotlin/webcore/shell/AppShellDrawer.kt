@@ -15,8 +15,7 @@ class AppShellDrawerConfig(
   var appBarElevation: Int?
 )
 
-// TODO: @mh Make external & refactor receiver function to normal function
-interface AppShellDrawerProps : RProps {
+external interface AppShellDrawerProps : RProps {
   var classes: AppShellDrawerClasses
   var config: AppShellDrawerConfig
 }
