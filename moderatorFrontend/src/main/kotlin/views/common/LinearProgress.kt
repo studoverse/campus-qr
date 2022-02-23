@@ -9,12 +9,12 @@ import react.dom.div
 import webcore.materialUI.linearProgress
 import webcore.materialUI.withStyles
 
-interface LinearProgressProps : RProps {
+external interface LinearProgressProps : RProps {
   var classes: LinearProgressClasses
   var show: Boolean
 }
 
-interface LinearProgressState : RState
+external interface LinearProgressState : RState
 
 /**
  * Linear progress that has a fixed height of 8px also when it's not shown.

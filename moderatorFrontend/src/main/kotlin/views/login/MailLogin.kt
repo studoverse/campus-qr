@@ -23,11 +23,11 @@ import webcore.materialUI.textField
 import webcore.materialUI.typography
 import webcore.materialUI.withStyles
 
-interface MailLoginProps : RProps {
+external interface MailLoginProps : RProps {
   var classes: MailLoginClasses
 }
 
-interface MailLoginState : RState {
+external interface MailLoginState : RState {
   var email: String
   var password: String
   var networkRequestInProgress: Boolean
@@ -122,7 +122,7 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
         }
         spacer(32)
         renderLoginNavigationButtonsView(
-          LoginNavigationButtonsViewProps.Config(
+          LoginNavigationButtonsViewConfig(
             networkRequestInProgress = state.networkRequestInProgress,
             backEnabled = false,
             nextButtonText = Strings.login_login_button.get(),

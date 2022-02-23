@@ -9,7 +9,7 @@ import react.dom.img
 import react.dom.jsStyle
 import webcore.materialUI.typography
 
-interface LogoBadgeProps : RProps {
+external interface LogoBadgeProps : RProps {
   var logoUrl: String
   var logoAlt: String
   var badgeTitle: String

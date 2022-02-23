@@ -15,11 +15,11 @@ import webcore.materialUI.*
 import webcore.mbMaterialDialog
 import webcore.mbSnackbar
 
-interface GuestCheckinOverviewProps : RProps {
+external interface GuestCheckinOverviewProps : RProps {
   var classes: GuestCheckInOverviewClasses
 }
 
-interface GuestCheckInOverviewState : RState {
+external interface GuestCheckInOverviewState : RState {
   var activeGuestCheckIns: List<ActiveCheckIn>?
   var showAddGuestCheckInDialog: Boolean
   var loadingCheckInList: Boolean
@@ -119,7 +119,7 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
         mTableBody {
           state.activeGuestCheckIns!!.forEach { activeCheckIn ->
             renderGuestCheckIntRow(
-              GuestCheckInRowProps.Config(
+              GuestCheckInRowConfig(
                 activeCheckIn,
                 onCheckedOut = {
                   fetchActiveGuestCheckIns()

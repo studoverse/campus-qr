@@ -21,7 +21,7 @@ interface AppShellDrawerProps : RProps {
   var config: Config
 }
 
-interface AppShellDrawerState : RState {
+external interface AppShellDrawerState : RState {
   var mobileNavOpen: Boolean
 }
 

@@ -17,12 +17,12 @@ import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
 
-interface ListLocationsProps : RProps {
+external interface ListLocationsProps : RProps {
   var classes: ListLocationsClasses
   var userData: UserData
 }
 
-interface ListLocationsState : RState {
+external interface ListLocationsState : RState {
   var locationList: List<ClientLocation>?
   var showAddLocationDialog: Boolean
   var showImportLocationDialog: Boolean
@@ -184,7 +184,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
         mTableBody {
           state.locationList!!.forEach { location ->
             renderLocationTableRow(
-              LocationTableRowProps.Config(
+              LocationTableRowConfig(
                 location,
                 onEditFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_edited.get())

@@ -14,12 +14,12 @@ import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
 
-interface ListUsersProps : RProps {
+external interface ListUsersProps : RProps {
   var userData: UserData
   var classes: ListUsersClasses
 }
 
-interface ListUsersState : RState {
+external interface ListUsersState : RState {
   var userList: List<ClientUser>?
   var showAddUserDialog: Boolean
   var showSsoInfoDialog: Boolean

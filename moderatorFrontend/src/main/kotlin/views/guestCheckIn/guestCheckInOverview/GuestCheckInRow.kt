@@ -19,18 +19,18 @@ import webcore.materialUI.mTableRow
 import webcore.materialUI.muiButton
 import webcore.materialUI.withStyles
 
-interface GuestCheckInRowProps : RProps {
-  var classes: GuestCheckInRowClasses
-  var config: Config
+class GuestCheckInRowConfig(
+  val activeCheckIn: ActiveCheckIn,
+  val onCheckedOut: () -> Unit,
+  val onShowSnackbar: (String) -> Unit,
+)
 
-  class Config(
-    val activeCheckIn: ActiveCheckIn,
-    val onCheckedOut: () -> Unit,
-    val onShowSnackbar: (String) -> Unit,
-  )
+external interface GuestCheckInRowProps : RProps {
+  var classes: GuestCheckInRowClasses
+  var config: GuestCheckInRowConfig
 }
 
-interface GuestCheckInRowState : RState
+external interface GuestCheckInRowState : RState
 
 class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>() {
   override fun RBuilder.render() {
@@ -80,7 +80,7 @@ private val GuestCheckInRowStyle = { _: dynamic ->
 
 private val styled = withStyles<GuestCheckInRowProps, GuestCheckInRow>(GuestCheckInRowStyle)
 
-fun RBuilder.renderGuestCheckIntRow(config: GuestCheckInRowProps.Config) = styled {
+fun RBuilder.renderGuestCheckIntRow(config: GuestCheckInRowConfig) = styled {
   attrs.config = config
 }
   

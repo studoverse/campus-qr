@@ -9,7 +9,7 @@ import react.dom.div
 import webcore.materialUI.circularProgress
 import webcore.materialUI.withStyles
 
-interface CenteredProgressProps : RProps {
+external interface CenteredProgressProps : RProps {
   var classes: CenteredProgressClasses
 }
 
@@ -21,7 +21,7 @@ class CenteredProgress : RComponent<CenteredProgressProps, RState>() {
   }
 }
 
-interface CenteredProgressClasses : RProps {
+interface CenteredProgressClasses {
   var centered: String
 }
 

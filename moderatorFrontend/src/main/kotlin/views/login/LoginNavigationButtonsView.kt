@@ -13,20 +13,20 @@ import webcore.materialUI.circularProgress
 import webcore.materialUI.muiButton
 import webcore.materialUI.withStyles
 
-interface LoginNavigationButtonsViewProps : RProps {
-  class Config(
-    var networkRequestInProgress: Boolean,
-    var backEnabled: Boolean,
-    var nextButtonText: String,
-    var nextButtonDisabled: Boolean,
-    var onNextAction: () -> Unit
-  )
+class LoginNavigationButtonsViewConfig(
+  var networkRequestInProgress: Boolean,
+  var backEnabled: Boolean,
+  var nextButtonText: String,
+  var nextButtonDisabled: Boolean,
+  var onNextAction: () -> Unit
+)
 
-  var config: Config
+external interface LoginNavigationButtonsViewProps : RProps {
+  var config: LoginNavigationButtonsViewConfig
   var classes: LoginNavigationButtonsViewClasses
 }
 
-interface LoginNavigationButtonsViewState : RState
+external interface LoginNavigationButtonsViewState : RState
 
 class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, LoginNavigationButtonsViewState>() {
   override fun RBuilder.render() {
@@ -69,7 +69,7 @@ private val style = { _: dynamic ->
 private val styled =
   withStyles<LoginNavigationButtonsViewProps, LoginNavigationButtonsView>(style)
 
-fun RBuilder.renderLoginNavigationButtonsView(config: LoginNavigationButtonsViewProps.Config) = styled {
+fun RBuilder.renderLoginNavigationButtonsView(config: LoginNavigationButtonsViewConfig) = styled {
   attrs.config = config
 }
   

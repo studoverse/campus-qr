@@ -14,7 +14,7 @@ import util.get
 import webcore.materialUI.typography
 import webcore.materialUI.withStyles
 
-interface GenericErrorViewProps : RProps {
+external interface GenericErrorViewProps : RProps {
   var title: String
   var subtitle: String
   var classes: PathNotFoundClasses

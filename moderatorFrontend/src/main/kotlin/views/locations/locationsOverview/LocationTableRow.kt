@@ -15,21 +15,21 @@ import webcore.materialMenu
 import webcore.materialUI.*
 import webcore.mbMaterialDialog
 
-interface LocationTableRowProps : RProps {
-  class Config(
-    val location: ClientLocation,
-    val onEditFinished: (response: String?) -> Unit,
-    val onDeleteFinished: (response: String?) -> Unit,
-    val userData: UserData,
-  ) {
-    val clientUser: ClientUser get() = userData.clientUser!!
-  }
+class LocationTableRowConfig(
+  val location: ClientLocation,
+  val onEditFinished: (response: String?) -> Unit,
+  val onDeleteFinished: (response: String?) -> Unit,
+  val userData: UserData,
+) {
+  val clientUser: ClientUser get() = userData.clientUser!!
+}
 
-  var config: Config
+external interface LocationTableRowProps : RProps {
+  var config: LocationTableRowConfig
   var classes: LocationTableRowClasses
 }
 
-interface LocationTableRowState : RState {
+external interface LocationTableRowState : RState {
   var showEditLocationDialog: Boolean
   var showProgress: Boolean
 }
@@ -157,7 +157,7 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<LocationTableRowProps, LocationTableRow>(style)
 
-fun RBuilder.renderLocationTableRow(config: LocationTableRowProps.Config) = styled {
+fun RBuilder.renderLocationTableRow(config: LocationTableRowConfig) = styled {
   attrs.config = config
 }
   

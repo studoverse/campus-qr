@@ -11,7 +11,7 @@ import util.MbLocalizedStringConfig
 import webcore.materialUI.switch
 import webcore.materialUI.withStyles
 
-interface LanguageSwitchProps : RProps {
+external interface LanguageSwitchProps : RProps {
   var classes: LanguageSwitchClasses
 }
 

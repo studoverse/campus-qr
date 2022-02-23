@@ -18,7 +18,7 @@ import webcore.materialUI.textField
 import webcore.materialUI.withStyles
 import kotlin.js.Date
 
-interface DatePickerProps : RProps {
+external interface DatePickerProps : RProps {
   var classes: DatePickerClasses
   var date: Date
   var onChange: (date: Date, isValid: Boolean) -> Unit
@@ -32,7 +32,7 @@ interface DatePickerProps : RProps {
   var variant: TextFieldVariant
 }
 
-interface DatePickerState : RState {
+external interface DatePickerState : RState {
   var dateTimeInputValue: String
   var oldBrowsersInputValues: DatePicker.DateInputValues
   var fieldError: Boolean

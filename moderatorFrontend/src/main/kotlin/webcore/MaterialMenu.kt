@@ -14,14 +14,14 @@ class MenuItem(
   val onClick: () -> Unit
 )
 
-interface MaterialMenuProps : RProps {
+external interface MaterialMenuProps : RProps {
   var classes: dynamic
   var className: String
   var fontSize: String?
   var menuItems: List<MenuItem>
 }
 
-interface MaterialMenuState : RState {
+external interface MaterialMenuState : RState {
   var open: Boolean
   var anchorEl: EventTarget?
   var ariaId: String

@@ -19,7 +19,7 @@ import util.get
 import views.login.LoginMode.EMAIL
 import webcore.materialUI.*
 
-interface LoginViewProps : RProps {
+external interface LoginViewProps : RProps {
   var classes: LoginViewClasses
   var loginMode: LoginMode
   var userData: UserData
@@ -29,7 +29,7 @@ enum class LoginMode {
   EMAIL
 }
 
-interface LoginViewState : RState
+external interface LoginViewState : RState
 
 class LoginView : RComponent<LoginViewProps, LoginViewState>() {
 
