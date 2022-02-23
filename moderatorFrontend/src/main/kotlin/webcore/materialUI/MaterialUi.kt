@@ -52,7 +52,7 @@ val tealColor: dynamic = importedTeal.default
 @JsModule("@material-ui/core/AppBar")
 private external val importedAppBar: dynamic
 
-interface AppBarProps : RProps {
+external interface AppBarProps : RProps {
   var position: String
   var color: String
   var className: String
@@ -65,7 +65,7 @@ val appBar: RClass<AppBarProps> = importedAppBar.default
 @JsModule("@material-ui/core/Toolbar")
 private external val importedToolbar: dynamic
 
-interface ToolbarProps : RProps {
+external interface ToolbarProps : RProps {
   var disableGutters: Boolean
   var variant: String // "regular" "dense"
   var className: String
@@ -78,7 +78,7 @@ val toolbar: RClass<ToolbarProps> = importedToolbar.default
 @JsModule("@material-ui/core/IconButton")
 private external val importedIconButton: dynamic
 
-interface IconButtonProps : RProps {
+external interface IconButtonProps : RProps {
   var disabled: Boolean
   var label: String
   var size: String
@@ -106,7 +106,7 @@ val expandMoreIcon: RClass<IconProps> = importedExpandMoreIcon.default
 private external val importedListIcon: dynamic
 val listIcon: RClass<IconProps> = importedListIcon.default
 
-interface IconProps : RProps {
+external interface IconProps : RProps {
   var color: String
   var className: String
   var fontSize: String
@@ -556,7 +556,7 @@ val rotateRightIcon: RClass<IconProps> = importedRotateRightIcon.default
 @JsModule("@material-ui/core/Typography")
 private external val importedTypography: dynamic
 
-interface TypographyProps : RProps {
+external interface TypographyProps : RProps {
   var align: String // 'inherit', 'left', 'center', 'right', 'justify'
   var color: String // 'default', 'error', 'inherit', 'primary', 'secondary', 'textPrimary', 'textSecondary'
   var variant: String // Can be one of the following:
@@ -579,7 +579,7 @@ val typography: RClass<TypographyProps> = importedTypography.default
 @JsModule("@material-ui/core/Menu")
 private external val importedMenu: dynamic
 
-interface MenuProps : RProps {
+external interface MenuProps : RProps {
   var id: String
   var classes: dynamic
   var anchorEl: dynamic
@@ -607,7 +607,7 @@ val menu: RClass<MenuProps> = importedMenu.default
 private external val importedMenuItem: dynamic
 
 
-interface MenuItemProps : RProps {
+external interface MenuItemProps : RProps {
   var value: String
   var onClick: (event: Event) -> Unit
   var disabled: Boolean
@@ -620,7 +620,7 @@ val menuItem: RClass<MenuItemProps> = importedMenuItem.default
 @JsModule("@material-ui/core/Box")
 private external val importedBox: dynamic
 
-interface FlexboxProps : RProps {
+external interface FlexboxProps : RProps {
   var flexDirection: String
   var justifyContent: String
   var flexWrap: String
@@ -633,7 +633,7 @@ interface FlexboxProps : RProps {
   var flexShrink: String
 }
 
-interface DisplayProps : RProps {
+external interface DisplayProps : RProps {
   var displayPrint: String
   var display: String
   var overflow: String
@@ -643,7 +643,7 @@ interface DisplayProps : RProps {
   var whiteSpace: String
 }
 
-interface BoxProps : FlexboxProps, DisplayProps {
+external interface BoxProps : FlexboxProps, DisplayProps {
   var className: String
   var onClick: (event: Event) -> Unit
 }
@@ -654,7 +654,7 @@ val box: RClass<BoxProps> = importedBox.default
 @JsModule("@material-ui/core/Drawer")
 private external val importedDrawer: dynamic
 
-interface DrawerProps : RProps {
+external interface DrawerProps : RProps {
   var className: String
   var anchor: String // 'left' | 'top' | 'right' | 'bottom'
   var elevation: Int
@@ -674,7 +674,7 @@ val drawer: RClass<DrawerProps> = importedDrawer.default
 @JsModule("@material-ui/core/List")
 private external val importedList: dynamic
 
-interface ListProps : RProps {
+external interface ListProps : RProps {
   var component: dynamic
   var dense: Boolean
   var disablePadding: Boolean
@@ -687,7 +687,7 @@ val list: RClass<ListProps> = importedList.default
 @JsModule("@material-ui/core/Modal")
 private external val importedModal: dynamic
 
-interface ModalProps : RProps {
+external interface ModalProps : RProps {
   var open: Boolean
   var closeAfterTransition: Boolean
   var disableAutoFocus: Boolean
@@ -706,14 +706,14 @@ val modal: RClass<ModalProps> = importedList.default
 @JsModule("@material-ui/core/ListSubheader")
 private external val importedListSubheader: dynamic
 
-interface ListSubheaderProps : RProps
+external interface ListSubheaderProps : RProps
 
 val listSubheader: RClass<ListProps> = importedListSubheader.default
 
 @JsModule("@material-ui/core/ListItem")
 private external val importedListItem: dynamic
 
-interface ListItemProps : RProps {
+external interface ListItemProps : RProps {
   var button: Boolean
   var component: dynamic
   var ContainerComponent: dynamic
@@ -732,7 +732,7 @@ val listItem: RClass<ListItemProps> = importedListItem.default
 @JsModule("@material-ui/core/ListItemIcon")
 private external val importedListItemIcon: dynamic
 
-interface ListItemIconProps : RProps {
+external interface ListItemIconProps : RProps {
   var classes: dynamic
 }
 
@@ -741,7 +741,7 @@ val listItemIcon: RClass<ListItemIconProps> = importedListItemIcon.default
 @JsModule("@material-ui/core/ListItemText")
 private external val importedListItemText: dynamic
 
-interface ListItemTextProps : RProps {
+external interface ListItemTextProps : RProps {
   var classes: dynamic
   var className: String
   var disableTypography: Boolean
@@ -758,7 +758,7 @@ val listItemText: RClass<ListItemTextProps> = importedListItemText.default
 @JsModule("@material-ui/core/Divider")
 private external val importedDivider: dynamic
 
-interface DividerProps : RProps {
+external interface DividerProps : RProps {
   var absolute: Boolean
   var component: dynamic
   var inset: Boolean
@@ -777,7 +777,7 @@ val divider: RClass<DividerProps> = importedDivider.default
 @JsModule("@material-ui/core/Backdrop")
 private external val importedBackdrop: dynamic
 
-interface BackdropProps : RProps {
+external interface BackdropProps : RProps {
   var invisible: Boolean
   var classes: dynamic
   var open: Boolean
@@ -850,7 +850,7 @@ private external val importedThemeProvider: dynamic
 val themeProvider: RClass<MuiThemeProviderProps> = importedThemeProvider.default
 
 
-interface ButtonBaseProps : RProps {
+external interface ButtonBaseProps : RProps {
   var onClick: (dynamic) -> Unit
   var component: dynamic
   var disabled: Boolean
@@ -866,7 +866,7 @@ interface ButtonBaseProps : RProps {
 @JsModule("@material-ui/core/Button")
 private external val importedButton: dynamic
 
-interface ButtonProps : ButtonBaseProps {
+external interface ButtonProps : ButtonBaseProps {
   var color: String
   var fullWidth: Boolean
   var href: String
@@ -884,7 +884,7 @@ val muiButton: RClass<ButtonProps> = importedButton.default
 @JsModule("@material-ui/core/Collapse")
 private external val importedCollapse: dynamic
 
-interface CollapseProps : RProps {
+external interface CollapseProps : RProps {
   var classes: dynamic
   var collapsedHeight: String
   var timeout: dynamic // can be a number or "auto"
@@ -898,7 +898,7 @@ val collapse: RClass<CollapseProps> = importedCollapse.default
 @JsModule("@material-ui/core/Link")
 private external val importedLink: dynamic
 
-interface LinkProps : TypographyProps {
+external interface LinkProps : TypographyProps {
   var href: String
   var target: String
   var underline: String  //'none'| 'hover'| 'always'
@@ -909,7 +909,7 @@ interface LinkProps : TypographyProps {
 val muiLink: RClass<LinkProps> = importedLink.default
 
 
-interface MuiThemeProviderProps : RProps {
+external interface MuiThemeProviderProps : RProps {
   var theme: dynamic
 }
 
@@ -918,7 +918,7 @@ val muiThemeProvider: RClass<MuiThemeProviderProps> = importedMuiThemeProvider.M
 @JsModule("@material-ui/core/Hidden")
 private external val importedHidden: dynamic
 
-interface HiddenProps : RProps {
+external interface HiddenProps : RProps {
   var implementation: String
   var only: String
   var initialWidth: String
@@ -939,7 +939,7 @@ val hidden: RClass<HiddenProps> = importedHidden.default
 @JsModule("@material-ui/core/MobileStepper")
 private external val importedMobileStepper: dynamic
 
-interface MobileStepperProps : RProps {
+external interface MobileStepperProps : RProps {
   var activeStep: Int
   var backButton: ReactElement
   var LinearProgressProps: dynamic
@@ -955,7 +955,7 @@ val mobileStepper: RClass<MobileStepperProps> = importedMobileStepper.default
 @JsModule("@material-ui/core/Stepper")
 private external val importedStepper: dynamic
 
-interface StepperProps : RProps {
+external interface StepperProps : RProps {
   var activeStep: Int
   var alternativeLabel: Boolean
   var connector: dynamic
@@ -969,7 +969,7 @@ val stepper: RClass<StepperProps> = importedStepper.default
 @JsModule("@material-ui/core/RadioGroup")
 private external val importedRadioGroup: dynamic
 
-interface RadioGroupProps : RProps {
+external interface RadioGroupProps : RProps {
   var className: String
   var defaultValue: dynamic
   var value: dynamic
@@ -982,7 +982,7 @@ val radioGroup: RClass<RadioGroupProps> = importedRadioGroup.default
 @JsModule("@material-ui/core/Radio")
 private external val importedRadio: dynamic
 
-interface RadioProps : RProps {
+external interface RadioProps : RProps {
   var className: String
   var checked: Boolean
   var required: Boolean
@@ -1002,7 +1002,7 @@ val radio: RClass<RadioProps> = importedRadio.default
 @JsModule("@material-ui/core/Step")
 private external val importedStep: dynamic
 
-interface StepProps : RProps {
+external interface StepProps : RProps {
   var active: Boolean
   var completed: Boolean
   var disabled: Boolean
@@ -1014,7 +1014,7 @@ val step: RClass<StepProps> = importedStep.default
 @JsModule("@material-ui/core/StepLabel")
 private external val importedStepLabel: dynamic
 
-interface StepLabelProps : RProps {
+external interface StepLabelProps : RProps {
   var disabled: Boolean
   var error: Boolean
   var icon: dynamic
@@ -1028,7 +1028,7 @@ val stepLabel: RClass<StepLabelProps> = importedStepLabel.default
 @JsModule("@material-ui/core/StepContent")
 private external val importedStepContent: dynamic
 
-interface StepContentProps : RProps {
+external interface StepContentProps : RProps {
   var classes: dynamic
 }
 
@@ -1037,7 +1037,7 @@ val stepContent: RClass<StepContentProps> = importedStepContent.default
 @JsModule("@material-ui/core/StepIcon")
 private external val importedStepIcon: dynamic
 
-interface StepIconProps : RProps {
+external interface StepIconProps : RProps {
   var classes: dynamic
   var icon: dynamic
 }
@@ -1047,7 +1047,7 @@ val stepIcon: RClass<StepIconProps> = importedStepIcon.default
 @JsModule("@material-ui/core/StepConnector")
 private external val importedStepConnector: dynamic
 
-interface StepConnectorProps : RProps {
+external interface StepConnectorProps : RProps {
   var classes: dynamic
 }
 
@@ -1057,7 +1057,7 @@ val stepConnector: RClass<StepConnectorProps> = importedStepConnector.default
 @JsModule("@material-ui/core/StepButton")
 private external val importedStepButton: dynamic
 
-interface StepButtonProps : RProps {
+external interface StepButtonProps : RProps {
   var icon: dynamic
   var completed: Boolean
   var optional: dynamic
@@ -1069,7 +1069,7 @@ val stepButton: RClass<StepButtonProps> = importedStepButton.default
 @JsModule("@material-ui/core/Tabs")
 private external val importedTabs: dynamic
 
-interface TabsProps : RProps {
+external interface TabsProps : RProps {
   var action: (actions: dynamic) -> Unit
   var centered: Boolean
   var classes: dynamic
@@ -1091,7 +1091,7 @@ val tabs: RClass<TabsProps> = importedTabs.default
 @JsModule("@material-ui/core/Tab")
 private external val importedTab: dynamic
 
-interface TabProps : RProps {
+external interface TabProps : RProps {
   var classes: dynamic
   var disabled: Boolean
   var icon: dynamic
@@ -1105,7 +1105,7 @@ val tab: RClass<TabProps> = importedTab.default
 @JsModule("@material-ui/core/Switch")
 private external val importedSwitch: dynamic
 
-interface SwitchProps : RProps {
+external interface SwitchProps : RProps {
   var checked: Boolean
   var checkedIcon: dynamic
   var classes: dynamic
@@ -1126,7 +1126,7 @@ val switch: RClass<SwitchProps> = importedSwitch.default
 @JsModule("@material-ui/core/FormGroup")
 private external val importedFormGroup: dynamic
 
-interface FormGroupProps : RProps {
+external interface FormGroupProps : RProps {
   var className: String
   var row: Boolean
   var children: dynamic
@@ -1138,7 +1138,7 @@ val formGroup: RClass<FormGroupProps> = importedFormGroup.default
 @JsModule("@material-ui/core/FormControlLabel")
 private external val importedFormControlLabel: dynamic
 
-interface FormControlLabelProps : RProps {
+external interface FormControlLabelProps : RProps {
   var checked: Boolean
   var classes: dynamic
   var control: dynamic
@@ -1156,7 +1156,7 @@ val formControlLabel: RClass<FormControlLabelProps> = importedFormControlLabel.d
 @JsModule("@material-ui/core/InputBase")
 private external val importedInputBase: dynamic
 
-interface InputBaseProps : RProps {
+external interface InputBaseProps : RProps {
   var autoComplete: String
   var autoFocus: Boolean
   var classes: dynamic
@@ -1194,7 +1194,7 @@ val inputBase: RClass<InputBaseProps> = importedInputBase.default
 @JsModule("@material-ui/core/TextField")
 private external val importedTextField: dynamic
 
-interface TextFieldProps : InputBaseProps {
+external interface TextFieldProps : InputBaseProps {
   var FormHelperTextProps: dynamic
   var helperText: dynamic
   var InputLabelProps: dynamic
@@ -1218,7 +1218,7 @@ enum class TextFieldVariant(val value: String) {
 @JsModule("@material-ui/lab/Autocomplete")
 private external val importedAutocomplete: dynamic
 
-interface AutocompleteProps<T> : RProps {
+external interface AutocompleteProps<T> : RProps {
   var id: String
   var autoHighlight: Boolean
   var autoSelect: Boolean
@@ -1285,7 +1285,7 @@ val muiAutocomplete: RClass<AutocompleteProps<dynamic>> = importedAutocomplete.d
 @JsModule("@material-ui/core/InputAdornment")
 private external val importedInputAdornment: dynamic
 
-interface InputAdornmentProps : RProps {
+external interface InputAdornmentProps : RProps {
   var classes: dynamic
   var component: dynamic
   var disableTypography: Boolean
@@ -1297,7 +1297,7 @@ val inputAdornment: RClass<InputAdornmentProps> = importedInputAdornment.default
 @JsModule("@material-ui/core/CircularProgress")
 private external val importedCircularProgress: dynamic
 
-interface CircularProgressProps : RProps {
+external interface CircularProgressProps : RProps {
   var classes: dynamic
   var className: dynamic
   var color: String
@@ -1314,7 +1314,7 @@ val circularProgress: RClass<CircularProgressProps> = importedCircularProgress.d
 @JsModule("@material-ui/core/LinearProgress")
 private external val importedLinearProgress: dynamic
 
-interface LinearProgressProps : RProps {
+external interface LinearProgressProps : RProps {
   var className: dynamic
   var color: String
   var value: Number
@@ -1328,7 +1328,7 @@ val linearProgress: RClass<LinearProgressProps> = importedLinearProgress.default
 @JsModule("@material-ui/core/Select")
 private external val importedSelect: dynamic
 
-interface SelectProps : RProps {
+external interface SelectProps : RProps {
   var autoWidth: Boolean
   var children: dynamic
   var classes: dynamic
@@ -1356,7 +1356,7 @@ val muiSelect: RClass<SelectProps> = importedSelect.default
 @JsModule("@material-ui/core/FormControl")
 private external val importedFormControl: dynamic
 
-interface FormControlProps : RProps {
+external interface FormControlProps : RProps {
   var children: dynamic
   var classes: dynamic
   var component: dynamic
@@ -1375,7 +1375,7 @@ val formControl: RClass<FormControlProps> = importedFormControl.default
 @JsModule("@material-ui/core/InputLabel")
 private external val importedInputLabel: dynamic
 
-interface InputLabelProps : RProps {
+external interface InputLabelProps : RProps {
   var htmlFor: String
   var children: dynamic
   var classes: dynamic
@@ -1396,7 +1396,7 @@ val inputLabel: RClass<InputLabelProps> = importedInputLabel.default
 @JsModule("@material-ui/core/OutlinedInput")
 private external val importedOutlinedInput: dynamic
 
-interface InputOutlinedInputProps : RProps {
+external interface InputOutlinedInputProps : RProps {
   var labelWidth: Int
   var name: String
   var id: String
@@ -1408,7 +1408,7 @@ val outlinedInput: RClass<InputOutlinedInputProps> = importedOutlinedInput.defau
 @JsModule("@material-ui/core/Paper")
 private external val importedPaper: dynamic
 
-interface PaperProps : RProps {
+external interface PaperProps : RProps {
   var classes: dynamic
   var className: dynamic
   var component: dynamic
@@ -1423,7 +1423,7 @@ val muiPaper: RClass<PaperProps> = importedPaper.default
 @JsModule("@material-ui/core/Card")
 private external val importedCard: dynamic
 
-interface CardProps : PaperProps {
+external interface CardProps : PaperProps {
   var raised: Boolean
 }
 
@@ -1432,7 +1432,7 @@ val muiCard: RClass<CardProps> = importedCard.default
 @JsModule("@material-ui/core/CardHeader")
 private external val importedCardHeader: dynamic
 
-interface CardHeaderProps : RProps {
+external interface CardHeaderProps : RProps {
   var classes: dynamic
   var className: dynamic
   var title: ReactElement
@@ -1445,7 +1445,7 @@ val muiCardHeader: RClass<CardHeaderProps> = importedCardHeader.default
 @JsModule("@material-ui/core/CardContent")
 private external val importedCardContent: dynamic
 
-interface CardContentProps : RProps {
+external interface CardContentProps : RProps {
   var classes: dynamic
   var className: dynamic
 }
@@ -1456,7 +1456,7 @@ val muiCardContent: RClass<CardContentProps> = importedCardContent.default
 @JsModule("@material-ui/core/CardActions")
 private external val importedCardActions: dynamic
 
-interface CardActionsProps : RProps {
+external interface CardActionsProps : RProps {
   var classes: dynamic
   var className: dynamic
   var children: dynamic
@@ -1468,7 +1468,7 @@ val muiCardActions: RClass<PaperProps> = importedCardActions.default
 @JsModule("@material-ui/core/SnackbarContent")
 private external val importedSnackbarContent: dynamic
 
-interface SnackbarContentProps : RProps {
+external interface SnackbarContentProps : RProps {
   var action: dynamic
   var classes: dynamic
   var className: String
@@ -1481,7 +1481,7 @@ val snackbarContent: RClass<SnackbarContentProps> = importedSnackbarContent.defa
 private external val importedSnackbar: dynamic
 
 
-interface SnackbarProps : RProps {
+external interface SnackbarProps : RProps {
   var action: dynamic
   var anchorOrigin: dynamic
   var autoHideDuration: Int?
@@ -1511,7 +1511,7 @@ val snackbar: RClass<SnackbarProps> = importedSnackbar.default
 @JsModule("@material-ui/core/Slide")
 private external val importedSlide: dynamic
 
-interface SlideProps : RProps {
+external interface SlideProps : RProps {
   var children: dynamic
   var direction: String
 
@@ -1525,7 +1525,7 @@ val slide: RClass<SlideProps> = importedSlide.default
 @JsModule("@material-ui/core/Slider")
 private external val importedSlider: dynamic
 
-interface SliderProps : RProps {
+external interface SliderProps : RProps {
   var classes: dynamic
   var color: String
   var defaultValue: dynamic
@@ -1545,7 +1545,7 @@ val slider: RClass<SliderProps> = importedSlider.default
 @JsModule("@material-ui/core/Accordion")
 private external val importedExpansionPanel: dynamic
 
-interface AccordionProps : RProps {
+external interface AccordionProps : RProps {
   var CollapseProps: dynamic
   var TransitionProps: dynamic
   var defaultExpanded: Boolean
@@ -1560,7 +1560,7 @@ val accordion: RClass<AccordionProps> = importedExpansionPanel.default
 @JsModule("@material-ui/core/AccordionSummary")
 private external val importedAccordionSummary: dynamic
 
-interface AccordionSummaryProps : RProps {
+external interface AccordionSummaryProps : RProps {
   var expandIcon: dynamic
   var IconButtonProps: dynamic
 }
@@ -1570,7 +1570,7 @@ val accordionSummary: RClass<AccordionSummaryProps> = importedAccordionSummary.d
 @JsModule("@material-ui/core/AccordionDetails")
 private external val importedAccordionDetails: dynamic
 
-interface AccordionDetailsProps : RProps {
+external interface AccordionDetailsProps : RProps {
   var CollapseProps: dynamic
   var defaultExpanded: Boolean
   var disabled: Boolean
@@ -1584,7 +1584,7 @@ val accordionDetails: RClass<AccordionDetailsProps> = importedAccordionDetails.d
 @JsModule("@material-ui/core/ExpansionPanelActions")
 private external val importedExpansionPanelActions: dynamic
 
-interface ExpansionPanelActionsProps : RProps
+external interface ExpansionPanelActionsProps : RProps
 
 val expansionPanelActions: RClass<ExpansionPanelActionsProps> = importedExpansionPanelActions.default
 
@@ -1619,7 +1619,7 @@ val grid: RClass<GridProps> = gridImport.default
 @JsModule("@material-ui/core/Dialog")
 private external val dialogImport: dynamic
 
-interface DialogProps : RProps, ModalProps {
+external interface DialogProps : ModalProps {
   var className: String
   var onClose: () -> Unit
   var fullWidth: Boolean
@@ -1799,7 +1799,7 @@ var avatar: RClass<CheckboxProps> = AvatarImport.default
 @JsModule("@material-ui/core/Checkbox/Checkbox")
 external val CheckboxImport: dynamic
 
-interface CheckboxProps : RProps {
+external interface CheckboxProps : RProps {
   var checked: Boolean
   var value: dynamic
   var size: String
@@ -1818,7 +1818,7 @@ var mCheckbox: RClass<CheckboxProps> = CheckboxImport.default
 @JsModule("@material-ui/core/Popover")
 external val PopoverImport: dynamic
 
-interface PopoverProps : RProps {
+external interface PopoverProps : RProps {
   var id: String
   var classes: dynamic
   var anchorEl: dynamic
@@ -1839,7 +1839,7 @@ var popover: RClass<PopoverProps> = PopoverImport.default
 @JsModule("@material-ui/core/Tooltip")
 external val TooltipImport: dynamic
 
-interface TooltipProps : RProps {
+external interface TooltipProps : RProps {
   var title: String
   var open: Boolean?
   var enterDelay: Int
@@ -1854,7 +1854,7 @@ var muiTooltip: RClass<TooltipProps> = TooltipImport.default
 @JsModule("@material-ui/core/Grow")
 external val GrowImport: dynamic
 
-interface GrowProps : RProps {
+external interface GrowProps : RProps {
   @JsName("in")
   var show: Boolean
   var timeout: dynamic
