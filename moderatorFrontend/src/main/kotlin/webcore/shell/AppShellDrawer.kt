@@ -25,6 +25,15 @@ external interface AppShellDrawerState : RState {
   var mobileNavOpen: Boolean
 }
 
+// TODO: @mh Try with new kotlin milestone version if this would still work although not using an external interface
+//data class AppShellDrawerState(var mobileNavOpen: Boolean)
+
+// TODO: @mh Alternative: Use it like this to get compile time error when a state is not defined
+//           https://github.com/Kotlin/full-stack-web-jetbrains-night-sample/blob/master/client/src/main/kotlin/view/Post.kt
+/*fun MyAccountState() = object : MyAccountState {
+  override var someBoolean: Boolean = false
+}*/
+
 const val drawerWidth = 240
 
 class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProps, AppShellDrawerState>(props) {
@@ -126,6 +135,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 }
 
+// TODO: @mh Make these style classes also to external interfaces?
 interface AppShellDrawerClasses {
   var drawerPaper: String
   var appBarStyles: String

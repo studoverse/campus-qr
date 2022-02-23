@@ -14,8 +14,9 @@ kotlin {
     }
   }
   js {
-    useCommonJs()
+    useCommonJs() // TODO: @mh Test without this line and remove if not needed
     browser()
+    //binaries.executable()
   }
 
   sourceSets {
