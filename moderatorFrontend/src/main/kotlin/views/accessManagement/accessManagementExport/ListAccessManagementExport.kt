@@ -91,7 +91,7 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
         }
         mTableBody {
           state.permitList!!.forEach { accessManagement ->
-            renderAccessManagementExportRow(AccessManagementExportTableRowProps.Config(accessManagement))
+            renderAccessManagementExportRow(AccessManagementExportTableRowConfig(accessManagement))
           }
         }
       }

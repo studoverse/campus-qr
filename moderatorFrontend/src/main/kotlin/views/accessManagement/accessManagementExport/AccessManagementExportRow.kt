@@ -12,12 +12,12 @@ import webcore.materialUI.mTableRow
 import webcore.materialUI.withStyles
 import kotlin.js.Date
 
-interface AccessManagementExportTableRowProps : RProps {
-  class Config(
-    val permit: AccessManagementExportData.Permit,
-  )
+class AccessManagementExportTableRowConfig(
+  val permit: AccessManagementExportData.Permit,
+)
 
-  var config: Config
+external interface AccessManagementExportTableRowProps : RProps {
+  var config: AccessManagementExportTableRowConfig
   var classes: AccessManagementExportTableRowClasses
 }
 
@@ -57,6 +57,6 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<AccessManagementExportTableRowProps, AccessManagementExportTableRow>(style)
 
-fun RBuilder.renderAccessManagementExportRow(config: AccessManagementExportTableRowProps.Config) = styled {
+fun RBuilder.renderAccessManagementExportRow(config: AccessManagementExportTableRowConfig) = styled {
   attrs.config = config
 }

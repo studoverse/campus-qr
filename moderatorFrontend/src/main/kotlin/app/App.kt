@@ -1,6 +1,6 @@
 package app
 
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.payloads.*
 import kotlinext.js.js
@@ -295,7 +295,7 @@ class App : RComponent<AppProps, AppState>() {
                 renderViewContent()
               }
               attrs.drawerList = {
-                renderAppDrawerItems(AppDrawerItemsProps.Config(
+                renderAppDrawerItems(AppDrawerItemsConfig(
                   userData = state.userData,
                   currentAppRoute = state.currentAppRoute,
                   checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,

@@ -6,7 +6,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
-import views.guestCheckIn.AddGuestCheckInProps
+import views.guestCheckIn.AddGuestCheckInConfig
 import views.guestCheckIn.renderAddGuestCheckIn
 import webcore.MbSnackbarProps
 import webcore.NetworkManager
@@ -57,7 +57,7 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
     title = Strings.guest_checkin_add_guest.get(),
     customContent = {
       renderAddGuestCheckIn(
-        AddGuestCheckInProps.Config(
+        AddGuestCheckInConfig(
           onGuestCheckedIn = {
             setState { showAddGuestCheckInDialog = false }
             fetchActiveGuestCheckIns()

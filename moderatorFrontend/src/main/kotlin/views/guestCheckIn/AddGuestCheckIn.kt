@@ -23,17 +23,17 @@ import webcore.materialUI.muiButton
 import webcore.materialUI.textField
 import webcore.materialUI.withStyles
 
-interface AddGuestCheckInProps : RProps {
-  class Config(
-    val onGuestCheckedIn: () -> Unit,
-    val onShowSnackbar: (String) -> Unit
-  )
+class AddGuestCheckInConfig(
+  val onGuestCheckedIn: () -> Unit,
+  val onShowSnackbar: (String) -> Unit
+)
 
+external interface AddGuestCheckInProps : RProps {
   var classes: AddGuestCheckInClasses
-  var config: Config
+  var config: AddGuestCheckInConfig
 }
 
-interface AddGuestCheckInState : RState {
+external interface AddGuestCheckInState : RState {
   var locationFetchInProgress: Boolean
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>
@@ -260,6 +260,6 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<AddGuestCheckInProps, AddGuestCheckIn>(style)
 
-fun RBuilder.renderAddGuestCheckIn(config: AddGuestCheckInProps.Config) = styled {
+fun RBuilder.renderAddGuestCheckIn(config: AddGuestCheckInConfig) = styled {
   attrs.config = config
 }

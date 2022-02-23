@@ -24,22 +24,22 @@ class SideDrawerItem(
   val icon: RClass<IconProps>
 )
 
-interface AppDrawerItemsProps : RProps {
-  class Config(
-    val userData: UserData?,
-    val currentAppRoute: AppRoute?,
-    val loading: Boolean,
-    val checkInSideDrawerItems: List<SideDrawerItem>,
-    val moderatorSideDrawerItems: List<SideDrawerItem>,
-    val adminSideDrawerItems: List<SideDrawerItem>,
-    val onCloseMobileNav: () -> Unit
-  )
+class AppDrawerItemsConfig(
+  val userData: UserData?,
+  val currentAppRoute: AppRoute?,
+  val loading: Boolean,
+  val checkInSideDrawerItems: List<SideDrawerItem>,
+  val moderatorSideDrawerItems: List<SideDrawerItem>,
+  val adminSideDrawerItems: List<SideDrawerItem>,
+  val onCloseMobileNav: () -> Unit
+)
 
-  var config: Config
+external interface AppDrawerItemsProps : RProps {
+  var config: AppDrawerItemsConfig
   var classes: AppDrawerClasses
 }
 
-interface AppDrawerItemsState : RState
+external interface AppDrawerItemsState : RState
 
 class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
   override fun RBuilder.render() {
@@ -199,6 +199,6 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<AppDrawerItemsProps, AppDrawerItems>(style)
 
-fun RBuilder.renderAppDrawerItems(config: AppDrawerItemsProps.Config) = styled {
+fun RBuilder.renderAppDrawerItems(config: AppDrawerItemsConfig) = styled {
   attrs.config = config
 }

@@ -9,9 +9,7 @@ import react.dom.strong
 import util.Strings
 import util.apiBase
 import util.get
-import views.accessManagement.AccessManagementDetailsProps
-import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Config
-import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Operation
+import views.accessManagement.AccessManagementDetailsConfig
 import views.accessManagement.renderAccessManagementDetails
 import webcore.MenuItem
 import webcore.NetworkManager
@@ -22,21 +20,21 @@ import webcore.materialUI.*
 import webcore.mbMaterialDialog
 import kotlin.js.Date
 
-interface AccessManagementTableRowProps : RProps {
-  enum class Operation {
-    Edit, Delete, Duplicate
-  }
+enum class AccessManagementTableRowOperation {
+  Edit, Delete, Duplicate
+}
 
-  class Config(
-    val accessManagement: ClientAccessManagement,
-    val onOperationFinished: (operation: Operation, success: Boolean) -> Unit
-  )
+class AccessManagementTableRowConfig(
+  val accessManagement: ClientAccessManagement,
+  val onOperationFinished: (operation: AccessManagementTableRowOperation, success: Boolean) -> Unit
+)
 
-  var config: Config
+external interface AccessManagementTableRowProps : RProps {
+  var config: AccessManagementTableRowConfig
   var classes: AccessManagementTableRowClasses
 }
 
-interface AccessManagementTableRowState : RState {
+external interface AccessManagementTableRowState : RState {
   var showAccessManagementEditDialog: Boolean
   var showAccessManagementDetailsDialog: Boolean
   var showProgress: Boolean
@@ -55,10 +53,10 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
     title = Strings.location_edit.get(),
     customContent = {
       renderAccessManagementDetails(
-        AccessManagementDetailsProps.Config.Edit(
+        AccessManagementDetailsConfig.Edit(
           accessManagement = props.config.accessManagement,
           onEdited = { success ->
-            props.config.onOperationFinished(Operation.Edit, success)
+            props.config.onOperationFinished(AccessManagementTableRowOperation.Edit, success)
             setState {
               showAccessManagementEditDialog = false
             }
@@ -78,7 +76,7 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
     title = Strings.access_control.get(),
     customContent = {
       renderAccessManagementDetails(
-        AccessManagementDetailsProps.Config.Details(
+        AccessManagementDetailsConfig.Details(
           accessManagement = props.config.accessManagement,
         )
       )
@@ -151,14 +149,14 @@ class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, Acces
               MenuItem(text = Strings.duplicate.get(), icon = fileCopyOutlinedIcon, onClick = {
                 launch {
                   val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
-                  props.config.onOperationFinished(Operation.Duplicate, response == "ok")
+                  props.config.onOperationFinished(AccessManagementTableRowOperation.Duplicate, response == "ok")
                 }
               }),
               MenuItem(text = Strings.delete.get(), icon = deleteIcon, onClick = {
                 if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
                   launch {
                     val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
-                    props.config.onOperationFinished(Operation.Delete, response == "ok")
+                    props.config.onOperationFinished(AccessManagementTableRowOperation.Delete, response == "ok")
                   }
                 }
               }),
@@ -205,6 +203,6 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<AccessManagementTableRowProps, AccessManagementTableRow>(style)
 
-fun RBuilder.renderAccessManagementRow(config: Config) = styled {
+fun RBuilder.renderAccessManagementRow(config: AccessManagementTableRowConfig) = styled {
   attrs.config = config
 }

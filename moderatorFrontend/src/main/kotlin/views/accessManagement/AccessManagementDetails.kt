@@ -13,25 +13,24 @@ import react.dom.span
 import util.Strings
 import util.apiBase
 import util.get
-import views.accessManagement.AccessManagementDetailsProps.Config
 import views.common.*
 import webcore.*
 import webcore.extensions.*
 import webcore.materialUI.*
 import kotlin.js.Date
 
-interface AccessManagementDetailsProps : RProps {
-  sealed class Config {
-    class Create(val locationId: String?, val onCreated: (Boolean) -> Unit) : Config()
-    class Edit(val accessManagement: ClientAccessManagement, val onEdited: (Boolean) -> Unit) : Config()
-    class Details(val accessManagement: ClientAccessManagement) : Config()
-  }
+sealed class AccessManagementDetailsConfig {
+  class Create(val locationId: String?, val onCreated: (Boolean) -> Unit) : AccessManagementDetailsConfig()
+  class Edit(val accessManagement: ClientAccessManagement, val onEdited: (Boolean) -> Unit) : AccessManagementDetailsConfig()
+  class Details(val accessManagement: ClientAccessManagement) : AccessManagementDetailsConfig()
+}
 
-  var config: Config
+external interface AccessManagementDetailsProps : RProps {
+  var config: AccessManagementDetailsConfig
   var classes: AccessManagementDetailsClasses
 }
 
-interface AccessManagementDetailsState : RState {
+external interface AccessManagementDetailsState : RState {
   var locationFetchInProgress: Boolean
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>
@@ -78,8 +77,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     }
 
     when (val config = props.config) {
-      is Config.Details -> initFields(config.accessManagement)
-      is Config.Edit -> initFields(config.accessManagement)
+      is AccessManagementDetailsConfig.Details -> initFields(config.accessManagement)
+      is AccessManagementDetailsConfig.Edit -> initFields(config.accessManagement)
       else -> initFields(null)
     }
   }
@@ -98,9 +97,9 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
         locationNameToLocationMap = response.associateBy { it.name }
         // Auto select current location
         val selectedLocationId = when (val config = props.config) {
-          is Config.Details -> config.accessManagement.locationId
-          is Config.Edit -> config.accessManagement.locationId
-          is Config.Create -> config.locationId
+          is AccessManagementDetailsConfig.Details -> config.accessManagement.locationId
+          is AccessManagementDetailsConfig.Edit -> config.accessManagement.locationId
+          is AccessManagementDetailsConfig.Create -> config.locationId
         }
         if (selectedLocationId != null) {
           selectedLocation = locationNameToLocationMap.values.firstOrNull { it.id == selectedLocationId }
@@ -126,12 +125,12 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     setState {
       showProgress = false
     }
-    (props.config as Config.Create).onCreated(response == "ok")
+    (props.config as AccessManagementDetailsConfig.Create).onCreated(response == "ok")
   }
 
   private fun editAccessControl() = launch {
     setState { showProgress = true }
-    val accessManagementId = (props.config as Config.Edit).accessManagement.id
+    val accessManagementId = (props.config as AccessManagementDetailsConfig.Edit).accessManagement.id
     val response = NetworkManager.post<String>(
       url = "$apiBase/access/$accessManagementId/edit",
       body = EditAccess(
@@ -146,12 +145,12 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     setState {
       showProgress = false
     }
-    (props.config as Config.Edit).onEdited(response == "ok")
+    (props.config as AccessManagementDetailsConfig.Edit).onEdited(response == "ok")
   }
 
   private fun validateInput(): Boolean {
     // Location has to be selected for creation
-    if (props.config is Config.Create && state.selectedLocation == null) {
+    if (props.config is AccessManagementDetailsConfig.Create && state.selectedLocation == null) {
       setState {
         selectedLocationTextFieldError = Strings.access_control_please_select_location.get()
       }
@@ -159,7 +158,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     }
 
     // At least one time slot has to be there in creation mode
-    if (props.config is Config.Create && state.timeSlots.isEmpty()) {
+    if (props.config is AccessManagementDetailsConfig.Create && state.timeSlots.isEmpty()) {
       // This shouldn't happen
       error("timeSlots empty: ${state.timeSlots}")
     }
@@ -188,7 +187,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
   private fun RBuilder.renderLocationSelection() {
     muiAutocomplete {
-      attrs.disabled = props.config is Config.Details
+      attrs.disabled = props.config is AccessManagementDetailsConfig.Details
       attrs.value = state.selectedLocation?.name ?: ""
       attrs.onChange = { _, target: String?, _ ->
         setState {
@@ -218,7 +217,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
   private fun RBuilder.renderNoteTextField() {
     textField {
-      attrs.disabled = props.config is Config.Details
+      attrs.disabled = props.config is AccessManagementDetailsConfig.Details
       attrs.fullWidth = true
       attrs.variant = TextFieldVariant.OUTLINED.value
       attrs.label = Strings.access_control_note.get()
@@ -234,7 +233,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
   private fun RBuilder.renderReasonTextField() {
     textField {
-      attrs.disabled = props.config is Config.Details
+      attrs.disabled = props.config is AccessManagementDetailsConfig.Details
       attrs.fullWidth = true
       attrs.variant = TextFieldVariant.OUTLINED.value
       attrs.label = Strings.access_control_reason.get()
@@ -256,7 +255,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       typography {
         +Strings.access_control_time_slots.get()
       }
-      if (props.config !is Config.Details) {
+      if (props.config !is AccessManagementDetailsConfig.Details) {
         muiTooltip {
           attrs.title = Strings.access_control_time_slot_add.get()
           iconButton {
@@ -280,12 +279,12 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           div(props.classes.timeSlotRow) {
             div(props.classes.timeSlotColumn) {
               datePicker(
-                disabled = props.config is Config.Details,
+                disabled = props.config is AccessManagementDetailsConfig.Details,
                 date = Date(clientDateRange.from),
                 label = Strings.access_control_from.get(),
                 fullWidth = true,
                 variant = TextFieldVariant.OUTLINED,
-                min = if (props.config is Config.Create) now else null,
+                min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
                 max = inThreeYears,
                 onChange = { selectedDate, _ ->
                   setState {
@@ -316,11 +315,11 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             horizontalSpacer(12)
             div(props.classes.timeSlotColumn) {
               timePicker(
-                disabled = props.config is Config.Details,
+                disabled = props.config is AccessManagementDetailsConfig.Details,
                 time = Date(clientDateRange.from),
                 fullWidth = true,
                 variant = TextFieldVariant.OUTLINED,
-                min = if (props.config is Config.Create) now else null,
+                min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
                 onChange = { selectedTime ->
                   setState {
                     timeSlots = timeSlots.map { timeSlot ->
@@ -350,12 +349,12 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
           div(props.classes.timeSlotRow) {
             div(props.classes.timeSlotColumn) {
               datePicker(
-                disabled = props.config is Config.Details,
+                disabled = props.config is AccessManagementDetailsConfig.Details,
                 date = Date(clientDateRange.to),
                 label = Strings.access_control_to.get(),
                 fullWidth = true,
                 variant = TextFieldVariant.OUTLINED,
-                min = if (props.config is Config.Create) now else null,
+                min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
                 max = inThreeYears,
                 onChange = { selectedDate, _ ->
                   setState {
@@ -380,11 +379,11 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             horizontalSpacer(12)
             div(props.classes.timeSlotColumn) {
               timePicker(
-                disabled = props.config is Config.Details,
+                disabled = props.config is AccessManagementDetailsConfig.Details,
                 time = Date(clientDateRange.to),
                 fullWidth = true,
                 variant = TextFieldVariant.OUTLINED,
-                min = if (props.config is Config.Create) now else null,
+                min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
                 onChange = { selectedTime ->
                   setState {
                     timeSlots = timeSlots.map { timeSlot ->
@@ -406,7 +405,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             }
           }
         }
-        if (props.config !is Config.Details) {
+        if (props.config !is AccessManagementDetailsConfig.Details) {
           gridItem(GridSize(xs = 1)) {
             muiTooltip {
               attrs.title = Strings.access_control_time_slot_remove.get()
@@ -446,7 +445,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             }
           }
         }
-        if (props.config !is Config.Details) {
+        if (props.config !is AccessManagementDetailsConfig.Details) {
           gridItem(GridSize(xs = 1)) {}
         }
       }
@@ -461,16 +460,16 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
     spacer(12)
     form(props.classes.form) {
       attrs.onSubmitFunction = { event ->
-        if (props.config !is Config.Details) {
+        if (props.config !is AccessManagementDetailsConfig.Details) {
           submitPermittedPeopleToState()
         }
         event.preventDefault()
         event.stopPropagation()
       }
-      if (props.config !is Config.Details) {
+      if (props.config !is AccessManagementDetailsConfig.Details) {
         div(GlobalCss.flex) {
           textField {
-            attrs.disabled = props.config is Config.Details
+            attrs.disabled = props.config is AccessManagementDetailsConfig.Details
             attrs.helperText = Strings.access_control_add_permitted_people_tip.get()
             attrs.fullWidth = true
             attrs.variant = TextFieldVariant.OUTLINED.value
@@ -517,7 +516,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
               mTableCell {
                 attrs.align = "right"
-                if (props.config !is Config.Details) {
+                if (props.config !is AccessManagementDetailsConfig.Details) {
                   iconButton {
                     closeIcon {}
                     attrs.onClick = {
@@ -537,9 +536,9 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
 
   private fun RBuilder.renderSubmitButton() {
     val createButtonText = when (props.config) {
-      is Config.Create -> Strings.access_control_create.get()
-      is Config.Edit -> Strings.access_control_save.get()
-      is Config.Details -> ""
+      is AccessManagementDetailsConfig.Create -> Strings.access_control_create.get()
+      is AccessManagementDetailsConfig.Edit -> Strings.access_control_save.get()
+      is AccessManagementDetailsConfig.Details -> ""
     }
     if (createButtonText.isNotEmpty()) {
       div(GlobalCss.flex) {
@@ -553,8 +552,8 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
             attrs.onClick = {
               if (validateInput()) {
                 when (props.config) {
-                  is Config.Create -> createAccessControl()
-                  is Config.Edit -> editAccessControl()
+                  is AccessManagementDetailsConfig.Create -> createAccessControl()
+                  is AccessManagementDetailsConfig.Edit -> editAccessControl()
                   else -> Unit
                 }
               }
@@ -631,6 +630,6 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<AccessManagementDetailsProps, AddLocation>(style)
 
-fun RBuilder.renderAccessManagementDetails(config: Config) = styled {
+fun RBuilder.renderAccessManagementDetails(config: AccessManagementDetailsConfig) = styled {
   attrs.config = config
 }

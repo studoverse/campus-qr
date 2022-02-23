@@ -5,9 +5,7 @@ import com.studo.campusqr.common.payloads.ClientAccessManagement
 import com.studo.campusqr.common.payloads.ClientLocation
 import react.*
 import util.*
-import views.accessManagement.AccessManagementDetailsProps
-import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Config
-import views.accessManagement.accessManagementOverview.AccessManagementTableRowProps.Operation
+import views.accessManagement.AccessManagementDetailsConfig
 import views.accessManagement.renderAccessManagementDetails
 import views.common.*
 import webcore.MbSnackbarProps
@@ -17,12 +15,12 @@ import webcore.materialUI.*
 import webcore.mbMaterialDialog
 import webcore.mbSnackbar
 
-interface ListAccessManagementProps : RProps {
+external interface ListAccessManagementProps : RProps {
   var classes: ListAccessManagementClasses
   var locationId: String?
 }
 
-interface ListAccessManagementState : RState {
+external interface ListAccessManagementState : RState {
   var accessManagementList: List<ClientAccessManagement>?
   var clientLocation: ClientLocation?
   var showAddAccessManagementDialog: Boolean
@@ -74,7 +72,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
     title = Strings.access_control_create.get(),
     customContent = {
       renderAccessManagementDetails(
-        AccessManagementDetailsProps.Config.Create(
+        AccessManagementDetailsConfig.Create(
           locationId = props.locationId,
           onCreated = { success ->
             setState {
@@ -161,15 +159,16 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
         mTableBody {
           state.accessManagementList!!.forEach { accessManagement ->
             renderAccessManagementRow(
-              Config(accessManagement,
+              AccessManagementTableRowConfig(
+                accessManagement,
                 onOperationFinished = { operation, success ->
                   setState {
                     snackbarText = if (success) {
                       fetchAccessManagementList()
                       when (operation) {
-                        Operation.Edit -> Strings.access_control_edited_successfully.get()
-                        Operation.Duplicate -> Strings.access_control_duplicated_successfully.get()
-                        Operation.Delete -> Strings.access_control_deleted_successfully.get()
+                        AccessManagementTableRowOperation.Edit -> Strings.access_control_edited_successfully.get()
+                        AccessManagementTableRowOperation.Duplicate -> Strings.access_control_duplicated_successfully.get()
+                        AccessManagementTableRowOperation.Delete -> Strings.access_control_deleted_successfully.get()
                       }
                     } else {
                       Strings.error_try_again.get()
