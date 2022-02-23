@@ -9,6 +9,7 @@ import webcore.materialUI.DrawerProps
 import webcore.materialUI.ToolbarProps
 import webcore.materialUI.withStyles
 
+// TODO: @mh Make external & refactor receiver function to normal function
 interface AppShellProps : RProps {
   var drawerList: RElementBuilder<DrawerProps>.() -> Unit
   var viewContent: RDOMBuilder<DIV>.() -> Unit
