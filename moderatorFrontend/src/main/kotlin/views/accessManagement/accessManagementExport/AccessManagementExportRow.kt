@@ -21,7 +21,7 @@ external interface AccessManagementExportTableRowProps : RProps {
   var classes: AccessManagementExportTableRowClasses
 }
 
-interface AccessManagementExportTableRowState : RState
+external interface AccessManagementExportTableRowState : RState
 
 class AccessManagementExportTableRow :
   RComponent<AccessManagementExportTableRowProps, AccessManagementExportTableRowState>() {
