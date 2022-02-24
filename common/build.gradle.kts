@@ -13,10 +13,10 @@ kotlin {
       kotlinOptions.jvmTarget = "11"
     }
   }
-  js {
+  js(IR) {
     useCommonJs() // TODO: @mh Test without this line and remove if not needed
     browser()
-    //binaries.executable()
+    binaries.executable()
   }
 
   sourceSets {
