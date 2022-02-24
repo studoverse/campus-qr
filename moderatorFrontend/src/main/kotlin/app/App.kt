@@ -311,7 +311,7 @@ class App : RComponent<AppProps, AppState>() {
                 },
                 toolbarIcon = null,
                 hideDrawer = false,
-                themeColor = "",
+                themeColor = theme.palette.primary.main,
               )
             }
           }
