@@ -34,7 +34,7 @@ class Settings : RComponent<SettingsProps, SettingsState>() {
   }
 }
 
-interface SettingsClasses {
+external interface SettingsClasses {
   var button: String
 }
 

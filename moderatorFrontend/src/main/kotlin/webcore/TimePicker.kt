@@ -189,7 +189,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
   }
 }
 
-interface TimePickerClasses {
+external interface TimePickerClasses {
   var container: String
   var textFieldLabel: String
 }

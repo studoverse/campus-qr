@@ -278,7 +278,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
   }
 }
 
-interface AddUserClasses {
+external interface AddUserClasses {
   var addButton: String
   var userPermissionsSwitch: String
 }

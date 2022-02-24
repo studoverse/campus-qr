@@ -321,7 +321,7 @@ class App : RComponent<AppProps, AppState>() {
   }
 }
 
-interface AppClasses {
+external interface AppClasses {
   var verticalCentered: String
 }
 

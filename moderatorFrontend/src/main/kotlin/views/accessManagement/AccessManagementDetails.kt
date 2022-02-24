@@ -593,7 +593,7 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 }
 
-interface AccessManagementDetailsClasses {
+external interface AccessManagementDetailsClasses {
   var addButton: String
   var form: String
   var addTimeSlotButton: String

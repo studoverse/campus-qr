@@ -242,7 +242,7 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
 // If seat is not null, id gets appended with '-' to locationId
 fun locationIdWithSeat(locationId: String, seat: Int?) = "$locationId${seat?.let { "-$it" } ?: ""}"
 
-interface AddGuestCheckInClasses {
+external interface AddGuestCheckInClasses {
   var addButton: String
   var form: String
 }

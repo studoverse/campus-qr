@@ -189,7 +189,7 @@ class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessMan
   }
 }
 
-interface ListAccessManagementClasses
+external interface ListAccessManagementClasses
 
 private val style = { _: dynamic ->
 }

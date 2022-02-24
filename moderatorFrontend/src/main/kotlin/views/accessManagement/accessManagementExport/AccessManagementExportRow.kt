@@ -50,7 +50,7 @@ class AccessManagementExportTableRow :
   }
 }
 
-interface AccessManagementExportTableRowClasses
+external interface AccessManagementExportTableRowClasses
 
 private val style = { _: dynamic ->
 }

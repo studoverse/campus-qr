@@ -179,7 +179,7 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
   }
 }
 
-interface ReportTableRowClasses {
+external interface ReportTableRowClasses {
   var autocompleteWrapper: String
 }
 

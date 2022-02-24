@@ -142,7 +142,7 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
   }
 }
 
-interface MailLoginClasses {
+external interface MailLoginClasses {
   var inputWrapper: String
   var description: String
   var link: String

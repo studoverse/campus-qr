@@ -196,7 +196,7 @@ private fun Date.format(showDate: Boolean = true): String {
 }
 
 
-interface AccessManagementTableRowClasses
+external interface AccessManagementTableRowClasses
 
 private val style = { _: dynamic ->
 }

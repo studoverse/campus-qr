@@ -61,7 +61,7 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
   }
 }
 
-interface AppContentClasses
+external interface AppContentClasses
 
 private val style = { _: dynamic ->
   js {

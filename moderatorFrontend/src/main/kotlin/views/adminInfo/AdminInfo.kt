@@ -58,7 +58,7 @@ class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
   }
 }
 
-interface AdminInfoClasses {
+external interface AdminInfoClasses {
   var header: String
   var subheader: String
   var contactButton: String

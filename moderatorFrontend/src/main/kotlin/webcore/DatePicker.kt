@@ -220,7 +220,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
   }
 }
 
-interface DatePickerClasses {
+external interface DatePickerClasses {
   var flex: String
   var textFieldLabel: String
 }

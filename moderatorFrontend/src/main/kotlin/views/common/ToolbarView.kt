@@ -76,7 +76,7 @@ class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   }
 }
 
-interface ToolbarViewClasses {
+external interface ToolbarViewClasses {
   var header: String
   var headerButton: String
   var headerButtonsWrapper: String

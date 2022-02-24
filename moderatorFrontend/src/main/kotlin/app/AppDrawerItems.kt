@@ -179,7 +179,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
   }
 }
 
-interface AppDrawerClasses {
+external interface AppDrawerClasses {
   val drawerLink: String
   val drawerItemText: String
 }

@@ -279,7 +279,7 @@ class Report : RComponent<ReportProps, ReportState>() {
   }
 }
 
-interface ReportClasses {
+external interface ReportClasses {
   var content: String
   var searchButton: String
   var inputForm: String

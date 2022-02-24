@@ -187,7 +187,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 }
 
-interface ListUsersClasses {
+external interface ListUsersClasses {
   var dialogContent: String
   var info: String
 }

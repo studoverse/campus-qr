@@ -61,7 +61,7 @@ class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, L
   }
 }
 
-interface LoginNavigationButtonsViewClasses
+external interface LoginNavigationButtonsViewClasses
 
 private val style = { _: dynamic ->
 }

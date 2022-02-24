@@ -101,7 +101,7 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
   }
 }
 
-interface ListAccessManagementExportClasses {
+external interface ListAccessManagementExportClasses {
   var header: String
 }
 

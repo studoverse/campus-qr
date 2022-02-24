@@ -142,7 +142,7 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
   }
 }
 
-interface GuestCheckInOverviewClasses
+external interface GuestCheckInOverviewClasses
 
 private val style = { _: dynamic ->
 }

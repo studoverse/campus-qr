@@ -66,7 +66,7 @@ class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
   }
 }
 
-interface MyAccountClasses {
+external interface MyAccountClasses {
   var container: String
 }
 

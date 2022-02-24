@@ -150,7 +150,7 @@ class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState
   }
 }
 
-interface LocationTableRowClasses
+external interface LocationTableRowClasses
 
 private val style = { _: dynamic ->
 }

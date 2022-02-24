@@ -29,7 +29,7 @@ class LinearProgress : RComponent<LinearProgressProps, LinearProgressState>() {
   }
 }
 
-interface LinearProgressClasses {
+external interface LinearProgressClasses {
   var holder: String
 }
 

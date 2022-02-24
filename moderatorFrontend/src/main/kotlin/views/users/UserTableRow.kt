@@ -126,7 +126,7 @@ class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
   }
 }
 
-interface UserTableRowClasses {
+external interface UserTableRowClasses {
   var permissionsList: String
 }
 

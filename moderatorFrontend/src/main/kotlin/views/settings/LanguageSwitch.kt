@@ -42,7 +42,7 @@ private class LanguageSwitch(props: LanguageSwitchProps) : RComponent<LanguageSw
   }
 }
 
-interface LanguageSwitchClasses {
+external interface LanguageSwitchClasses {
   var root: String
 }
 

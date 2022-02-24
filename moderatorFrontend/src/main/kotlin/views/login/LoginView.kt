@@ -68,7 +68,7 @@ class LoginView : RComponent<LoginViewProps, LoginViewState>() {
   }
 }
 
-interface LoginViewClasses {
+external interface LoginViewClasses {
   var cardOuter: String
   var cardHeader: String
   var logoImg: String

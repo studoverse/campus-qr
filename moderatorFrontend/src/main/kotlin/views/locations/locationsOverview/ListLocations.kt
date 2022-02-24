@@ -209,7 +209,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
   }
 }
 
-interface ListLocationsClasses
+external interface ListLocationsClasses
 
 private val style = { _: dynamic ->
   js {

@@ -73,7 +73,7 @@ class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>()
   }
 }
 
-interface GuestCheckInRowClasses
+external interface GuestCheckInRowClasses
 
 private val GuestCheckInRowStyle = { _: dynamic ->
 }

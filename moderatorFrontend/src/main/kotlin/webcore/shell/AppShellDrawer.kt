@@ -134,8 +134,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 }
 
-// TODO: @mh Make these style classes also to external interfaces?
-interface AppShellDrawerClasses {
+external interface AppShellDrawerClasses {
   var drawerPaper: String
   var appBarStyles: String
   var drawerWidthMargin: String

@@ -60,7 +60,7 @@ class GenericErrorView : RComponent<GenericErrorViewProps, RState>() {
   }
 }
 
-interface PathNotFoundClasses {
+external interface PathNotFoundClasses {
   var centeredText: String
   var centeredDiv: String
 }

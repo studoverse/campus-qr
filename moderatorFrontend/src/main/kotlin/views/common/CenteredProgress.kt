@@ -21,7 +21,7 @@ class CenteredProgress : RComponent<CenteredProgressProps, RState>() {
   }
 }
 
-interface CenteredProgressClasses {
+external interface CenteredProgressClasses {
   var centered: String
 }
 

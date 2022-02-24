@@ -170,7 +170,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
   }
 }
 
-interface AddLocationClasses {
+external interface AddLocationClasses {
   var addButton: String
   var accessTypeSwitch: String
 }
