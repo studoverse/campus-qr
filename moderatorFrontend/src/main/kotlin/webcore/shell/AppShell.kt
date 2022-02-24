@@ -9,19 +9,22 @@ import webcore.materialUI.DrawerProps
 import webcore.materialUI.ToolbarProps
 import webcore.materialUI.withStyles
 
-// TODO: @mh Make external & refactor receiver function to normal function
-interface AppShellProps : RProps {
-  var drawerList: RElementBuilder<DrawerProps>.() -> Unit
-  var viewContent: RDOMBuilder<DIV>.() -> Unit
-  var toolbarIcon: (RElementBuilder<ToolbarProps>.() -> Unit)?
-  var themeColor: String
+class AppShellConfig(
+  var drawerList: RElementBuilder<DrawerProps>.() -> Unit,
+  var viewContent: RDOMBuilder<DIV>.() -> Unit,
+  var toolbarIcon: (RElementBuilder<ToolbarProps>.() -> Unit)?,
+  var themeColor: String,
+  var hideDrawer: Boolean,
+  var smallToolbar: Boolean,
+  var mobileNavOpen: Boolean,
+  var appBarElevation: Int?,
+  var stickyNavigation: Boolean,
+)
+
+external interface AppShellProps : RProps {
+  var config: AppShellConfig
   var theme: dynamic
   var classes: dynamic
-  var hideDrawer: Boolean
-  var smallToolbar: Boolean
-  var mobileNavOpen: Boolean
-  var appBarElevation: Int?
-  var stickyNavigation: Boolean
 }
 
 external interface AppShellState : RState
@@ -32,22 +35,22 @@ class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(
 
     renderAppShellDrawer(
       AppShellDrawerConfig(
-        props.mobileNavOpen,
-        props.hideDrawer,
-        props.drawerList,
-        props.toolbarIcon,
-        props.themeColor,
-        props.smallToolbar,
-        props.stickyNavigation,
-        props.appBarElevation
+        props.config.mobileNavOpen,
+        props.config.hideDrawer,
+        props.config.drawerList,
+        props.config.toolbarIcon,
+        props.config.themeColor,
+        props.config.smallToolbar,
+        props.config.stickyNavigation,
+        props.config.appBarElevation
       )
     )
 
     val contentClasses = "${props.classes.content}" +
-        (if (!props.hideDrawer) " ${props.classes.drawerWidthMargin}" else "") +
-        (if (props.smallToolbar) " ${props.classes.contentWithSmallToolbar}" else " ${props.classes.contentWithNormalToolbar}")
+        (if (!props.config.hideDrawer) " ${props.classes.drawerWidthMargin}" else "") +
+        (if (props.config.smallToolbar) " ${props.classes.contentWithSmallToolbar}" else " ${props.classes.contentWithNormalToolbar}")
     div(classes = contentClasses) {
-      props.viewContent(this)
+      props.config.viewContent(this)
     }
   }
 }

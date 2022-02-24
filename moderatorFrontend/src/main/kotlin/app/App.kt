@@ -19,6 +19,7 @@ import webcore.NetworkManager
 import webcore.extensions.findParent
 import webcore.extensions.launch
 import webcore.materialUI.*
+import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
 data class LanguageState(
@@ -287,26 +288,31 @@ class App : RComponent<AppProps, AppState>() {
             renderViewContent()
           } else {
             appShell {
-              attrs.appBarElevation = 0
-              attrs.mobileNavOpen = state.mobileNavOpen
-              attrs.smallToolbar = true
-              attrs.stickyNavigation = true
-              attrs.viewContent = {
-                renderViewContent()
-              }
-              attrs.drawerList = {
-                renderAppDrawerItems(AppDrawerItemsConfig(
-                  userData = state.userData,
-                  currentAppRoute = state.currentAppRoute,
-                  checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
-                  moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
-                  adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
-                  loading = false,
-                  onCloseMobileNav = {
-                    setState { mobileNavOpen = false }
-                  }
-                ))
-              }
+              attrs.config = AppShellConfig(
+                appBarElevation = 0,
+                mobileNavOpen = state.mobileNavOpen,
+                smallToolbar = true,
+                stickyNavigation = true,
+                viewContent = {
+                  renderViewContent()
+                },
+                drawerList = {
+                  renderAppDrawerItems(AppDrawerItemsConfig(
+                    userData = state.userData,
+                    currentAppRoute = state.currentAppRoute,
+                    checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
+                    moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
+                    adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
+                    loading = false,
+                    onCloseMobileNav = {
+                      setState { mobileNavOpen = false }
+                    }
+                  ))
+                },
+                toolbarIcon = null,
+                hideDrawer = false,
+                themeColor = "",
+              )
             }
           }
         }
