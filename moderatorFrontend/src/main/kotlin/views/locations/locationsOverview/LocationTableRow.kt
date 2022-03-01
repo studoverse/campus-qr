@@ -24,12 +24,12 @@ class LocationTableRowConfig(
   val clientUser: ClientUser get() = userData.clientUser!!
 }
 
-external interface LocationTableRowProps : RProps {
+external interface LocationTableRowProps : Props {
   var config: LocationTableRowConfig
   var classes: LocationTableRowClasses
 }
 
-external interface LocationTableRowState : RState {
+external interface LocationTableRowState : State {
   var showEditLocationDialog: Boolean
   var showProgress: Boolean
 }

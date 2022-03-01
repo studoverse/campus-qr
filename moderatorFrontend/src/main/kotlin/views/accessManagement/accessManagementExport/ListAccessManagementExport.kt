@@ -16,12 +16,12 @@ import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.materialUI.*
 
-external interface ListAccessManagementExportProps : RProps {
+external interface ListAccessManagementExportProps : Props {
   var classes: ListAccessManagementExportClasses
   var locationId: String?
 }
 
-external interface ListAccessManagementExportState : RState {
+external interface ListAccessManagementExportState : State {
   var permitList: List<AccessManagementExportData.Permit>?
   var clientLocation: ClientLocation?
   var loadingPermitList: Boolean

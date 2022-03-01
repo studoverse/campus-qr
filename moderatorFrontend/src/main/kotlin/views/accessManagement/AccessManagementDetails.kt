@@ -25,12 +25,12 @@ sealed class AccessManagementDetailsConfig {
   class Details(val accessManagement: ClientAccessManagement) : AccessManagementDetailsConfig()
 }
 
-external interface AccessManagementDetailsProps : RProps {
+external interface AccessManagementDetailsProps : Props {
   var config: AccessManagementDetailsConfig
   var classes: AccessManagementDetailsClasses
 }
 
-external interface AccessManagementDetailsState : RState {
+external interface AccessManagementDetailsState : State {
   var locationFetchInProgress: Boolean
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>

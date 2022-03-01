@@ -7,10 +7,10 @@ import com.studo.campusqr.common.payloads.isAuthenticated
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.browser.window
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.a
 import react.dom.div
 import react.dom.img
@@ -19,7 +19,7 @@ import util.get
 import views.login.LoginMode.EMAIL
 import webcore.materialUI.*
 
-external interface LoginViewProps : RProps {
+external interface LoginViewProps : Props {
   var classes: LoginViewClasses
   var loginMode: LoginMode
   var userData: UserData
@@ -29,7 +29,7 @@ enum class LoginMode {
   EMAIL
 }
 
-external interface LoginViewState : RState
+external interface LoginViewState : State
 
 class LoginView : RComponent<LoginViewProps, LoginViewState>() {
 

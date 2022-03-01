@@ -21,7 +21,7 @@ import webcore.materialUI.*
 class SideDrawerItem(
   val label: LocalizedString,
   val url: Url,
-  val icon: RClass<IconProps>
+  val icon: ComponentClass<IconProps>
 )
 
 class AppDrawerItemsConfig(
@@ -34,12 +34,12 @@ class AppDrawerItemsConfig(
   val onCloseMobileNav: () -> Unit
 )
 
-external interface AppDrawerItemsProps : RProps {
+external interface AppDrawerItemsProps : Props {
   var config: AppDrawerItemsConfig
   var classes: AppDrawerClasses
 }
 
-external interface AppDrawerItemsState : RState
+external interface AppDrawerItemsState : State
 
 class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
   override fun RBuilder.render() {
@@ -58,7 +58,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
       label: String,
       url: String? = null,
       onClick: ((event: Event) -> Unit)? = null,
-      icon: RClass<IconProps>? = null,
+      icon: ComponentClass<IconProps>? = null,
       selected: Boolean = false,
       openInNewTab: Boolean = false,
       showLoadingIndicator: Boolean = false

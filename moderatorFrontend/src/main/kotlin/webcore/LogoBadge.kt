@@ -1,22 +1,22 @@
 package webcore
 
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.div
 import react.dom.img
 import react.dom.jsStyle
 import webcore.materialUI.typography
 
-external interface LogoBadgeProps : RProps {
+external interface LogoBadgeProps : Props {
   var logoUrl: String
   var logoAlt: String
   var badgeTitle: String
   var badgeSubtitle: String?
 }
 
-class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, RState>(props) {
+class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, State>(props) {
 
   override fun RBuilder.render() {
     div {

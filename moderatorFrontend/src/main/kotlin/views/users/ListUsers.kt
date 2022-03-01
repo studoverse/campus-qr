@@ -14,12 +14,12 @@ import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
 
-external interface ListUsersProps : RProps {
+external interface ListUsersProps : Props {
   var userData: UserData
   var classes: ListUsersClasses
 }
 
-external interface ListUsersState : RState {
+external interface ListUsersState : State {
   var userList: List<ClientUser>?
   var showAddUserDialog: Boolean
   var showSsoInfoDialog: Boolean
@@ -82,7 +82,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   )
 
 
-  private fun RBuilder.renderSsoInfoButtonDialog(): ReactElement {
+  private fun RBuilder.renderSsoInfoButtonDialog(): ReactElement<*> {
 
     fun closeDialog() {
       setState {

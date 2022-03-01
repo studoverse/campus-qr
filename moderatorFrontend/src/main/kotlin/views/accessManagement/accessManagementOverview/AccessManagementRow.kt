@@ -29,12 +29,12 @@ class AccessManagementTableRowConfig(
   val onOperationFinished: (operation: AccessManagementTableRowOperation, success: Boolean) -> Unit
 )
 
-external interface AccessManagementTableRowProps : RProps {
+external interface AccessManagementTableRowProps : Props {
   var config: AccessManagementTableRowConfig
   var classes: AccessManagementTableRowClasses
 }
 
-external interface AccessManagementTableRowState : RState {
+external interface AccessManagementTableRowState : State {
   var showAccessManagementEditDialog: Boolean
   var showAccessManagementDetailsDialog: Boolean
   var showProgress: Boolean

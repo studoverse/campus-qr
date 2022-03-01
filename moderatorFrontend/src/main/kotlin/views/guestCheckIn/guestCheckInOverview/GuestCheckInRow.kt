@@ -4,10 +4,10 @@ import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import com.studo.campusqr.common.payloads.CheckOutData
 import kotlinx.browser.window
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import util.Strings
 import util.apiBase
 import util.get
@@ -25,12 +25,12 @@ class GuestCheckInRowConfig(
   val onShowSnackbar: (String) -> Unit,
 )
 
-external interface GuestCheckInRowProps : RProps {
+external interface GuestCheckInRowProps : Props {
   var classes: GuestCheckInRowClasses
   var config: GuestCheckInRowConfig
 }
 
-external interface GuestCheckInRowState : RState
+external interface GuestCheckInRowState : State
 
 class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>() {
   override fun RBuilder.render() {

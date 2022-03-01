@@ -2,10 +2,10 @@ package views.login
 
 import app.GlobalCss
 import kotlinx.browser.window
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.div
 import util.Strings
 import util.get
@@ -21,12 +21,12 @@ class LoginNavigationButtonsViewConfig(
   var onNextAction: () -> Unit
 )
 
-external interface LoginNavigationButtonsViewProps : RProps {
+external interface LoginNavigationButtonsViewProps : Props {
   var config: LoginNavigationButtonsViewConfig
   var classes: LoginNavigationButtonsViewClasses
 }
 
-external interface LoginNavigationButtonsViewState : RState
+external interface LoginNavigationButtonsViewState : State
 
 class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, LoginNavigationButtonsViewState>() {
   override fun RBuilder.render() {

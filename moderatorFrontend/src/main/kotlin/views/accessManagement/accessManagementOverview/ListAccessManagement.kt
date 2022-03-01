@@ -15,12 +15,12 @@ import webcore.materialUI.*
 import webcore.mbMaterialDialog
 import webcore.mbSnackbar
 
-external interface ListAccessManagementProps : RProps {
+external interface ListAccessManagementProps : Props {
   var classes: ListAccessManagementClasses
   var locationId: String?
 }
 
-external interface ListAccessManagementState : RState {
+external interface ListAccessManagementState : State {
   var accessManagementList: List<ClientAccessManagement>?
   var clientLocation: ClientLocation?
   var showAddAccessManagementDialog: Boolean

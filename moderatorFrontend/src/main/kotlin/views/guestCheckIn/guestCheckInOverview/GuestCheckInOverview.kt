@@ -15,11 +15,11 @@ import webcore.materialUI.*
 import webcore.mbMaterialDialog
 import webcore.mbSnackbar
 
-external interface GuestCheckinOverviewProps : RProps {
+external interface GuestCheckinOverviewProps : Props {
   var classes: GuestCheckInOverviewClasses
 }
 
-external interface GuestCheckInOverviewState : RState {
+external interface GuestCheckInOverviewState : State {
   var activeGuestCheckIns: List<ActiveCheckIn>?
   var showAddGuestCheckInDialog: Boolean
   var loadingCheckInList: Boolean

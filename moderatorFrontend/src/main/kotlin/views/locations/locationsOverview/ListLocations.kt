@@ -17,12 +17,12 @@ import webcore.*
 import webcore.extensions.launch
 import webcore.materialUI.*
 
-external interface ListLocationsProps : RProps {
+external interface ListLocationsProps : Props {
   var classes: ListLocationsClasses
   var userData: UserData
 }
 
-external interface ListLocationsState : RState {
+external interface ListLocationsState : State {
   var locationList: List<ClientLocation>?
   var showAddLocationDialog: Boolean
   var showImportLocationDialog: Boolean
@@ -86,7 +86,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     }
   )
 
-  private fun RBuilder.renderImportButtonDialog(): ReactElement {
+  private fun RBuilder.renderImportButtonDialog(): ReactElement<*> {
 
     fun closeDialog() {
       setState {

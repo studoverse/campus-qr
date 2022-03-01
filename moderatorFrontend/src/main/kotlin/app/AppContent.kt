@@ -2,10 +2,10 @@ package app
 
 import com.studo.campusqr.common.payloads.UserData
 import kotlinext.js.js
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import util.AppRoute
 import util.Url
 import views.accessManagement.accessManagementExport.renderAccessManagementExportList
@@ -27,13 +27,13 @@ class AppContentConfig(
   val userData: UserData?,
 )
 
-external interface AppContentProps : RProps {
+external interface AppContentProps : Props {
   var config: AppContentConfig
 
   var classes: AppContentClasses
 }
 
-external interface AppContentState : RState
+external interface AppContentState : State
 
 class AppContent : RComponent<AppContentProps, AppContentState>() {
 

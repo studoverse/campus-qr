@@ -13,25 +13,25 @@ data class MbSnackbarConfig(
   var onClose: () -> Unit, // must be provided. managing the state must be handled outside the component
   // provide more than a simple text to show in snackbar
   // it will override previous message variable
-  var complexMessage: (RBuilder.() -> ReactElement)? = null
+  var complexMessage: (RBuilder.() -> ReactElement<*>)? = null
 )
 
 data class MbSnackbarAlignment(val vertical: String, val horizontal: String)
 
-enum class MbSnackbarType(val icon: RClass<IconProps>?) {
+enum class MbSnackbarType(val icon: ComponentClass<IconProps>?) {
   SUCCESS(checkCircleIcon),
   ERROR(errorIcon),
   INFO(infoIcon),
   WARNING(warningIcon)
 }
 
-external interface MbSnackbarProps : RProps {
+external interface MbSnackbarProps : Props {
   var theme: dynamic
   var classes: dynamic
   var config: MbSnackbarConfig
 }
 
-class MbSnackbar : RComponent<MbSnackbarProps, RState>() {
+class MbSnackbar : RComponent<MbSnackbarProps, State>() {
   override fun RBuilder.render() {
     snackbar {
       attrs.anchorOrigin = js {

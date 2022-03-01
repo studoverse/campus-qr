@@ -10,18 +10,18 @@ import kotlin.random.Random
 class MenuItem(
   val text: String,
   val enabled: Boolean = true,
-  val icon: RClass<IconProps>? = null,
+  val icon: ComponentClass<IconProps>? = null,
   val onClick: () -> Unit
 )
 
-external interface MaterialMenuProps : RProps {
+external interface MaterialMenuProps : Props {
   var classes: dynamic
   var className: String
   var fontSize: String?
   var menuItems: List<MenuItem>
 }
 
-external interface MaterialMenuState : RState {
+external interface MaterialMenuState : State {
   var open: Boolean
   var anchorEl: EventTarget?
   var ariaId: String

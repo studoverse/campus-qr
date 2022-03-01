@@ -2,10 +2,10 @@ package views.common
 
 import kotlinext.js.js
 import kotlinx.browser.window
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.code
 import react.dom.div
 import react.dom.span
@@ -14,13 +14,13 @@ import util.get
 import webcore.materialUI.typography
 import webcore.materialUI.withStyles
 
-external interface GenericErrorViewProps : RProps {
+external interface GenericErrorViewProps : Props {
   var title: String
   var subtitle: String
   var classes: PathNotFoundClasses
 }
 
-class PathNotFound : RComponent<GenericErrorViewProps, RState>() {
+class PathNotFound : RComponent<GenericErrorViewProps, State>() {
   override fun RBuilder.render() {
     div(props.classes.centeredDiv) {
       typography {
@@ -43,7 +43,7 @@ class PathNotFound : RComponent<GenericErrorViewProps, RState>() {
   }
 }
 
-class GenericErrorView : RComponent<GenericErrorViewProps, RState>() {
+class GenericErrorView : RComponent<GenericErrorViewProps, State>() {
   override fun RBuilder.render() {
     div(props.classes.centeredDiv) {
       typography {

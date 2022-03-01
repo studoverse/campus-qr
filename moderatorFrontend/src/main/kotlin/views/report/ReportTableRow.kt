@@ -18,12 +18,12 @@ class ReportTableRowConfig(
   val onDeleteFilter: (userLocation: ReportData.UserLocation) -> Unit
 )
 
-external interface ReportTableRowProps : RProps {
+external interface ReportTableRowProps : Props {
   var config: ReportTableRowConfig
   var classes: ReportTableRowClasses
 }
 
-external interface ReportTableRowState : RState {
+external interface ReportTableRowState : State {
   var showProgress: Boolean
   var showApplyFilterDialog: Boolean
   var filterOptions: List<Int>

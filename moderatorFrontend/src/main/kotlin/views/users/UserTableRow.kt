@@ -21,13 +21,13 @@ class UserTableRowConfig(
   val onEditFinished: (response: String?) -> Unit
 )
 
-external interface UserTableRowProps : RProps {
+external interface UserTableRowProps : Props {
   var config: UserTableRowConfig
   var userData: UserData
   var classes: UserTableRowClasses
 }
 
-external interface UserTableRowState : RState {
+external interface UserTableRowState : State {
   var showEditUserDialog: Boolean
   var snackbarText: String
 }

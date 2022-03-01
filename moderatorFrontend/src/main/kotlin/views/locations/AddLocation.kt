@@ -24,12 +24,12 @@ sealed class AddLocationConfig(val onFinished: (response: String?) -> Unit) {
   class Edit(val location: ClientLocation, onFinished: (response: String?) -> Unit) : AddLocationConfig(onFinished)
 }
 
-external interface AddLocationProps : RProps {
+external interface AddLocationProps : Props {
   var config: AddLocationConfig
   var classes: AddLocationClasses
 }
 
-external interface AddLocationState : RState {
+external interface AddLocationState : State {
   var locationCreationInProgress: Boolean
   var locationTextFieldValue: String
   var locationTextFieldError: String

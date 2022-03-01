@@ -14,12 +14,12 @@ import webcore.mbSnackbar
 
 class MyAccountConfig(val userData: UserData)
 
-external interface MyAccountProps : RProps {
+external interface MyAccountProps : Props {
   var classes: MyAccountClasses
   var config: MyAccountConfig
 }
 
-external interface MyAccountState : RState {
+external interface MyAccountState : State {
   var snackbarText: String
 }
 

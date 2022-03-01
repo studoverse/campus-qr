@@ -6,9 +6,9 @@ import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.events.Event
+import react.Props
 import react.RBuilder
-import react.RProps
-import react.RState
+import react.State
 import react.dom.div
 import react.dom.form
 import react.setState
@@ -23,11 +23,11 @@ import webcore.materialUI.textField
 import webcore.materialUI.typography
 import webcore.materialUI.withStyles
 
-external interface MailLoginProps : RProps {
+external interface MailLoginProps : Props {
   var classes: MailLoginClasses
 }
 
-external interface MailLoginState : RState {
+external interface MailLoginState : State {
   var email: String
   var password: String
   var networkRequestInProgress: Boolean

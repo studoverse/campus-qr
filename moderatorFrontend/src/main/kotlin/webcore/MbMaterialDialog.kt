@@ -9,17 +9,17 @@ import react.dom.div
 import util.get
 import webcore.materialUI.*
 
-external interface MbDialogProps : RProps {
+external interface MbDialogProps : Props {
   var classes: dynamic
   var config: MbMaterialDialogConfig
 }
 
-external interface MbDialogState : RState
+external interface MbDialogState : State
 
 class MbMaterialDialogConfig(
   var show: Boolean,
   var title: String?,
-  var titleIcon: RClass<IconProps>?,
+  var titleIcon: ComponentClass<IconProps>?,
   var textContent: String?,
   var customContent: (RDOMBuilder<DIV>.() -> Unit)?,
   var buttons: List<DialogButton>?,
@@ -101,7 +101,7 @@ private val styledMbMaterialDialog = withStyles<MbDialogProps, MbMaterialDialog>
 fun RBuilder.mbMaterialDialog(
   show: Boolean = false,
   title: String? = null,
-  titleIcon: RClass<IconProps>? = null,
+  titleIcon: ComponentClass<IconProps>? = null,
   textContent: String? = null,
   customContent: (RDOMBuilder<DIV>.() -> Unit)? = null,
   buttons: List<DialogButton>? = null,
@@ -124,7 +124,7 @@ fun RBuilder.mbMaterialDialog(
 fun RBuilder.mbMaterialDialog(
   show: Boolean = false,
   title: String? = null,
-  titleIcon: RClass<IconProps>? = null,
+  titleIcon: ComponentClass<IconProps>? = null,
   textContent: String? = null,
   customContent: (RDOMBuilder<DIV>.() -> Unit)? = null,
   positiveButton: DialogButton? = positiveButton {},

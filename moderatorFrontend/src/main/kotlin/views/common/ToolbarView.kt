@@ -6,8 +6,8 @@ import app.routeContext
 import kotlinext.js.js
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.Props
+import react.State
 import react.dom.div
 import util.Url
 import util.toRoute
@@ -25,12 +25,12 @@ class ToolbarViewConfig(
   val buttons: List<ToolbarViewButton> = emptyList()
 )
 
-external interface ToolbarViewProps : RProps {
+external interface ToolbarViewProps : Props {
   var classes: ToolbarViewClasses
   var config: ToolbarViewConfig
 }
 
-external interface ToolbarViewState : RState
+external interface ToolbarViewState : State
 
 class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   override fun RBuilder.render() {

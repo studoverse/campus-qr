@@ -21,13 +21,13 @@ class AppShellConfig(
   var stickyNavigation: Boolean,
 )
 
-external interface AppShellProps : RProps {
+external interface AppShellProps : Props {
   var config: AppShellConfig
   var theme: dynamic
   var classes: dynamic
 }
 
-external interface AppShellState : RState
+external interface AppShellState : State
 
 class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(props) {
 
@@ -89,4 +89,4 @@ private val styles: (dynamic) -> dynamic = { theme ->
   }
 }
 
-val appShell: RClass<AppShellProps> = withStyles<AppShellProps, AppShell>(styles, options = js { withTheme = true })
+val appShell: ComponentClass<AppShellProps> = withStyles<AppShellProps, AppShell>(styles, options = js { withTheme = true })

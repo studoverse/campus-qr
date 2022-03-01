@@ -34,11 +34,11 @@ data class RouteContext(val pushRoute: (AppRoute) -> Unit)
 val languageContext = createContext(LanguageState(MbLocalizedStringConfig.selectedLanguage) {})
 val routeContext = createContext<RouteContext>()
 
-external interface AppProps : RProps {
+external interface AppProps : Props {
   var classes: AppClasses
 }
 
-external interface AppState : RState {
+external interface AppState : State {
   var userData: UserData?
   var loadingUserData: Boolean
   var currentAppRoute: AppRoute

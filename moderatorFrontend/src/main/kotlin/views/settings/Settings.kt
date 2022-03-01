@@ -3,21 +3,21 @@ package views.settings
 import app.baseUrl
 import kotlinext.js.js
 import kotlinx.browser.window
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.br
 import util.Strings
 import util.get
 import webcore.materialUI.muiButton
 import webcore.materialUI.withStyles
 
-external interface SettingsProps : RProps {
+external interface SettingsProps : Props {
   var classes: SettingsClasses
 }
 
-external interface SettingsState : RState
+external interface SettingsState : State
 
 class Settings : RComponent<SettingsProps, SettingsState>() {
   override fun RBuilder.render() {

@@ -25,13 +25,13 @@ sealed class AddUserConfig(val onFinished: (response: String?) -> Unit) {
   class Edit(val user: ClientUser, onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
 }
 
-external interface AddUserProps : RProps {
+external interface AddUseProps : Props {
   var config: AddUserConfig
   var userData: UserData
   var classes: AddUserClasses
 }
 
-external interface AddUserState : RState {
+external interface AddUserState : State {
   var userCreationInProgress: Boolean
 
   var userEmailTextFieldValue: String

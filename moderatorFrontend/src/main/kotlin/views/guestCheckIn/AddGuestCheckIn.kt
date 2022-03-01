@@ -28,12 +28,12 @@ class AddGuestCheckInConfig(
   val onShowSnackbar: (String) -> Unit
 )
 
-external interface AddGuestCheckInProps : RProps {
+external interface AddGuestCheckInProps : Props {
   var classes: AddGuestCheckInClasses
   var config: AddGuestCheckInConfig
 }
 
-external interface AddGuestCheckInState : RState {
+external interface AddGuestCheckInState : State {
   var locationFetchInProgress: Boolean
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>

@@ -2,10 +2,10 @@ package views.adminInfo
 
 import kotlinext.js.js
 import kotlinx.browser.window
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.br
 import react.dom.div
 import util.Strings
@@ -15,11 +15,11 @@ import webcore.materialUI.muiButton
 import webcore.materialUI.typography
 import webcore.materialUI.withStyles
 
-external interface AdminInfoProps : RProps {
+external interface AdminInfoProps : Props {
   var classes: AdminInfoClasses
 }
 
-external interface AdminInfoState : RState
+external interface AdminInfoState : State
 
 class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
   override fun RBuilder.render() {

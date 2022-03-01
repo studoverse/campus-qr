@@ -15,12 +15,12 @@ class AppShellDrawerConfig(
   var appBarElevation: Int?
 )
 
-external interface AppShellDrawerProps : RProps {
+external interface AppShellDrawerProps : Props {
   var classes: AppShellDrawerClasses
   var config: AppShellDrawerConfig
 }
 
-external interface AppShellDrawerState : RState {
+external interface AppShellDrawerState : State {
   var mobileNavOpen: Boolean
 }
 

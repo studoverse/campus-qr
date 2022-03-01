@@ -1,19 +1,19 @@
 package views.common
 
 import kotlinext.js.js
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.div
 import webcore.materialUI.circularProgress
 import webcore.materialUI.withStyles
 
-external interface CenteredProgressProps : RProps {
+external interface CenteredProgressProps : Props {
   var classes: CenteredProgressClasses
 }
 
-class CenteredProgress : RComponent<CenteredProgressProps, RState>() {
+class CenteredProgress : RComponent<CenteredProgressProps, State>() {
   override fun RBuilder.render() {
     div(props.classes.centered) {
       circularProgress {}

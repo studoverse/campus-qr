@@ -28,11 +28,11 @@ import webcore.extensions.launch
 import webcore.materialUI.*
 import kotlin.js.Date
 
-external interface ReportProps : RProps {
+external interface ReportProps : Props {
   var classes: ReportClasses
 }
 
-external interface ReportState : RState {
+external interface ReportState : State {
   var emailTextFieldValue: String
   var emailTextFieldError: String
   var reportData: ReportData?

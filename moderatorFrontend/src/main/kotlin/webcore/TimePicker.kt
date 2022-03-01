@@ -17,7 +17,7 @@ import webcore.materialUI.textField
 import webcore.materialUI.withStyles
 import kotlin.js.Date
 
-external interface TimePickerProps : RProps {
+external interface TimePickerProps : Props {
   var classes: TimePickerClasses
   var time: Date
   var onChange: (date: Date) -> Unit
@@ -32,7 +32,7 @@ external interface TimePickerProps : RProps {
   var variant: TextFieldVariant
 }
 
-external interface TimePickerState : RState {
+external interface TimePickerState : State {
   var oldBrowsersInputValues: TimePicker.TimeInputValues
 }
 

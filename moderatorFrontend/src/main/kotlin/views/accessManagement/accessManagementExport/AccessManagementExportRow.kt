@@ -1,10 +1,10 @@
 package views.accessManagement.accessManagementExport
 
 import com.studo.campusqr.common.payloads.AccessManagementExportData
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.strong
 import views.accessManagement.accessManagementOverview.format
 import webcore.materialUI.mTableCell
@@ -16,12 +16,12 @@ class AccessManagementExportTableRowConfig(
   val permit: AccessManagementExportData.Permit,
 )
 
-external interface AccessManagementExportTableRowProps : RProps {
+external interface AccessManagementExportTableRowProps : Props {
   var config: AccessManagementExportTableRowConfig
   var classes: AccessManagementExportTableRowClasses
 }
 
-external interface AccessManagementExportTableRowState : RState
+external interface AccessManagementExportTableRowState : State
 
 class AccessManagementExportTableRow :
   RComponent<AccessManagementExportTableRowProps, AccessManagementExportTableRowState>() {
