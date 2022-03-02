@@ -232,9 +232,9 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
           UserPermission.values().forEach { userPermission ->
             formControlLabel {
-              attrs.control = mCheckbox {
-                attrs.checked = userPermission in state.userPermissions
-                attrs.onChange = { _, checked ->
+              attrs.control = mCheckbox.create {
+                checked = userPermission in state.userPermissions
+                onChange = { _, checked ->
                   val existingPermissions = state.userPermissions
                   if (checked) {
                     setState { userPermissions = existingPermissions + userPermission }

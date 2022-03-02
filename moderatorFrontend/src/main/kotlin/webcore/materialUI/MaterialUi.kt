@@ -1141,7 +1141,7 @@ private external val importedFormControlLabel: dynamic
 external interface FormControlLabelProps : Props {
   var checked: Boolean
   var classes: dynamic
-  var control: dynamic
+  var control: ReactElement<*>
   var disabled: Boolean
   var inputRef: dynamic
   var label: dynamic
