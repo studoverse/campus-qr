@@ -6,9 +6,7 @@ import kotlinx.browser.document
 import react.Fragment
 import react.create
 import react.dom.render
-import views.common.renderLinearProgress
-
-fun App() {}
+import views.common.renderMbLinearProgress
 
 fun main() {
   requireAll(require.context("../../../../../moderatorFrontend/src/main/kotlin", true, js("/\\.css$/")))
@@ -17,7 +15,10 @@ fun main() {
   val container = document.getElementById("root")!!
 
   val application = Fragment.create {
-    renderLinearProgress(true)
+    renderMbLinearProgress {
+      show = true
+    }
+
     //app()
   }
 

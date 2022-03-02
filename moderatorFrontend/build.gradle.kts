@@ -11,6 +11,9 @@ repositories {
   mavenCentral()
 }
 
+fun kotlinw(target: String): String =
+  "org.jetbrains.kotlin-wrappers:kotlin-$target"
+
 kotlin {
   js(IR) {
     useCommonJs()
@@ -24,11 +27,17 @@ dependencies {
   implementation(project(":common"))
 
   api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
-  api("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.309-kotlin-1.6.10")
-  api("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.309-kotlin-1.6.10")
-  //api("org.jetbrains.kotlin-wrappers:kotlin-react-legacy:17.0.2-pre.309-kotlin-1.6.10")
-  //api("org.jetbrains.kotlin-wrappers:kotlin-react-dom-legacy:17.0.2-pre.309-kotlin-1.6.10")
+  api(kotlinw("react:17.0.2-pre.310-kotlin-1.6.10"))
+  api(kotlinw("react-dom:17.0.2-pre.310-kotlin-1.6.10"))
+  //api(kotlinw("react-legacy:17.0.2-pre.310-kotlin-1.6.10"))
+  //api(kotlinw("react-dom-legacy:17.0.2-pre.310-kotlin-1.6.10"))
+  api(kotlinw("react-css:17.0.2-pre.310-kotlin-1.6.10"))
+  api(kotlinw("mui:5.4.4-pre.310-kotlin-1.6.10"))
+  api(kotlinw("mui-icons:5.4.4-pre.310-kotlin-1.6.10"))
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+
+  implementation(npm("@emotion/react", "11.7.1"))
+  implementation(npm("@emotion/styled", "11.6.0"))
 
   // kotlinx-serialization + Ktor client
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")

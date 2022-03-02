@@ -1,46 +1,40 @@
 package views.common
 
-import kotlinext.js.js
+import csstype.px
+import kotlinx.js.Object.Companion.create
+import kotlinx.js.jso
+import mui.material.Box
+import mui.material.LinearProgress
 import react.*
-import react.dom.html.ReactHTML.div
-import webcore.materialUI.linearProgress
-import webcore.materialUI.withStyles
 
-external interface LinearProgressProps : Props {
-  var classes: LinearProgressClasses
+external interface MbLinearProgressProps : Props {
   var show: Boolean
 }
 
-external interface LinearProgressState : State
+external interface MbLinearProgressState : State
 
 /**
  * Linear progress that has a fixed height of 8px also when it's not shown.
  */
-class LinearProgress : Component<LinearProgressProps, LinearProgressState>() {
+class MbLinearProgress : Component<MbLinearProgressProps, MbLinearProgressState>() {
   override fun render(): ReactNode {
-    return div.create {
-      this.className = props.classes.holder // TODO: @mh Replace withStyles styling with sx prop
+    return Box.create {
+      sx = jso {
+        height = 8.px
+      }
       if (props.show) {
-        linearProgress {}
+        LinearProgress {}
       }
     }
   }
 }
 
-external interface LinearProgressClasses {
-  var holder: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    holder = js {
-      height = 8
-    }
-  }
-}
-
-private val styled = withStyles<LinearProgressProps, LinearProgress>(style)
-
-fun renderLinearProgress(show: Boolean) = styled.create {
+/*fun renderMbLinearProgress(show: Boolean) = MbLinearProgress<MbLinearProgressProps, MbLinearProgressState>.create {
   this.show = show
+}*/
+
+// TODO: @mh Find out how to render a class component
+fun ChildrenBuilder.renderMbLinearProgress(handler: MbLinearProgressProps.() -> Unit) {
+  create(MbLinearProgress::class, handler)
+  //child(MbLinearProgress::class, handler)
 }
