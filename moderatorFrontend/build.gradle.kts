@@ -26,8 +26,8 @@ dependencies {
   api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
   api("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.309-kotlin-1.6.10")
   api("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.309-kotlin-1.6.10")
-  api("org.jetbrains.kotlin-wrappers:kotlin-react-legacy:17.0.2-pre.309-kotlin-1.6.10")
-  api("org.jetbrains.kotlin-wrappers:kotlin-react-dom-legacy:17.0.2-pre.309-kotlin-1.6.10")
+  //api("org.jetbrains.kotlin-wrappers:kotlin-react-legacy:17.0.2-pre.309-kotlin-1.6.10")
+  //api("org.jetbrains.kotlin-wrappers:kotlin-react-dom-legacy:17.0.2-pre.309-kotlin-1.6.10")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
 
   // kotlinx-serialization + Ktor client
