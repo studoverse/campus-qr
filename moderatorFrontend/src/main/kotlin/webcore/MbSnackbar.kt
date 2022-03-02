@@ -27,7 +27,7 @@ enum class MbSnackbarType(val icon: ComponentClass<IconProps>?) {
 
 external interface MbSnackbarProps : Props {
   var theme: dynamic
-  var classes: dynamic
+  var classes: MbSnackbarClasses
   var config: MbSnackbarConfig
 }
 
@@ -49,17 +49,16 @@ class MbSnackbar : RComponent<MbSnackbarProps, State>() {
       snackbarContent {
         attrs {
           className = when (props.config.snackbarType) {
-            MbSnackbarType.SUCCESS -> props.classes.success as String
-            MbSnackbarType.ERROR -> props.classes.error as String
-            MbSnackbarType.INFO -> props.classes.info as String
-            MbSnackbarType.WARNING -> props.classes.warning as String
+            MbSnackbarType.SUCCESS -> props.classes.success
+            MbSnackbarType.ERROR -> props.classes.error
+            MbSnackbarType.INFO -> props.classes.info
+            MbSnackbarType.WARNING -> props.classes.warning
             null -> ""
           }
           message = span.create {
             // TODO: @mh Test if this is really displayed correctly
-            // TODO: @mh How to handle this styling?
-            //className = props.classes.message as String
-            props.config.snackbarType?.icon?.let { it { className = props.classes.icon as String } }
+            className = props.classes.message
+            props.config.snackbarType?.icon?.let { it { className = props.classes.icon } }
             +props.config.message
           }
           props.config.complexMessage?.let { message = it() }
@@ -69,6 +68,17 @@ class MbSnackbar : RComponent<MbSnackbarProps, State>() {
   }
 }
 
+external interface MbSnackbarClasses {
+  var root: String
+  var success: String
+  var error: String
+  var info: String
+  var loading: String
+  var warning: String
+  var icon: String
+  var message: String
+  var centerGridItem: String
+}
 
 private val style = { theme: dynamic ->
   js {
