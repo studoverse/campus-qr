@@ -816,6 +816,7 @@ fun <P : Props, T : ComponentClass<P>> withStyles(
   return ((importedWithStyles<T>(styles, options))(component))
 }
 
+// TODO: @mh Either fix or remove because after migration sx will be used for styling instead
 fun <P : Props, T : ComponentClass<P>> RBuilder.withStyles(
   styles: dynamic,
   component: T,
@@ -1668,7 +1669,7 @@ external interface TableProps : Props {
   var classes: dynamic
   var size: String?
   var padding: String
-  var component: RComponent<Props, State>? get() = definedExternally; set(value) = definedExternally
+  var component: Component<Props, State>? get() = definedExternally; set(value) = definedExternally
   var stickyHeader: Boolean?
 }
 
@@ -1679,7 +1680,7 @@ var mTable: ComponentClass<TableProps> = TableImport.default
 external val TableBodyImport: dynamic
 
 external interface TableBodyProps : Props {
-  var component: RComponent<Props, State>? get() = definedExternally; set(value) = definedExternally
+  var component: Component<Props, State>? get() = definedExternally; set(value) = definedExternally
 }
 
 var mTableBody: ComponentClass<TableBodyProps> = TableBodyImport.default
@@ -1700,7 +1701,7 @@ external val TableRowImport: dynamic
 
 
 external interface TableRowProps : Props {
-  var component: RComponent<Props, State>? get() = definedExternally; set(value) = definedExternally
+  var component: Component<Props, State>? get() = definedExternally; set(value) = definedExternally
   var hover: Boolean? get() = definedExternally; set(value) = definedExternally
   var selected: Boolean? get() = definedExternally; set(value) = definedExternally
 }
