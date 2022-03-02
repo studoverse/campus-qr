@@ -25,7 +25,7 @@ sealed class AddUserConfig(val onFinished: (response: String?) -> Unit) {
   class Edit(val user: ClientUser, onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
 }
 
-external interface AddUseProps : Props {
+external interface AddUserProps : Props {
   var config: AddUserConfig
   var userData: UserData
   var classes: AddUserClasses

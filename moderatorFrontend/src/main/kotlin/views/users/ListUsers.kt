@@ -82,7 +82,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   )
 
 
-  private fun RBuilder.renderSsoInfoButtonDialog(): ReactElement<*> {
+  private fun RBuilder.renderSsoInfoButtonDialog() {
 
     fun closeDialog() {
       setState {
@@ -90,6 +90,7 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       }
     }
 
+    // TODO: @mh Remove return
     return mbMaterialDialog(
       show = state.showSsoInfoDialog,
       title = Strings.user_sso_info.get(),

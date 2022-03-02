@@ -2,7 +2,7 @@ package webcore
 
 import kotlinext.js.js
 import react.*
-import react.dom.span
+import react.dom.html.ReactHTML.span
 import webcore.materialUI.*
 
 data class MbSnackbarConfig(
@@ -55,8 +55,11 @@ class MbSnackbar : RComponent<MbSnackbarProps, State>() {
             MbSnackbarType.WARNING -> props.classes.warning as String
             null -> ""
           }
-          message = span(classes = props.classes.message as String) {
-            props.config.snackbarType?.icon?.let { it { attrs.className = props.classes.icon as String } }
+          message = span.create {
+            // TODO: @mh Test if this is really displayed correctly
+            // TODO: @mh How to handle this styling?
+            //className = props.classes.message as String
+            props.config.snackbarType?.icon?.let { it { className = props.classes.icon as String } }
             +props.config.message
           }
           props.config.complexMessage?.let { message = it() }

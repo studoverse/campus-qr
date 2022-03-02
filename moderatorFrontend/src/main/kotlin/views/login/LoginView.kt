@@ -7,13 +7,10 @@ import com.studo.campusqr.common.payloads.isAuthenticated
 import kotlinext.js.js
 import kotlinx.browser.document
 import kotlinx.browser.window
-import react.Props
-import react.RBuilder
-import react.RComponent
-import react.State
+import react.*
 import react.dom.a
-import react.dom.div
-import react.dom.img
+import react.dom.html.ReactHTML.div
+import react.dom.html.ReactHTML.img
 import util.Strings
 import util.get
 import views.login.LoginMode.EMAIL
@@ -42,10 +39,12 @@ class LoginView : RComponent<LoginViewProps, LoginViewState>() {
         attrs.classes = js {
           root = props.classes.cardHeader
         }
-        attrs.title = div {
-          img(classes = props.classes.logoImg) {
-            attrs.src = "$baseUrl/static/images/logo_campusqr.png"
-            attrs.alt = "Logo"
+        // TODO: @mh Test if this is really displayed correctly
+        attrs.title = div.create {
+          img {
+            src = "$baseUrl/static/images/logo_campusqr.png"
+            alt = "Logo"
+            className = props.classes.logoImg
           }
         }
       }

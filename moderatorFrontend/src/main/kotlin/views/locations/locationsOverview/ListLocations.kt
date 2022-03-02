@@ -86,7 +86,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
     }
   )
 
-  private fun RBuilder.renderImportButtonDialog(): ReactElement<*> {
+  private fun RBuilder.renderImportButtonDialog() {
 
     fun closeDialog() {
       setState {
@@ -94,6 +94,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
       }
     }
 
+    // TODO: @mh Remove return
     return mbMaterialDialog(
       show = state.showImportLocationDialog,
       title = Strings.location_import.get(),
