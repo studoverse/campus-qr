@@ -199,17 +199,17 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
       attrs.options = state.locationNameToLocationMap.keys.toTypedArray()
       attrs.getOptionLabel = { it }
       attrs.renderInput = { params: dynamic ->
-        textField {
-          attrs.error = state.selectedLocationTextFieldError.isNotEmpty()
-          attrs.helperText = state.selectedLocationTextFieldError
-          attrs.id = params.id
-          attrs.InputProps = params.InputProps
-          attrs.inputProps = params.inputProps
-          attrs.disabled = params.disabled
-          attrs.fullWidth = params.fullWidth
-          attrs.fullWidth = true
-          attrs.variant = TextFieldVariant.OUTLINED.value
-          attrs.label = Strings.location_name.get()
+        textField.create {
+          error = state.selectedLocationTextFieldError.isNotEmpty()
+          helperText = state.selectedLocationTextFieldError
+          id = params.id
+          InputProps = params.InputProps
+          inputProps = params.inputProps
+          disabled = params.disabled
+          fullWidth = params.fullWidth
+          fullWidth = true
+          variant = TextFieldVariant.OUTLINED.value
+          label = Strings.location_name.get()
         }
       }
     }

@@ -170,17 +170,17 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
         attrs.options = state.locationNameToLocationMap.keys.toTypedArray()
         attrs.getOptionLabel = { it }
         attrs.renderInput = { params: dynamic ->
-          textField {
-            attrs.error = state.selectedLocationTextFieldError.isNotEmpty()
-            attrs.helperText = state.selectedLocationTextFieldError
-            attrs.id = params.id
-            attrs.InputProps = params.InputProps
-            attrs.inputProps = params.inputProps
-            attrs.disabled = params.disabled
-            attrs.fullWidth = params.fullWidth
-            attrs.fullWidth = true
-            attrs.variant = "outlined"
-            attrs.label = Strings.location_name.get()
+          textField.create {
+            error = state.selectedLocationTextFieldError.isNotEmpty()
+            helperText = state.selectedLocationTextFieldError
+            id = params.id
+            InputProps = params.InputProps
+            inputProps = params.inputProps
+            disabled = params.disabled
+            fullWidth = params.fullWidth
+            fullWidth = true
+            variant = "outlined"
+            label = Strings.location_name.get()
           }
         }
       }
@@ -219,16 +219,16 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
           attrs.value = state.seatInputValue
           attrs.getOptionLabel = { it.toString() }
           attrs.renderInput = { params: dynamic ->
-            textField {
-              attrs.error = state.seatInputError.isNotEmpty()
-              attrs.helperText = state.seatInputError
-              attrs.id = params.id
-              attrs.InputProps = params.InputProps
-              attrs.inputProps = params.inputProps
-              attrs.disabled = params.disabled
-              attrs.fullWidth = params.fullWidth
-              attrs.variant = "outlined"
-              attrs.label = Strings.report_checkin_seat.get()
+            textField.create {
+              error = state.seatInputError.isNotEmpty()
+              helperText = state.seatInputError
+              id = params.id
+              InputProps = params.InputProps
+              inputProps = params.inputProps
+              disabled = params.disabled
+              fullWidth = params.fullWidth
+              variant = "outlined"
+              label = Strings.report_checkin_seat.get()
             }
           }
         }

@@ -97,14 +97,14 @@ class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProp
                 }
               }
               attrs.renderInput = { params: dynamic ->
-                textField {
-                  attrs.id = params.id
-                  attrs.InputProps = params.InputProps
-                  attrs.inputProps = params.inputProps
-                  attrs.disabled = params.disabled as Boolean
-                  attrs.fullWidth = params.fullWidth as Boolean
-                  attrs.variant = "outlined"
-                  attrs.label = Strings.report_checkin_seat_filter.get()
+                textField.create {
+                  id = params.id
+                  InputProps = params.InputProps
+                  inputProps = params.inputProps
+                  disabled = params.disabled as Boolean
+                  fullWidth = params.fullWidth as Boolean
+                  variant = "outlined"
+                  label = Strings.report_checkin_seat_filter.get()
                 }
               }
             }
