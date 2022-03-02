@@ -1,11 +1,8 @@
 package views.common
 
 import kotlinext.js.js
-import react.Props
-import react.RBuilder
-import react.RComponent
-import react.State
-import react.dom.div
+import react.*
+import react.dom.html.ReactHTML.div
 import webcore.materialUI.linearProgress
 import webcore.materialUI.withStyles
 
@@ -19,9 +16,10 @@ external interface LinearProgressState : State
 /**
  * Linear progress that has a fixed height of 8px also when it's not shown.
  */
-class LinearProgress : RComponent<LinearProgressProps, LinearProgressState>() {
-  override fun RBuilder.render() {
-    div(props.classes.holder) {
+class LinearProgress : Component<LinearProgressProps, LinearProgressState>() {
+  override fun render(): ReactNode {
+    return div.create {
+      this.className = props.classes.holder // TODO: @mh Replace withStyles styling with sx prop
       if (props.show) {
         linearProgress {}
       }
@@ -43,6 +41,6 @@ private val style = { _: dynamic ->
 
 private val styled = withStyles<LinearProgressProps, LinearProgress>(style)
 
-fun RBuilder.renderLinearProgress(show: Boolean) = styled {
-  attrs.show = show
+fun renderLinearProgress(show: Boolean) = styled.create {
+  this.show = show
 }
