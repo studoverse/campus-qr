@@ -6,6 +6,7 @@ import kotlinext.js.js
 import kotlinx.browser.window
 import react.*
 import react.dom.div
+import react.dom.html.ReactHTML
 import util.Strings
 import util.apiBase
 import util.get
@@ -90,14 +91,14 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       }
     }
 
-    // TODO: @mh Remove return
-    return mbMaterialDialog(
+    mbMaterialDialog(
       show = state.showSsoInfoDialog,
       title = Strings.user_sso_info.get(),
       customContent = {
         typography {
           attrs.className = props.classes.dialogContent
           attrs.variant = "body1"
+          attrs.component = ReactHTML.span
           +Strings.user_sso_info_details1.get()
           spacer(16)
           +Strings.user_sso_info_details2.get()

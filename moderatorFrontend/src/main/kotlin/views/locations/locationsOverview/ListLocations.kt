@@ -94,8 +94,7 @@ class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
       }
     }
 
-    // TODO: @mh Remove return
-    return mbMaterialDialog(
+    mbMaterialDialog(
       show = state.showImportLocationDialog,
       title = Strings.location_import.get(),
       textContent = Strings.location_import_details.get(),

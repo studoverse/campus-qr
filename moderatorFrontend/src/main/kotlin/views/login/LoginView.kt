@@ -39,7 +39,6 @@ class LoginView : RComponent<LoginViewProps, LoginViewState>() {
         attrs.classes = js {
           root = props.classes.cardHeader
         }
-        // TODO: @mh Test if this is really displayed correctly
         attrs.title = div.create {
           img {
             src = "$baseUrl/static/images/logo_campusqr.png"
