@@ -29,7 +29,7 @@ dependencies {
   api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
   api(kotlinw("react:17.0.2-pre.310-kotlin-1.6.10"))
   api(kotlinw("react-dom:17.0.2-pre.310-kotlin-1.6.10"))
-  //api(kotlinw("react-legacy:17.0.2-pre.310-kotlin-1.6.10"))
+  //api(kotlinw("react-legacy:17.0.2-pre.310-kotlin-1.6.10")) // TODO: @mh Remove after migration
   //api(kotlinw("react-dom-legacy:17.0.2-pre.310-kotlin-1.6.10"))
   api(kotlinw("react-css:17.0.2-pre.310-kotlin-1.6.10"))
   api(kotlinw("mui:5.4.4-pre.310-kotlin-1.6.10"))
