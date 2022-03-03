@@ -1,7 +1,6 @@
 package views.common
 
 import csstype.px
-import kotlinx.js.Object.Companion.create
 import kotlinx.js.jso
 import mui.material.Box
 import mui.material.LinearProgress
@@ -29,12 +28,8 @@ class MbLinearProgress : Component<MbLinearProgressProps, MbLinearProgressState>
   }
 }
 
-/*fun renderMbLinearProgress(show: Boolean) = MbLinearProgress<MbLinearProgressProps, MbLinearProgressState>.create {
-  this.show = show
-}*/
-
-// TODO: @mh Find out how to render a class component
-fun ChildrenBuilder.renderMbLinearProgress(handler: MbLinearProgressProps.() -> Unit) {
-  create(MbLinearProgress::class, handler)
-  //child(MbLinearProgress::class, handler)
+fun ChildrenBuilder.renderMbLinearProgress(handler: MbLinearProgressProps.() -> MbLinearProgressProps) {
+  MbLinearProgress::class.react.invoke {
+    +handler()
+  }
 }
