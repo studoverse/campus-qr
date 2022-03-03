@@ -17,7 +17,6 @@ fun main() {
   val application = Fragment.create {
     renderMbLinearProgress {
       show = true
-      return@renderMbLinearProgress this
     }
 
     //app()

@@ -28,8 +28,8 @@ class MbLinearProgress : Component<MbLinearProgressProps, MbLinearProgressState>
   }
 }
 
-fun ChildrenBuilder.renderMbLinearProgress(handler: MbLinearProgressProps.() -> MbLinearProgressProps) {
+fun ChildrenBuilder.renderMbLinearProgress(handler: MbLinearProgressProps.() -> Unit) {
   MbLinearProgress::class.react.invoke {
-    +handler()
+    +jso(handler)
   }
 }
