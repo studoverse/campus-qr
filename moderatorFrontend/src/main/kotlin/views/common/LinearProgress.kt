@@ -4,7 +4,12 @@ import csstype.px
 import kotlinx.js.jso
 import mui.material.Box
 import mui.material.LinearProgress
-import react.*
+import mui.system.sx
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.react
+import webcore.RComponent
 
 external interface MbLinearProgressProps : Props {
   var show: Boolean
@@ -15,10 +20,11 @@ external interface MbLinearProgressState : State
 /**
  * Linear progress that has a fixed height of 8px also when it's not shown.
  */
-class MbLinearProgress : Component<MbLinearProgressProps, MbLinearProgressState>() {
-  override fun render(): ReactNode {
-    return Box.create {
-      sx = jso {
+class MbLinearProgress : RComponent<MbLinearProgressProps, MbLinearProgressState>() {
+
+  override fun ChildrenBuilder.render() {
+    Box {
+      sx {
         height = 8.px
       }
       if (props.show) {

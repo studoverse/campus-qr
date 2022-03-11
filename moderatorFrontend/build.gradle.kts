@@ -13,6 +13,7 @@ repositories {
 
 fun kotlinw(target: String): String =
   "org.jetbrains.kotlin-wrappers:kotlin-$target"
+val kotlinWrappersVersion = "0.0.1-pre.318-kotlin-1.6.10"
 
 kotlin {
   js(IR) {
@@ -25,15 +26,14 @@ kotlin {
 dependencies {
   implementation(kotlin("stdlib-js"))
   implementation(project(":common"))
+  implementation(enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
 
   api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
-  api(kotlinw("react:17.0.2-pre.310-kotlin-1.6.10"))
-  api(kotlinw("react-dom:17.0.2-pre.310-kotlin-1.6.10"))
-  //api(kotlinw("react-legacy:17.0.2-pre.310-kotlin-1.6.10")) // TODO: @mh Remove after migration
-  //api(kotlinw("react-dom-legacy:17.0.2-pre.310-kotlin-1.6.10"))
-  api(kotlinw("react-css:17.0.2-pre.310-kotlin-1.6.10"))
-  api(kotlinw("mui:5.4.4-pre.310-kotlin-1.6.10"))
-  api(kotlinw("mui-icons:5.4.4-pre.310-kotlin-1.6.10"))
+  api(kotlinw("react"))
+  api(kotlinw("emotion"))
+  api(kotlinw("react-dom"))
+  api(kotlinw("mui"))
+  api(kotlinw("mui-icons"))
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
 
   implementation(npm("@emotion/react", "11.7.1"))
