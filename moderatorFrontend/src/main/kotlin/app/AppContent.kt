@@ -8,6 +8,7 @@ import react.State
 import react.react
 import util.AppRoute
 import util.Url
+import views.accessManagement.accessManagementExport.renderAccessManagementExportList
 import views.accessManagement.accessManagementOverview.renderAccessManagementList
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
@@ -32,9 +33,9 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
     when (currentAppRoute?.url) {
       Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList { locationId = null }
       Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList { locationId = currentAppRoute.pathParams["id"] }
-      /*Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
-        Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
-        Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()
+      Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList { locationId = null }
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList { locationId = currentAppRoute.pathParams["id"] }
+      /*Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()
         Url.LOCATIONS_LIST -> renderListLocations(userData = props.config.userData!!)
         Url.REPORT -> renderReport()
         Url.USERS -> renderUsers(userData = props.config.userData!!)
