@@ -5,7 +5,6 @@ import csstype.AlignItems
 import csstype.Display
 import csstype.number
 import csstype.px
-import kotlinext.js.js
 import kotlinx.js.jso
 import mui.icons.material.*
 import mui.material.*
@@ -58,14 +57,17 @@ class MbSnackbar : RComponent<MbSnackbarProps, State>() {
             }
             SnackbarContent {
               sx {
-                when (props.config.snackbarType) {
-                  // TODO: @mh What is greenColor[500] etc. ?
-                  MbSnackbarType.SUCCESS -> props.classes.success as String
-                  MbSnackbarType.ERROR -> props.classes.error as String
-                  MbSnackbarType.INFO -> props.classes.info as String
-                  MbSnackbarType.WARNING -> props.classes.warning as String
+                /*when (props.config.snackbarType) {
+                  // TODO: @mh How to access greenColor etc.? See: https://mui.com/customization/color/
+                  MbSnackbarType.SUCCESS -> backgroundColor = asDynamic().greenColor[500]
+                  MbSnackbarType.ERROR -> backgroundColor = asDynamic().redColor[500]
+                  MbSnackbarType.INFO -> backgroundColor = asDynamic().blueColor[500]
+                  MbSnackbarType.WARNING -> {
+                    color = Color("black")
+                    backgroundColor = asDynamic().yellowColor[500]
+                  }
                   null -> ""
-                }
+                }*/
               }
               message = Box.create {
                 sx {
@@ -89,25 +91,6 @@ class MbSnackbar : RComponent<MbSnackbarProps, State>() {
           }
         }
       }
-    }
-  }
-}
-
-
-private val style = { theme: dynamic ->
-  js {
-    success = js {
-      backgroundColor = greenColor[500]
-    }
-    error = js {
-      backgroundColor = redColor[500]
-    }
-    info = js {
-      backgroundColor = blueColor[500]
-    }
-    warning = js {
-      color = "black"
-      backgroundColor = yellowColor[500]
     }
   }
 }
