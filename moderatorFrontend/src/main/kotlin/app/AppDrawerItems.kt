@@ -19,6 +19,8 @@ import util.Url
 import util.get
 import views.common.spacer
 import views.settings.renderSettings
+import webcore.LogoBadgeConfig
+import webcore.logoBadge
 
 class SideDrawerItem(
   val label: LocalizedString,
@@ -45,13 +47,14 @@ external interface AppDrawerItemsState : State
 class AppDrawerItems : Component<AppDrawerItemsProps, AppDrawerItemsState>() {
   override fun render(): ReactNode {
     return Fragment.create {
-      // TODO: @mh Add LogoBadge.kt file
-      /*logoBadge(
-        logoUrl = "$baseUrl/static/images/logo_campusqr.png",
-        logoAlt = "Campus QR",
-        badgeTitle = props.config.userData?.appName ?: "",
-        badgeSubtitle = props.config.userData?.clientUser?.name ?: ""
-      )*/
+      logoBadge {
+        config = LogoBadgeConfig(
+          logoUrl = "$baseUrl/static/images/logo_campusqr.png",
+          logoAlt = "Campus QR",
+          badgeTitle = props.config.userData?.appName ?: "",
+          badgeSubtitle = props.config.userData?.clientUser?.name ?: ""
+        )
+      }
 
       if (props.config.loading) {
         LinearProgress {}
