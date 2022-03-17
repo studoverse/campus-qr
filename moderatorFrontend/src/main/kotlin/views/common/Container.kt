@@ -1,5 +1,6 @@
 package views.common
 
+import csstype.ClassName
 import csstype.px
 import kotlinx.js.jso
 import mui.material.Box
@@ -7,7 +8,7 @@ import react.ChildrenBuilder
 
 fun ChildrenBuilder.container(block: ChildrenBuilder.() -> Unit): Unit =
   Box {
-    className = "genericContainer"
+    className = ClassName("genericContainer")
     block(this)
   }
 

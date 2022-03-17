@@ -59,17 +59,13 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
             }
             color = AppBarColor.primary
             position = if (props.config.stickyNavigation) AppBarPosition.sticky else AppBarPosition.static
-            // TODO: @mh Elevation does not seem to have any effect on the generated css
-            //           See: https://github.com/JetBrains/kotlin-wrappers/issues/1324
-            props.config.appBarElevation?.let { this.asDynamic()["elevation"] = it }
+            props.config.appBarElevation?.let { elevation = it }
             Toolbar {
               sx {
-                " .MuiToolbar-root" {
-                  borderTop = Border(width = 6.px, style = csstype.LineStyle.solid, color = Color(props.config.themeColor))
-                  (theme.breakpoints.up(Breakpoint.md)) {
-                    if (props.config.smallToolbar) {
-                      minHeight = 12.px
-                    }
+                borderTop = Border(width = 6.px, style = LineStyle.solid, color = Color(props.config.themeColor))
+                (theme.breakpoints.up(Breakpoint.md)) {
+                  if (props.config.smallToolbar) {
+                    minHeight = 12.px
                   }
                 }
               }
@@ -102,7 +98,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
               implementation = HiddenImplementation.css
               Drawer {
                 sx {
-                  this.drawerStyle()
+                  drawerStyle()
                 }
                 open = true
                 variant = DrawerVariant.permanent
@@ -136,7 +132,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 
   private fun PropertiesBuilder.drawerStyle() {
-    " .MuiDrawer-paper" {
+    MuiDrawer.paper {
       width = drawerWidth.px
     }
   }
