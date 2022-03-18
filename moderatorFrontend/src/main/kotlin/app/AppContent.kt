@@ -12,6 +12,7 @@ import views.accessManagement.accessManagementExport.renderAccessManagementExpor
 import views.accessManagement.accessManagementOverview.renderAccessManagementList
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
+import views.guestCheckIn.guestCheckInOverview.renderGuestCheckInOverview
 import webcore.RComponent
 
 class AppContentConfig(
@@ -35,8 +36,8 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
       Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList { locationId = currentAppRoute.pathParams["id"] }
       Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList { locationId = null }
       Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList { locationId = currentAppRoute.pathParams["id"] }
-      /*Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()
-        Url.LOCATIONS_LIST -> renderListLocations(userData = props.config.userData!!)
+      Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()
+      /*Url.LOCATIONS_LIST -> renderListLocations(userData = props.config.userData!!)
         Url.REPORT -> renderReport()
         Url.USERS -> renderUsers(userData = props.config.userData!!)
         Url.ACCOUNT_SETTINGS -> renderMyAccount(MyAccountConfig(props.config.userData!!))*/

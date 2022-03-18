@@ -32,8 +32,6 @@ enum class MbSnackbarType(val icon: SvgIconComponent?) {
 }
 
 external interface MbSnackbarProps : Props {
-  var theme: dynamic
-  var classes: dynamic
   var config: MbSnackbarConfig
 }
 
