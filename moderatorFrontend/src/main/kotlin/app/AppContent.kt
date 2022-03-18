@@ -14,6 +14,8 @@ import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
 import views.guestCheckIn.guestCheckInOverview.renderGuestCheckInOverview
 import views.locations.locationsOverview.renderListLocations
+import views.login.LoginMode
+import views.login.renderLoginView
 import webcore.RComponent
 
 class AppContentConfig(
@@ -43,10 +45,10 @@ class AppContent : RComponent<AppContentProps, AppContentState>() {
         Url.USERS -> renderUsers(userData = props.config.userData!!)
         Url.ACCOUNT_SETTINGS -> renderMyAccount(MyAccountConfig(props.config.userData!!))*/
       Url.ADMIN_INFO -> renderAdminInfo {}
-      /*Url.LOGIN_EMAIL -> renderLoginView(
-          studoUserData = props.config.userData!!,
-          mode = LoginMode.EMAIL
-        )*/
+      Url.LOGIN_EMAIL -> renderLoginView {
+        userData = props.config.userData!!
+        loginMode = LoginMode.EMAIL
+      }
       Url.BLANK -> Unit
       null -> pathNotFoundView {}
       else -> {} // TODO: @mh Remove after migration
