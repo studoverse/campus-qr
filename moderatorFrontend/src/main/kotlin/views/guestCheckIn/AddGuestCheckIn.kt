@@ -6,14 +6,10 @@ import com.studo.campusqr.common.payloads.CheckInData
 import com.studo.campusqr.common.payloads.ClientLocation
 import csstype.ClassName
 import csstype.px
-import kotlinx.js.Object
 import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
-import org.w3c.dom.HTMLElement
 import react.*
-import react.dom.events.ChangeEvent
-import react.dom.onChange
 import util.Strings
 import util.apiBase
 import util.get
@@ -21,11 +17,8 @@ import views.common.centeredProgress
 import views.common.networkErrorView
 import views.common.renderMbLinearProgress
 import views.common.spacer
-import webcore.NetworkManager
-import webcore.RComponent
+import webcore.*
 import webcore.extensions.launch
-import webcore.setState
-import webcore.value
 
 class AddGuestCheckInConfig(
   val onGuestCheckedIn: () -> Unit,
@@ -177,25 +170,25 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
         getOptionLabel = { it }
         renderInput = { params ->
           TextField.create {
-            Object.assign(this, params)
+            +params
             error = state.selectedLocationTextFieldError.isNotEmpty()
             helperText = ReactNode(state.selectedLocationTextFieldError)
             fullWidth = true
             variant = FormControlVariant.outlined
             label = ReactNode(Strings.location_name.get())
           }
+
         }
       }
       spacer(16)
-      TextField {
+      TextField<OutlinedTextFieldProps> {
         error = state.personEmailTextFieldError.isNotEmpty()
         helperText = ReactNode(state.personEmailTextFieldError)
         fullWidth = true
-        variant = FormControlVariant.outlined
+        variant = FormControlVariant.outlined()
         label = ReactNode(Strings.email_address.get())
         value = state.personEmailTextFieldValue
         onChange = { event ->
-          event as ChangeEvent<HTMLElement>
           val value = event.target.value
           setState {
             personEmailTextFieldError = ""
@@ -223,7 +216,7 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
           getOptionLabel = { it.toString() }
           renderInput = { params ->
             TextField.create {
-              Object.assign(this, params)
+              +params
               error = state.seatInputError.isNotEmpty()
               helperText = ReactNode(state.seatInputError)
               variant = FormControlVariant.outlined

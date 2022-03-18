@@ -26,10 +26,16 @@ var InputBaseComponentProps.max: Any? // String (e.g. "123", "2022-01-01'T'13:14
     asDynamic().max = value
   }
 
-var InputBaseComponentProps.list: String
+var InputBaseComponentProps.list: String?
   get() = asDynamic().list
   set(value) {
     asDynamic().list = value
+  }
+
+var InputBaseComponentProps.maxLength: Int?
+  get() = asDynamic().maxLength
+  set(value) {
+    asDynamic().maxLength = value
   }
 
 operator fun FormControlVariant.invoke(): Union = when (this) {
