@@ -82,7 +82,7 @@ class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
   }
 }
 
-fun ChildrenBuilder.renderAdminInfo(handler: AdminInfoProps.() -> Unit) {
+fun ChildrenBuilder.renderAdminInfo(handler: AdminInfoProps.() -> Unit = {}) {
   AdminInfo::class.react {
     +jso(handler)
   }
