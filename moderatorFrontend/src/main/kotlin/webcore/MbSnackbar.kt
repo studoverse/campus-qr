@@ -1,10 +1,7 @@
 package webcore
 
 import app.themeContext
-import csstype.AlignItems
-import csstype.Display
-import csstype.number
-import csstype.px
+import csstype.*
 import kotlinx.js.jso
 import mui.icons.material.*
 import mui.material.*
@@ -55,17 +52,16 @@ class MbSnackbar : RComponent<MbSnackbarProps, State>() {
             }
             SnackbarContent {
               sx {
-                /*when (props.config.snackbarType) {
-                  // TODO: @mh How to access greenColor etc.? See: https://mui.com/customization/color/
-                  MbSnackbarType.SUCCESS -> backgroundColor = asDynamic().greenColor[500]
-                  MbSnackbarType.ERROR -> backgroundColor = asDynamic().redColor[500]
-                  MbSnackbarType.INFO -> backgroundColor = asDynamic().blueColor[500]
+                when (props.config.snackbarType) {
+                  MbSnackbarType.SUCCESS -> backgroundColor = Color(greenColor[500] as String)
+                  MbSnackbarType.ERROR -> backgroundColor = Color(redColor[500] as String)
+                  MbSnackbarType.INFO -> backgroundColor = Color(blueColor[500] as String)
                   MbSnackbarType.WARNING -> {
                     color = Color("black")
-                    backgroundColor = asDynamic().yellowColor[500]
+                    backgroundColor = Color(yellowColor[500] as String)
                   }
                   null -> ""
-                }*/
+                }
               }
               message = Box.create {
                 sx {
