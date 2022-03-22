@@ -73,7 +73,7 @@ class AppDrawerItems : Component<AppDrawerItemsProps, AppDrawerItemsState>() {
           throw IllegalArgumentException("Either specify url or onClick")
         }
 
-        mui.material.Link {
+        Link {
           component = a
           sx {
             textDecoration = important(None.none)
@@ -101,8 +101,10 @@ class AppDrawerItems : Component<AppDrawerItemsProps, AppDrawerItemsState>() {
             }
             ListItemText {
               sx {
-                fontSize = 14.px
-                hyphens = Auto.auto
+                MuiListItemText.primary {
+                  fontSize = 14.px
+                  hyphens = Auto.auto
+                }
               }
               +label
                 .replace("_", "_\u00ad") // Add soft hyphen after some gender-gap characters for long gendered words
