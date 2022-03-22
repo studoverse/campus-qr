@@ -124,6 +124,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
           label = ReactNode(Strings.location_access_type.get())
 
           LocationAccessType.values().forEach { accessType ->
+            // TODO: @mh Replace with Context receiver (need to wait for Kotlin 1.6.20) or temp component
             this as ChildrenBuilder
             MenuItem {
               value = accessType.toString()
