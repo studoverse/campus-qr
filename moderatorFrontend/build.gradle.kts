@@ -16,6 +16,7 @@ fun kotlinw(target: String): String =
 val kotlinWrappersVersion = "0.0.1-pre.321-kotlin-1.6.10"
 
 kotlin {
+  // TODO: @mh Add incremental compilation when kotlin 1.6.20 is released (https://blog.jetbrains.com/kotlin/2022/02/kotlin-1-6-20-m1-released/)
   js(IR) {
     useCommonJs()
     browser()
