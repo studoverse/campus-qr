@@ -114,6 +114,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
         variant = FormControlVariant.outlined
         Select<SelectProps<String>> {
           value = state.locationAccessType.toString()
+          // TODO: @mh See: https://github.com/JetBrains/kotlin-wrappers/issues/1356
           onChange = { event: dynamic -> // TODO: @mh Did not find a typed way that works
             setState {
               locationAccessType = LocationAccessType.valueOf(event.target.value)

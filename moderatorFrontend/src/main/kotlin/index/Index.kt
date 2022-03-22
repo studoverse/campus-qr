@@ -15,7 +15,6 @@ fun main() {
   val container = document.getElementById("root")!!
 
   val application = Fragment.create {
-    // TODO: @mh Check Material UI file for Todos that were dependent on MUI 5
     app()
   }
 
