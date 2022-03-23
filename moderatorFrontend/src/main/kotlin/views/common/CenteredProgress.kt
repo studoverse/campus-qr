@@ -17,7 +17,7 @@ external interface CenteredProgressProps : Props
 
 external interface CenteredProgressState : State
 
-class CenteredProgress : RComponent<CenteredProgressProps, CenteredProgressState>() {
+private class CenteredProgress : RComponent<CenteredProgressProps, CenteredProgressState>() {
   override fun ChildrenBuilder.render() {
     Box {
       sx = jso {

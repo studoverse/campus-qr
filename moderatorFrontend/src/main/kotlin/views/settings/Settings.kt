@@ -20,7 +20,7 @@ external interface SettingsProps : Props
 
 external interface SettingsState : State
 
-class Settings : RComponent<SettingsProps, SettingsState>() {
+private class Settings : RComponent<SettingsProps, SettingsState>() {
   override fun ChildrenBuilder.render() {
     renderLanguageSwitch {}
     br {}

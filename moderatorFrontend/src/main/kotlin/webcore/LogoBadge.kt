@@ -24,7 +24,7 @@ external interface LogoBadgeProps : Props {
   var config: LogoBadgeConfig
 }
 
-class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, State>(props) {
+private class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, State>(props) {
 
   override fun ChildrenBuilder.render() {
     Box {

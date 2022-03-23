@@ -31,7 +31,7 @@ external interface ListAccessManagementExportState : State {
   var loadingPermitList: Boolean
 }
 
-class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, ListAccessManagementExportState>() {
+private class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, ListAccessManagementExportState>() {
 
   override fun ListAccessManagementExportState.init() {
     permitList = null

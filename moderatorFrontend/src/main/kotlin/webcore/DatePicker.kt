@@ -168,7 +168,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
             placeholder = dayString
             label = ReactNode(dayString)
             inputProps = jso {
-              min = 1.toString()
+              min = 1
               max = 31
             }
             value = state.oldBrowsersInputValues.day
@@ -192,7 +192,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
             placeholder = monthString
             label = ReactNode(monthString)
             inputProps = jso {
-              min = 1.toString()
+              min = 1
               max = 12
             }
             value = state.oldBrowsersInputValues.month

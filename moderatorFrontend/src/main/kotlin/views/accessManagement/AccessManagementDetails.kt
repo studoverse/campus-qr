@@ -54,7 +54,8 @@ external interface AccessManagementDetailsState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManagementDetailsProps, AccessManagementDetailsState>(props) {
+private class AddLocation(props: AccessManagementDetailsProps) :
+  RComponent<AccessManagementDetailsProps, AccessManagementDetailsState>(props) {
 
   override fun AccessManagementDetailsState.init(props: AccessManagementDetailsProps) {
     fun initFields(accessManagement: ClientAccessManagement?) {
@@ -220,14 +221,13 @@ class AddLocation(props: AccessManagementDetailsProps) : RComponent<AccessManage
   }
 
   private fun ChildrenBuilder.renderNoteTextField() {
-    TextField {
+    TextField<OutlinedTextFieldProps> {
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
-      variant = FormControlVariant.outlined
+      variant = FormControlVariant.outlined()
       label = ReactNode(Strings.access_control_note.get())
       value = state.accessControlNoteTextFieldValue
       onChange = { event ->
-        event as ChangeEvent<HTMLElement>
         val value = event.target.value
         setState {
           accessControlNoteTextFieldValue = value

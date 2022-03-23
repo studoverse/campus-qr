@@ -165,7 +165,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
             placeholder = hourString
             label = ReactNode(hourString)
             inputProps = jso {
-              min = 0.toString()
+              min = 0
               max = 23
             }
             value = state.oldBrowsersInputValues.hour
@@ -188,7 +188,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
             placeholder = minuteString
             label = ReactNode(minuteString)
             inputProps = jso {
-              min = 0.toString()
+              min = 0
               max = 59
             }
             value = state.oldBrowsersInputValues.minute

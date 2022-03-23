@@ -32,7 +32,7 @@ external interface ListLocationsState : State {
   var snackbarText: String
 }
 
-class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
+private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
 
   override fun ListLocationsState.init() {
     locationList = null

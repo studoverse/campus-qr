@@ -25,7 +25,7 @@ external interface GuestCheckInOverviewState : State {
   var snackbarText: String
 }
 
-class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInOverviewState>() {
+private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInOverviewState>() {
 
   override fun GuestCheckInOverviewState.init() {
     activeGuestCheckIns = emptyList()

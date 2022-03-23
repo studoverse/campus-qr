@@ -39,7 +39,7 @@ external interface ReportState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-class Report : RComponent<ReportProps, ReportState>() {
+private class Report : RComponent<ReportProps, ReportState>() {
 
   override fun ReportState.init() {
     emailTextFieldValue = ""

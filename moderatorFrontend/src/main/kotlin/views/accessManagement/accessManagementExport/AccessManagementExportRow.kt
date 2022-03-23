@@ -23,7 +23,7 @@ external interface AccessManagementExportTableRowProps : Props {
 
 external interface AccessManagementExportTableRowState : State
 
-class AccessManagementExportTableRow :
+private class AccessManagementExportTableRow :
   RComponent<AccessManagementExportTableRowProps, AccessManagementExportTableRowState>() {
 
   override fun ChildrenBuilder.render() {

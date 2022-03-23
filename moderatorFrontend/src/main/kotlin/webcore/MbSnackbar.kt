@@ -32,7 +32,7 @@ external interface MbSnackbarProps : Props {
   var config: MbSnackbarConfig
 }
 
-class MbSnackbar : RComponent<MbSnackbarProps, State>() {
+private class MbSnackbar : RComponent<MbSnackbarProps, State>() {
   override fun ChildrenBuilder.render() {
     themeContext.Consumer {
       children = { theme ->

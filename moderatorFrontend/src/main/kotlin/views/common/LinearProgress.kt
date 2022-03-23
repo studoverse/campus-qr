@@ -20,7 +20,7 @@ external interface MbLinearProgressState : State
 /**
  * Linear progress that has a fixed height of 8px also when it's not shown.
  */
-class MbLinearProgress : RComponent<MbLinearProgressProps, MbLinearProgressState>() {
+private class MbLinearProgress : RComponent<MbLinearProgressProps, MbLinearProgressState>() {
 
   override fun ChildrenBuilder.render() {
     Box {

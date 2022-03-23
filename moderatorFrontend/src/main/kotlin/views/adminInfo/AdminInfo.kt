@@ -24,7 +24,7 @@ external interface AdminInfoProps : Props
 
 external interface AdminInfoState : State
 
-class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
+private class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
   override fun ChildrenBuilder.render() {
     Box {
       sx {

@@ -40,7 +40,7 @@ external interface UserTableRowState : State {
   var snackbarText: String
 }
 
-class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
+private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
 
   override fun UserTableRowState.init() {
     showEditUserDialog = false

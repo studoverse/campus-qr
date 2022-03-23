@@ -30,7 +30,7 @@ external interface GuestCheckInRowProps : Props {
 
 external interface GuestCheckInRowState : State
 
-class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>() {
+private class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>() {
   override fun ChildrenBuilder.render() {
     TableRow {
       TableCell {

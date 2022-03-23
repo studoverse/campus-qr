@@ -31,7 +31,7 @@ external interface MailLoginState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
+private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
   override fun MailLoginState.init() {
     email = ""
     password = ""

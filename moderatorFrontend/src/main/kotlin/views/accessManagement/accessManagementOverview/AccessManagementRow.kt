@@ -47,7 +47,7 @@ external interface AccessManagementTableRowState : State {
   var showProgress: Boolean
 }
 
-class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, AccessManagementTableRowState>() {
+private class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, AccessManagementTableRowState>() {
 
   override fun AccessManagementTableRowState.init() {
     showAccessManagementEditDialog = false

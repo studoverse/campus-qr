@@ -28,7 +28,7 @@ external interface MyAccountState : State {
   var snackbarText: String
 }
 
-class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
+private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
 
   override fun MyAccountState.init() {
     snackbarText = ""

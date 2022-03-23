@@ -24,7 +24,7 @@ external interface GenericErrorViewProps : Props {
   var subtitle: String
 }
 
-class PathNotFound : RComponent<GenericErrorViewProps, State>() {
+private class PathNotFound : RComponent<GenericErrorViewProps, State>() {
   override fun ChildrenBuilder.render() {
     Box {
       sx = jso {
@@ -54,7 +54,7 @@ class PathNotFound : RComponent<GenericErrorViewProps, State>() {
   }
 }
 
-class GenericErrorView : RComponent<GenericErrorViewProps, State>() {
+private class GenericErrorView : RComponent<GenericErrorViewProps, State>() {
   override fun ChildrenBuilder.render() {
     Box {
       sx = jso {

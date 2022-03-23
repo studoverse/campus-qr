@@ -32,7 +32,7 @@ external interface ToolbarViewProps : Props {
 
 interface ToolbarViewState : State
 
-class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
+private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   override fun ChildrenBuilder.render() {
     Box {
       className = ClassName(GlobalCss.flex)

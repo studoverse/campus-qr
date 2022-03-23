@@ -34,7 +34,7 @@ external interface LocationTableRowState : State {
   var showProgress: Boolean
 }
 
-class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState>() {
+private class LocationTableRow : RComponent<LocationTableRowProps, LocationTableRowState>() {
 
   override fun LocationTableRowState.init() {
     showEditLocationDialog = false

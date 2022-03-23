@@ -33,7 +33,7 @@ external interface AppContentProps : Props {
 
 external interface AppContentState : State
 
-class AppContent : RComponent<AppContentProps, AppContentState>() {
+private class AppContent : RComponent<AppContentProps, AppContentState>() {
 
   override fun ChildrenBuilder.render() {
     val currentAppRoute = props.config.currentAppRoute

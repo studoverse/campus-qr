@@ -45,7 +45,7 @@ external interface MaterialMenuState : State {
   var ariaId: String
 }
 
-class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
+private class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
 
   override fun MaterialMenuState.init() {
     open = false

@@ -45,7 +45,7 @@ external interface AddGuestCheckInState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
+private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
 
   override fun AddGuestCheckInState.init() {
     locationFetchInProgress = false

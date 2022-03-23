@@ -29,7 +29,7 @@ external interface ListAccessManagementState : State {
   var snackbarText: String
 }
 
-class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessManagementState>() {
+private class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessManagementState>() {
 
   override fun ListAccessManagementState.init() {
     accessManagementList = null

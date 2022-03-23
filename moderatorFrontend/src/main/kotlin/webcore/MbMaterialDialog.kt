@@ -37,7 +37,7 @@ fun positiveButton(text: String = "OK", onClick: () -> Unit) = DialogButton(text
 fun negativeButton(text: String = LocalizedString("Cancel", "Abbrechen").get(), onClick: () -> Unit) =
   DialogButton(text = text, onClick = onClick)
 
-class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
+private class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
 
   override fun ChildrenBuilder.render() {
     Dialog {

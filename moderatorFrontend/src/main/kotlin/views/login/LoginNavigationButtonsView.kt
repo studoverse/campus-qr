@@ -28,7 +28,7 @@ external interface LoginNavigationButtonsViewProps : Props {
 
 external interface LoginNavigationButtonsViewState : State
 
-class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, LoginNavigationButtonsViewState>() {
+private class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, LoginNavigationButtonsViewState>() {
   override fun ChildrenBuilder.render() {
     Box {
       className = ClassName(GlobalCss.flex)

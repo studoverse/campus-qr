@@ -32,7 +32,7 @@ external interface ReportTableRowState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProps, ReportTableRowState>(props) {
+private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProps, ReportTableRowState>(props) {
 
   override fun ReportTableRowState.init(props: ReportTableRowProps) {
     showProgress = false

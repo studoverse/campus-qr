@@ -53,7 +53,7 @@ external interface AppState : State {
   var activeLanguage: MbLocalizedStringConfig.SupportedLanguage
 }
 
-class App : RComponent<AppProps, AppState>() {
+private class App : RComponent<AppProps, AppState>() {
 
   private val checkInSideDrawerItems: List<SideDrawerItem>
     get() {

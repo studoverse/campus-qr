@@ -37,7 +37,7 @@ external interface AddLocationState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
+private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
 
   override fun AddLocationState.init(props: AddLocationProps) {
     locationCreationInProgress = false

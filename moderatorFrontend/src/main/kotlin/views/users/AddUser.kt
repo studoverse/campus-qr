@@ -47,7 +47,7 @@ external interface AddUserState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
+private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
 
   override fun AddUserState.init(props: AddUserProps) {
     userCreationInProgress = false

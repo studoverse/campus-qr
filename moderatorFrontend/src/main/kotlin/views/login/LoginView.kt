@@ -32,7 +32,7 @@ enum class LoginMode {
 
 external interface LoginViewState : State
 
-class LoginView : RComponent<LoginViewProps, LoginViewState>() {
+private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
 
   override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "#f2f2f2"
