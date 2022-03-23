@@ -58,7 +58,8 @@ private class Report : RComponent<ReportProps, ReportState>() {
         setState {
           snackbarText = ""
         }
-      })
+      }
+    )
   }
 
   private fun validateInput(): Boolean {

@@ -121,7 +121,8 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
       message = state.snackbarText,
       onClose = {
         setState { snackbarText = "" }
-      })
+      }
+    )
   }
 
   override fun ChildrenBuilder.render() {

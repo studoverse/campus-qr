@@ -103,7 +103,8 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
       message = state.snackbarText,
       onClose = {
         setState { snackbarText = "" }
-      })
+      }
+    )
   }
 
   override fun ChildrenBuilder.render() {

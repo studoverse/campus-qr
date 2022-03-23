@@ -116,12 +116,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
       hover = true
 
       TableCell {
-        onClick = {
-          setState {
-            showAccessManagementDetailsDialog = true
-          }
-        }
-        //onClick = tableRowClick
+        onClick = tableRowClick
         +props.config.accessManagement.locationName
       }
       TableCell {

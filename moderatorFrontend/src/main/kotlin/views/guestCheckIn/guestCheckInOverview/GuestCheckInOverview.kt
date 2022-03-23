@@ -85,7 +85,8 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
       message = state.snackbarText,
       onClose = {
         setState { snackbarText = "" }
-      })
+      }
+    )
   }
 
   override fun ChildrenBuilder.render() {
