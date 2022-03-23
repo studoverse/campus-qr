@@ -518,7 +518,6 @@ private class AddLocation(props: AccessManagementDetailsProps) :
       if (props.config !is AccessManagementDetailsConfig.Details) {
         Box {
           className = ClassName(GlobalCss.flex)
-          @Suppress("UPPER_BOUND_VIOLATED")
           TextField<OutlinedTextFieldProps> {
             disabled = props.config is AccessManagementDetailsConfig.Details
             helperText = ReactNode(Strings.access_control_add_permitted_people_tip.get())
