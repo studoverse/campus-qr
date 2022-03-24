@@ -94,15 +94,6 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
                 options = state.filterOptions.map { it.toString() }.toTypedArray()
                 value = state.filteredSeats.map { it.toString() }.toTypedArray()
                 getOptionLabel = { it }
-                renderOption = { _, option, state ->
-                  Fragment.create {
-                    Checkbox {
-                      color = CheckboxColor.primary
-                      checked = state.selected
-                    }
-                    +option
-                  }
-                }
                 renderInput = { params ->
                   TextField.create {
                     +params
