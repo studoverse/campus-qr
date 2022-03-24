@@ -141,7 +141,11 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
       }
       TableCell {
         props.config.userLocation.locationSeatCount?.let {
-          val currentFilteredSeats = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
+          // Filter out the seat of the infected person itself
+          val currentFilteredSeats = props.config.userLocation.filteredSeats
+            ?.toList()
+            ?.filter { it != props.config.userLocation.seat }
+            ?: emptyList()
           if (currentFilteredSeats.isNotEmpty()) {
             Chip {
               color = ChipColor.primary
