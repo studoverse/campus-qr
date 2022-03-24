@@ -113,6 +113,7 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
         }
         variant = FormControlVariant.outlined
         Select<SelectProps<String>> {
+          // TODO: @mh See: https://youtrack.jetbrains.com/issue/KT-51698
           this as ChildrenBuilder
           value = state.locationAccessType.toString()
           // TODO: @mh See: https://github.com/JetBrains/kotlin-wrappers/issues/1356
