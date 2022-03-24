@@ -141,7 +141,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
       }
       TableCell {
         props.config.userLocation.locationSeatCount?.let {
-          // Filter out the seat of the infected person itself
+          // Seat of infected person doesn't make sense to include in the filter
           val currentFilteredSeats = props.config.userLocation.filteredSeats
             ?.toList()
             ?.filter { it != props.config.userLocation.seat }
