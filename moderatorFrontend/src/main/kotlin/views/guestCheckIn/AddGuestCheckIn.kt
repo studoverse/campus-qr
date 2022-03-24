@@ -197,9 +197,7 @@ private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckIn
         }
       }
       if (state.selectedLocation?.seatCount != null) {
-        val options = state.selectedLocation?.seatCount?.let { seatCount ->
-          (1..seatCount).map { it }.toTypedArray()
-        } ?: emptyArray()
+        val options = (1..state.selectedLocation?.seatCount!!).map { it }.toTypedArray()
         spacer(16)
         Autocomplete<AutocompleteProps<Int>> {
           onChange = { _, target: Int?, _, _ ->
