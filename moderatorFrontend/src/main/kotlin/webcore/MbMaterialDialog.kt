@@ -1,9 +1,7 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
-import csstype.Display
-import csstype.VerticalAlign
-import csstype.px
+import csstype.*
 import kotlinx.js.jso
 import mui.icons.material.SvgIconComponent
 import mui.material.*
@@ -67,6 +65,9 @@ private class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
         }
       }
       DialogContent {
+        sx {
+          padding = important(Padding(vertical = 8.px, horizontal = 24.px))
+        }
         props.config.textContent?.let { content ->
           DialogContentText { +content }
         }

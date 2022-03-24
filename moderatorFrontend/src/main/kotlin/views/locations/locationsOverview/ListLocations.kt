@@ -161,7 +161,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
           if (props.userData.clientUser!!.canEditLocations) {
             ToolbarButton(
               text = Strings.location_create.get(),
-              variant = ButtonVariant.outlined,
+              variant = ButtonVariant.contained,
               onClick = {
                 setState {
                   showAddLocationDialog = true
