@@ -99,7 +99,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
             if (showLoadingIndicator) {
               CircularProgress { size = "25px" }
             } else {
-              icon?.invoke { }
+              icon?.invoke()
             }
           }
           ListItemText {

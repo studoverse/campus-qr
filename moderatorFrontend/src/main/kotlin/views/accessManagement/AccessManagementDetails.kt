@@ -272,7 +272,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                     padding = 0.px
                     marginLeft = 8.px
                   }
-                  mui.icons.material.Add {}
+                  mui.icons.material.Add()
                   onClick = {
                     setState {
                       timeSlots = (timeSlots + ClientDateRange(timeSlots.last().from, timeSlots.last().to))
@@ -454,7 +454,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                         }
                         // At least one time slot must be set
                         disabled = state.timeSlots.count() == 1
-                        Close
+                        Close()
                         onClick = {
                           setState {
                             timeSlots = timeSlots.filter { it != clientDateRange }

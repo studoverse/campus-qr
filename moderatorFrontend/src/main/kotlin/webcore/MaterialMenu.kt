@@ -95,7 +95,7 @@ private class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() 
               sx {
                 minWidth = 36.px
               }
-              icon {}
+              icon()
             }
           }
           sx {

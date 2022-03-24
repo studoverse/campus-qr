@@ -44,7 +44,7 @@ private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
                 width = 60.px
                 height = 60.px
               }
-              ArrowBack {}
+              ArrowBack()
               onClick = {
                 routeContext.pushRoute(backButtonUrl.toRoute()!!)
               }

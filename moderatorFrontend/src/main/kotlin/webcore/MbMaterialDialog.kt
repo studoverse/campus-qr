@@ -58,7 +58,7 @@ private class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
                 verticalAlign = VerticalAlign.middle
                 marginRight = 8.px
               }
-              titleIcon {}
+              titleIcon()
             }
           }
           +title
