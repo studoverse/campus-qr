@@ -569,7 +569,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                 align = TableCellAlign.right
                 if (props.config !is AccessManagementDetailsConfig.Details) {
                   IconButton {
-                    Close
+                    Close()
                     onClick = {
                       setState {
                         permittedPeopleList = permittedPeopleList.filter { it != personIdentification }
