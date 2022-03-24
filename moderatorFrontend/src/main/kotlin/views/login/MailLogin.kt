@@ -92,7 +92,8 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
         TextField<StandardTextFieldProps> {
           fullWidth = true
           label = ReactNode(Strings.email_address.get())
-          onChange = { event: dynamic -> // TODO: @mh Did not find a typed way that works
+          // TODO: @mh See: https://github.com/JetBrains/kotlin-wrappers/issues/1356
+          onChange = { event: dynamic ->
             setState {
               email = event.target.value
               errorMessage = null
