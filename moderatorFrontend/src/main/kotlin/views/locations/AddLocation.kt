@@ -113,6 +113,7 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
         }
         variant = FormControlVariant.outlined
         Select<SelectProps<String>> {
+          this as ChildrenBuilder
           value = state.locationAccessType.toString()
           // TODO: @mh See: https://github.com/JetBrains/kotlin-wrappers/issues/1356
           onChange = { event: dynamic -> // TODO: @mh Did not find a typed way that works
@@ -124,8 +125,6 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
           label = ReactNode(Strings.location_access_type.get())
 
           LocationAccessType.values().forEach { accessType ->
-            // TODO: @mh Replace with Context receiver (need to wait for Kotlin 1.6.20) or temp component
-            this as ChildrenBuilder
             MenuItem {
               value = accessType.toString()
               +accessType.localizedString.get()
