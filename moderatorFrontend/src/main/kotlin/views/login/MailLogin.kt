@@ -9,7 +9,9 @@ import kotlinx.browser.document
 import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
+import org.w3c.dom.HTMLElement
 import react.*
+import react.dom.events.ChangeEvent
 import react.dom.html.InputType
 import react.dom.html.ReactHTML.form
 import util.Strings
@@ -20,6 +22,7 @@ import webcore.NetworkManager
 import webcore.extensions.launch
 import webcore.invoke
 import webcore.setState
+import webcore.value
 
 external interface MailLoginProps : Props
 
@@ -92,8 +95,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
         TextField<StandardTextFieldProps> {
           fullWidth = true
           label = ReactNode(Strings.email_address.get())
-          // TODO: @mh See: https://github.com/JetBrains/kotlin-wrappers/issues/1356
-          onChange = { event: dynamic ->
+          onChange = { event: ChangeEvent<HTMLElement> ->
             setState {
               email = event.target.value
               errorMessage = null
