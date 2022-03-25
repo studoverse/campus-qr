@@ -1,58 +1,60 @@
 package views.login
 
 import app.GlobalCss
+import csstype.ClassName
 import kotlinx.browser.window
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.div
+import kotlinx.js.jso
+import mui.material.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.dom.html.ButtonType
+import react.react
 import util.Strings
 import util.get
-import webcore.materialUI.circularProgress
-import webcore.materialUI.muiButton
-import webcore.materialUI.withStyles
+import webcore.RComponent
 
-interface LoginNavigationButtonsViewProps : RProps {
-  class Config(
-    var networkRequestInProgress: Boolean,
-    var backEnabled: Boolean,
-    var nextButtonText: String,
-    var nextButtonDisabled: Boolean,
-    var onNextAction: () -> Unit
-  )
+class LoginNavigationButtonsViewConfig(
+  var networkRequestInProgress: Boolean,
+  var backEnabled: Boolean,
+  var nextButtonText: String,
+  var nextButtonDisabled: Boolean,
+  var onNextAction: () -> Unit
+)
 
-  var config: Config
-  var classes: LoginNavigationButtonsViewClasses
+external interface LoginNavigationButtonsViewProps : Props {
+  var config: LoginNavigationButtonsViewConfig
 }
 
-interface LoginNavigationButtonsViewState : RState
+external interface LoginNavigationButtonsViewState : State
 
-class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, LoginNavigationButtonsViewState>() {
-  override fun RBuilder.render() {
-    div(GlobalCss.flex) {
+private class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, LoginNavigationButtonsViewState>() {
+  override fun ChildrenBuilder.render() {
+    Box {
+      className = ClassName(GlobalCss.flex)
       if (props.config.backEnabled) {
-        muiButton {
-          attrs.variant = "outlined"
-          attrs.color = "primary"
-          attrs.onClick = {
+        Button {
+          variant = ButtonVariant.outlined
+          color = ButtonColor.primary
+          onClick = {
             window.history.back()
           }
           +Strings.back.get().uppercase()
         }
       }
-      div(GlobalCss.flexEnd) {
+      Box {
+        className = ClassName(GlobalCss.flexEnd)
         if (props.config.networkRequestInProgress) {
-          circularProgress {}
+          CircularProgress()
         } else {
-          muiButton {
-            attrs.variant = "outlined"
-            attrs.color = "primary"
-            attrs.disabled = props.config.nextButtonDisabled
-            attrs.onClick = {
+          Button {
+            variant = ButtonVariant.outlined
+            color = ButtonColor.primary
+            disabled = props.config.nextButtonDisabled
+            onClick = {
               props.config.onNextAction()
             }
-            attrs.type = "submit"
+            type = ButtonType.submit
             +props.config.nextButtonText
           }
         }
@@ -61,15 +63,8 @@ class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsViewProps, L
   }
 }
 
-interface LoginNavigationButtonsViewClasses
-
-private val style = { _: dynamic ->
+fun ChildrenBuilder.renderLoginNavigationButtonsView(handler: LoginNavigationButtonsViewProps.() -> Unit) {
+  LoginNavigationButtonsView::class.react {
+    +jso(handler)
+  }
 }
-
-private val styled =
-  withStyles<LoginNavigationButtonsViewProps, LoginNavigationButtonsView>(style)
-
-fun RBuilder.renderLoginNavigationButtonsView(config: LoginNavigationButtonsViewProps.Config) = styled {
-  attrs.config = config
-}
-  

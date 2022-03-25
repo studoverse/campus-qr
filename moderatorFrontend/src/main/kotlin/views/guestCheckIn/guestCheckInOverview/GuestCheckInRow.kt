@@ -4,51 +4,49 @@ import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import com.studo.campusqr.common.payloads.CheckOutData
 import kotlinx.browser.window
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import kotlinx.js.jso
+import mui.material.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.react
 import util.Strings
 import util.apiBase
 import util.get
 import views.guestCheckIn.locationIdWithSeat
 import webcore.NetworkManager
+import webcore.RComponent
 import webcore.extensions.launch
-import webcore.materialUI.mTableCell
-import webcore.materialUI.mTableRow
-import webcore.materialUI.muiButton
-import webcore.materialUI.withStyles
 
-interface GuestCheckInRowProps : RProps {
-  var classes: GuestCheckInRowClasses
-  var config: Config
+class GuestCheckInRowConfig(
+  val activeCheckIn: ActiveCheckIn,
+  val onCheckedOut: () -> Unit,
+  val onShowSnackbar: (String) -> Unit,
+)
 
-  class Config(
-    val activeCheckIn: ActiveCheckIn,
-    val onCheckedOut: () -> Unit,
-    val onShowSnackbar: (String) -> Unit,
-  )
+external interface GuestCheckInRowProps : Props {
+  var config: GuestCheckInRowConfig
 }
 
-interface GuestCheckInRowState : RState
+external interface GuestCheckInRowState : State
 
-class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>() {
-  override fun RBuilder.render() {
-    mTableRow {
-      mTableCell {
+private class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>() {
+  override fun ChildrenBuilder.render() {
+    TableRow {
+      TableCell {
         +props.config.activeCheckIn.locationName
       }
-      mTableCell {
+      TableCell {
         +props.config.activeCheckIn.email
       }
-      mTableCell {
+      TableCell {
         +(props.config.activeCheckIn.seat?.toString() ?: "-")
       }
-      mTableCell {
-        muiButton {
-          attrs.variant = "outlined"
-          attrs.color = "primary"
-          attrs.onClick = {
+      TableCell {
+        Button {
+          variant = ButtonVariant.outlined
+          color = ButtonColor.primary
+          onClick = {
             val areYouSureText =
               Strings.guest_checkin_checkout_are_you_sure.get().format(props.config.activeCheckIn.email)
             if (window.confirm(areYouSureText)) {
@@ -73,14 +71,8 @@ class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>()
   }
 }
 
-interface GuestCheckInRowClasses
-
-private val GuestCheckInRowStyle = { _: dynamic ->
+fun ChildrenBuilder.renderGuestCheckIntRow(handler: GuestCheckInRowProps.() -> Unit) {
+  GuestCheckInRow::class.react {
+    +jso(handler)
+  }
 }
-
-private val styled = withStyles<GuestCheckInRowProps, GuestCheckInRow>(GuestCheckInRowStyle)
-
-fun RBuilder.renderGuestCheckIntRow(config: GuestCheckInRowProps.Config) = styled {
-  attrs.config = config
-}
-  

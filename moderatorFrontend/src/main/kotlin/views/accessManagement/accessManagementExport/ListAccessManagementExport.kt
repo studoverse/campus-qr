@@ -2,32 +2,36 @@ package views.accessManagement.accessManagementExport
 
 import com.studo.campusqr.common.payloads.AccessManagementExportData
 import com.studo.campusqr.common.payloads.ClientLocation
-import kotlinext.js.js
-import react.*
+import kotlinx.js.jso
+import mui.material.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.react
 import util.Strings
 import util.Url
 import util.apiBase
 import util.get
-import views.common.ToolbarViewProps
+import views.common.ToolbarViewConfig
 import views.common.networkErrorView
-import views.common.renderLinearProgress
+import views.common.renderMbLinearProgress
 import views.common.renderToolbarView
 import webcore.NetworkManager
+import webcore.RComponent
 import webcore.extensions.launch
-import webcore.materialUI.*
+import webcore.setState
 
-interface ListAccessManagementExportProps : RProps {
-  var classes: ListAccessManagementExportClasses
+external interface ListAccessManagementExportProps : Props {
   var locationId: String?
 }
 
-interface ListAccessManagementExportState : RState {
+external interface ListAccessManagementExportState : State {
   var permitList: List<AccessManagementExportData.Permit>?
   var clientLocation: ClientLocation?
   var loadingPermitList: Boolean
 }
 
-class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, ListAccessManagementExportState>() {
+private class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, ListAccessManagementExportState>() {
 
   override fun ListAccessManagementExportState.init() {
     permitList = null
@@ -62,9 +66,9 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
     fetchAccessManagementList()
   }
 
-  override fun RBuilder.render() {
-    renderToolbarView(
-      ToolbarViewProps.Config(
+  override fun ChildrenBuilder.render() {
+    renderToolbarView {
+      config = ToolbarViewConfig(
         title = StringBuilder().apply {
           append(Strings.access_control_export.get())
           append(" - ")
@@ -77,21 +81,21 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
         backButtonUrl = Url.ACCESS_MANAGEMENT_LIST,
         buttons = emptyList()
       )
-    )
+    }
 
-    renderLinearProgress(state.loadingPermitList)
+    renderMbLinearProgress { show = state.loadingPermitList }
 
     if (state.permitList != null) {
-      mTable {
-        mTableHead {
-          mTableRow {
-            mTableCell { +Strings.access_control_time_slot.get() }
-            mTableCell { +Strings.access_control_permitted_person.get() }
+      Table {
+        TableHead {
+          TableRow {
+            TableCell { +Strings.access_control_time_slot.get() }
+            TableCell { +Strings.access_control_permitted_person.get() }
           }
         }
-        mTableBody {
+        TableBody {
           state.permitList!!.forEach { accessManagement ->
-            renderAccessManagementExportRow(AccessManagementExportTableRowProps.Config(accessManagement))
+            renderAccessManagementExportRow { config = AccessManagementExportTableRowConfig(accessManagement) }
           }
         }
       }
@@ -101,21 +105,8 @@ class ListAccessManagementExport : RComponent<ListAccessManagementExportProps, L
   }
 }
 
-interface ListAccessManagementExportClasses {
-  var header: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    header = js {
-      margin = 16
-    }
+fun ChildrenBuilder.renderAccessManagementExportList(handler: ListAccessManagementExportProps.() -> Unit) {
+  ListAccessManagementExport::class.react {
+    +jso(handler)
   }
-}
-
-private val styled = withStyles<ListAccessManagementExportProps, ListAccessManagementExport>(style)
-
-fun RBuilder.renderAccessManagementExportList(locationId: String?) = styled {
-  // Set component attrs here
-  attrs.locationId = locationId
 }

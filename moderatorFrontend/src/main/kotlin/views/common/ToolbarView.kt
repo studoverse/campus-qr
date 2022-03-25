@@ -3,70 +3,85 @@ package views.common
 import app.GlobalCss
 import app.RouteContext
 import app.routeContext
-import kotlinext.js.js
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.div
+import csstype.ClassName
+import csstype.px
+import kotlinx.js.jso
+import mui.icons.material.ArrowBack
+import mui.material.*
+import mui.system.sx
+import react.*
 import util.Url
 import util.toRoute
-import webcore.materialUI.*
+import webcore.RComponent
 
-interface ToolbarViewProps : RProps {
-  var classes: ToolbarViewClasses
-  var config: Config
+class ToolbarButton(
+  val text: String,
+  val variant: ButtonVariant, // outlined|contained
+  val onClick: (routeContext: RouteContext) -> Unit
+)
 
-  class ToolbarButton(
-    val text: String,
-    val variant: String, // outlined|contained
-    val onClick: (routeContext: RouteContext) -> Unit
-  )
+class ToolbarViewConfig(
+  val title: String,
+  val backButtonUrl: Url? = null,
+  val buttons: List<ToolbarButton> = emptyList()
+)
 
-  class Config(
-    val title: String,
-    val backButtonUrl: Url? = null,
-    val buttons: List<ToolbarButton> = emptyList()
-  )
+external interface ToolbarViewProps : Props {
+  var config: ToolbarViewConfig
 }
 
-interface ToolbarViewState : RState
+interface ToolbarViewState : State
 
-class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
-  override fun RBuilder.render() {
-    div(GlobalCss.flex) {
+private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
+  override fun ChildrenBuilder.render() {
+    Box {
+      className = ClassName(GlobalCss.flex)
       props.config.backButtonUrl?.let { backButtonUrl ->
-        routeContext.Consumer { routeContext ->
-          iconButton {
-            attrs.classes = js {
-              root = props.classes.backButton
-            }
-            arrowBackIcon {}
-            attrs.onClick = {
-              routeContext.pushRoute(backButtonUrl.toRoute()!!)
+        routeContext.Consumer {
+          children = { routeContext ->
+            IconButton.create {
+              sx {
+                width = 60.px
+                height = 60.px
+              }
+              ArrowBack()
+              onClick = {
+                routeContext.pushRoute(backButtonUrl.toRoute()!!)
+              }
             }
           }
         }
       }
-      typography {
-        attrs.className = props.classes.header
-        attrs.variant = "h5"
+      Typography {
+        sx {
+          margin = 16.px
+        }
+        variant = "h5"
         +props.config.title
       }
-      div(GlobalCss.flexEnd) {
-        routeContext.Consumer { routeContext ->
-          div(props.classes.headerButtonsWrapper) {
-            props.config.buttons.forEach { toolbarButton ->
-              muiButton {
-                attrs.classes = js {
-                  root = props.classes.headerButton
+      Box {
+        className = ClassName(GlobalCss.flexEnd)
+        routeContext.Consumer {
+          children = { routeContext ->
+            Box.create {
+              sx {
+                marginLeft = 16.px
+              }
+              props.config.buttons.forEach { toolbarButton ->
+                Button {
+                  sx {
+                    marginRight = 16.px
+                    marginTop = 16.px
+                    marginBottom = 16.px
+                    marginLeft = 0.px
+                  }
+                  variant = toolbarButton.variant
+                  color = ButtonColor.primary
+                  onClick = {
+                    toolbarButton.onClick(routeContext)
+                  }
+                  +toolbarButton.text
                 }
-                attrs.variant = toolbarButton.variant
-                attrs.color = "primary"
-                attrs.onClick = {
-                  toolbarButton.onClick(routeContext)
-                }
-                +toolbarButton.text
               }
             }
           }
@@ -76,37 +91,8 @@ class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   }
 }
 
-interface ToolbarViewClasses {
-  var header: String
-  var headerButton: String
-  var headerButtonsWrapper: String
-  var backButton: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    header = js {
-      margin = 16
-    }
-    headerButton = js {
-      marginRight = 16
-      marginTop = 16
-      marginBottom = 16
-      marginLeft = 0
-    }
-    headerButtonsWrapper = js {
-      marginLeft = 16
-    }
-    backButton = js {
-      width = 60
-      height = 60
-    }
+fun ChildrenBuilder.renderToolbarView(handler: ToolbarViewProps.() -> Unit) {
+  ToolbarView::class.react {
+    +jso(handler)
   }
 }
-
-private val styled = withStyles<ToolbarViewProps, ToolbarView>(style)
-
-fun RBuilder.renderToolbarView(config: ToolbarViewProps.Config) = styled {
-  attrs.config = config
-}
-  

@@ -1,24 +1,34 @@
 package app
 
-import com.studo.campusqr.common.*
+import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.payloads.*
-import kotlinext.js.js
+import csstype.Display
+import csstype.FlexDirection
+import csstype.vh
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.js.jso
+import mui.icons.material.*
+import mui.material.Box
+import mui.material.styles.Theme
+import mui.material.styles.ThemeProvider
+import mui.material.styles.createTheme
+import mui.system.sx
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URL
 import react.*
-import react.dom.div
 import util.*
 import views.common.centeredProgress
 import views.common.networkErrorView
 import webcore.NetworkManager
+import webcore.RComponent
 import webcore.extensions.findParent
 import webcore.extensions.launch
-import webcore.materialUI.*
+import webcore.setState
+import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
 data class LanguageState(
@@ -32,12 +42,11 @@ data class RouteContext(val pushRoute: (AppRoute) -> Unit)
 
 val languageContext = createContext(LanguageState(MbLocalizedStringConfig.selectedLanguage) {})
 val routeContext = createContext<RouteContext>()
+val themeContext = createContext<Theme>()
 
-interface AppProps : RProps {
-  var classes: AppClasses
-}
+external interface AppProps : Props
 
-interface AppState : RState {
+external interface AppState : State {
   var userData: UserData?
   var loadingUserData: Boolean
   var currentAppRoute: AppRoute
@@ -45,7 +54,7 @@ interface AppState : RState {
   var activeLanguage: MbLocalizedStringConfig.SupportedLanguage
 }
 
-class App : RComponent<AppProps, AppState>() {
+private class App : RComponent<AppProps, AppState>() {
 
   private val checkInSideDrawerItems: List<SideDrawerItem>
     get() {
@@ -53,12 +62,12 @@ class App : RComponent<AppProps, AppState>() {
         listOf(
           SideDrawerItem(
             label = Url.ACCESS_MANAGEMENT_LIST.title,
-            icon = lockOpenIcon,
+            icon = LockOpen,
             url = Url.ACCESS_MANAGEMENT_LIST
           ),
           SideDrawerItem(
             label = Url.GUEST_CHECK_IN.title,
-            icon = contactMailIcon,
+            icon = ContactMail,
             url = Url.GUEST_CHECK_IN
           )
         )
@@ -74,14 +83,14 @@ class App : RComponent<AppProps, AppState>() {
       if (state.userData?.clientUser?.canEditLocations == true || state.userData?.clientUser?.canViewCheckIns == true) {
         items += SideDrawerItem(
           label = Url.LOCATIONS_LIST.title,
-          icon = meetingRoomIcon,
+          icon = MeetingRoom,
           url = Url.LOCATIONS_LIST
         )
       }
       if (state.userData?.clientUser?.canViewCheckIns == true) {
         items += SideDrawerItem(
           label = Url.REPORT.title,
-          icon = blurCircularIcon,
+          icon = BlurCircular,
           url = Url.REPORT
         )
       }
@@ -95,12 +104,12 @@ class App : RComponent<AppProps, AppState>() {
         listOf(
           SideDrawerItem(
             label = Url.USERS.title,
-            icon = peopleIcon,
+            icon = People,
             url = Url.USERS
           ),
           SideDrawerItem(
             label = Url.ADMIN_INFO.title,
-            icon = infoIcon,
+            icon = Info,
             url = Url.ADMIN_INFO
           ),
         )
@@ -222,27 +231,22 @@ class App : RComponent<AppProps, AppState>() {
     }
   }
 
-  private val theme = createTheme(js {
-    this.typography = js {
+  private val theme = createTheme(jso {
+
+    typography = jso {
       useNextVariants = true
     }
-    palette = js {
-
-      // White
-      default = js {
-        main = ColorPalette.default
-      }
-
-      primary = js {
+    palette = jso {
+      primary = jso {
         main = ColorPalette.primaryColor
         contrastText = "#fff"
       }
 
-      secondary = js {
+      secondary = jso {
         main = ColorPalette.secondaryColor
       }
 
-      affirmative = js {
+      success = jso {
         main = "#41d856"
         contrastText = "#fff"
       }
@@ -250,22 +254,27 @@ class App : RComponent<AppProps, AppState>() {
     }
   })
 
-  private fun RBuilder.renderViewContent() {
+  private fun ChildrenBuilder.renderViewContent() {
     if (state.userData == null) {
       if (state.loadingUserData) {
-        div(this@App.props.classes.verticalCentered) {
-          centeredProgress()
+        Box {
+          sx {
+            display = Display.flex
+            minHeight = 100.vh
+            flexDirection = FlexDirection.column
+          }
+          centeredProgress {}
         }
       } else {
         networkErrorView()
       }
     } else {
-      renderAppContent(
-        AppContentProps.Config(
+      renderAppContent {
+        config = AppContentConfig(
           currentAppRoute = state.currentAppRoute,
           userData = state.userData
         )
-      )
+      }
     }
   }
 
@@ -276,55 +285,50 @@ class App : RComponent<AppProps, AppState>() {
     MbLocalizedStringConfig.selectedLanguage = newLang
   }
 
-  override fun RBuilder.render() {
+  override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "white"
-    muiThemeProvider {
-      attrs.theme = theme
+    ThemeProvider {
+      this.theme = this@App.theme
       routeContext.Provider(RouteContext(::pushAppRoute)) {
         languageContext.Provider(LanguageState(state.activeLanguage, ::onLangChange)) {
-          // Render content without side drawer and toolbar, if no shell option is activated via url hash
-          if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
-            renderViewContent()
-          } else {
-            appShell {
-              attrs.appBarElevation = 0
-              attrs.mobileNavOpen = state.mobileNavOpen
-              attrs.smallToolbar = true
-              attrs.stickyNavigation = true
-              attrs.viewContent = {
-                renderViewContent()
-              }
-              attrs.drawerList = {
-                renderAppDrawerItems(AppDrawerItemsProps.Config(
-                  userData = state.userData,
-                  currentAppRoute = state.currentAppRoute,
-                  checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
-                  moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
-                  adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
-                  loading = false,
-                  onCloseMobileNav = {
-                    setState { mobileNavOpen = false }
-                  }
-                ))
+          themeContext.Provider(this@App.theme) {
+            // Render content without side drawer and toolbar, if no shell option is activated via url hash
+            if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
+              renderViewContent()
+            } else {
+              appShell {
+                config = AppShellConfig(
+                  appBarElevation = 0,
+                  mobileNavOpen = state.mobileNavOpen,
+                  smallToolbar = true,
+                  stickyNavigation = true,
+                  viewContent = {
+                    renderViewContent()
+                  },
+                  drawerList = {
+                    renderAppDrawerItems {
+                      config = AppDrawerItemsConfig(
+                        userData = state.userData,
+                        currentAppRoute = state.currentAppRoute,
+                        checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
+                        moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
+                        adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
+                        loading = false,
+                        onCloseMobileNav = {
+                          setState { mobileNavOpen = false }
+                        }
+                      )
+                    }
+                  },
+                  toolbarIcon = null,
+                  hideDrawer = false,
+                  themeColor = this@App.theme.palette.primary.main,
+                )
               }
             }
           }
         }
       }
-    }
-  }
-}
-
-interface AppClasses : RProps {
-  var verticalCentered: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    verticalCentered = js {
-      display = "flex"
-      minHeight = "100vh"
-      flexDirection = "column"
     }
   }
 }
@@ -343,6 +347,8 @@ object GlobalCss {
   const val fullWidth = "fullWidth"
 }
 
-private val styledApp = withStyles<AppProps, App>(styles = style)
-
-fun RBuilder.app() = styledApp {}
+fun ChildrenBuilder.app(handler: AppProps.() -> Unit = {}) {
+  App::class.react {
+    +jso(handler)
+  }
+}

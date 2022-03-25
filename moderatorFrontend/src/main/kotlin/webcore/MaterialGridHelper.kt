@@ -2,37 +2,42 @@
 
 package webcore
 
-import react.RBuilder
-import react.dom.div
-import react.dom.jsStyle
-import react.dom.span
-import webcore.materialUI.grid
+import csstype.*
+import mui.material.Box
+import mui.material.Grid
+import mui.material.GridDirection
+import mui.system.ResponsiveStyleValue
+import mui.system.sx
+import react.ChildrenBuilder
+import react.dom.html.ReactHTML.span
 
-fun RBuilder.gridContainer(
+fun ChildrenBuilder.gridContainer(
   direction: GridDirection,
-  rowGravity: ItemsGravity = ItemsGravity.START, // used when direction == ROW
-  columnGravity: ItemsGravity = ItemsGravity.START, // used when direction == COLUMN
+  rowGravity: JustifyContent = JustifyContent.start, // used when direction == ROW
+  columnGravity: AlignContent = AlignContent.start, // used when direction == COLUMN
   spacing: Int = 1,
-  alignItems: String = "baseline",
+  alignItems: AlignItems = AlignItems.baseline,
   containerStyle: String? = null,
-  items: RBuilder.() -> Unit
+  items: ChildrenBuilder.() -> Unit
 ) {
-  grid {
-    attrs.className = containerStyle
-    attrs.container = true
-    attrs.item = false
-    attrs.alignContent = columnGravity.value
-    attrs.justifyContent = rowGravity.value
-    attrs.direction = direction.value
-    attrs.alignItems = alignItems
-    attrs.spacing = spacing
+  Grid {
+    sx {
+      this.alignItems = alignItems
+      alignContent = columnGravity
+      justifyContent = rowGravity
+    }
+    containerStyle?.let { className = ClassName(it) }
+    container = true
+    item = false
+    this.direction = ResponsiveStyleValue(direction)
+    this.spacing = ResponsiveStyleValue(spacing)
     items()
   }
 }
 
 
 /**
- * must called inside a gridContainer
+ * Must be called inside a gridContainer
  * @param size configure how much columns this item will take from its parent container
  * @param item used to override how item is positioned within the container or to align item's children
  * example style: {
@@ -40,23 +45,22 @@ fun RBuilder.gridContainer(
  *     textAlign = "center" || "start" etc.                 // align items within the grid items
  * }
  */
-fun RBuilder.gridItem(
+fun ChildrenBuilder.gridItem(
   size: GridSize = GridSize(xs = false),
   className: String? = null,
-  item: RBuilder.() -> Unit
+  item: ChildrenBuilder.() -> Unit
 ) {
-  grid {
-    attrs.className = className
-    attrs.item = true
-    size.xs?.let { attrs.xs = it }
-    size.sm?.let { attrs.sm = it }
-    size.md?.let { attrs.md = it }
-    size.lg?.let { attrs.lg = it }
-    size.xl?.let { attrs.xl = it }
+  Grid {
+    className?.let { this.className = ClassName(it) }
+    this.item = true
+    size.xs?.let { xs = it }
+    size.sm?.let { sm = it }
+    size.md?.let { md = it }
+    size.lg?.let { lg = it }
+    size.xl?.let { xl = it }
     item()
   }
 }
-
 
 /**
  * Configure grid container/item sizes for each screen size
@@ -74,38 +78,19 @@ data class GridSize(
   val xl: Any? = null
 )
 
-enum class GridDirection(val value: String) {
-  ROW("row"),
-  REVERSED_ROW("row-reverse"),
-  COLUMN("column")
-}
-
-/**
- * ItemsGravity is representation of justify-content and align-content css property
- * only values which make sense is currently added.
- * feel free to add more values if needed :)
- */
-enum class ItemsGravity(val value: String) {
-  END("flex-end"),
-  START("flex-start"),
-  CENTER("center"),
-  STRETCH("stretch"),
-  SPACE_BETWEEN("space-between")
-}
-
-
-fun RBuilder.horizontalMargin(margin: Int) {
-  span {
-    attrs.jsStyle {
-      marginRight = margin
+fun ChildrenBuilder.horizontalMargin(margin: Int) {
+  Box {
+    component = span
+    sx {
+      marginRight = margin.px
     }
   }
 }
 
-fun RBuilder.verticalMargin(margin: Int) {
-  div {
-    attrs.jsStyle {
-      marginBottom = margin
+fun ChildrenBuilder.verticalMargin(margin: Int) {
+  Box {
+    sx {
+      marginBottom = margin.px
     }
   }
 }

@@ -2,39 +2,39 @@ package views.login
 
 import com.studo.campusqr.common.LoginResult
 import com.studo.campusqr.common.payloads.MailLoginData
-import kotlinext.js.js
+import csstype.PropertiesBuilder
+import csstype.TextAlign
+import csstype.px
 import kotlinx.browser.document
-import kotlinx.html.js.onSubmitFunction
-import org.w3c.dom.events.Event
-import react.RBuilder
-import react.RProps
-import react.RState
-import react.dom.div
-import react.dom.form
-import react.setState
+import kotlinx.js.jso
+import mui.material.*
+import mui.system.sx
+import org.w3c.dom.HTMLElement
+import react.*
+import react.dom.events.ChangeEvent
+import react.dom.html.InputType
+import react.dom.html.ReactHTML.form
 import util.Strings
 import util.apiBase
 import util.get
 import views.common.spacer
 import webcore.NetworkManager
-import webcore.extensions.inputValue
 import webcore.extensions.launch
-import webcore.materialUI.textField
-import webcore.materialUI.typography
-import webcore.materialUI.withStyles
+import webcore.invoke
+import webcore.setState
+import webcore.value
 
-interface MailLoginProps : RProps {
-  var classes: MailLoginClasses
-}
+external interface MailLoginProps : Props
 
-interface MailLoginState : RState {
+external interface MailLoginState : State {
   var email: String
   var password: String
   var networkRequestInProgress: Boolean
   var errorMessage: String?
 }
 
-class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
+@Suppress("UPPER_BOUND_VIOLATED")
+private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
   override fun MailLoginState.init() {
     email = ""
     password = ""
@@ -73,56 +73,64 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
     }
   }
 
-  override fun RBuilder.render() {
-    typography {
-      attrs.className = props.classes.description
-      attrs.variant = "body1"
+  override fun ChildrenBuilder.render() {
+    Typography {
+      sx {
+        description()
+      }
+      variant = "body1"
       +Strings.login_email_form_body.get()
     }
 
     form {
-      attrs.onSubmitFunction = { event ->
+      onSubmit = { event ->
         event.preventDefault()
         event.stopPropagation()
         login()
       }
-      div(props.classes.inputWrapper) {
-        textField {
-          attrs.fullWidth = true
-          attrs.label = Strings.email_address.get()
-          attrs.onChange = { event: Event ->
-            val value = event.inputValue
+      Box {
+        sx {
+          padding = 16.px
+        }
+        TextField<StandardTextFieldProps> {
+          fullWidth = true
+          label = ReactNode(Strings.email_address.get())
+          onChange = { event: ChangeEvent<HTMLElement> ->
             setState {
-              email = value
+              email = event.target.value
               errorMessage = null
             }
           }
-          attrs.value = state.email
+          variant = FormControlVariant.standard()
+          value = state.email
         }
         spacer()
-        textField {
-          attrs.fullWidth = true
-          attrs.type = "password"
-          attrs.label = Strings.login_email_form_pw_label.get()
-          attrs.onChange = { event: Event ->
-            val value = event.inputValue
+        TextField<StandardTextFieldProps> {
+          fullWidth = true
+          type = InputType.password
+          label = ReactNode(Strings.login_email_form_pw_label.get())
+          onChange = { event: dynamic ->
+            val value = event.target.value
             setState {
               password = value
               errorMessage = null
             }
           }
-          attrs.value = state.password
+          variant = FormControlVariant.standard()
+          value = state.password
         }
         state.errorMessage?.let { errorMessage ->
-          typography {
-            attrs.variant = "body1"
-            attrs.className = props.classes.description
+          Typography {
+            variant = "body1"
+            sx {
+              description()
+            }
             +errorMessage
           }
         }
         spacer(32)
-        renderLoginNavigationButtonsView(
-          LoginNavigationButtonsViewProps.Config(
+        renderLoginNavigationButtonsView {
+          config = LoginNavigationButtonsViewConfig(
             networkRequestInProgress = state.networkRequestInProgress,
             backEnabled = false,
             nextButtonText = Strings.login_login_button.get(),
@@ -131,40 +139,27 @@ class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>() {
               login()
             }
           )
-        )
+        }
       }
     }
-    div(props.classes.description) {
-      typography {
+    Box {
+      sx {
+        description()
+      }
+      Typography {
         +Strings.login_forgot_pw_text.get()
       }
     }
   }
-}
 
-interface MailLoginClasses {
-  var inputWrapper: String
-  var description: String
-  var link: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    inputWrapper = js {
-      padding = 16
-    }
-    description = js {
-      textAlign = "center"
-      padding = 16
-    }
-    link = js {
-      color = "white"
-    }
+  private fun PropertiesBuilder.description() {
+    textAlign = TextAlign.center
+    padding = 16.px
   }
 }
 
-private val styled = withStyles<MailLoginProps, MailLogin>(style)
-
-fun RBuilder.renderMailLogin() = styled {
+fun ChildrenBuilder.renderMailLogin(handler: MailLoginProps.() -> Unit = {}) {
+  MailLogin::class.react {
+    +jso(handler)
+  }
 }
-  

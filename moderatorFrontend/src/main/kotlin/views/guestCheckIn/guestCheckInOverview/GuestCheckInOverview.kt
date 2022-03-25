@@ -1,32 +1,31 @@
 package views.guestCheckIn.guestCheckInOverview
 
 import com.studo.campusqr.common.payloads.ActiveCheckIn
-import react.*
+import kotlinx.js.jso
+import mui.material.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.react
 import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
-import views.guestCheckIn.AddGuestCheckInProps
+import views.guestCheckIn.AddGuestCheckInConfig
 import views.guestCheckIn.renderAddGuestCheckIn
-import webcore.MbSnackbarProps
-import webcore.NetworkManager
+import webcore.*
 import webcore.extensions.launch
-import webcore.materialUI.*
-import webcore.mbMaterialDialog
-import webcore.mbSnackbar
 
-interface GuestCheckinOverviewProps : RProps {
-  var classes: GuestCheckInOverviewClasses
-}
+external interface GuestCheckinOverviewProps : Props
 
-interface GuestCheckInOverviewState : RState {
+external interface GuestCheckInOverviewState : State {
   var activeGuestCheckIns: List<ActiveCheckIn>?
   var showAddGuestCheckInDialog: Boolean
   var loadingCheckInList: Boolean
   var snackbarText: String
 }
 
-class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInOverviewState>() {
+private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInOverviewState>() {
 
   override fun GuestCheckInOverviewState.init() {
     activeGuestCheckIns = emptyList()
@@ -52,74 +51,79 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
     fetchActiveGuestCheckIns()
   }
 
-  private fun RBuilder.renderAddGuestCheckInDialog() = mbMaterialDialog(
-    show = state.showAddGuestCheckInDialog,
-    title = Strings.guest_checkin_add_guest.get(),
-    customContent = {
-      renderAddGuestCheckIn(
-        AddGuestCheckInProps.Config(
-          onGuestCheckedIn = {
-            setState { showAddGuestCheckInDialog = false }
-            fetchActiveGuestCheckIns()
-          },
-          onShowSnackbar = { text ->
-            setState {
-              snackbarText = text
+  private fun ChildrenBuilder.renderAddGuestCheckInDialog() = mbMaterialDialog(handler = {
+    config = MbMaterialDialogConfig(
+      show = state.showAddGuestCheckInDialog,
+      title = Strings.guest_checkin_add_guest.get(),
+      customContent = {
+        renderAddGuestCheckIn {
+          config = AddGuestCheckInConfig(
+            onGuestCheckedIn = {
+              setState { showAddGuestCheckInDialog = false }
+              fetchActiveGuestCheckIns()
+            },
+            onShowSnackbar = { text ->
+              setState {
+                snackbarText = text
+              }
             }
-          }
-        )
-      )
-    },
-    buttons = null,
-    onClose = {
-      setState {
-        showAddGuestCheckInDialog = false
+          )
+        }
+      },
+      buttons = null,
+      onClose = {
+        setState {
+          showAddGuestCheckInDialog = false
+        }
       }
-    }
-  )
+    )
+  })
 
-  private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(
+  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar {
+    config = MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
       onClose = {
         setState { snackbarText = "" }
-      })
-  )
+      }
+    )
+  }
 
-  override fun RBuilder.render() {
+  override fun ChildrenBuilder.render() {
     renderSnackbar()
     renderAddGuestCheckInDialog()
-    renderToolbarView(ToolbarViewProps.Config(
-      title = Strings.guest_checkin.get(),
-      buttons = listOf(
-        ToolbarViewProps.ToolbarButton(
-          text = Strings.guest_checkin_add_guest.get(),
-          variant = "contained",
-          onClick = {
-            setState {
-              showAddGuestCheckInDialog = true
+    renderToolbarView {
+      config = ToolbarViewConfig(
+        title = Strings.guest_checkin.get(),
+        buttons = listOf(
+          ToolbarButton(
+            text = Strings.guest_checkin_add_guest.get(),
+            variant = ButtonVariant.contained,
+            onClick = {
+              setState {
+                showAddGuestCheckInDialog = true
+              }
             }
-          }
+          )
         )
       )
-    ))
-    renderLinearProgress(state.loadingCheckInList)
+    }
+    renderMbLinearProgress { show = state.loadingCheckInList }
 
     when {
-      state.activeGuestCheckIns?.isNotEmpty() == true -> mTable {
-        mTableHead {
-          mTableRow {
-            mTableCell { +Strings.location_name.get() }
-            mTableCell { +Strings.email_address.get() }
-            mTableCell { +Strings.report_checkin_seat.get() }
-            mTableCell { }
+      state.activeGuestCheckIns?.isNotEmpty() == true -> Table {
+        TableHead {
+          TableRow {
+            TableCell { +Strings.location_name.get() }
+            TableCell { +Strings.email_address.get() }
+            TableCell { +Strings.report_checkin_seat.get() }
+            TableCell { }
           }
         }
-        mTableBody {
+        TableBody {
           state.activeGuestCheckIns!!.forEach { activeCheckIn ->
-            renderGuestCheckIntRow(
-              GuestCheckInRowProps.Config(
+            renderGuestCheckIntRow {
+              config = GuestCheckInRowConfig(
                 activeCheckIn,
                 onCheckedOut = {
                   fetchActiveGuestCheckIns()
@@ -129,27 +133,21 @@ class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInO
                   setState { snackbarText = text }
                 }
               )
-            )
+            }
           }
         }
       }
       state.activeGuestCheckIns == null && !state.loadingCheckInList -> networkErrorView()
-      !state.loadingCheckInList -> genericErrorView(
-        Strings.guest_checkin_not_yet_added_title.get(),
-        Strings.guest_checkin_not_yet_added_subtitle.get()
-      )
+      !state.loadingCheckInList -> genericErrorView {
+        title = Strings.guest_checkin_not_yet_added_title.get()
+        subtitle = Strings.guest_checkin_not_yet_added_subtitle.get()
+      }
     }
   }
 }
 
-interface GuestCheckInOverviewClasses
-
-private val style = { _: dynamic ->
+fun ChildrenBuilder.renderGuestCheckInOverview(handler: GuestCheckinOverviewProps.() -> Unit = {}) {
+  GuestCheckInOverview::class.react {
+    +jso(handler)
+  }
 }
-
-private val styled = withStyles<GuestCheckinOverviewProps, GuestCheckInOverview>(style)
-
-fun RBuilder.renderGuestCheckInOverview() = styled {
-  // Set component attrs here
-}
-  

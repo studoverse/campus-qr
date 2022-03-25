@@ -1,88 +1,88 @@
 package webcore.shell
 
-import kotlinext.js.js
-import kotlinx.html.DIV
+import app.themeContext
+import csstype.*
+import kotlinx.js.jso
+import mui.material.Box
+import mui.system.Breakpoint
+import mui.system.sx
 import react.*
-import react.dom.RDOMBuilder
-import react.dom.div
-import webcore.materialUI.DrawerProps
-import webcore.materialUI.ToolbarProps
-import webcore.materialUI.withStyles
+import webcore.RComponent
 
-interface AppShellProps : RProps {
-  var drawerList: RElementBuilder<DrawerProps>.() -> Unit
-  var viewContent: RDOMBuilder<DIV>.() -> Unit
-  var toolbarIcon: (RElementBuilder<ToolbarProps>.() -> Unit)?
-  var themeColor: String
-  var theme: dynamic
-  var classes: dynamic
-  var hideDrawer: Boolean
-  var smallToolbar: Boolean
-  var mobileNavOpen: Boolean
-  var appBarElevation: Int?
-  var stickyNavigation: Boolean
+class AppShellConfig(
+  var drawerList: ChildrenBuilder.() -> Unit,
+  var viewContent: ChildrenBuilder.() -> Unit,
+  var toolbarIcon: (ChildrenBuilder.() -> Unit)?,
+  var themeColor: String,
+  var hideDrawer: Boolean,
+  var smallToolbar: Boolean,
+  var mobileNavOpen: Boolean,
+  var appBarElevation: Int?,
+  var stickyNavigation: Boolean,
+)
+
+external interface AppShellProps : Props {
+  var config: AppShellConfig
 }
 
-interface AppShellState : RState
+external interface AppShellState : State
 
 class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(props) {
 
-  override fun RBuilder.render() {
+  override fun ChildrenBuilder.render() {
+    themeContext.Consumer {
+      children = { theme ->
+        Fragment.create {
+          renderAppShellDrawer {
+            config = AppShellDrawerConfig(
+              props.config.mobileNavOpen,
+              props.config.hideDrawer,
+              props.config.drawerList,
+              props.config.toolbarIcon,
+              props.config.themeColor,
+              props.config.smallToolbar,
+              props.config.stickyNavigation,
+              props.config.appBarElevation
+            )
+          }
 
-    renderAppShellDrawer(
-      AppShellDrawerProps.Config(
-        props.mobileNavOpen,
-        props.hideDrawer,
-        props.drawerList,
-        props.toolbarIcon,
-        props.themeColor,
-        props.smallToolbar,
-        props.stickyNavigation,
-        props.appBarElevation
-      )
-    )
 
-    val contentClasses = "${props.classes.content}" +
-        (if (!props.hideDrawer) " ${props.classes.drawerWidthMargin}" else "") +
-        (if (props.smallToolbar) " ${props.classes.contentWithSmallToolbar}" else " ${props.classes.contentWithNormalToolbar}")
-    div(classes = contentClasses) {
-      props.viewContent(this)
-    }
-  }
-}
+          Box {
+            sx {
+              (theme.breakpoints.only(Breakpoint.sm)) {
+                minHeight = 100.vh - 64.px
+              }
+              (theme.breakpoints.only(Breakpoint.xs)) {
+                minHeight = 100.vh - 56.px
+              }
+              margin = Margin(vertical = 0.px, horizontal = Auto.auto)
+              display = Display.flex
+              flexDirection = FlexDirection.column
 
-private val styles: (dynamic) -> dynamic = { theme ->
-  js {
-    content = js {
-      this[arrayOf(theme.breakpoints.only("sm"))] = js {
-        this["min-height"] = "calc(100vh - 64px)"
-      }
-      this[arrayOf(theme.breakpoints.only("xs"))] = js {
-        this["min-height"] = "calc(100vh - 56px)"
-      }
-      margin = "0 auto"
-      display = "flex"
-      this["flex-direction"] = "column"
-    }
+              (theme.breakpoints.up(Breakpoint.md)) {
+                if (!props.config.hideDrawer) {
+                  marginLeft = drawerWidth.px
+                }
 
-    contentWithNormalToolbar = js {
-      this[arrayOf(theme.breakpoints.up("md"))] = js {
-        this["min-height"] = "calc(100vh - 64px)"
-      }
-    }
-
-    contentWithSmallToolbar = js {
-      this[arrayOf(theme.breakpoints.up("md"))] = js {
-        this["min-height"] = "calc(100vh - 12px)"
-      }
-    }
-
-    drawerWidthMargin = js {
-      this[arrayOf(theme.breakpoints.up("md"))] = js {
-        marginLeft = drawerWidth
+                if (props.config.smallToolbar) {
+                  minHeight = 100.vh - 12.px
+                  marginLeft = drawerWidth.px
+                } else {
+                  minHeight = 100.vh - 64.px
+                  marginLeft = drawerWidth.px
+                }
+              }
+            }
+            props.config.viewContent(this)
+          }
+        }
       }
     }
   }
 }
 
-val appShell: RClass<AppShellProps> = withStyles<AppShellProps, AppShell>(styles, options = js { withTheme = true })
+fun ChildrenBuilder.appShell(handler: AppShellProps.() -> Unit) {
+  AppShell::class.react {
+    +jso(handler)
+  }
+}

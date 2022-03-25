@@ -1,15 +1,25 @@
 package views.common
 
-import kotlinx.html.DIV
-import react.RBuilder
-import react.ReactElement
-import react.dom.RDOMBuilder
-import react.dom.div
-import react.dom.jsStyle
+import csstype.ClassName
+import csstype.px
+import mui.material.Box
+import mui.system.sx
+import react.ChildrenBuilder
 
-fun RBuilder.container(block: RDOMBuilder<DIV>.() -> Unit): ReactElement =
-  div(classes = "genericContainer", block = block)
+fun ChildrenBuilder.container(block: ChildrenBuilder.() -> Unit): Unit =
+  Box {
+    className = ClassName("genericContainer")
+    block(this)
+  }
 
-fun RBuilder.spacer(size: Int = 8) = div { attrs.jsStyle { height = size } }
+fun ChildrenBuilder.spacer(size: Int = 8) = Box {
+  sx {
+    height = size.px
+  }
+}
 
-fun RBuilder.horizontalSpacer(size: Int = 8) = div { attrs.jsStyle { width = size } }
+fun ChildrenBuilder.horizontalSpacer(size: Int = 8) = Box {
+  sx {
+    width = size.px
+  }
+}

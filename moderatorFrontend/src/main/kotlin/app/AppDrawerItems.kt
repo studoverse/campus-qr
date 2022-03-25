@@ -2,63 +2,72 @@ package app
 
 import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.common.utils.LocalizedString
-import kotlinext.js.js
-import kotlinx.html.js.onClickFunction
-import org.w3c.dom.events.Event
-import react.*
-import react.dom.a
-import react.dom.div
-import react.dom.jsStyle
+import csstype.*
+import kotlinx.js.jso
+import mui.icons.material.Person
+import mui.icons.material.SvgIconComponent
+import mui.material.*
+import mui.system.sx
+import org.w3c.dom.HTMLAnchorElement
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.dom.events.MouseEvent
+import react.dom.html.AnchorTarget
+import react.dom.html.ReactHTML.a
+import react.react
 import util.AppRoute
 import util.Strings
 import util.Url
 import util.get
 import views.common.spacer
 import views.settings.renderSettings
+import webcore.LogoBadgeConfig
+import webcore.RComponent
 import webcore.logoBadge
-import webcore.materialUI.*
 
 class SideDrawerItem(
   val label: LocalizedString,
   val url: Url,
-  val icon: RClass<IconProps>
+  val icon: SvgIconComponent
 )
 
-interface AppDrawerItemsProps : RProps {
-  class Config(
-    val userData: UserData?,
-    val currentAppRoute: AppRoute?,
-    val loading: Boolean,
-    val checkInSideDrawerItems: List<SideDrawerItem>,
-    val moderatorSideDrawerItems: List<SideDrawerItem>,
-    val adminSideDrawerItems: List<SideDrawerItem>,
-    val onCloseMobileNav: () -> Unit
-  )
+class AppDrawerItemsConfig(
+  val userData: UserData?,
+  val currentAppRoute: AppRoute?,
+  val loading: Boolean,
+  val checkInSideDrawerItems: List<SideDrawerItem>,
+  val moderatorSideDrawerItems: List<SideDrawerItem>,
+  val adminSideDrawerItems: List<SideDrawerItem>,
+  val onCloseMobileNav: () -> Unit
+)
 
-  var config: Config
-  var classes: AppDrawerClasses
+external interface AppDrawerItemsProps : Props {
+  var config: AppDrawerItemsConfig
 }
 
-interface AppDrawerItemsState : RState
+external interface AppDrawerItemsState : State
 
-class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
-  override fun RBuilder.render() {
-    logoBadge(
-      logoUrl = "$baseUrl/static/images/logo_campusqr.png",
-      logoAlt = "Campus QR",
-      badgeTitle = props.config.userData?.appName ?: "",
-      badgeSubtitle = props.config.userData?.clientUser?.name ?: ""
-    )
+private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
+  override fun ChildrenBuilder.render() {
+    logoBadge {
+      config = LogoBadgeConfig(
+        logoUrl = "$baseUrl/static/images/logo_campusqr.png",
+        logoAlt = "Campus QR",
+        badgeTitle = props.config.userData?.appName ?: "",
+        badgeSubtitle = props.config.userData?.clientUser?.name ?: ""
+      )
+    }
 
     if (props.config.loading) {
-      linearProgress {}
+      LinearProgress {}
     }
 
     fun drawerListItem(
       label: String,
       url: String? = null,
-      onClick: ((event: Event) -> Unit)? = null,
-      icon: RClass<IconProps>? = null,
+      onClick: ((event: MouseEvent<HTMLAnchorElement, *>) -> Unit)? = null,
+      icon: SvgIconComponent? = null,
       selected: Boolean = false,
       openInNewTab: Boolean = false,
       showLoadingIndicator: Boolean = false
@@ -67,31 +76,38 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
         throw IllegalArgumentException("Either specify url or onClick")
       }
 
-      a(classes = props.classes.drawerLink) {
-        url?.let { url -> attrs.href = url }
-        onClick?.let { onClick ->
-          attrs.onClickFunction = { event ->
-            onClick(event)
+      Link {
+        component = a
+        sx {
+          textDecoration = important(None.none)
+          color = Color(ColorPalette.textDefault)
+        }
+        url?.let { url -> href = url }
+        onClick?.let { onClickEvent ->
+          this.onClick = { event ->
+            onClickEvent(event)
             props.config.onCloseMobileNav()
           }
         }
         if (openInNewTab) {
-          attrs.target = "_blank"
+          target = AnchorTarget._blank
         }
-        attrs.rel = "noopener"
-        listItem {
-          attrs.selected = selected
-          attrs.button = true
-          listItemIcon {
+        rel = "noopener"
+        ListItemButton {
+          this.selected = selected
+          ListItemIcon {
             if (showLoadingIndicator) {
-              circularProgress { attrs.size = "25px" }
+              CircularProgress { size = "25px" }
             } else {
-              icon?.invoke { }
+              icon?.invoke()
             }
           }
-          listItemText {
-            attrs.classes = js {
-              primary = props.classes.drawerItemText
+          ListItemText {
+            sx {
+              MuiListItemText.primary {
+                fontSize = 14.px
+                hyphens = Auto.auto
+              }
             }
             +label
               .replace("_", "_\u00ad") // Add soft hyphen after some gender-gap characters for long gendered words
@@ -105,7 +121,7 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
 
     fun drawerItems() {
       if (props.config.checkInSideDrawerItems.isNotEmpty()) {
-        listSubheader {
+        ListSubheader {
           +Strings.check_in.get()
         }
         props.config.checkInSideDrawerItems.forEach { sideDrawerItem ->
@@ -119,8 +135,8 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
       }
 
       if (props.config.moderatorSideDrawerItems.isNotEmpty()) {
-        divider {}
-        listSubheader {
+        Divider {}
+        ListSubheader {
           +Strings.user_type_moderator_action.get()
         }
         props.config.moderatorSideDrawerItems.forEach { sideDrawerItem ->
@@ -134,8 +150,8 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
       }
 
       if (props.config.adminSideDrawerItems.isNotEmpty()) {
-        divider {}
-        listSubheader {
+        Divider {}
+        ListSubheader {
           +Strings.user_type_admin_action.get()
         }
         props.config.adminSideDrawerItems.forEach { sideDrawerItem ->
@@ -149,56 +165,39 @@ class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
       }
 
       if (props.config.userData?.externalAuthProvider == false) {
-        divider {}
-        listSubheader {
+        Divider {}
+        ListSubheader {
           +Strings.other.get()
         }
         drawerListItem(
           label = Strings.account_settings.get(),
-          icon = personIcon,
+          icon = Person,
           selected = props.config.currentAppRoute?.url == Url.ACCOUNT_SETTINGS,
-          url = Url.ACCOUNT_SETTINGS.path
+          url = Url.ACCOUNT_SETTINGS.path,
         )
       }
     }
 
-    list {
-      attrs.disablePadding = true
+    mui.material.List {
+      disablePadding = true
 
       // Student specific features
       drawerItems()
     }
 
-    div {
-      attrs.jsStyle {
-        flex = "1"
+    Box {
+      sx {
+        flex = Flex(number(1.0), number(1.0), 0.px)
       }
     }
     renderSettings()
     spacer(16)
+
   }
 }
 
-interface AppDrawerClasses {
-  val drawerLink: String
-  val drawerItemText: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    drawerLink = js {
-      textDecoration = "none!important"
-      color = ColorPalette.textDefault
-    }
-    drawerItemText = js {
-      fontSize = "14px"
-      hyphens = "auto"
-    }
+fun ChildrenBuilder.renderAppDrawerItems(handler: AppDrawerItemsProps.() -> Unit) {
+  AppDrawerItems::class.react {
+    +jso(handler)
   }
-}
-
-private val styled = withStyles<AppDrawerItemsProps, AppDrawerItems>(style)
-
-fun RBuilder.renderAppDrawerItems(config: AppDrawerItemsProps.Config) = styled {
-  attrs.config = config
 }

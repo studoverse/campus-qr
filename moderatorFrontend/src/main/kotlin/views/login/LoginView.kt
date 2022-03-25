@@ -4,23 +4,24 @@ import app.ColorPalette
 import app.baseUrl
 import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.common.payloads.isAuthenticated
-import kotlinext.js.js
+import csstype.*
 import kotlinx.browser.document
 import kotlinx.browser.window
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.a
-import react.dom.div
-import react.dom.img
+import kotlinx.js.jso
+import mui.material.*
+import mui.system.sx
+import org.w3c.dom.HTMLImageElement
+import react.*
+import react.dom.html.ImgHTMLAttributes
+import react.dom.html.ReactHTML.a
+import react.dom.html.ReactHTML.div
+import react.dom.html.ReactHTML.img
 import util.Strings
 import util.get
 import views.login.LoginMode.EMAIL
-import webcore.materialUI.*
+import webcore.RComponent
 
-interface LoginViewProps : RProps {
-  var classes: LoginViewClasses
+external interface LoginViewProps : Props {
   var loginMode: LoginMode
   var userData: UserData
 }
@@ -29,27 +30,44 @@ enum class LoginMode {
   EMAIL
 }
 
-interface LoginViewState : RState
+external interface LoginViewState : State
 
-class LoginView : RComponent<LoginViewProps, LoginViewState>() {
+private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
 
-  override fun RBuilder.render() {
+  override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "#f2f2f2"
 
-    muiCard {
-      attrs.className = props.classes.cardOuter
-      muiCardHeader {
-        attrs.classes = js {
-          root = props.classes.cardHeader
+    Card {
+      sx {
+        maxWidth = 450.px
+        marginTop = 36.px
+        marginLeft = Auto.auto
+        marginRight = Auto.auto
+        marginBottom = 16.px
+      }
+      CardHeader {
+        sx {
+          padding = 0.px
+          background = Color("white")
         }
-        attrs.title = div {
-          img(classes = props.classes.logoImg) {
-            attrs.src = "$baseUrl/static/images/logo_campusqr.png"
-            attrs.alt = "Logo"
+        title = div.create {
+          Box {
+            component = img
+            sx {
+              display = Display.block
+              marginLeft = Auto.auto
+              marginRight = Auto.auto
+              marginTop = 36.px
+              height = Auto.auto
+              width = 100.px
+            }
+            this as ImgHTMLAttributes<HTMLImageElement>
+            src = "$baseUrl/static/images/logo_campusqr.png"
+            alt = "Logo"
           }
         }
       }
-      muiCardContent {
+      CardContent {
         div {
           when (props.loginMode) {
             EMAIL -> renderMailLogin()
@@ -57,62 +75,28 @@ class LoginView : RComponent<LoginViewProps, LoginViewState>() {
         }
       }
     }
-    typography {
-      attrs.className = props.classes.companyInfo
-      attrs.variant = "body2"
+    Typography {
+      sx {
+        textAlign = TextAlign.center
+        color = Color(ColorPalette.gray)
+      }
+      variant = "body2"
 
-      a(href = baseUrl) {
+      a {
+        href = baseUrl
         +Strings.login_info.get()
       }
     }
   }
 }
 
-interface LoginViewClasses {
-  var cardOuter: String
-  var cardHeader: String
-  var logoImg: String
-  var companyInfo: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    cardOuter = js {
-      maxWidth = 450
-      marginTop = 36
-      marginLeft = "auto"
-      marginRight = "auto"
-      marginBottom = 16
+fun ChildrenBuilder.renderLoginView(handler: LoginViewProps.() -> Unit) {
+  LoginView::class.react {
+    +jso(handler)
+    if (userData.isAuthenticated) {
+      // User is authenticated so redirect to main page
+      window.location.href = "/admin"
     }
-    cardHeader = js {
-      padding = 0
-      background = "white"
-    }
-    logoImg = js {
-      display = "block"
-      marginLeft = "auto"
-      marginRight = "auto"
-      marginTop = 36
-      height = "auto"
-      width = 100
-    }
-    companyInfo = js {
-      textAlign = "center"
-      color = ColorPalette.gray
-    }
-  }
-}
-
-private val styled = withStyles<LoginViewProps, LoginView>(style)
-
-fun RBuilder.renderLoginView(studoUserData: UserData, mode: LoginMode) = styled {
-  // Set component attrs here
-  attrs.loginMode = mode
-  attrs.userData = studoUserData
-
-  if (studoUserData.isAuthenticated) {
-    // User is authenticated so redirect to main page
-    window.location.href = "/admin"
   }
 }
   

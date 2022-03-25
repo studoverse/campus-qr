@@ -16,6 +16,7 @@ kotlin {
   js {
     useCommonJs()
     browser()
+    binaries.executable()
   }
 
   sourceSets {

@@ -11,21 +11,33 @@ repositories {
   mavenCentral()
 }
 
+fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
+val kotlinWrappersVersion = "0.0.1-pre.321-kotlin-1.6.10"
+
 kotlin {
+  // TODO: @mh Add incremental compilation when kotlin 1.6.20 is released (https://blog.jetbrains.com/kotlin/2022/02/kotlin-1-6-20-m1-released/)
   js {
     useCommonJs()
     browser()
+    binaries.executable()
   }
 }
 
 dependencies {
   implementation(kotlin("stdlib-js"))
   implementation(project(":common"))
+  implementation(enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
 
   api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
-  api("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.212-kotlin-1.5.10")
-  api("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.212-kotlin-1.5.10")
+  api(kotlinw("react"))
+  api(kotlinw("emotion"))
+  api(kotlinw("react-dom"))
+  api(kotlinw("mui"))
+  api(kotlinw("mui-icons"))
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+
+  implementation(npm("@emotion/react", "11.7.1"))
+  implementation(npm("@emotion/styled", "11.6.0"))
 
   // kotlinx-serialization + Ktor client
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
@@ -39,12 +51,7 @@ dependencies {
   api(npm("react", "17.0.2"))
   api(npm("react-dom", "17.0.2"))
 
-  api(npm("@material-ui/core", "4.12.2"))
-
-  // Needed for MuiAutocomplete. Can be removed if it gets merged into @material-ui/core
-  api(npm("@material-ui/lab", "4.0.0-alpha.60"))
-
-  api(npm("@material-ui/icons", "4.11.2"))
+  api(npm("@mui/material", "5.5.2"))
 
   api(npm("js-file-download", "0.4.12"))
 

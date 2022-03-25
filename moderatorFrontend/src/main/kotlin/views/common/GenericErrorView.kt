@@ -1,36 +1,47 @@
 package views.common
 
-import kotlinext.js.js
+import csstype.Auto
+import csstype.PropertiesBuilder
+import csstype.TextAlign
+import csstype.px
 import kotlinx.browser.window
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.code
-import react.dom.div
-import react.dom.span
+import kotlinx.js.jso
+import mui.material.Box
+import mui.material.Typography
+import mui.system.sx
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.dom.html.ReactHTML.code
+import react.dom.html.ReactHTML.span
+import react.react
 import util.Strings
 import util.get
-import webcore.materialUI.typography
-import webcore.materialUI.withStyles
+import webcore.RComponent
 
-interface GenericErrorViewProps : RProps {
+external interface GenericErrorViewProps : Props {
   var title: String
   var subtitle: String
-  var classes: PathNotFoundClasses
 }
 
-class PathNotFound : RComponent<GenericErrorViewProps, RState>() {
-  override fun RBuilder.render() {
-    div(props.classes.centeredDiv) {
-      typography {
-        attrs.className = props.classes.centeredText
-        attrs.variant = "h1"
+private class PathNotFound : RComponent<GenericErrorViewProps, State>() {
+  override fun ChildrenBuilder.render() {
+    Box {
+      sx {
+        margin = Auto.auto
+      }
+      Typography {
+        sx {
+          centeredText()
+        }
+        variant = "h1"
         +"404"
       }
-      typography {
-        attrs.className = props.classes.centeredText
-        attrs.variant = "body1"
+      Typography {
+        sx {
+          centeredText()
+        }
+        variant = "body1"
         +"Path \""
         span {
           code {
@@ -43,51 +54,51 @@ class PathNotFound : RComponent<GenericErrorViewProps, RState>() {
   }
 }
 
-class GenericErrorView : RComponent<GenericErrorViewProps, RState>() {
-  override fun RBuilder.render() {
-    div(props.classes.centeredDiv) {
-      typography {
-        attrs.className = props.classes.centeredText
-        attrs.variant = "h5"
+private class GenericErrorView : RComponent<GenericErrorViewProps, State>() {
+  override fun ChildrenBuilder.render() {
+    Box {
+      sx {
+        margin = Auto.auto
+      }
+      Typography {
+        sx {
+          centeredText()
+        }
+        variant = "h5"
         +props.title
       }
-      typography {
-        attrs.className = props.classes.centeredText
-        attrs.variant = "body1"
+      Typography {
+        sx {
+          centeredText()
+        }
+        variant = "body1"
         +props.subtitle
       }
     }
   }
 }
 
-interface PathNotFoundClasses {
-  var centeredText: String
-  var centeredDiv: String
+private fun PropertiesBuilder.centeredText() {
+  paddingLeft = 16.px
+  paddingRight = 16.px
+  textAlign = TextAlign.center
 }
 
-private val style = { _: dynamic ->
-  js {
-    centeredText = js {
-      paddingLeft = 16
-      paddingRight = 16
-      textAlign = "center"
-    }
-    centeredDiv = js {
-      margin = "auto"
-    }
+fun ChildrenBuilder.pathNotFoundView(handler: GenericErrorViewProps.() -> Unit) {
+  PathNotFound::class.react {
+    +jso(handler)
   }
 }
 
-private val styledPathNotFound = withStyles<GenericErrorViewProps, PathNotFound>(style)
-fun RBuilder.pathNotFoundView() = styledPathNotFound {}
-
-private val styledGenericError = withStyles<GenericErrorViewProps, GenericErrorView>(style)
-fun RBuilder.genericErrorView(title: String, subtitle: String) = styledGenericError {
-  attrs.title = title
-  attrs.subtitle = subtitle
+fun ChildrenBuilder.genericErrorView(handler: GenericErrorViewProps.() -> Unit) {
+  GenericErrorView::class.react {
+    +jso(handler)
+  }
 }
 
-fun RBuilder.networkErrorView() = genericErrorView(
-  title = Strings.network_error.get(),
-  subtitle = Strings.network_error_description.get()
-)
+fun ChildrenBuilder.networkErrorView() {
+  genericErrorView {
+    title = Strings.network_error.get()
+    subtitle = Strings.network_error_description.get()
+  }
+}

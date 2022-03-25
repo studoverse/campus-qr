@@ -1,54 +1,73 @@
 package views.adminInfo
 
-import kotlinext.js.js
+import csstype.Globals
+import csstype.PropertiesBuilder
+import csstype.px
 import kotlinx.browser.window
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.br
-import react.dom.div
+import kotlinx.js.jso
+import mui.material.Box
+import mui.material.Button
+import mui.material.ButtonColor
+import mui.material.Typography
+import mui.system.sx
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.dom.html.ReactHTML.br
+import react.react
 import util.Strings
 import util.get
 import views.common.spacer
-import webcore.materialUI.muiButton
-import webcore.materialUI.typography
-import webcore.materialUI.withStyles
+import webcore.RComponent
 
-interface AdminInfoProps : RProps {
-  var classes: AdminInfoClasses
-}
+external interface AdminInfoProps : Props
 
-interface AdminInfoState : RState
+external interface AdminInfoState : State
 
-class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
-  override fun RBuilder.render() {
-    div(classes = props.classes.container) {
-      typography {
-        attrs.className = props.classes.header
-        attrs.variant = "h5"
+private class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
+  override fun ChildrenBuilder.render() {
+    Box {
+      sx {
+        marginTop = 8.px
+        marginLeft = 16.px
+        marginRight = marginLeft
+        marginBottom = 32.px
+      }
+      Typography {
+        sx {
+          marginTop = 8.px
+          marginBottom = 16.px
+        }
+        variant = "h5"
         +Strings.admin_info.get()
       }
-      typography {
-        attrs.className = props.classes.subheader
-        attrs.variant = "h6"
+      Typography {
+        sx {
+          subheader()
+        }
+        variant = "h6"
         +Strings.user_sso_info.get()
       }
       +Strings.user_sso_info_details1.get()
       br {}
       +Strings.user_sso_info_details2.get()
-      typography {
-        attrs.className = props.classes.subheader
-        attrs.variant = "h6"
+      Typography {
+        sx {
+          subheader()
+        }
+        variant = "h6"
         +Strings.admin_info_configuration.get()
       }
       +Strings.admin_info_configuration_details.get()
       spacer(16)
-      div {
-        muiButton {
-          attrs.className = props.classes.contactButton
-          attrs.color = "primary"
-          attrs.onClick = {
+      Box {
+        Button {
+          sx {
+            textTransform = Globals.initial
+            marginLeft = (-8).px
+          }
+          color = ButtonColor.primary
+          onClick = {
             window.open("https://studo.com", "_blank")
           }
           +Strings.more_about_studo.get()
@@ -56,41 +75,16 @@ class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
       }
     }
   }
-}
 
-interface AdminInfoClasses {
-  var header: String
-  var subheader: String
-  var contactButton: String
-  var container: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    header = js {
-      marginTop = 8
-      marginBottom = 16
-    }
-    subheader = js {
-      marginTop = 8
-      marginBottom = 8
-    }
-    contactButton = js {
-      textTransform = "initial"
-      marginLeft = -8
-    }
-    container = js {
-      marginTop = 8
-      marginLeft = 16
-      marginRight = marginLeft
-      marginBottom = 32
-    }
+  fun PropertiesBuilder.subheader() {
+    marginTop = 8.px
+    marginBottom = 8.px
   }
 }
 
-private val styled = withStyles<AdminInfoProps, AdminInfo>(style)
-
-fun RBuilder.renderAdminInfo() = styled {
-  // Set component attrs here
+fun ChildrenBuilder.renderAdminInfo(handler: AdminInfoProps.() -> Unit = {}) {
+  AdminInfo::class.react {
+    +jso(handler)
+  }
 }
   

@@ -1,33 +1,51 @@
 package webcore
 
-import kotlinext.js.js
+import csstype.px
+import kotlinx.js.jso
+import mui.icons.material.MoreVert
+import mui.icons.material.SvgIconComponent
+import mui.material.IconButton
+import mui.material.ListItemIcon
+import mui.material.Menu
+import mui.material.MenuItem
+import mui.system.sx
+import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
-import react.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.dom.aria.AriaHasPopup
+import react.dom.aria.ariaHasPopup
+import react.dom.aria.ariaLabel
+import react.dom.aria.ariaOwns
+import react.react
 import webcore.extensions.randomNumberString
-import webcore.materialUI.*
 import kotlin.random.Random
 
 class MenuItem(
   val text: String,
   val enabled: Boolean = true,
-  val icon: RClass<IconProps>? = null,
+  val icon: SvgIconComponent? = null,
   val onClick: () -> Unit
 )
 
-interface MaterialMenuProps : RProps {
-  var classes: dynamic
-  var className: String
-  var fontSize: String?
-  var menuItems: List<MenuItem>
+class MaterialMenuConfig(
+  var className: String = "",
+  var fontSize: String? = null,
+  var menuItems: List<MenuItem>,
+)
+
+external interface MaterialMenuProps : Props {
+  var config: MaterialMenuConfig
 }
 
-interface MaterialMenuState : RState {
+external interface MaterialMenuState : State {
   var open: Boolean
   var anchorEl: EventTarget?
   var ariaId: String
 }
 
-class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
+private class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
 
   override fun MaterialMenuState.init() {
     open = false
@@ -35,14 +53,14 @@ class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
     ariaId = Random.randomNumberString()
   }
 
-  override fun RBuilder.render() {
+  override fun ChildrenBuilder.render() {
 
     val ariaId = "name-menu-${state.ariaId}"
 
-    iconButton {
-      attrs.asDynamic()["aria-owns"] = if (state.open) ariaId else undefined
-      attrs.asDynamic()["aria-haspopup"] = true
-      attrs.onClick = { event ->
+    IconButton {
+      if (state.open) ariaOwns = ariaId
+      ariaHasPopup = AriaHasPopup.`true`
+      onClick = { event ->
         val target = event.currentTarget
         setState {
           open = !open
@@ -51,15 +69,15 @@ class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
         event.preventDefault()
         event.stopPropagation()
       }
-      attrs.asDynamic()["aria-label"] = "More"
-      moreVertIcon {
-        if (props.fontSize != null) {
-          attrs.fontSize = props.fontSize!!
+      ariaLabel = "More"
+      MoreVert {
+        if (props.config.fontSize != null) {
+          asDynamic().fontSize = props.config.fontSize!!
         }
       }
     }
-    menu {
-      attrs.onClose = { event ->
+    Menu {
+      onClose = { event: Event ->
         setState {
           open = false
           anchorEl = null
@@ -67,24 +85,24 @@ class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
         event.preventDefault()
         event.stopPropagation()
       }
-      attrs.asDynamic()["id"] = ariaId
-      attrs.open = state.open
-      attrs.anchorEl = state.anchorEl
-      props.menuItems.forEach { item ->
-        menuItem {
+      id = ariaId
+      open = state.open
+      asDynamic().anchorEl = state.anchorEl
+      props.config.menuItems.forEach { item ->
+        MenuItem {
           item.icon?.let { icon ->
-            listItemIcon {
-              attrs.classes = js {
-                root = props.classes.itemIcon
+            ListItemIcon {
+              sx {
+                minWidth = 36.px
               }
-              icon {}
+              icon()
             }
           }
-          attrs.classes = js {
-            root = props.classes.menuItemStyle
+          sx {
+            fontSize = 14.px
           }
-          attrs.disabled = !item.enabled
-          attrs.onClick = {
+          disabled = !item.enabled
+          onClick = {
             item.onClick()
             setState { open = false }
           }
@@ -95,22 +113,8 @@ class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() {
   }
 }
 
-private val style = { _: dynamic ->
-  js {
-    menuItemStyle = js {
-      fontSize = 14
-    }
-    itemIcon = js {
-      minWidth = 36
-    }
+fun ChildrenBuilder.materialMenu(handler: MaterialMenuProps.() -> Unit) {
+  MaterialMenu::class.react {
+    +jso(handler)
   }
 }
-
-private val styledChatDrawer = withStyles<MaterialMenuProps, MaterialMenu>(style)
-
-fun RBuilder.materialMenu(fontSize: String? = null, className: String = "", menuItems: List<MenuItem>) =
-  styledChatDrawer {
-    attrs.menuItems = menuItems
-    attrs.className = className
-    attrs.fontSize = fontSize
-  }

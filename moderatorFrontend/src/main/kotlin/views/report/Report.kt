@@ -7,32 +7,29 @@ import com.studo.campusqr.common.payloads.DeleteSeatFilter
 import com.studo.campusqr.common.payloads.EditSeatFilter
 import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
-import kotlinext.js.js
-import kotlinx.html.js.onSubmitFunction
-import org.w3c.dom.events.Event
+import csstype.PropertiesBuilder
+import csstype.px
+import kotlinx.js.jso
+import mui.material.*
+import mui.system.sx
 import react.*
-import react.dom.div
-import react.dom.form
+import react.dom.html.ReactHTML.form
 import util.Strings
 import util.apiBase
 import util.fileDownload
 import util.get
 import views.common.centeredProgress
-import views.common.renderLinearProgress
+import views.common.renderMbLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.addDays
 import webcore.extensions.coerceAtMost
-import webcore.extensions.inputValue
 import webcore.extensions.launch
-import webcore.materialUI.*
 import kotlin.js.Date
 
-interface ReportProps : RProps {
-  var classes: ReportClasses
-}
+external interface ReportProps : Props
 
-interface ReportState : RState {
+external interface ReportState : State {
   var emailTextFieldValue: String
   var emailTextFieldError: String
   var reportData: ReportData?
@@ -41,7 +38,8 @@ interface ReportState : RState {
   var infectionDate: Date
 }
 
-class Report : RComponent<ReportProps, ReportState>() {
+@Suppress("UPPER_BOUND_VIOLATED")
+private class Report : RComponent<ReportProps, ReportState>() {
 
   override fun ReportState.init() {
     emailTextFieldValue = ""
@@ -52,16 +50,17 @@ class Report : RComponent<ReportProps, ReportState>() {
     infectionDate = Date().addDays(-14)
   }
 
-  private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(
+  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar {
+    config = MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
       onClose = {
         setState {
           snackbarText = ""
         }
-      })
-  )
+      }
+    )
+  }
 
   private fun validateInput(): Boolean {
     if (state.emailTextFieldValue.isEmpty()) {
@@ -135,52 +134,59 @@ class Report : RComponent<ReportProps, ReportState>() {
     }
   }
 
-  override fun RBuilder.render() {
+  override fun ChildrenBuilder.render() {
     val now = Date()
     val showEmailAddress = state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
     renderSnackbar()
-    typography {
-      attrs.variant = "h5"
-      attrs.className = props.classes.content
+    Typography {
+      variant = "h5"
+      sx {
+        content()
+      }
       +Strings.report.get()
     }
 
-    div(props.classes.inputForm) {
-      gridContainer(GridDirection.ROW) {
+    Box {
+      sx {
+        margin = 16.px
+      }
+      gridContainer(GridDirection.row) {
         gridItem(GridSize(xs = 12, sm = 3)) {
-          datePicker(
-            date = state.infectionDate,
-            label = Strings.report_infection_date.get(),
-            helperText = Strings.report_infection_date_tip.get(),
-            fullWidth = true,
-            variant = TextFieldVariant.OUTLINED,
-            max = now,
-            onChange = { selectedDate, _ ->
-              setState {
-                infectionDate = selectedDate.coerceAtMost(now)
-              }
-            },
-          )
+          datePicker {
+            config = DatePickerConfig(
+              date = state.infectionDate,
+              label = Strings.report_infection_date.get(),
+              helperText = Strings.report_infection_date_tip.get(),
+              fullWidth = true,
+              variant = FormControlVariant.outlined,
+              max = now,
+              onChange = { selectedDate: Date, isValid: Boolean ->
+                setState {
+                  infectionDate = selectedDate.coerceAtMost(now)
+                }
+              },
+            )
+          }
         }
         gridItem(GridSize(xs = 12, sm = 6)) {
           form {
-            attrs.onSubmitFunction = { event ->
+            onSubmit = { event ->
               event.preventDefault()
               event.stopPropagation()
               if (validateInput()) {
                 traceContacts()
               }
             }
-            textField {
-              attrs.fullWidth = true
-              attrs.variant = TextFieldVariant.OUTLINED.value
-              attrs.label = Strings.report_email.get()
-              attrs.value = state.emailTextFieldValue
-              attrs.error = state.emailTextFieldError.isNotEmpty()
-              attrs.helperText = state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()
-              attrs.onChange = { event: Event ->
-                val value = event.inputValue
+            TextField<OutlinedTextFieldProps> {
+              fullWidth = true
+              variant = FormControlVariant.outlined()
+              label = ReactNode(Strings.report_email.get())
+              value = state.emailTextFieldValue
+              error = state.emailTextFieldError.isNotEmpty()
+              helperText = ReactNode(state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get())
+              onChange = { event ->
+                val value = event.target.value
                 setState {
                   emailTextFieldValue = value
                   emailTextFieldError = ""
@@ -190,13 +196,13 @@ class Report : RComponent<ReportProps, ReportState>() {
           }
         }
         gridItem(GridSize(xs = 12, sm = 3)) {
-          muiButton {
-            attrs.classes = js {
-              root = props.classes.searchButton
+          Button {
+            sx {
+              margin = 16.px
             }
-            attrs.variant = "contained"
-            attrs.color = "primary"
-            attrs.onClick = {
+            variant = ButtonVariant.contained
+            color = ButtonColor.primary
+            onClick = {
               if (validateInput()) {
                 traceContacts()
               }
@@ -208,11 +214,14 @@ class Report : RComponent<ReportProps, ReportState>() {
     }
     when {
       state.reportData != null -> {
-        renderLinearProgress(state.showProgress)
+        renderMbLinearProgress { show = state.showProgress }
         val reportData = state.reportData!!
-        div(props.classes.content) {
-          typography {
-            attrs.variant = "h6"
+        Box {
+          sx {
+            content()
+          }
+          Typography {
+            variant = "h6"
             +Strings.report_affected_people.get()
               .format(
                 reportData.impactedUsersCount.toString(),
@@ -224,37 +233,37 @@ class Report : RComponent<ReportProps, ReportState>() {
 
           spacer(32)
 
-          mTable {
-            mTableHead {
-              mTableRow {
-                if (showEmailAddress) mTableCell { +Strings.report_checkin_email.get() }
-                mTableCell { +Strings.report_checkin_date.get() }
-                mTableCell { +Strings.report_checkin_location.get() }
-                mTableCell { +Strings.report_checkin_seat.get() }
-                mTableCell { +Strings.report_impacted_people.get() }
-                mTableCell { +Strings.report_checkin_filter.get() }
+          Table {
+            TableHead {
+              TableRow {
+                if (showEmailAddress) TableCell { +Strings.report_checkin_email.get() }
+                TableCell { +Strings.report_checkin_date.get() }
+                TableCell { +Strings.report_checkin_location.get() }
+                TableCell { +Strings.report_checkin_seat.get() }
+                TableCell { +Strings.report_impacted_people.get() }
+                TableCell { +Strings.report_checkin_filter.get() }
               }
             }
-            mTableBody {
+            TableBody {
               reportData.reportedUserLocations.forEach { userLocation ->
-                renderReportTableRow(
-                  ReportTableRowProps.Config(
+                renderReportTableRow {
+                  config = ReportTableRowConfig(
                     userLocation = userLocation,
                     showEmailAddress = showEmailAddress,
                     onApplyFilterChange = this@Report::applyFilter,
                     onDeleteFilter = this@Report::deleteFilter
                   )
-                )
+                }
               }
             }
           }
 
           spacer(32)
           if (reportData.impactedUsersCount > 0) {
-            muiButton {
-              attrs.size = "small"
-              attrs.color = "primary"
-              attrs.onClick = {
+            Button {
+              size = Size.small
+              color = ButtonColor.primary
+              onClick = {
                 fileDownload(reportData.impactedUsersEmailsCsvData, reportData.impactedUsersEmailsCsvFileName)
               }
               +Strings.report_export_via_csv.get()
@@ -263,10 +272,10 @@ class Report : RComponent<ReportProps, ReportState>() {
           }
 
           if (reportData.reportedUserLocations.isNotEmpty()) {
-            muiButton {
-              attrs.size = "small"
-              attrs.color = "primary"
-              attrs.onClick = {
+            Button {
+              size = Size.small
+              color = ButtonColor.primary
+              onClick = {
                 fileDownload(reportData.reportedUserLocationsCsv, reportData.reportedUserLocationsCsvFileName)
               }
               +Strings.report_export_infected_user_checkins_csv.get()
@@ -277,30 +286,14 @@ class Report : RComponent<ReportProps, ReportState>() {
       state.showProgress -> centeredProgress()
     }
   }
-}
 
-interface ReportClasses {
-  var content: String
-  var searchButton: String
-  var inputForm: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    content = js {
-      margin = 16
-    }
-    searchButton = js {
-      margin = 16
-    }
-    inputForm = js {
-      margin = 16
-    }
+  private fun PropertiesBuilder.content() {
+    margin = 16.px
   }
 }
 
-private val styled = withStyles<ReportProps, Report>(style)
-
-fun RBuilder.renderReport() = styled {
-  // Set component attrs here
+fun ChildrenBuilder.renderReport(handler: ReportProps.() -> Unit = {}) {
+  Report::class.react {
+    +jso(handler)
+  }
 }

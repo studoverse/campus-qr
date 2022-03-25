@@ -1,54 +1,66 @@
 package views.users
 
 import com.studo.campusqr.common.payloads.UserData
-import kotlinext.js.js
-import react.*
-import react.dom.div
+import csstype.px
+import kotlinx.js.jso
+import mui.material.Box
+import mui.system.sx
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.react
 import util.Strings
 import util.get
-import views.common.ToolbarViewProps
+import views.common.ToolbarViewConfig
 import views.common.renderToolbarView
-import webcore.MbSnackbarProps
-import webcore.materialUI.withStyles
+import webcore.MbSnackbarConfig
+import webcore.RComponent
 import webcore.mbSnackbar
+import webcore.setState
 
-interface MyAccountProps : RProps {
-  var classes: MyAccountClasses
-  var config: Config
+class MyAccountConfig(val userData: UserData)
 
-  class Config(val userData: UserData)
+external interface MyAccountProps : Props {
+  var config: MyAccountConfig
 }
 
-interface MyAccountState : RState {
+external interface MyAccountState : State {
   var snackbarText: String
 }
 
-class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
+private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
 
   override fun MyAccountState.init() {
     snackbarText = ""
   }
 
-  override fun RBuilder.render() {
-    renderToolbarView(
-      ToolbarViewProps.Config(
+  override fun ChildrenBuilder.render() {
+    renderToolbarView {
+      config = ToolbarViewConfig(
         title = Strings.account_settings.get(),
         buttons = emptyList()
       )
-    )
-    div(classes = props.classes.container) {
-      mbSnackbar(
-        MbSnackbarProps.Config(
+    }
+    Box {
+      sx {
+        marginTop = 32.px
+        marginLeft = 32.px
+        marginRight = marginLeft
+        marginBottom = 32.px
+      }
+      mbSnackbar {
+        config = MbSnackbarConfig(
           show = state.snackbarText.isNotEmpty(),
           message = state.snackbarText,
           onClose = {
             setState {
               snackbarText = ""
             }
-          })
-      )
-      renderAddUser(
-        config = AddUserProps.Config.Edit(
+          }
+        )
+      }
+      renderAddUser {
+        config = AddUserConfig.Edit(
           props.config.userData.clientUser!!,
           onFinished = { result ->
             setState {
@@ -59,32 +71,15 @@ class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
               }
             }
           }
-        ),
+        )
         userData = props.config.userData
-      )
+      }
     }
   }
 }
 
-interface MyAccountClasses {
-  var container: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    container = js {
-      marginTop = 32
-      marginLeft = 32
-      marginRight = marginLeft
-      marginBottom = 32
-    }
+fun ChildrenBuilder.renderMyAccount(handler: MyAccountProps.() -> Unit) {
+  MyAccount::class.react {
+    +jso(handler)
   }
 }
-
-private val styled = withStyles<MyAccountProps, MyAccount>(style)
-
-fun RBuilder.renderMyAccount(config: MyAccountProps.Config) = styled {
-  // Set component attrs here
-  attrs.config = config
-}
-  

@@ -6,33 +6,32 @@ import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.*
-import kotlinext.js.js
-import org.w3c.dom.events.Event
+import csstype.*
+import kotlinx.js.jso
+import mui.material.*
+import mui.system.sx
 import react.*
-import react.dom.div
+import react.dom.html.InputType
+import react.dom.html.ReactHTML.div
 import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
 import views.common.spacer
-import views.users.AddUserProps.Config
-import webcore.NetworkManager
-import webcore.extensions.inputValue
+import webcore.*
 import webcore.extensions.launch
-import webcore.materialUI.*
 
-interface AddUserProps : RProps {
-  sealed class Config(val onFinished: (response: String?) -> Unit) {
-    class Create(onFinished: (response: String?) -> Unit) : Config(onFinished)
-    class Edit(val user: ClientUser, onFinished: (response: String?) -> Unit) : Config(onFinished)
-  }
-
-  var config: Config
-  var userData: UserData
-  var classes: AddUserClasses
+sealed class AddUserConfig(val onFinished: (response: String?) -> Unit) {
+  class Create(onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
+  class Edit(val user: ClientUser, onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
 }
 
-interface AddUserState : RState {
+external interface AddUserProps : Props {
+  var config: AddUserConfig
+  var userData: UserData
+}
+
+external interface AddUserState : State {
   var userCreationInProgress: Boolean
 
   var userEmailTextFieldValue: String
@@ -47,21 +46,22 @@ interface AddUserState : RState {
   var userPermissions: Set<UserPermission>
 }
 
-class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
+@Suppress("UPPER_BOUND_VIOLATED")
+private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
 
   override fun AddUserState.init(props: AddUserProps) {
     userCreationInProgress = false
 
-    userEmailTextFieldValue = (props.config as? Config.Edit)?.user?.email ?: ""
+    userEmailTextFieldValue = (props.config as? AddUserConfig.Edit)?.user?.email ?: ""
     userEmailTextFieldError = ""
 
     userPasswordTextFieldValue = ""
     userPasswordTextFieldError = ""
 
-    userNameTextFieldValue = (props.config as? Config.Edit)?.user?.name ?: ""
+    userNameTextFieldValue = (props.config as? AddUserConfig.Edit)?.user?.name ?: ""
     userNameTextFieldError = ""
 
-    userPermissions = (props.config as? Config.Edit)?.user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS)
+    userPermissions = (props.config as? AddUserConfig.Edit)?.user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS)
   }
 
   private fun createNewUser() = launch {
@@ -86,11 +86,11 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/edit",
       body = EditUserData(
-        userId = (props.config as Config.Edit).user.id,
+        userId = (props.config as AddUserConfig.Edit).user.id,
         name = state.userNameTextFieldValue.emptyToNull(),
         password = state.userPasswordTextFieldValue.emptyToNull(),
         permissions = state.userPermissions
-          .takeIf { (props.config as Config.Edit).user.permissions != it }
+          .takeIf { (props.config as AddUserConfig.Edit).user.permissions != it }
           ?.map { it.name }
       )
     )
@@ -153,21 +153,21 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     }
   }
 
-  override fun RBuilder.render() {
-    textField {
-      attrs.error = state.userEmailTextFieldError.isNotEmpty()
-      attrs.helperText = state.userEmailTextFieldError
-      attrs.fullWidth = true
-      attrs.variant = "outlined"
-      attrs.value = state.userEmailTextFieldValue
-      attrs.autoComplete = "username"
-      attrs.label = Strings.email_address.get()
-      attrs.type = "email"
-      if (props.config is Config.Edit) {
-        attrs.disabled = true
+  override fun ChildrenBuilder.render() {
+    TextField<OutlinedTextFieldProps> {
+      error = state.userEmailTextFieldError.isNotEmpty()
+      helperText = ReactNode(state.userEmailTextFieldError)
+      fullWidth = true
+      variant = FormControlVariant.outlined()
+      value = state.userEmailTextFieldValue
+      autoComplete = "username"
+      label = ReactNode(Strings.email_address.get())
+      type = InputType.email
+      if (props.config is AddUserConfig.Edit) {
+        disabled = true
       }
-      attrs.onChange = { event: Event ->
-        val value = event.inputValue
+      onChange = { event ->
+        val value = event.target.value
         setState {
           userEmailTextFieldValue = value
           userEmailTextFieldError = ""
@@ -178,21 +178,21 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
     spacer(16)
 
     if (!props.userData.externalAuthProvider) {
-      textField {
-        attrs.error = state.userPasswordTextFieldError.isNotEmpty()
-        attrs.helperText = state.userPasswordTextFieldError
-        attrs.fullWidth = true
-        attrs.type = "password"
-        attrs.variant = "outlined"
-        if (props.config is Config.Create) {
-          attrs.label = Strings.login_email_form_pw_label.get()
+      TextField<OutlinedTextFieldProps> {
+        error = state.userPasswordTextFieldError.isNotEmpty()
+        helperText = ReactNode(state.userPasswordTextFieldError)
+        fullWidth = true
+        type = InputType.password
+        variant = FormControlVariant.outlined()
+        if (props.config is AddUserConfig.Create) {
+          label = ReactNode(Strings.login_email_form_pw_label.get())
         } else {
-          attrs.label = Strings.login_email_form_new_pw_label.get()
-          attrs.autoComplete = "new-password"
+          label = ReactNode(Strings.login_email_form_new_pw_label.get())
+          autoComplete = "new-password"
         }
-        attrs.value = state.userPasswordTextFieldValue
-        attrs.onChange = { event: Event ->
-          val value = event.inputValue
+        value = state.userPasswordTextFieldValue
+        onChange = { event ->
+          val value = event.target.value
           setState {
             userPasswordTextFieldValue = value
             userPasswordTextFieldError = ""
@@ -202,16 +202,16 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
       spacer(16)
     }
 
-    textField {
-      attrs.error = state.userNameTextFieldError.isNotEmpty()
-      attrs.helperText = state.userNameTextFieldError
-      attrs.fullWidth = true
-      attrs.variant = "outlined"
-      attrs.label = Strings.user_name.get()
-      attrs.value = state.userNameTextFieldValue
-      attrs.autoComplete = "off"
-      attrs.onChange = { event: Event ->
-        val value = event.inputValue
+    TextField<OutlinedTextFieldProps> {
+      error = state.userNameTextFieldError.isNotEmpty()
+      helperText = ReactNode(state.userNameTextFieldError)
+      fullWidth = true
+      variant = FormControlVariant.outlined()
+      label = ReactNode(Strings.user_name.get())
+      value = state.userNameTextFieldValue
+      autoComplete = "off"
+      onChange = { event ->
+        val value = event.target.value
         setState {
           userNameTextFieldValue = value
           userNameTextFieldError = ""
@@ -223,19 +223,25 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     // This view is is either used for user management, or to change own user properties
     if (props.userData.clientUser!!.canEditUsers) {
-      typography {
+      Typography {
         +Strings.user_permissions.get()
       }
-      div(classes = props.classes.userPermissionsSwitch) {
-        formControl {
-          attrs.fullWidth = true
-          attrs.variant = "outlined"
+      Box {
+        sx {
+          display = Display.flex
+          justifyContent = JustifyContent.center
+          alignItems = AlignItems.center
+          fontFamily = string("'Roboto', Arial, sans-serif")
+        }
+        FormControl {
+          fullWidth = true
+          variant = FormControlVariant.outlined
 
           UserPermission.values().forEach { userPermission ->
-            formControlLabel {
-              attrs.control = mCheckbox {
-                attrs.checked = userPermission in state.userPermissions
-                attrs.onChange = { _, checked ->
+            FormControlLabel {
+              control = Checkbox.create {
+                checked = userPermission in state.userPermissions
+                onChange = { _, checked ->
                   val existingPermissions = state.userPermissions
                   if (checked) {
                     setState { userPermissions = existingPermissions + userPermission }
@@ -244,7 +250,7 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
                   }
                 }
               }
-              attrs.label = userPermission.localizedString.get()
+              label = ReactNode(userPermission.localizedString.get())
             }
           }
         }
@@ -253,25 +259,27 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
 
     spacer(32)
 
-    div(GlobalCss.flex) {
-      div(GlobalCss.flexEnd) {
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.addButton
+    div {
+      className = ClassName(GlobalCss.flex)
+      div {
+        className = ClassName(GlobalCss.flexEnd)
+        Button {
+          sx {
+            marginBottom = 16.px
           }
-          attrs.variant = "contained"
-          attrs.color = "primary"
-          attrs.onClick = {
+          variant = ButtonVariant.contained
+          color = ButtonColor.primary
+          onClick = {
             when (props.config) {
-              is Config.Create -> if (validateNameInput() && validatePasswordInput() && validateEmailInput()) {
+              is AddUserConfig.Create -> if (validateNameInput() && validatePasswordInput() && validateEmailInput()) {
                 createNewUser()
               }
-              is Config.Edit -> editUser()
+              is AddUserConfig.Edit -> editUser()
             }
           }
           +when (props.config) {
-            is Config.Create -> Strings.user_add.get()
-            is Config.Edit -> Strings.user_update.get()
+            is AddUserConfig.Create -> Strings.user_add.get()
+            is AddUserConfig.Edit -> Strings.user_update.get()
           }
         }
       }
@@ -279,29 +287,8 @@ class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(prop
   }
 }
 
-interface AddUserClasses {
-  var addButton: String
-  var userPermissionsSwitch: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    addButton = js {
-      marginBottom = 16
-    }
-    userPermissionsSwitch = js {
-      display = "flex"
-      justifyContent = "center"
-      alignItems = "center"
-      fontFamily = "'Roboto', Arial, sans-serif"
-    }
+fun ChildrenBuilder.renderAddUser(handler: AddUserProps.() -> Unit) {
+  AddUser::class.react {
+    +jso(handler)
   }
 }
-
-private val styled = withStyles<AddUserProps, AddUser>(style)
-
-fun RBuilder.renderAddUser(config: Config, userData: UserData) = styled {
-  attrs.config = config
-  attrs.userData = userData
-}
-  

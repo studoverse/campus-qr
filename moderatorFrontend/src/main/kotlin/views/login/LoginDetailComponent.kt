@@ -2,10 +2,10 @@ package views.login
 
 import kotlinx.browser.window
 import org.w3c.dom.url.URL
-import react.RComponent
 import util.toRoute
+import webcore.RComponent
 
-abstract class LoginDetailComponent<P : react.RProps, S : react.RState> : RComponent<P, S>() {
+abstract class LoginDetailComponent<P : react.Props, S : react.State> : RComponent<P, S>() {
   protected fun redirectAfterLogin() {
     // Fallback admin page if no redirect url was defined, reload the page
     val redirectUrl = window.location.toRoute()?.queryParams?.get("redirect") ?: "/admin/"

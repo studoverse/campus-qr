@@ -1,49 +1,41 @@
 package views.common
 
-import kotlinext.js.js
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.div
-import webcore.materialUI.linearProgress
-import webcore.materialUI.withStyles
+import csstype.px
+import kotlinx.js.jso
+import mui.material.Box
+import mui.material.LinearProgress
+import mui.system.sx
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.react
+import webcore.RComponent
 
-interface LinearProgressProps : RProps {
-  var classes: LinearProgressClasses
+external interface MbLinearProgressProps : Props {
   var show: Boolean
 }
 
-interface LinearProgressState : RState
+external interface MbLinearProgressState : State
 
 /**
  * Linear progress that has a fixed height of 8px also when it's not shown.
  */
-class LinearProgress : RComponent<LinearProgressProps, LinearProgressState>() {
-  override fun RBuilder.render() {
-    div(props.classes.holder) {
+private class MbLinearProgress : RComponent<MbLinearProgressProps, MbLinearProgressState>() {
+
+  override fun ChildrenBuilder.render() {
+    Box {
+      sx {
+        height = 8.px
+      }
       if (props.show) {
-        linearProgress {}
+        LinearProgress {}
       }
     }
   }
 }
 
-interface LinearProgressClasses {
-  var holder: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    holder = js {
-      height = 8
-    }
+fun ChildrenBuilder.renderMbLinearProgress(handler: MbLinearProgressProps.() -> Unit) {
+  MbLinearProgress::class.react {
+    +jso(handler)
   }
 }
-
-private val styled = withStyles<LinearProgressProps, LinearProgress>(style)
-
-fun RBuilder.renderLinearProgress(show: Boolean) = styled {
-  attrs.show = show
-}
-  

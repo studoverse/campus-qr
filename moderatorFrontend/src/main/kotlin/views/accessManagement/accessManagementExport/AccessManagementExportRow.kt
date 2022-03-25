@@ -1,36 +1,36 @@
 package views.accessManagement.accessManagementExport
 
 import com.studo.campusqr.common.payloads.AccessManagementExportData
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.strong
+import kotlinx.js.jso
+import mui.material.TableCell
+import mui.material.TableRow
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.dom.html.ReactHTML.strong
+import react.react
 import views.accessManagement.accessManagementOverview.format
-import webcore.materialUI.mTableCell
-import webcore.materialUI.mTableRow
-import webcore.materialUI.withStyles
+import webcore.RComponent
 import kotlin.js.Date
 
-interface AccessManagementExportTableRowProps : RProps {
-  class Config(
-    val permit: AccessManagementExportData.Permit,
-  )
+class AccessManagementExportTableRowConfig(
+  val permit: AccessManagementExportData.Permit,
+)
 
-  var config: Config
-  var classes: AccessManagementExportTableRowClasses
+external interface AccessManagementExportTableRowProps : Props {
+  var config: AccessManagementExportTableRowConfig
 }
 
-interface AccessManagementExportTableRowState : RState
+external interface AccessManagementExportTableRowState : State
 
-class AccessManagementExportTableRow :
+private class AccessManagementExportTableRow :
   RComponent<AccessManagementExportTableRowProps, AccessManagementExportTableRowState>() {
 
-  override fun RBuilder.render() {
-    mTableRow {
-      attrs.hover = true
+  override fun ChildrenBuilder.render() {
+    TableRow {
+      hover = true
 
-      mTableCell {
+      TableCell {
         val dateRange = props.config.permit.dateRange
         val now = Date().getTime()
         if (dateRange.from < now && dateRange.to > now) {
@@ -43,20 +43,15 @@ class AccessManagementExportTableRow :
           +dateRange.format()
         }
       }
-      mTableCell {
+      TableCell {
         +props.config.permit.email
       }
     }
   }
 }
 
-interface AccessManagementExportTableRowClasses
-
-private val style = { _: dynamic ->
-}
-
-private val styled = withStyles<AccessManagementExportTableRowProps, AccessManagementExportTableRow>(style)
-
-fun RBuilder.renderAccessManagementExportRow(config: AccessManagementExportTableRowProps.Config) = styled {
-  attrs.config = config
+fun ChildrenBuilder.renderAccessManagementExportRow(handler: AccessManagementExportTableRowProps.() -> Unit) {
+  AccessManagementExportTableRow::class.react {
+    +jso(handler)
+  }
 }

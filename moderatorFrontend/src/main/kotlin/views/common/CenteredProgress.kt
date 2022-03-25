@@ -1,42 +1,40 @@
 package views.common
 
-import kotlinext.js.js
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.div
-import webcore.materialUI.circularProgress
-import webcore.materialUI.withStyles
+import csstype.AlignSelf
+import csstype.Auto
+import csstype.Display
+import csstype.JustifyContent
+import kotlinx.js.jso
+import mui.material.Box
+import mui.material.CircularProgress
+import mui.system.sx
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.react
+import webcore.RComponent
 
-interface CenteredProgressProps : RProps {
-  var classes: CenteredProgressClasses
-}
+external interface CenteredProgressProps : Props
 
-class CenteredProgress : RComponent<CenteredProgressProps, RState>() {
-  override fun RBuilder.render() {
-    div(props.classes.centered) {
-      circularProgress {}
+external interface CenteredProgressState : State
+
+private class CenteredProgress : RComponent<CenteredProgressProps, CenteredProgressState>() {
+  override fun ChildrenBuilder.render() {
+    Box {
+      sx {
+        display = Display.flex
+        alignSelf = AlignSelf.center
+        marginTop = Auto.auto
+        marginBottom = Auto.auto
+        justifyContent = JustifyContent.center
+      }
+      CircularProgress {}
     }
   }
 }
 
-interface CenteredProgressClasses : RProps {
-  var centered: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    centered = js {
-      display = "flex"
-      alignSelf = "center"
-      marginTop = "auto"
-      marginBottom = "auto"
-      justifyContent = "center"
-    }
+fun ChildrenBuilder.centeredProgress(handler: CenteredProgressProps.() -> Unit = {}) {
+  CenteredProgress::class.react {
+    +jso(handler)
   }
 }
-
-val styledCenteredProgress = withStyles<CenteredProgressProps, CenteredProgress>(style)
-
-fun RBuilder.centeredProgress() = styledCenteredProgress {}

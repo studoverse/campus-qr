@@ -2,24 +2,30 @@ package views.users
 
 import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.UserData
-import kotlinext.js.js
+import csstype.px
+import csstype.rgb
+import csstype.rgba
 import kotlinx.browser.window
-import react.*
-import react.dom.div
+import kotlinx.js.jso
+import mui.material.*
+import mui.system.sx
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.dom.html.ReactHTML
+import react.react
 import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
 import webcore.*
 import webcore.extensions.launch
-import webcore.materialUI.*
 
-interface ListUsersProps : RProps {
+external interface ListUsersProps : Props {
   var userData: UserData
-  var classes: ListUsersClasses
 }
 
-interface ListUsersState : RState {
+external interface ListUsersState : State {
   var userList: List<ClientUser>?
   var showAddUserDialog: Boolean
   var showSsoInfoDialog: Boolean
@@ -27,7 +33,7 @@ interface ListUsersState : RState {
   var snackbarText: String
 }
 
-class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
+private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 
   override fun ListUsersState.init() {
     userList = null
@@ -64,25 +70,28 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     }
   }
 
-  private fun RBuilder.renderAddUserDialog() = mbMaterialDialog(
-    show = state.showAddUserDialog,
-    title = Strings.user_add.get(),
-    customContent = {
-      renderAddUser(
-        config = AddUserProps.Config.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
-        userData = props.userData
-      )
-    },
-    buttons = null,
-    onClose = {
-      setState {
-        showAddUserDialog = false
+  private fun ChildrenBuilder.renderAddUserDialog() = mbMaterialDialog(handler = {
+    config = MbMaterialDialogConfig(
+      show = state.showAddUserDialog,
+      title = Strings.user_add.get(),
+      customContent = {
+        renderAddUser {
+          config = AddUserConfig.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) })
+          userData = props.userData
+        }
+      },
+      buttons = null,
+      onClose = {
+        setState {
+          showAddUserDialog = false
+        }
       }
-    }
+    )
+  }
   )
 
 
-  private fun RBuilder.renderSsoInfoButtonDialog(): ReactElement {
+  private fun ChildrenBuilder.renderSsoInfoButtonDialog() {
 
     fun closeDialog() {
       setState {
@@ -90,55 +99,60 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       }
     }
 
-    return mbMaterialDialog(
-      show = state.showSsoInfoDialog,
-      title = Strings.user_sso_info.get(),
-      customContent = {
-        typography {
-          attrs.className = props.classes.dialogContent
-          attrs.variant = "body1"
-          +Strings.user_sso_info_details1.get()
-          spacer(16)
-          +Strings.user_sso_info_details2.get()
-        }
-      },
-      buttons = listOf(
-        DialogButton(Strings.more_about_studo.get(), onClick = {
-          closeDialog()
-          window.open("https://studo.com", "_blank")
-        }),
-        DialogButton("OK", onClick = ::closeDialog)
-      ),
-      onClose = ::closeDialog
-    )
+    mbMaterialDialog(handler = {
+      config = MbMaterialDialogConfig(
+        show = state.showSsoInfoDialog,
+        title = Strings.user_sso_info.get(),
+        customContent = {
+          Typography {
+            sx {
+              color = rgba(0, 0, 0, 0.54)
+            }
+            variant = "body1"
+            component = ReactHTML.span
+            +Strings.user_sso_info_details1.get()
+            spacer(16)
+            +Strings.user_sso_info_details2.get()
+          }
+        },
+        buttons = listOf(
+          DialogButton(Strings.more_about_studo.get(), onClick = {
+            closeDialog()
+            window.open("https://studo.com", "_blank")
+          }),
+          DialogButton("OK", onClick = ::closeDialog)
+        ),
+        onClose = ::closeDialog
+      )
+    })
   }
 
-  private fun RBuilder.renderSnackbar() = mbSnackbar(
-    MbSnackbarProps.Config(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
+  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar {
+    config = MbSnackbarConfig(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
       setState { snackbarText = "" }
     })
-  )
+  }
 
-  override fun RBuilder.render() {
+  override fun ChildrenBuilder.render() {
     renderAddUserDialog()
     renderSsoInfoButtonDialog()
     renderSnackbar()
-    renderToolbarView(
-      ToolbarViewProps.Config(
+    renderToolbarView {
+      config = ToolbarViewConfig(
         title = Strings.user_management.get(),
         buttons = listOfNotNull(
-          ToolbarViewProps.ToolbarButton(
+          ToolbarButton(
             text = Strings.user_sso_info.get(),
-            variant = "outlined",
+            variant = ButtonVariant.outlined,
             onClick = {
               setState {
                 showSsoInfoDialog = true
               }
             }
           ),
-          if (props.userData.externalAuthProvider) null else ToolbarViewProps.ToolbarButton(
+          if (props.userData.externalAuthProvider) null else ToolbarButton(
             text = Strings.user_add.get(),
-            variant = "contained",
+            variant = ButtonVariant.contained,
             onClick = {
               setState {
                 showAddUserDialog = true
@@ -147,35 +161,43 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
           )
         )
       )
-    )
+    }
 
     if (props.userData.externalAuthProvider) {
-      div(classes = props.classes.info) {
+      Box {
+        sx {
+          backgroundColor = rgb(232, 244, 253)
+          borderRadius = 4.px
+          marginLeft = 16.px
+          marginRight = 16.px
+          marginBottom = 16.px
+          padding = 16.px
+        }
         +Strings.user_administration_external_auth_provider.get()
       }
     }
 
-    renderLinearProgress(state.loadingUserList)
+    renderMbLinearProgress { show = state.loadingUserList }
 
     if (state.userList?.isNotEmpty() == true) {
-      mTable {
-        mTableHead {
-          mTableRow {
-            mTableCell { +Strings.user_name.get() }
-            mTableCell { +Strings.email_address.get() }
-            mTableCell { +Strings.user_permissions.get() }
-            mTableCell { +Strings.user_first_login_date.get() }
-            mTableCell { +Strings.actions.get() }
+      Table {
+        TableHead {
+          TableRow {
+            TableCell { +Strings.user_name.get() }
+            TableCell { +Strings.email_address.get() }
+            TableCell { +Strings.user_permissions.get() }
+            TableCell { +Strings.user_first_login_date.get() }
+            TableCell { +Strings.actions.get() }
           }
         }
-        mTableBody {
+        TableBody {
           state.userList!!.forEach { user ->
-            renderUserTableRow(
-              UserTableRowProps.Config(user, onEditFinished = { response ->
+            renderUserTableRow {
+              config = UserTableRowConfig(user, onEditFinished = { response ->
                 handleCreateOrAddUserResponse(response)
-              }),
+              })
               userData = props.userData
-            )
+            }
           }
         }
       }
@@ -187,30 +209,8 @@ class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 }
 
-interface ListUsersClasses {
-  var dialogContent: String
-  var info: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    dialogContent = js {
-      color = "rgba(0, 0, 0, 0.54)"
-    }
-    info = js {
-      backgroundColor = "rgb(232, 244, 253)"
-      borderRadius = 4
-      marginLeft = 16
-      marginRight = 16
-      marginBottom = 16
-      padding = 16
-    }
+fun ChildrenBuilder.renderUsers(handler: ListUsersProps.() -> Unit) {
+  ListUsers::class.react {
+    +jso(handler)
   }
 }
-
-private val styled = withStyles<ListUsersProps, ListUsers>(style)
-
-fun RBuilder.renderUsers(userData: UserData) = styled {
-  attrs.userData = userData
-}
-  

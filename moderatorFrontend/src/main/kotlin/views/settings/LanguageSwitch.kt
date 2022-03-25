@@ -1,62 +1,58 @@
 package views.settings
 
 import app.languageContext
-import kotlinext.js.js
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.div
+import csstype.AlignItems
+import csstype.Display
+import csstype.JustifyContent
+import csstype.string
+import kotlinx.js.jso
+import mui.material.Box
+import mui.material.Switch
+import mui.material.SwitchColor
+import mui.system.sx
+import react.*
 import util.MbLocalizedStringConfig
-import webcore.materialUI.switch
-import webcore.materialUI.withStyles
+import webcore.RComponent
 
-interface LanguageSwitchProps : RProps {
-  var classes: LanguageSwitchClasses
-}
+external interface LanguageSwitchProps : Props
 
-private class LanguageSwitch(props: LanguageSwitchProps) : RComponent<LanguageSwitchProps, RState>(props) {
-  override fun RBuilder.render() {
+private class LanguageSwitch(props: LanguageSwitchProps) : RComponent<LanguageSwitchProps, State>(props) {
+  override fun ChildrenBuilder.render() {
 
-    languageContext.Consumer { languageState ->
-      val activeLanguage = languageState.activeLanguage
-      val languageChange = languageState.onLanguageChange
+    languageContext.Consumer {
+      children = { languageState ->
+        val activeLanguage = languageState.activeLanguage
+        val languageChange = languageState.onLanguageChange
 
-      div(classes = props.classes.root) {
-        +"Deutsch"
-        switch {
-          attrs.checked = (activeLanguage != MbLocalizedStringConfig.SupportedLanguage.De)
-          attrs.color = "default"
-          attrs.onChange = { _, checked ->
-            val newLanguage = if (checked) {
-              MbLocalizedStringConfig.SupportedLanguage.En
-            } else {
-              MbLocalizedStringConfig.SupportedLanguage.De
-            }
-            languageChange(newLanguage)
+        Box.create {
+          sx {
+            display = Display.flex
+            justifyContent = JustifyContent.center
+            alignItems = AlignItems.center
+            fontFamily = string("'Roboto', Arial, sans-serif")
           }
+          +"Deutsch"
+          Switch {
+            checked = (activeLanguage != MbLocalizedStringConfig.SupportedLanguage.De)
+            color = SwitchColor.default
+            onChange = { _, checked ->
+              val newLanguage = if (checked) {
+                MbLocalizedStringConfig.SupportedLanguage.En
+              } else {
+                MbLocalizedStringConfig.SupportedLanguage.De
+              }
+              languageChange(newLanguage)
+            }
+          }
+          +"English"
         }
-        +"English"
       }
     }
   }
 }
 
-interface LanguageSwitchClasses {
-  var root: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    root = js {
-      display = "flex"
-      justifyContent = "center"
-      alignItems = "center"
-      fontFamily = "'Roboto', Arial, sans-serif"
-    }
+fun ChildrenBuilder.renderLanguageSwitch(handler: LanguageSwitchProps.() -> Unit) {
+  LanguageSwitch::class.react {
+    +jso(handler)
   }
 }
-
-private val styled = withStyles<LanguageSwitchProps, LanguageSwitch>(style)
-
-fun RBuilder.renderLanguageSwitch() = styled {}

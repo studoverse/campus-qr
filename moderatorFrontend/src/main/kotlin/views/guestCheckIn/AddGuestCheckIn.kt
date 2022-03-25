@@ -4,36 +4,32 @@ import app.GlobalCss
 import app.baseUrl
 import com.studo.campusqr.common.payloads.CheckInData
 import com.studo.campusqr.common.payloads.ClientLocation
-import kotlinext.js.js
-import org.w3c.dom.events.Event
+import csstype.ClassName
+import csstype.px
+import kotlinx.js.jso
+import mui.material.*
+import mui.system.sx
 import react.*
-import react.dom.div
 import util.Strings
 import util.apiBase
 import util.get
 import views.common.centeredProgress
 import views.common.networkErrorView
-import views.common.renderLinearProgress
+import views.common.renderMbLinearProgress
 import views.common.spacer
-import webcore.NetworkManager
-import webcore.extensions.inputValue
+import webcore.*
 import webcore.extensions.launch
-import webcore.materialUI.muiAutocomplete
-import webcore.materialUI.muiButton
-import webcore.materialUI.textField
-import webcore.materialUI.withStyles
 
-interface AddGuestCheckInProps : RProps {
-  class Config(
-    val onGuestCheckedIn: () -> Unit,
-    val onShowSnackbar: (String) -> Unit
-  )
+class AddGuestCheckInConfig(
+  val onGuestCheckedIn: () -> Unit,
+  val onShowSnackbar: (String) -> Unit
+)
 
-  var classes: AddGuestCheckInClasses
-  var config: Config
+external interface AddGuestCheckInProps : Props {
+  var config: AddGuestCheckInConfig
 }
 
-interface AddGuestCheckInState : RState {
+external interface AddGuestCheckInState : State {
   var locationFetchInProgress: Boolean
   var showProgress: Boolean
   var locationNameToLocationMap: Map<String, ClientLocation>
@@ -48,7 +44,8 @@ interface AddGuestCheckInState : RState {
   var seatInputError: String
 }
 
-class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
+@Suppress("UPPER_BOUND_VIOLATED")
+private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
 
   override fun AddGuestCheckInState.init() {
     locationFetchInProgress = false
@@ -125,16 +122,18 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
     fetchLocations()
   }
 
-  private fun RBuilder.renderSubmitButton() {
-    div(GlobalCss.flex) {
-      div(GlobalCss.flexEnd) {
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.addButton
+  private fun ChildrenBuilder.renderSubmitButton() {
+    Box {
+      className = ClassName(GlobalCss.flex)
+      Box {
+        className = ClassName(GlobalCss.flexEnd)
+        Button {
+          sx {
+            marginBottom = 16.px
           }
-          attrs.variant = "contained"
-          attrs.color = "primary"
-          attrs.onClick = {
+          variant = ButtonVariant.contained
+          color = ButtonColor.primary
+          onClick = {
             if (validateInput()) {
               checkInGuest()
             }
@@ -145,8 +144,8 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
     }
   }
 
-  override fun RBuilder.render() {
-    renderLinearProgress(state.showProgress)
+  override fun ChildrenBuilder.render() {
+    renderMbLinearProgress { show = state.showProgress }
 
     if (!state.locationFetchInProgress && state.locationNameToLocationMap.isEmpty()) {
       networkErrorView()
@@ -155,9 +154,9 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
       centeredProgress()
       spacer(36)
     } else {
-      muiAutocomplete {
-        attrs.value = state.selectedLocation?.name ?: ""
-        attrs.onChange = { _, target: String?, _ ->
+      Autocomplete<AutocompleteProps<String>> {
+        value = state.selectedLocation?.name ?: ""
+        onChange = { _, target: String?, _, _ ->
           setState {
             selectedLocationTextFieldError = ""
             selectedLocation = target?.let { locationNameToLocationMap[it] }
@@ -166,34 +165,31 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
             seatInputValue = null
           }
         }
-        attrs.openOnFocus = true
-        attrs.options = state.locationNameToLocationMap.keys.toTypedArray()
-        attrs.getOptionLabel = { it }
-        attrs.renderInput = { params: dynamic ->
-          textField {
-            attrs.error = state.selectedLocationTextFieldError.isNotEmpty()
-            attrs.helperText = state.selectedLocationTextFieldError
-            attrs.id = params.id
-            attrs.InputProps = params.InputProps
-            attrs.inputProps = params.inputProps
-            attrs.disabled = params.disabled
-            attrs.fullWidth = params.fullWidth
-            attrs.fullWidth = true
-            attrs.variant = "outlined"
-            attrs.label = Strings.location_name.get()
+        openOnFocus = true
+        options = state.locationNameToLocationMap.keys.toTypedArray()
+        getOptionLabel = { it }
+        renderInput = { params ->
+          TextField.create {
+            +params
+            error = state.selectedLocationTextFieldError.isNotEmpty()
+            helperText = ReactNode(state.selectedLocationTextFieldError)
+            fullWidth = true
+            variant = FormControlVariant.outlined
+            label = ReactNode(Strings.location_name.get())
           }
+
         }
       }
       spacer(16)
-      textField {
-        attrs.error = state.personEmailTextFieldError.isNotEmpty()
-        attrs.helperText = state.personEmailTextFieldError
-        attrs.fullWidth = true
-        attrs.variant = "outlined"
-        attrs.label = Strings.email_address.get()
-        attrs.value = state.personEmailTextFieldValue
-        attrs.onChange = { event: Event ->
-          val value = event.inputValue
+      TextField<OutlinedTextFieldProps> {
+        error = state.personEmailTextFieldError.isNotEmpty()
+        helperText = ReactNode(state.personEmailTextFieldError)
+        fullWidth = true
+        variant = FormControlVariant.outlined()
+        label = ReactNode(Strings.email_address.get())
+        value = state.personEmailTextFieldValue
+        onChange = { event ->
+          val value = event.target.value
           setState {
             personEmailTextFieldError = ""
             personEmailTextFieldValue = value
@@ -201,34 +197,28 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
         }
       }
       if (state.selectedLocation?.seatCount != null) {
-        val options = state.selectedLocation?.seatCount?.let { seatCount ->
-          (1..seatCount).map { it }.toTypedArray()
-        } ?: emptyArray()
+        val options = (1..state.selectedLocation?.seatCount!!).map { it }.toTypedArray()
         spacer(16)
-        muiAutocomplete {
-          attrs.onChange = { _, target: Int?, _ ->
+        Autocomplete<AutocompleteProps<Int>> {
+          onChange = { _, target: Int?, _, _ ->
             setState {
               seatInputError = ""
               seatInputValue = target
             }
           }
-          attrs.fullWidth = true
-          attrs.multiple = false
-          attrs.openOnFocus = true
-          attrs.options = options
-          attrs.value = state.seatInputValue
-          attrs.getOptionLabel = { it.toString() }
-          attrs.renderInput = { params: dynamic ->
-            textField {
-              attrs.error = state.seatInputError.isNotEmpty()
-              attrs.helperText = state.seatInputError
-              attrs.id = params.id
-              attrs.InputProps = params.InputProps
-              attrs.inputProps = params.inputProps
-              attrs.disabled = params.disabled
-              attrs.fullWidth = params.fullWidth
-              attrs.variant = "outlined"
-              attrs.label = Strings.report_checkin_seat.get()
+          fullWidth = true
+          multiple = false
+          openOnFocus = true
+          this.options = options
+          value = state.seatInputValue
+          getOptionLabel = { it.toString() }
+          renderInput = { params ->
+            TextField.create {
+              +params
+              error = state.seatInputError.isNotEmpty()
+              helperText = ReactNode(state.seatInputError)
+              variant = FormControlVariant.outlined
+              label = ReactNode(Strings.report_checkin_seat.get())
             }
           }
         }
@@ -242,24 +232,8 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
 // If seat is not null, id gets appended with '-' to locationId
 fun locationIdWithSeat(locationId: String, seat: Int?) = "$locationId${seat?.let { "-$it" } ?: ""}"
 
-interface AddGuestCheckInClasses {
-  var addButton: String
-  var form: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    addButton = js {
-      marginBottom = 16
-    }
-    form = js {
-      width = "100%"
-    }
+fun ChildrenBuilder.renderAddGuestCheckIn(handler: AddGuestCheckInProps.() -> Unit) {
+  AddGuestCheckIn::class.react {
+    +jso(handler)
   }
-}
-
-private val styled = withStyles<AddGuestCheckInProps, AddGuestCheckIn>(style)
-
-fun RBuilder.renderAddGuestCheckIn(config: AddGuestCheckInProps.Config) = styled {
-  attrs.config = config
 }

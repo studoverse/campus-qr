@@ -1,58 +1,64 @@
 package webcore
 
+import app.themeContext
 import com.studo.campusqr.common.utils.LocalizedString
-import kotlinext.js.js
+import csstype.*
 import kotlinx.browser.document
-import kotlinx.html.InputType
+import kotlinx.js.jso
+import mui.material.Box
+import mui.material.FormControlVariant
+import mui.material.TextField
+import mui.system.sx
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.events.Event
 import react.*
-import react.dom.div
+import react.dom.events.ChangeEvent
+import react.dom.onChange
 import util.get
 import webcore.extensions.emptyToNull
-import webcore.extensions.inputValue
 import webcore.extensions.setFullYear
 import webcore.extensions.toInputTypeDateValueString
-import webcore.materialUI.TextFieldVariant
-import webcore.materialUI.textField
-import webcore.materialUI.withStyles
 import kotlin.js.Date
 
-interface DatePickerProps : RProps {
-  var classes: DatePickerClasses
-  var date: Date
-  var onChange: (date: Date, isValid: Boolean) -> Unit
-  var disabled: Boolean
-  var error: Boolean
-  var min: Date?
-  var max: Date?
-  var fullWidth: Boolean
-  var label: String?
-  var helperText: String?
-  var variant: TextFieldVariant
+class DatePickerConfig(
+  var date: Date,
+  var onChange: (date: Date, isValid: Boolean) -> Unit,
+  var disabled: Boolean = false,
+  var error: Boolean = false,
+  var min: Date? = null,
+  var max: Date? = null,
+  var fullWidth: Boolean = false,
+  var label: String? = null,
+  var helperText: String? = null,
+  var variant: FormControlVariant = FormControlVariant.outlined,
+)
+
+external interface DatePickerProps : Props {
+  var config: DatePickerConfig
 }
 
-interface DatePickerState : RState {
+external interface DatePickerState : State {
   var dateTimeInputValue: String
   var oldBrowsersInputValues: DatePicker.DateInputValues
   var fieldError: Boolean
 }
 
+@Suppress("UPPER_BOUND_VIOLATED")
 class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePickerState>(props) {
 
   class DateInputValues(var year: String, var month: String, var day: String)
 
   override fun DatePickerState.init(props: DatePickerProps) {
-    val year = props.date.getFullYear()
-    val month = props.date.getMonth() + 1
-    val day = props.date.getDate()
-    dateTimeInputValue = props.date.toInputTypeDateValueString()
+    val year = props.config.date.getFullYear()
+    val month = props.config.date.getMonth() + 1
+    val day = props.config.date.getDate()
+    dateTimeInputValue = props.config.date.toInputTypeDateValueString()
     oldBrowsersInputValues = DateInputValues(year.toString(), month.toString(), day.toString())
     fieldError = false
   }
 
   override fun componentDidUpdate(prevProps: DatePickerProps, prevState: DatePickerState, snapshot: Any) {
-    if (prevProps.date != props.date) {
+    if (prevProps.config.date != props.config.date) {
       setState { init(props) }
     }
   }
@@ -89,29 +95,31 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
       fieldError = !isValid
     }
     val date = Date().setFullYear(year, month, day)
-    props.onChange(date, isValid)
+    props.config.onChange(date, isValid)
   }
 
-  private fun RBuilder.renderWithInputTypeDateSupport() {
-    textField {
-      attrs.type = InputType.date.toString()
-      attrs.value = state.dateTimeInputValue
-      attrs.inputProps = js {
-        props.min?.let { minProp ->
+  private fun ChildrenBuilder.renderWithInputTypeDateSupport() {
+    TextField {
+      type = react.dom.html.InputType.date
+      value = state.dateTimeInputValue
+      inputProps = jso {
+        props.config.min?.let { minProp ->
           min = minProp.toInputTypeDateValueString()
         }
-        props.max?.let { maxProp ->
+        props.config.max?.let { maxProp ->
           max = maxProp.toInputTypeDateValueString()
         }
       }
-      attrs.label = props.label
-      attrs.helperText = props.helperText
-      attrs.fullWidth = props.fullWidth
-      attrs.variant = props.variant.value
-      attrs.disabled = props.disabled
-      attrs.error = props.error || state.fieldError
-      attrs.onChange = { event: Event ->
-        event.inputValue.emptyToNull()?.let { value ->
+      props.config.label?.let { label = ReactNode(it) }
+      props.config.helperText?.let { helperText = ReactNode(it) }
+      fullWidth = props.config.fullWidth
+      variant = props.config.variant
+      disabled = props.config.disabled
+      error = props.config.error || state.fieldError
+
+      onChange = { event ->
+        event as ChangeEvent<HTMLElement>
+        event.target.value.emptyToNull()?.let { value ->
           setState {
             dateTimeInputValue = value
           }
@@ -120,97 +128,108 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
           val date = Date(inputDateTimestamp)
 
           val isValid: Boolean = !inputDateTimestamp.isNaN() && date.getFullYear() > 1000 && date.getFullYear() < 9999
-          props.onChange(date, isValid)
+          props.config.onChange(date, isValid)
           setState { fieldError = !isValid }
         }
       }
     }
   }
 
-  private fun RBuilder.renderWithoutInputTypeDateSupport() {
-    val dayString = LocalizedString(
-      "Day",
-      "Tag"
-    ).get()
-    val monthString = LocalizedString(
-      "Month",
-      "Monat"
-    ).get()
-    val yearString = LocalizedString(
-      "Year",
-      "Jahr"
-    ).get()
-    div(props.classes.flex) {
-      textField {
-        attrs.fullWidth = props.fullWidth
-        attrs.variant = props.variant.value
-        attrs.disabled = props.disabled
-        attrs.error = props.error || state.fieldError
-        attrs.style = js { flex = 1 }
-        attrs.classes = js {
-          root = props.classes.textFieldLabel
-        }
-        attrs.type = InputType.number.toString()
-        attrs.placeholder = dayString
-        attrs.label = dayString
-        attrs.inputProps = js {
-          min = 1
-          max = 31
-        }
-        attrs.value = state.oldBrowsersInputValues.day
-        attrs.onChange = { event: Event ->
-          val value = event.inputValue
-          setState { oldBrowsersInputValues.day = value }
-          tryParsingInputFields(value, state.oldBrowsersInputValues.month, state.oldBrowsersInputValues.year)
-        }
-      }
-      textField {
-        attrs.fullWidth = props.fullWidth
-        attrs.variant = props.variant.value
-        attrs.disabled = props.disabled
-        attrs.error = props.error || state.fieldError
-        attrs.style = js { flex = 2 }
-        attrs.classes = js {
-          root = props.classes.textFieldLabel
-        }
-        attrs.type = InputType.number.toString()
-        attrs.placeholder = monthString
-        attrs.label = monthString
-        attrs.inputProps = js {
-          min = 1
-          max = 12
-        }
-        attrs.value = state.oldBrowsersInputValues.month
-        attrs.onChange = { event: Event ->
-          val value = event.inputValue
-          setState { oldBrowsersInputValues.month = value }
-          tryParsingInputFields(state.oldBrowsersInputValues.day, value, state.oldBrowsersInputValues.year)
-        }
-      }
-      textField {
-        attrs.fullWidth = props.fullWidth
-        attrs.variant = props.variant.value
-        attrs.disabled = props.disabled
-        attrs.error = props.error || state.fieldError
-        attrs.style = js { flex = 2 }
-        attrs.classes = js {
-          root = props.classes.textFieldLabel
-        }
-        attrs.type = InputType.number.toString()
-        attrs.placeholder = yearString
-        attrs.label = yearString
-        attrs.value = state.oldBrowsersInputValues.year
-        attrs.onChange = { event: Event ->
-          val value = event.inputValue
-          setState { oldBrowsersInputValues.year = value }
-          tryParsingInputFields(state.oldBrowsersInputValues.day, state.oldBrowsersInputValues.month, value)
+  private fun ChildrenBuilder.renderWithoutInputTypeDateSupport() {
+    themeContext.Consumer {
+      children = { theme ->
+        val dayString = LocalizedString(
+          "Day",
+          "Tag"
+        ).get()
+        val monthString = LocalizedString(
+          "Month",
+          "Monat"
+        ).get()
+        val yearString = LocalizedString(
+          "Year",
+          "Jahr"
+        ).get()
+        Box.create {
+          sx {
+            display = Display.flex
+            width = 100.pct
+          }
+          TextField {
+            fullWidth = props.config.fullWidth
+            variant = props.config.variant
+            disabled = props.config.disabled
+            error = props.config.error || state.fieldError
+            sx {
+              flex = Flex(number(1.0), number(1.0), 0.px)
+              paddingTop = theme.spacing(2)
+            }
+            type = react.dom.html.InputType.number
+            placeholder = dayString
+            label = ReactNode(dayString)
+            inputProps = jso {
+              min = 1
+              max = 31
+            }
+            value = state.oldBrowsersInputValues.day
+            onChange = { event ->
+              event as ChangeEvent<HTMLElement>
+              val value = event.target.value
+              setState { oldBrowsersInputValues.day = value }
+              tryParsingInputFields(value, state.oldBrowsersInputValues.month, state.oldBrowsersInputValues.year)
+            }
+          }
+          TextField {
+            fullWidth = props.config.fullWidth
+            variant = props.config.variant
+            disabled = props.config.disabled
+            error = props.config.error || state.fieldError
+            sx {
+              flex = Flex(number(2.0), number(1.0), 0.px)
+              paddingTop = theme.spacing(2)
+            }
+            type = react.dom.html.InputType.number
+            placeholder = monthString
+            label = ReactNode(monthString)
+            inputProps = jso {
+              min = 1
+              max = 12
+            }
+            value = state.oldBrowsersInputValues.month
+            onChange = { event ->
+              event as ChangeEvent<HTMLElement>
+              val value = event.target.value
+              setState { oldBrowsersInputValues.month = value }
+              tryParsingInputFields(state.oldBrowsersInputValues.day, value, state.oldBrowsersInputValues.year)
+            }
+          }
+          TextField {
+            fullWidth = props.config.fullWidth
+            variant = props.config.variant
+            disabled = props.config.disabled
+            error = props.config.error || state.fieldError
+            sx {
+              flex = Flex(number(2.0), number(1.0), 0.px)
+              paddingTop = theme.spacing(2)
+            }
+            type = react.dom.html.InputType.number
+            placeholder = yearString
+            label = ReactNode(yearString)
+            value = state.oldBrowsersInputValues.year
+            onChange = { event ->
+              event as ChangeEvent<HTMLElement>
+              val value = event.target.value
+              setState { oldBrowsersInputValues.year = value }
+              tryParsingInputFields(state.oldBrowsersInputValues.day, state.oldBrowsersInputValues.month, value)
+            }
+          }
         }
       }
     }
   }
 
-  override fun RBuilder.render() {
-    div {
+  override fun ChildrenBuilder.render() {
+    Box {
       if (detectInputDateSupport()) {
         renderWithInputTypeDateSupport()
       } else {
@@ -220,45 +239,8 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
   }
 }
 
-interface DatePickerClasses {
-  var flex: String
-  var textFieldLabel: String
-}
-
-private val styles = { theme: dynamic ->
-  js {
-    flex = js {
-      display = "flex"
-      width = "100%"
-    }
-    textFieldLabel = js {
-      paddingTop = theme.spacing(2)
-    }
+fun ChildrenBuilder.datePicker(handler: DatePickerProps.() -> Unit) {
+  DatePicker::class.react {
+    +jso(handler)
   }
-}
-
-private val styled = withStyles<DatePickerProps, DatePicker>(styles)
-
-fun RBuilder.datePicker(
-  date: Date,
-  onChange: (date: Date, isValid: Boolean) -> Unit,
-  disabled: Boolean = false,
-  error: Boolean = false,
-  min: Date? = null,
-  max: Date? = null,
-  fullWidth: Boolean = false,
-  label: String? = null,
-  helperText: String? = null,
-  variant: TextFieldVariant = TextFieldVariant.STANDARD,
-) = styled {
-  attrs.date = date
-  attrs.onChange = onChange
-  attrs.disabled = disabled
-  attrs.error = error
-  attrs.min = min
-  attrs.max = max
-  attrs.fullWidth = fullWidth
-  attrs.label = label
-  attrs.helperText = helperText
-  attrs.variant = variant
 }

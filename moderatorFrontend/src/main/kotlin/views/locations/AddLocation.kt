@@ -5,32 +5,30 @@ import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
-import kotlinext.js.js
-import org.w3c.dom.events.Event
+import csstype.*
+import kotlinx.js.jso
+import mui.material.*
+import mui.system.sx
 import react.*
-import react.dom.div
+import react.dom.html.InputType
 import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
 import views.common.spacer
-import views.locations.AddLocationProps.Config
-import webcore.NetworkManager
-import webcore.extensions.inputValue
+import webcore.*
 import webcore.extensions.launch
-import webcore.materialUI.*
 
-interface AddLocationProps : RProps {
-  sealed class Config(val onFinished: (response: String?) -> Unit) {
-    class Create(onFinished: (response: String?) -> Unit) : Config(onFinished)
-    class Edit(val location: ClientLocation, onFinished: (response: String?) -> Unit) : Config(onFinished)
-  }
-
-  var config: Config
-  var classes: AddLocationClasses
+sealed class AddLocationConfig(val onFinished: (response: String?) -> Unit) {
+  class Create(onFinished: (response: String?) -> Unit) : AddLocationConfig(onFinished)
+  class Edit(val location: ClientLocation, onFinished: (response: String?) -> Unit) : AddLocationConfig(onFinished)
 }
 
-interface AddLocationState : RState {
+external interface AddLocationProps : Props {
+  var config: AddLocationConfig
+}
+
+external interface AddLocationState : State {
   var locationCreationInProgress: Boolean
   var locationTextFieldValue: String
   var locationTextFieldError: String
@@ -38,21 +36,22 @@ interface AddLocationState : RState {
   var locationSeatCount: Int?
 }
 
-class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
+@Suppress("UPPER_BOUND_VIOLATED")
+private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
 
   override fun AddLocationState.init(props: AddLocationProps) {
     locationCreationInProgress = false
     locationTextFieldError = ""
-    locationTextFieldValue = (props.config as? Config.Edit)?.location?.name ?: ""
-    locationAccessType = (props.config as? Config.Edit)?.location?.accessType ?: LocationAccessType.FREE
-    locationSeatCount = (props.config as? Config.Edit)?.location?.seatCount
+    locationTextFieldValue = (props.config as? AddLocationConfig.Edit)?.location?.name ?: ""
+    locationAccessType = (props.config as? AddLocationConfig.Edit)?.location?.accessType ?: LocationAccessType.FREE
+    locationSeatCount = (props.config as? AddLocationConfig.Edit)?.location?.seatCount
   }
 
   private fun createOrUpdateLocation() = launch {
     setState { locationCreationInProgress = true }
     val url = when (val config = props.config) {
-      is Config.Create -> "$apiBase/location/create"
-      is Config.Edit -> "$apiBase/location/${config.location.id}/edit"
+      is AddLocationConfig.Create -> "$apiBase/location/create"
+      is AddLocationConfig.Edit -> "$apiBase/location/${config.location.id}/edit"
     }
     val response = NetworkManager.post<String>(
       url = url,
@@ -78,19 +77,19 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     return true
   }
 
-  override fun RBuilder.render() {
-    textField {
-      attrs.error = state.locationTextFieldError.isNotEmpty()
-      attrs.helperText = state.locationTextFieldError
-      attrs.fullWidth = true
-      attrs.variant = "outlined"
-      attrs.label = Strings.location_name.get()
-      attrs.value = state.locationTextFieldValue
-      attrs.inputProps = js {
+  override fun ChildrenBuilder.render() {
+    TextField<OutlinedTextFieldProps> {
+      error = state.locationTextFieldError.isNotEmpty()
+      helperText = ReactNode(state.locationTextFieldError)
+      fullWidth = true
+      variant = FormControlVariant.outlined()
+      label = ReactNode(Strings.location_name.get())
+      value = state.locationTextFieldValue
+      inputProps = jso {
         maxLength = 40 // Make sure names stay printable
       }
-      attrs.onChange = { event: Event ->
-        val value = event.inputValue
+      onChange = { event ->
+        val value = event.target.value
         setState {
           locationTextFieldValue = value
           locationTextFieldError = ""
@@ -100,27 +99,35 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
 
     spacer(16)
 
-    div(classes = props.classes.accessTypeSwitch) {
-      formControl {
-        attrs.fullWidth = true
-        inputLabel {
+    Box {
+      sx {
+        display = Display.flex
+        justifyContent = JustifyContent.center
+        alignItems = AlignItems.center
+        fontFamily = string("'Roboto', Arial, sans-serif")
+      }
+      FormControl {
+        fullWidth = true
+        InputLabel {
           +Strings.user_permissions.get()
         }
-        attrs.variant = "outlined"
-        muiSelect {
-          attrs.value = state.locationAccessType.toString()
-          attrs.onChange = { event ->
-            val value = event.target.value as String
+        variant = FormControlVariant.outlined
+        Select<SelectProps<String>> {
+          // TODO: @mh See: https://youtrack.jetbrains.com/issue/KT-51698
+          this as ChildrenBuilder
+          value = state.locationAccessType.toString()
+          // TODO: @mh See: https://github.com/JetBrains/kotlin-wrappers/issues/1356
+          onChange = { event: dynamic ->
             setState {
-              locationAccessType = LocationAccessType.valueOf(value)
+              locationAccessType = LocationAccessType.valueOf(event.target.value)
             }
           }
-          attrs.variant = "outlined"
-          attrs.label = Strings.location_access_type.get()
+          variant = SelectVariant.outlined
+          label = ReactNode(Strings.location_access_type.get())
 
           LocationAccessType.values().forEach { accessType ->
-            menuItem {
-              attrs.value = accessType.toString()
+            MenuItem {
+              value = accessType.toString()
               +accessType.localizedString.get()
             }
           }
@@ -130,15 +137,15 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
 
     spacer(16)
 
-    textField {
-      attrs.placeholder = Strings.undefined.get()
-      attrs.fullWidth = true
-      attrs.variant = "outlined"
-      attrs.type = "number"
-      attrs.label = Strings.location_number_of_seats_hint.get()
-      attrs.value = state.locationSeatCount?.toString() ?: ""
-      attrs.onChange = { event: Event ->
-        val value = event.inputValue
+    TextField<OutlinedTextFieldProps> {
+      placeholder = Strings.undefined.get()
+      fullWidth = true
+      variant = FormControlVariant.outlined()
+      type = InputType.number
+      label = ReactNode(Strings.location_number_of_seats_hint.get())
+      value = state.locationSeatCount?.toString() ?: ""
+      onChange = { event ->
+        val value = event.target.value
         setState {
           locationSeatCount = value.toIntOrNull()?.coerceIn(1, 10_000)
         }
@@ -147,20 +154,22 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
 
     spacer(32)
 
-    div(GlobalCss.flex) {
-      div(GlobalCss.flexEnd) {
-        muiButton {
-          attrs.classes = js {
-            root = props.classes.addButton
+    Box {
+      className = ClassName(GlobalCss.flex)
+      Box {
+        className = ClassName(GlobalCss.flexEnd)
+        Button {
+          sx {
+            marginBottom = 16.px
           }
-          attrs.variant = "contained"
-          attrs.color = "primary"
-          attrs.onClick = {
+          variant = ButtonVariant.contained
+          color = ButtonColor.primary
+          onClick = {
             if (validateInput()) {
               createOrUpdateLocation()
             }
           }
-          +if (props.config is Config.Create) {
+          +if (props.config is AddLocationConfig.Create) {
             Strings.location_add.get()
           } else {
             Strings.location_update.get()
@@ -171,28 +180,8 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
   }
 }
 
-interface AddLocationClasses {
-  var addButton: String
-  var accessTypeSwitch: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    addButton = js {
-      marginBottom = 16
-    }
-    accessTypeSwitch = js {
-      display = "flex"
-      justifyContent = "center"
-      alignItems = "center"
-      fontFamily = "'Roboto', Arial, sans-serif"
-    }
+fun ChildrenBuilder.renderAddLocation(handler: AddLocationProps.() -> Unit) {
+  AddLocation::class.react {
+    +jso(handler)
   }
 }
-
-private val styled = withStyles<AddLocationProps, AddLocation>(style)
-
-fun RBuilder.renderAddLocation(config: Config) = styled {
-  attrs.config = config
-}
-  

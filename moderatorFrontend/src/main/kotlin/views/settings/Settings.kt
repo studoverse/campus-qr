@@ -1,32 +1,35 @@
 package views.settings
 
 import app.baseUrl
-import kotlinext.js.js
+import csstype.Globals
 import kotlinx.browser.window
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.br
+import kotlinx.js.jso
+import mui.material.Button
+import mui.material.ButtonColor
+import mui.system.sx
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.dom.html.ReactHTML.br
+import react.react
 import util.Strings
 import util.get
-import webcore.materialUI.muiButton
-import webcore.materialUI.withStyles
+import webcore.RComponent
 
-interface SettingsProps : RProps {
-  var classes: SettingsClasses
-}
+external interface SettingsProps : Props
 
-interface SettingsState : RState
+external interface SettingsState : State
 
-class Settings : RComponent<SettingsProps, SettingsState>() {
-  override fun RBuilder.render() {
-    renderLanguageSwitch()
+private class Settings : RComponent<SettingsProps, SettingsState>() {
+  override fun ChildrenBuilder.render() {
+    renderLanguageSwitch {}
     br {}
-    muiButton {
-      attrs.className = props.classes.button
-      attrs.color = "primary"
-      attrs.onClick = {
+    Button {
+      sx {
+        textTransform = Globals.initial
+      }
+      color = ButtonColor.primary
+      onClick = {
         window.location.href = "$baseUrl/user/logout"
       }
       +Strings.logout.get()
@@ -34,21 +37,9 @@ class Settings : RComponent<SettingsProps, SettingsState>() {
   }
 }
 
-interface SettingsClasses {
-  var button: String
-}
-
-private val style = { _: dynamic ->
-  js {
-    button = js {
-      textTransform = "initial"
-    }
+fun ChildrenBuilder.renderSettings(handler: SettingsProps.() -> Unit = {}) {
+  Settings::class.react {
+    +jso(handler)
   }
-}
-
-private val styled = withStyles<SettingsProps, Settings>(style)
-
-fun RBuilder.renderSettings() = styled {
-  // Set component attrs here
 }
   
