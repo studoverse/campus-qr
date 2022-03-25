@@ -2,8 +2,8 @@ package views.common
 
 import csstype.ClassName
 import csstype.px
-import kotlinx.js.jso
 import mui.material.Box
+import mui.system.sx
 import react.ChildrenBuilder
 
 fun ChildrenBuilder.container(block: ChildrenBuilder.() -> Unit): Unit =
@@ -13,13 +13,13 @@ fun ChildrenBuilder.container(block: ChildrenBuilder.() -> Unit): Unit =
   }
 
 fun ChildrenBuilder.spacer(size: Int = 8) = Box {
-  sx = jso {
+  sx {
     height = size.px
   }
 }
 
 fun ChildrenBuilder.horizontalSpacer(size: Int = 8) = Box {
-  sx = jso {
+  sx {
     width = size.px
   }
 }

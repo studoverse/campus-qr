@@ -14,6 +14,7 @@ import mui.material.Box
 import mui.material.styles.Theme
 import mui.material.styles.ThemeProvider
 import mui.material.styles.createTheme
+import mui.system.sx
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
@@ -257,7 +258,7 @@ private class App : RComponent<AppProps, AppState>() {
     if (state.userData == null) {
       if (state.loadingUserData) {
         Box {
-          sx = jso {
+          sx {
             display = Display.flex
             minHeight = 100.vh
             flexDirection = FlexDirection.column
