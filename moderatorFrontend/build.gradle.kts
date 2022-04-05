@@ -12,10 +12,10 @@ repositories {
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-val kotlinWrappersVersion = "0.0.1-pre.326-kotlin-1.6.20"
+val kotlinWrappersVersion = "0.0.1-pre.325-kotlin-1.6.10" // TODO: @mh Use pre.326 when using IR compiler
 
 kotlin {
-  js(IR) {
+  js {
     useCommonJs()
     browser()
     binaries.executable()

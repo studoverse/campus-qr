@@ -13,7 +13,7 @@ kotlin {
       kotlinOptions.jvmTarget = "11"
     }
   }
-  js(IR) {
+  js {
     useCommonJs()
     browser()
     binaries.executable()
