@@ -15,7 +15,7 @@ class AppShellDrawerConfig(
   var hideDrawer: Boolean,
   var drawerList: ChildrenBuilder.() -> Unit,
   var toolbarIcon: (ChildrenBuilder.() -> Unit)?,
-  var themeColor: String,
+  var themeColor: Color,
   var smallToolbar: Boolean,
   var stickyNavigation: Boolean,
   var appBarElevation: Int?
@@ -62,7 +62,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
             props.config.appBarElevation?.let { elevation = it }
             Toolbar {
               sx {
-                borderTop = Border(width = 6.px, style = LineStyle.solid, color = Color(props.config.themeColor))
+                borderTop = Border(width = 6.px, style = LineStyle.solid, color = props.config.themeColor)
                 (theme.breakpoints.up(Breakpoint.md)) {
                   if (props.config.smallToolbar) {
                     minHeight = 12.px

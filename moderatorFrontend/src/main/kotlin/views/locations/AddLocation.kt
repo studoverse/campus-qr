@@ -117,7 +117,7 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
           this as ChildrenBuilder
           value = state.locationAccessType.toString()
           // TODO: @mh See: https://github.com/JetBrains/kotlin-wrappers/issues/1356
-          onChange = { event: dynamic ->
+          asDynamic().onChange = { event: dynamic ->
             setState {
               locationAccessType = LocationAccessType.valueOf(event.target.value)
             }
