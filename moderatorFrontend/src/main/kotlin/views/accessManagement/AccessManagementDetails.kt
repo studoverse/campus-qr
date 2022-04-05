@@ -471,7 +471,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                 if (state.fromDateTextFieldError.isNotEmpty()) {
                   Typography {
                     sx {
-                      color = Color(theme.palette.error.main)
+                      color = theme.palette.error.main
                     }
                     +state.fromDateTextFieldError
                   }
@@ -481,7 +481,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                 if (state.toDateTextFieldError.isNotEmpty()) {
                   Typography {
                     sx {
-                      color = Color(theme.palette.error.main)
+                      color = theme.palette.error.main
                     }
                     +state.toDateTextFieldError
                   }

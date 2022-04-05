@@ -13,7 +13,7 @@ class AppShellConfig(
   var drawerList: ChildrenBuilder.() -> Unit,
   var viewContent: ChildrenBuilder.() -> Unit,
   var toolbarIcon: (ChildrenBuilder.() -> Unit)?,
-  var themeColor: String,
+  var themeColor: Color,
   var hideDrawer: Boolean,
   var smallToolbar: Boolean,
   var mobileNavOpen: Boolean,
