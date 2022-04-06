@@ -1,6 +1,5 @@
 package webcore
 
-import app.themeContext
 import csstype.*
 import kotlinx.js.jso
 import mui.icons.material.*
@@ -34,55 +33,51 @@ external interface MbSnackbarProps : Props {
 
 private class MbSnackbar : RComponent<MbSnackbarProps, State>() {
   override fun ChildrenBuilder.render() {
-    themeContext.Consumer {
-      children = { theme ->
-        Fragment.create {
-          Snackbar {
-            anchorOrigin = jso {
-              vertical = props.config.position.vertical
-              horizontal = props.config.position.horizontal
-            }
-            sx {
-              marginBottom = 20.px
-            }
-            open = props.config.show
-            autoHideDuration = 3000
-            onClose = { event, reason ->
-              props.config.onClose()
-            }
-            SnackbarContent {
-              sx {
-                when (props.config.snackbarType) {
-                  MbSnackbarType.SUCCESS -> backgroundColor = Color(greenColor[500] as String)
-                  MbSnackbarType.ERROR -> backgroundColor = Color(redColor[500] as String)
-                  MbSnackbarType.INFO -> backgroundColor = Color(blueColor[500] as String)
-                  MbSnackbarType.WARNING -> {
-                    color = Color("black")
-                    backgroundColor = Color(yellowColor[500] as String)
-                  }
-                  null -> ""
-                }
+    Fragment.create {
+      Snackbar {
+        anchorOrigin = jso {
+          vertical = props.config.position.vertical
+          horizontal = props.config.position.horizontal
+        }
+        sx {
+          marginBottom = 20.px
+        }
+        open = props.config.show
+        autoHideDuration = 3000
+        onClose = { event, reason ->
+          props.config.onClose()
+        }
+        SnackbarContent {
+          sx {
+            when (props.config.snackbarType) {
+              MbSnackbarType.SUCCESS -> backgroundColor = Color(greenColor[500] as String)
+              MbSnackbarType.ERROR -> backgroundColor = Color(redColor[500] as String)
+              MbSnackbarType.INFO -> backgroundColor = Color(blueColor[500] as String)
+              MbSnackbarType.WARNING -> {
+                color = Color("black")
+                backgroundColor = Color(yellowColor[500] as String)
               }
-              message = Box.create {
-                sx {
-                  display = Display.flex
-                  alignItems = AlignItems.center
-                }
-                props.config.snackbarType?.icon?.let {
-                  it {
-                    sx {
-                      fontSize = 20.px
-                      opacity = number(0.9)
-                      marginRight = theme.spacing(1)
-                    }
-                  }
-                }
-                +props.config.message
-              }
-              props.config.complexMessage?.let { message = it() }
-
+              null -> ""
             }
           }
+          message = Box.create {
+            sx {
+              display = Display.flex
+              alignItems = AlignItems.center
+            }
+            props.config.snackbarType?.icon?.let {
+              it {
+                sx {
+                  fontSize = 20.px
+                  opacity = number(0.9)
+                  marginRight = 8.px
+                }
+              }
+            }
+            +props.config.message
+          }
+          props.config.complexMessage?.let { message = it() }
+
         }
       }
     }

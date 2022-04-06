@@ -1,8 +1,10 @@
 package webcore
 
-import app.themeContext
 import com.studo.campusqr.common.utils.LocalizedString
-import csstype.*
+import csstype.Display
+import csstype.number
+import csstype.pct
+import csstype.px
 import kotlinx.browser.document
 import kotlinx.js.jso
 import mui.material.Box
@@ -136,93 +138,89 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
   }
 
   private fun ChildrenBuilder.renderWithoutInputTypeDateSupport() {
-    themeContext.Consumer {
-      children = { theme ->
-        val dayString = LocalizedString(
-          "Day",
-          "Tag"
-        ).get()
-        val monthString = LocalizedString(
-          "Month",
-          "Monat"
-        ).get()
-        val yearString = LocalizedString(
-          "Year",
-          "Jahr"
-        ).get()
-        Box.create {
-          sx {
-            display = Display.flex
-            width = 100.pct
-          }
-          TextField {
-            fullWidth = props.config.fullWidth
-            variant = props.config.variant
-            disabled = props.config.disabled
-            error = props.config.error || state.fieldError
-            sx {
-              flex = Flex(number(1.0), number(1.0), 0.px)
-              paddingTop = theme.spacing(2)
-            }
-            type = react.dom.html.InputType.number
-            placeholder = dayString
-            label = ReactNode(dayString)
-            inputProps = jso {
-              min = 1
-              max = 31
-            }
-            value = state.oldBrowsersInputValues.day
-            onChange = { event ->
-              event as ChangeEvent<HTMLElement>
-              val value = event.target.value
-              setState { oldBrowsersInputValues.day = value }
-              tryParsingInputFields(value, state.oldBrowsersInputValues.month, state.oldBrowsersInputValues.year)
-            }
-          }
-          TextField {
-            fullWidth = props.config.fullWidth
-            variant = props.config.variant
-            disabled = props.config.disabled
-            error = props.config.error || state.fieldError
-            sx {
-              flex = Flex(number(2.0), number(1.0), 0.px)
-              paddingTop = theme.spacing(2)
-            }
-            type = react.dom.html.InputType.number
-            placeholder = monthString
-            label = ReactNode(monthString)
-            inputProps = jso {
-              min = 1
-              max = 12
-            }
-            value = state.oldBrowsersInputValues.month
-            onChange = { event ->
-              event as ChangeEvent<HTMLElement>
-              val value = event.target.value
-              setState { oldBrowsersInputValues.month = value }
-              tryParsingInputFields(state.oldBrowsersInputValues.day, value, state.oldBrowsersInputValues.year)
-            }
-          }
-          TextField {
-            fullWidth = props.config.fullWidth
-            variant = props.config.variant
-            disabled = props.config.disabled
-            error = props.config.error || state.fieldError
-            sx {
-              flex = Flex(number(2.0), number(1.0), 0.px)
-              paddingTop = theme.spacing(2)
-            }
-            type = react.dom.html.InputType.number
-            placeholder = yearString
-            label = ReactNode(yearString)
-            value = state.oldBrowsersInputValues.year
-            onChange = { event ->
-              event as ChangeEvent<HTMLElement>
-              val value = event.target.value
-              setState { oldBrowsersInputValues.year = value }
-              tryParsingInputFields(state.oldBrowsersInputValues.day, state.oldBrowsersInputValues.month, value)
-            }
-          }
+    val dayString = LocalizedString(
+      "Day",
+      "Tag"
+    ).get()
+    val monthString = LocalizedString(
+      "Month",
+      "Monat"
+    ).get()
+    val yearString = LocalizedString(
+      "Year",
+      "Jahr"
+    ).get()
+    Box.create {
+      sx {
+        display = Display.flex
+        width = 100.pct
+      }
+      TextField {
+        fullWidth = props.config.fullWidth
+        variant = props.config.variant
+        disabled = props.config.disabled
+        error = props.config.error || state.fieldError
+        sx {
+          flex = Flex(number(1.0))
+          paddingTop = 16.px
+        }
+        type = react.dom.html.InputType.number
+        placeholder = dayString
+        label = ReactNode(dayString)
+        inputProps = jso {
+          min = 1
+          max = 31
+        }
+        value = state.oldBrowsersInputValues.day
+        onChange = { event ->
+          event as ChangeEvent<HTMLElement>
+          val value = event.target.value
+          setState { oldBrowsersInputValues.day = value }
+          tryParsingInputFields(value, state.oldBrowsersInputValues.month, state.oldBrowsersInputValues.year)
+        }
+      }
+      TextField {
+        fullWidth = props.config.fullWidth
+        variant = props.config.variant
+        disabled = props.config.disabled
+        error = props.config.error || state.fieldError
+        sx {
+          flex = Flex(number(2.0))
+          paddingTop = 16.px
+        }
+        type = react.dom.html.InputType.number
+        placeholder = monthString
+        label = ReactNode(monthString)
+        inputProps = jso {
+          min = 1
+          max = 12
+        }
+        value = state.oldBrowsersInputValues.month
+        onChange = { event ->
+          event as ChangeEvent<HTMLElement>
+          val value = event.target.value
+          setState { oldBrowsersInputValues.month = value }
+          tryParsingInputFields(state.oldBrowsersInputValues.day, value, state.oldBrowsersInputValues.year)
+        }
+      }
+      TextField {
+        fullWidth = props.config.fullWidth
+        variant = props.config.variant
+        disabled = props.config.disabled
+        error = props.config.error || state.fieldError
+        sx {
+          flex = Flex(number(2.0))
+          paddingTop = 16.px
+        }
+        type = react.dom.html.InputType.number
+        placeholder = yearString
+        label = ReactNode(yearString)
+        value = state.oldBrowsersInputValues.year
+        onChange = { event ->
+          event as ChangeEvent<HTMLElement>
+          val value = event.target.value
+          setState { oldBrowsersInputValues.year = value }
+          tryParsingInputFields(state.oldBrowsersInputValues.day, state.oldBrowsersInputValues.month, value)
         }
       }
     }

@@ -1,8 +1,6 @@
 package webcore
 
-import app.themeContext
 import com.studo.campusqr.common.utils.LocalizedString
-import csstype.Flex
 import csstype.number
 import csstype.pct
 import csstype.px
@@ -138,66 +136,62 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
   }
 
   private fun ChildrenBuilder.renderWithoutInputTypeTimeSupport() {
-    themeContext.Consumer {
-      children = { theme ->
-        val hourString = LocalizedString(
-          "Hour",
-          "Stunde"
-        ).get()
-        val minuteString = LocalizedString(
-          "Minute",
-          "Minute"
-        ).get()
-        Box.create {
-          sx {
-            width = 100.pct
-          }
-          TextField {
-            fullWidth = props.config.fullWidth
-            variant = props.config.variant
-            disabled = props.config.disabled
-            error = props.config.error
-            sx {
-              flex = Flex(number(1.0), number(1.0), 0.px)
-              paddingTop = theme.spacing(2)
-            }
-            type = react.dom.html.InputType.number
-            placeholder = hourString
-            label = ReactNode(hourString)
-            inputProps = jso {
-              min = 0
-              max = 23
-            }
-            value = state.oldBrowsersInputValues.hour
-            this.onChange = { event ->
-              event as ChangeEvent<HTMLElement>
-              val value: String = event.target.value
-              tryParsingInputFields(value, state.oldBrowsersInputValues.minute)
-            }
-          }
-          TextField {
-            fullWidth = props.config.fullWidth
-            variant = props.config.variant
-            disabled = props.config.disabled
-            error = props.config.error
-            sx {
-              flex = Flex(number(1.0), number(1.0), 0.px)
-              paddingTop = theme.spacing(2)
-            }
-            type = react.dom.html.InputType.number
-            placeholder = minuteString
-            label = ReactNode(minuteString)
-            inputProps = jso {
-              min = 0
-              max = 59
-            }
-            value = state.oldBrowsersInputValues.minute
-            onChange = { event ->
-              event as ChangeEvent<HTMLElement>
-              val value: String = event.target.value
-              tryParsingInputFields(state.oldBrowsersInputValues.hour, value)
-            }
-          }
+    val hourString = LocalizedString(
+      "Hour",
+      "Stunde"
+    ).get()
+    val minuteString = LocalizedString(
+      "Minute",
+      "Minute"
+    ).get()
+    Box.create {
+      sx {
+        width = 100.pct
+      }
+      TextField {
+        fullWidth = props.config.fullWidth
+        variant = props.config.variant
+        disabled = props.config.disabled
+        error = props.config.error
+        sx {
+          flex = Flex(number(1.0))
+          paddingTop = 16.px
+        }
+        type = react.dom.html.InputType.number
+        placeholder = hourString
+        label = ReactNode(hourString)
+        inputProps = jso {
+          min = 0
+          max = 23
+        }
+        value = state.oldBrowsersInputValues.hour
+        this.onChange = { event ->
+          event as ChangeEvent<HTMLElement>
+          val value: String = event.target.value
+          tryParsingInputFields(value, state.oldBrowsersInputValues.minute)
+        }
+      }
+      TextField {
+        fullWidth = props.config.fullWidth
+        variant = props.config.variant
+        disabled = props.config.disabled
+        error = props.config.error
+        sx {
+          flex = Flex(number(1.0))
+          paddingTop = 16.px
+        }
+        type = react.dom.html.InputType.number
+        placeholder = minuteString
+        label = ReactNode(minuteString)
+        inputProps = jso {
+          min = 0
+          max = 59
+        }
+        value = state.oldBrowsersInputValues.minute
+        onChange = { event ->
+          event as ChangeEvent<HTMLElement>
+          val value: String = event.target.value
+          tryParsingInputFields(state.oldBrowsersInputValues.hour, value)
         }
       }
     }
