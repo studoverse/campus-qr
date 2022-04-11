@@ -1,5 +1,8 @@
 plugins {
   kotlin("js")
+
+  // Workaround for https://youtrack.jetbrains.com/issue/KT-51921 respectively https://github.com/JetBrains/kotlin-wrappers/issues/1077
+  id("io.github.turansky.kfc.legacy-union") version "5.8.0"
 }
 
 val ktor_version: String = "1.6.7"
