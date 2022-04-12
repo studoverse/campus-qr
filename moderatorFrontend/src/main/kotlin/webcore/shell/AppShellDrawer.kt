@@ -93,37 +93,40 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
           }
 
           if (!props.config.hideDrawer) {
-            Hidden {
-              smDown = true
-              implementation = HiddenImplementation.css
-              Drawer {
-                sx {
+            Drawer {
+              sx {
+                (theme.breakpoints.down(Breakpoint.md)) {
+                  display = None.none
+                }
+                (theme.breakpoints.up(Breakpoint.md)) {
                   drawerStyle()
                 }
-                open = true
-                variant = DrawerVariant.permanent
-                props.config.drawerList(this)
               }
+              open = true
+              variant = DrawerVariant.permanent
+              props.config.drawerList(this)
             }
-            Hidden {
-              mdUp = true
-              Drawer {
-                open = state.mobileNavOpen
-                variant = DrawerVariant.temporary
-                onClose = { _, _ -> setState { mobileNavOpen = false } }
-                ModalProps = jso {
-                  keepMounted = true // Better open performance on mobile
+            Drawer {
+              open = state.mobileNavOpen
+              variant = DrawerVariant.temporary
+              onClose = { _, _ -> setState { mobileNavOpen = false } }
+              ModalProps = jso {
+                keepMounted = true // Better open performance on mobile
+              }
+              sx {
+                (theme.breakpoints.up(Breakpoint.md)) {
+                  display = None.none
                 }
-                sx {
+                (theme.breakpoints.down(Breakpoint.md)) {
                   drawerStyle()
                 }
-                SlideProps = jso {
-                  // `in` = true
-                  direction = SlideDirection.right
-                  appear = true
-                }
-                props.config.drawerList(this)
               }
+              SlideProps = jso {
+                // `in` = true
+                direction = SlideDirection.right
+                appear = true
+              }
+              props.config.drawerList(this)
             }
           }
         }
