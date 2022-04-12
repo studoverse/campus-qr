@@ -15,7 +15,7 @@ repositories {
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-val kotlinWrappersVersion = "0.0.1-pre.325-kotlin-1.6.10" // TODO: @mh Use pre.326 when using IR compiler
+val kotlinWrappersVersion = "0.0.1-pre.329-kotlin-1.6.20"
 
 kotlin {
   js {
@@ -53,7 +53,7 @@ dependencies {
   api(npm("react", "17.0.2"))
   api(npm("react-dom", "17.0.2"))
 
-  api(npm("@mui/material", "5.5.2"))
+  api(npm("@mui/material", "5.6.1"))
 
   api(npm("js-file-download", "0.4.12"))
 
