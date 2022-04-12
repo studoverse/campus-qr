@@ -9,11 +9,11 @@ import mui.system.sx
 import react.ChildrenBuilder
 import react.Props
 import react.State
-import react.dom.html.ReactHTML.br
 import react.react
 import util.Strings
 import util.get
 import webcore.RComponent
+import webcore.verticalMargin
 
 external interface SettingsProps : Props
 
@@ -22,7 +22,7 @@ external interface SettingsState : State
 private class Settings : RComponent<SettingsProps, SettingsState>() {
   override fun ChildrenBuilder.render() {
     renderLanguageSwitch()
-    br {}
+    verticalMargin(16)
     Button {
       sx {
         textTransform = Globals.initial

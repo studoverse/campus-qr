@@ -82,15 +82,17 @@ fun ChildrenBuilder.horizontalMargin(margin: Int) {
   Box {
     component = span
     sx {
-      marginRight = margin.px
+      width = margin.px
+      display = Display.inlineBlock
     }
   }
 }
 
-fun ChildrenBuilder.verticalMargin(margin: Int) {
+fun ChildrenBuilder.verticalMargin(margin: Int = 8) {
   Box {
     sx {
-      marginBottom = margin.px
+      height = margin.px
+      display = Display.block
     }
   }
 }

@@ -12,12 +12,12 @@ import mui.system.sx
 import react.ChildrenBuilder
 import react.Props
 import react.State
-import react.dom.html.ReactHTML.br
 import react.react
 import util.Strings
 import util.get
 import views.common.spacer
 import webcore.RComponent
+import webcore.verticalMargin
 
 external interface AdminInfoProps : Props
 
@@ -48,7 +48,7 @@ private class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
         +Strings.user_sso_info.get()
       }
       +Strings.user_sso_info_details1.get()
-      br {}
+      verticalMargin(16)
       +Strings.user_sso_info_details2.get()
       Typography {
         sx {

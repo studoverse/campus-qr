@@ -3,7 +3,6 @@ package views.accessManagement.accessManagementOverview
 import com.studo.campusqr.common.payloads.ClientAccessManagement
 import com.studo.campusqr.common.payloads.ClientDateRange
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.icons.material.Delete
 import mui.icons.material.Edit
 import mui.icons.material.FileCopyOutlined
@@ -15,7 +14,6 @@ import react.ChildrenBuilder
 import react.Props
 import react.State
 import react.dom.events.MouseEvent
-import react.dom.html.ReactHTML.br
 import react.dom.html.ReactHTML.strong
 import react.react
 import util.Strings
@@ -125,7 +123,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
         val now = Date().getTime()
         dateRanges.forEachIndexed { index, dateRange ->
           if (index != 0) {
-            br { }
+            verticalMargin(16)
           }
           if (dateRange.from < now && dateRange.to > now) {
             // Current date range
