@@ -1,6 +1,7 @@
 package webcore.shell
 
-import app.themeContext
+import app.AppContext
+import app.appContext
 import csstype.*
 import kotlinx.js.jso
 import mui.material.*
@@ -33,6 +34,15 @@ const val drawerWidth = 240
 
 class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProps, AppShellDrawerState>(props) {
 
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AppShellDrawer::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun AppShellDrawerState.init(props: AppShellDrawerProps) {
     mobileNavOpen = props.config.mobileNavOpen
   }
@@ -42,94 +52,89 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 
   override fun ChildrenBuilder.render() {
-    themeContext.Consumer {
-      children = { theme ->
-        Fragment.create {
-          AppBar {
-            if (!props.config.hideDrawer) {
-              sx {
-                (theme.breakpoints.up(Breakpoint.md)) {
-                  marginLeft = drawerWidth.px
-                  width = 100.pct - drawerWidth.px
-                  if (props.config.smallToolbar) {
-                    height = 12.px
-                  }
-                }
-              }
-            }
-            color = AppBarColor.primary
-            position = if (props.config.stickyNavigation) AppBarPosition.sticky else AppBarPosition.static
-            props.config.appBarElevation?.let { elevation = it }
-            Toolbar {
-              sx {
-                borderTop = Border(width = 6.px, style = LineStyle.solid, color = props.config.themeColor)
-                (theme.breakpoints.up(Breakpoint.md)) {
-                  if (props.config.smallToolbar) {
-                    minHeight = 12.px
-                  }
-                }
-              }
-              if (!props.config.hideDrawer) {
-                IconButton {
-                  sx {
-                    (theme.breakpoints.up(Breakpoint.md)) {
-                      display = None.none
-                    }
-                  }
-                  mui.icons.material.Menu {
-                    sx {
-                      color = (Color("#fff"))
-                    }
-                  }
-                  onClick = {
-                    setState {
-                      mobileNavOpen = !state.mobileNavOpen
-                    }
-                  }
-                }
-              }
-              props.config.toolbarIcon?.invoke(this)
-            }
-          }
-
-          if (!props.config.hideDrawer) {
-            Drawer {
-              sx {
-                (theme.breakpoints.down(Breakpoint.md)) {
-                  display = None.none
-                }
-                (theme.breakpoints.up(Breakpoint.md)) {
-                  drawerStyle()
-                }
-              }
-              open = true
-              variant = DrawerVariant.permanent
-              props.config.drawerList(this)
-            }
-            Drawer {
-              open = state.mobileNavOpen
-              variant = DrawerVariant.temporary
-              onClose = { _, _ -> setState { mobileNavOpen = false } }
-              ModalProps = jso {
-                keepMounted = true // Better open performance on mobile
-              }
-              sx {
-                (theme.breakpoints.up(Breakpoint.md)) {
-                  display = None.none
-                }
-                (theme.breakpoints.down(Breakpoint.md)) {
-                  drawerStyle()
-                }
-              }
-              SlideProps = jso {
-                // `in` = true
-                direction = SlideDirection.right
-                appear = true
-              }
-              props.config.drawerList(this)
+    val theme = appContext.theme
+    AppBar {
+      if (!props.config.hideDrawer) {
+        sx {
+          (theme.breakpoints.up(Breakpoint.md)) {
+            marginLeft = drawerWidth.px
+            width = 100.pct - drawerWidth.px
+            if (props.config.smallToolbar) {
+              height = 12.px
             }
           }
         }
+      }
+      color = AppBarColor.primary
+      position = if (props.config.stickyNavigation) AppBarPosition.sticky else AppBarPosition.static
+      props.config.appBarElevation?.let { elevation = it }
+      Toolbar {
+        sx {
+          borderTop = Border(width = 6.px, style = LineStyle.solid, color = props.config.themeColor)
+          (theme.breakpoints.up(Breakpoint.md)) {
+            if (props.config.smallToolbar) {
+              minHeight = 12.px
+            }
+          }
+        }
+        if (!props.config.hideDrawer) {
+          IconButton {
+            sx {
+              (theme.breakpoints.up(Breakpoint.md)) {
+                display = None.none
+              }
+            }
+            mui.icons.material.Menu {
+              sx {
+                color = (Color("#fff"))
+              }
+            }
+            onClick = {
+              setState {
+                mobileNavOpen = !state.mobileNavOpen
+              }
+            }
+          }
+        }
+        props.config.toolbarIcon?.invoke(this)
+      }
+    }
+
+    if (!props.config.hideDrawer) {
+      Drawer {
+        sx {
+          (theme.breakpoints.down(Breakpoint.md)) {
+            display = None.none
+          }
+          (theme.breakpoints.up(Breakpoint.md)) {
+            drawerStyle()
+          }
+        }
+        open = true
+        variant = DrawerVariant.permanent
+        props.config.drawerList(this)
+      }
+      Drawer {
+        open = state.mobileNavOpen
+        variant = DrawerVariant.temporary
+        onClose = { _, _ -> setState { mobileNavOpen = false } }
+        ModalProps = jso {
+          keepMounted = true // Better open performance on mobile
+        }
+        sx {
+          (theme.breakpoints.up(Breakpoint.md)) {
+            display = None.none
+          }
+          (theme.breakpoints.down(Breakpoint.md)) {
+            drawerStyle()
+          }
+        }
+        SlideProps = jso {
+          // `in` = true
+          direction = SlideDirection.right
+          appear = true
+        }
+        props.config.drawerList(this)
       }
     }
   }

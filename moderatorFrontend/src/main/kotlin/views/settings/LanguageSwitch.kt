@@ -1,6 +1,7 @@
 package views.settings
 
-import app.languageContext
+import app.AppContext
+import app.appContext
 import csstype.AlignItems
 import csstype.Display
 import csstype.JustifyContent
@@ -16,36 +17,43 @@ import webcore.RComponent
 external interface LanguageSwitchProps : Props
 
 private class LanguageSwitch(props: LanguageSwitchProps) : RComponent<LanguageSwitchProps, State>(props) {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(LanguageSwitch::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun ChildrenBuilder.render() {
+    val languageContext = appContext.languageContext
 
-    languageContext.Consumer {
-      children = { languageState ->
-        val activeLanguage = languageState.activeLanguage
-        val languageChange = languageState.onLanguageChange
+    val activeLanguage = languageContext.activeLanguage
+    val languageChange = languageContext.onLanguageChange
 
-        Box.create {
-          sx {
-            display = Display.flex
-            justifyContent = JustifyContent.center
-            alignItems = AlignItems.center
-            fontFamily = string("'Roboto', Arial, sans-serif")
+    Box {
+      sx {
+        display = Display.flex
+        justifyContent = JustifyContent.center
+        alignItems = AlignItems.center
+        fontFamily = string("'Roboto', Arial, sans-serif")
+      }
+      +"Deutsch"
+      Switch {
+        checked = (activeLanguage != MbLocalizedStringConfig.SupportedLanguage.De)
+        color = SwitchColor.default
+        onChange = { _, checked ->
+          val newLanguage = if (checked) {
+            MbLocalizedStringConfig.SupportedLanguage.En
+          } else {
+            MbLocalizedStringConfig.SupportedLanguage.De
           }
-          +"Deutsch"
-          Switch {
-            checked = (activeLanguage != MbLocalizedStringConfig.SupportedLanguage.De)
-            color = SwitchColor.default
-            onChange = { _, checked ->
-              val newLanguage = if (checked) {
-                MbLocalizedStringConfig.SupportedLanguage.En
-              } else {
-                MbLocalizedStringConfig.SupportedLanguage.De
-              }
-              languageChange(newLanguage)
-            }
-          }
-          +"English"
+          languageChange(newLanguage)
         }
       }
+      +"English"
     }
   }
 }

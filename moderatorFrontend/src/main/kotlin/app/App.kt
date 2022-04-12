@@ -11,7 +11,6 @@ import kotlinx.browser.window
 import kotlinx.js.jso
 import mui.icons.material.*
 import mui.material.Box
-import mui.material.styles.Theme
 import mui.material.styles.ThemeProvider
 import mui.material.styles.createTheme
 import mui.system.sx
@@ -19,7 +18,10 @@ import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URL
-import react.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
+import react.react
 import util.*
 import views.common.centeredProgress
 import views.common.networkErrorView
@@ -31,18 +33,7 @@ import webcore.setState
 import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
-data class LanguageState(
-  val activeLanguage: MbLocalizedStringConfig.SupportedLanguage,
-  val onLanguageChange: (newLang: MbLocalizedStringConfig.SupportedLanguage) -> Unit
-)
-
 val baseUrl = window.location.href.substringBefore("/admin")
-
-data class RouteContext(val pushRoute: (AppRoute) -> Unit)
-
-val languageContext = createContext(LanguageState(MbLocalizedStringConfig.selectedLanguage) {})
-val routeContext = createContext<RouteContext>()
-val themeContext = createContext<Theme>()
 
 external interface AppProps : Props
 
@@ -289,44 +280,46 @@ private class App : RComponent<AppProps, AppState>() {
     document.body?.style?.backgroundColor = "white"
     ThemeProvider {
       this.theme = this@App.theme
-      routeContext.Provider(RouteContext(::pushAppRoute)) {
-        languageContext.Provider(LanguageState(state.activeLanguage, ::onLangChange)) {
-          themeContext.Provider(this@App.theme) {
-            // Render content without side drawer and toolbar, if no shell option is activated via url hash
-            if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
-              renderViewContent()
-            } else {
-              appShell(
-                config = AppShellConfig(
-                  appBarElevation = 0,
-                  mobileNavOpen = state.mobileNavOpen,
-                  smallToolbar = true,
-                  stickyNavigation = true,
-                  viewContent = {
-                    renderViewContent()
-                  },
-                  drawerList = {
-                    renderAppDrawerItems(
-                      config = AppDrawerItemsConfig(
-                        userData = state.userData,
-                        currentAppRoute = state.currentAppRoute,
-                        checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
-                        moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
-                        adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
-                        loading = false,
-                        onCloseMobileNav = {
-                          setState { mobileNavOpen = false }
-                        }
-                      )
-                    )
-                  },
-                  toolbarIcon = null,
-                  hideDrawer = false,
-                  themeColor = this@App.theme.palette.primary.main,
+      appContext.Provider(
+        AppContext(
+          languageContext = LanguageContext(state.activeLanguage, ::onLangChange),
+          routeContext = RouteContext(::pushAppRoute),
+          themeContext = ThemeContext(this@App.theme),
+        )
+      ) {
+        // Render content without side drawer and toolbar, if no shell option is activated via url hash
+        if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
+          renderViewContent()
+        } else {
+          appShell(
+            config = AppShellConfig(
+              appBarElevation = 0,
+              mobileNavOpen = state.mobileNavOpen,
+              smallToolbar = true,
+              stickyNavigation = true,
+              viewContent = {
+                renderViewContent()
+              },
+              drawerList = {
+                renderAppDrawerItems(
+                  config = AppDrawerItemsConfig(
+                    userData = state.userData,
+                    currentAppRoute = state.currentAppRoute,
+                    checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
+                    moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
+                    adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
+                    loading = false,
+                    onCloseMobileNav = {
+                      setState { mobileNavOpen = false }
+                    }
+                  )
                 )
-              )
-            }
-          }
+              },
+              toolbarIcon = null,
+              hideDrawer = false,
+              themeColor = this@App.theme.palette.primary.main,
+            )
+          )
         }
       }
     }
