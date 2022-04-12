@@ -5,7 +5,6 @@ import csstype.PropertiesBuilder
 import csstype.TextAlign
 import csstype.px
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.Box
 import mui.material.Typography
 import mui.system.sx
@@ -84,21 +83,23 @@ private fun PropertiesBuilder.centeredText() {
   textAlign = TextAlign.center
 }
 
-fun ChildrenBuilder.pathNotFoundView(handler: GenericErrorViewProps.() -> Unit) {
+fun ChildrenBuilder.pathNotFoundView(title: String = "", subtitle: String = "") {
   PathNotFound::class.react {
-    +jso(handler)
+    this.title = title
+    this.subtitle = subtitle
   }
 }
 
-fun ChildrenBuilder.genericErrorView(handler: GenericErrorViewProps.() -> Unit) {
+fun ChildrenBuilder.genericErrorView(title: String, subtitle: String) {
   GenericErrorView::class.react {
-    +jso(handler)
+    this.title = title
+    this.subtitle = subtitle
   }
 }
 
 fun ChildrenBuilder.networkErrorView() {
-  genericErrorView {
-    title = Strings.network_error.get()
+  genericErrorView(
+    title = Strings.network_error.get(),
     subtitle = Strings.network_error_description.get()
-  }
+  )
 }

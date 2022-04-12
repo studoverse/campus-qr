@@ -6,7 +6,6 @@ import csstype.PropertiesBuilder
 import csstype.TextAlign
 import csstype.px
 import kotlinx.browser.document
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLElement
@@ -129,7 +128,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
           }
         }
         spacer(32)
-        renderLoginNavigationButtonsView {
+        renderLoginNavigationButtonsView(
           config = LoginNavigationButtonsViewConfig(
             networkRequestInProgress = state.networkRequestInProgress,
             backEnabled = false,
@@ -139,7 +138,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
               login()
             }
           )
-        }
+        )
       }
     }
     Box {
@@ -158,8 +157,6 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
   }
 }
 
-fun ChildrenBuilder.renderMailLogin(handler: MailLoginProps.() -> Unit = {}) {
-  MailLogin::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderMailLogin() {
+  MailLogin::class.react {}
 }

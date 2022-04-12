@@ -6,7 +6,6 @@ import com.studo.campusqr.common.payloads.CheckInData
 import com.studo.campusqr.common.payloads.ClientLocation
 import csstype.ClassName
 import csstype.px
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import react.*
@@ -145,7 +144,7 @@ private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckIn
   }
 
   override fun ChildrenBuilder.render() {
-    renderMbLinearProgress { show = state.showProgress }
+    renderMbLinearProgress(show = state.showProgress)
 
     if (!state.locationFetchInProgress && state.locationNameToLocationMap.isEmpty()) {
       networkErrorView()
@@ -232,8 +231,8 @@ private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckIn
 // If seat is not null, id gets appended with '-' to locationId
 fun locationIdWithSeat(locationId: String, seat: Int?) = "$locationId${seat?.let { "-$it" } ?: ""}"
 
-fun ChildrenBuilder.renderAddGuestCheckIn(handler: AddGuestCheckInProps.() -> Unit) {
+fun ChildrenBuilder.renderAddGuestCheckIn(config: AddGuestCheckInConfig) {
   AddGuestCheckIn::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

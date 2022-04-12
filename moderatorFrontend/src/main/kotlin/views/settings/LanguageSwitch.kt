@@ -5,7 +5,6 @@ import csstype.AlignItems
 import csstype.Display
 import csstype.JustifyContent
 import csstype.string
-import kotlinx.js.jso
 import mui.material.Box
 import mui.material.Switch
 import mui.material.SwitchColor
@@ -51,8 +50,6 @@ private class LanguageSwitch(props: LanguageSwitchProps) : RComponent<LanguageSw
   }
 }
 
-fun ChildrenBuilder.renderLanguageSwitch(handler: LanguageSwitchProps.() -> Unit) {
-  LanguageSwitch::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderLanguageSwitch() {
+  LanguageSwitch::class.react {}
 }

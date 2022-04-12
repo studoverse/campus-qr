@@ -1,7 +1,6 @@
 package views.common
 
 import csstype.px
-import kotlinx.js.jso
 import mui.material.Box
 import mui.material.LinearProgress
 import mui.system.sx
@@ -34,8 +33,8 @@ private class MbLinearProgress : RComponent<MbLinearProgressProps, MbLinearProgr
   }
 }
 
-fun ChildrenBuilder.renderMbLinearProgress(handler: MbLinearProgressProps.() -> Unit) {
+fun ChildrenBuilder.renderMbLinearProgress(show: Boolean) {
   MbLinearProgress::class.react {
-    +jso(handler)
+    this.show = show
   }
 }

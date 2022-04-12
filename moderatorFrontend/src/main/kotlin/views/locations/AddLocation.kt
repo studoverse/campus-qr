@@ -180,8 +180,8 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
   }
 }
 
-fun ChildrenBuilder.renderAddLocation(handler: AddLocationProps.() -> Unit) {
+fun ChildrenBuilder.renderAddLocation(config: AddLocationConfig) {
   AddLocation::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

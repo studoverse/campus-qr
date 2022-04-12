@@ -237,8 +237,8 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
   }
 }
 
-fun ChildrenBuilder.datePicker(handler: DatePickerProps.() -> Unit) {
+fun ChildrenBuilder.datePicker(config: DatePickerConfig) {
   DatePicker::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

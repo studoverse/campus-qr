@@ -1,7 +1,6 @@
 package webcore
 
 import csstype.*
-import kotlinx.js.jso
 import mui.material.Box
 import mui.material.Typography
 import mui.system.sx
@@ -75,8 +74,8 @@ private class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, Stat
   }
 }
 
-fun ChildrenBuilder.logoBadge(handler: LogoBadgeProps.() -> Unit) {
+fun ChildrenBuilder.logoBadge(config: LogoBadgeConfig) {
   LogoBadge::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

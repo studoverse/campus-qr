@@ -50,8 +50,8 @@ private class AccessManagementExportTableRow :
   }
 }
 
-fun ChildrenBuilder.renderAccessManagementExportRow(handler: AccessManagementExportTableRowProps.() -> Unit) {
+fun ChildrenBuilder.renderAccessManagementExportRow(config: AccessManagementExportTableRowConfig) {
   AccessManagementExportTableRow::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

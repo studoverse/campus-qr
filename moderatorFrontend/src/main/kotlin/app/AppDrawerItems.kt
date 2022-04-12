@@ -3,7 +3,6 @@ package app
 import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.common.utils.LocalizedString
 import csstype.*
-import kotlinx.js.jso
 import mui.icons.material.Person
 import mui.icons.material.SvgIconComponent
 import mui.material.*
@@ -51,14 +50,14 @@ external interface AppDrawerItemsState : State
 
 private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
   override fun ChildrenBuilder.render() {
-    logoBadge {
+    logoBadge(
       config = LogoBadgeConfig(
         logoUrl = "$baseUrl/static/images/logo_campusqr.png",
         logoAlt = "Campus QR",
         badgeTitle = props.config.userData?.appName ?: "",
         badgeSubtitle = props.config.userData?.clientUser?.name ?: ""
       )
-    }
+    )
 
     if (props.config.loading) {
       LinearProgress {}
@@ -197,8 +196,8 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
   }
 }
 
-fun ChildrenBuilder.renderAppDrawerItems(handler: AppDrawerItemsProps.() -> Unit) {
+fun ChildrenBuilder.renderAppDrawerItems(config: AppDrawerItemsConfig) {
   AppDrawerItems::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

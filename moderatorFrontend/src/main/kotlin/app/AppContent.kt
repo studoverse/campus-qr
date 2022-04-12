@@ -1,7 +1,6 @@
 package app
 
 import com.studo.campusqr.common.payloads.UserData
-import kotlinx.js.jso
 import react.ChildrenBuilder
 import react.Props
 import react.State
@@ -39,29 +38,29 @@ private class AppContent : RComponent<AppContentProps, AppContentState>() {
     val currentAppRoute = props.config.currentAppRoute
 
     when (currentAppRoute?.url) {
-      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList { locationId = null }
-      Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList { locationId = currentAppRoute.pathParams["id"] }
-      Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList { locationId = null }
-      Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList { locationId = currentAppRoute.pathParams["id"] }
+      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(locationId = null)
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList(locationId = currentAppRoute.pathParams["id"])
+      Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
       Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()
-      Url.LOCATIONS_LIST -> renderListLocations { userData = props.config.userData!! }
+      Url.LOCATIONS_LIST -> renderListLocations(userData = props.config.userData!!)
       Url.REPORT -> renderReport()
-      Url.USERS -> renderUsers { userData = props.config.userData!! }
-      Url.ACCOUNT_SETTINGS -> renderMyAccount { config = MyAccountConfig(props.config.userData!!) }
+      Url.USERS -> renderUsers(userData = props.config.userData!!)
+      Url.ACCOUNT_SETTINGS -> renderMyAccount(config = MyAccountConfig(props.config.userData!!))
       Url.ADMIN_INFO -> renderAdminInfo()
-      Url.LOGIN_EMAIL -> renderLoginView {
-        userData = props.config.userData!!
+      Url.LOGIN_EMAIL -> renderLoginView(
+        userData = props.config.userData!!,
         loginMode = LoginMode.EMAIL
-      }
+      )
       Url.BLANK -> Unit
-      null -> pathNotFoundView {}
+      null -> pathNotFoundView()
     }
 
   }
 }
 
-fun ChildrenBuilder.renderAppContent(handler: AppContentProps.() -> Unit) {
+fun ChildrenBuilder.renderAppContent(config: AppContentConfig) {
   AppContent::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -4,7 +4,6 @@ import app.baseUrl
 import app.routeContext
 import com.studo.campusqr.common.payloads.*
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.icons.material.*
 import mui.material.CircularProgress
 import mui.material.TableCell
@@ -41,12 +40,12 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
     showProgress = false
   }
 
-  private fun ChildrenBuilder.renderEditLocationDialog() = mbMaterialDialog(handler = {
+  private fun ChildrenBuilder.renderEditLocationDialog() = mbMaterialDialog(
     config = MbMaterialDialogConfig(
       show = true,
       title = Strings.location_edit.get(),
       customContent = {
-        renderAddLocation {
+        renderAddLocation(
           config = AddLocationConfig.Edit(props.config.location, onFinished = { response ->
             if (response == "ok") {
               setState {
@@ -55,7 +54,7 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
             }
             props.config.onEditFinished(response)
           })
-        }
+        )
       },
       buttons = null,
       onClose = {
@@ -64,7 +63,7 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
         }
       }
     )
-  })
+  )
 
   override fun ChildrenBuilder.render() {
     if (state.showEditLocationDialog) {
@@ -93,7 +92,7 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
               if (state.showProgress) {
                 CircularProgress()
               } else {
-                materialMenu {
+                materialMenu(
                   config = MaterialMenuConfig(
                     menuItems = listOfNotNull(
                       if (props.config.clientUser.canEditLocations) {
@@ -150,7 +149,7 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
                       } else null,
                     )
                   )
-                }
+                )
               }
             }
           }
@@ -160,9 +159,9 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
   }
 }
 
-fun ChildrenBuilder.renderLocationTableRow(handler: LocationTableRowProps.() -> Unit) {
+fun ChildrenBuilder.renderLocationTableRow(config: LocationTableRowConfig) {
   LocationTableRow::class.react {
-    +jso(handler)
+    this.config = config
   }
 }
   

@@ -1,7 +1,6 @@
 package views.guestCheckIn.guestCheckInOverview
 
 import com.studo.campusqr.common.payloads.ActiveCheckIn
-import kotlinx.js.jso
 import mui.material.*
 import react.ChildrenBuilder
 import react.Props
@@ -51,12 +50,12 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
     fetchActiveGuestCheckIns()
   }
 
-  private fun ChildrenBuilder.renderAddGuestCheckInDialog() = mbMaterialDialog(handler = {
+  private fun ChildrenBuilder.renderAddGuestCheckInDialog() = mbMaterialDialog(
     config = MbMaterialDialogConfig(
       show = state.showAddGuestCheckInDialog,
       title = Strings.guest_checkin_add_guest.get(),
       customContent = {
-        renderAddGuestCheckIn {
+        renderAddGuestCheckIn(
           config = AddGuestCheckInConfig(
             onGuestCheckedIn = {
               setState { showAddGuestCheckInDialog = false }
@@ -68,7 +67,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
               }
             }
           )
-        }
+        )
       },
       buttons = null,
       onClose = {
@@ -77,9 +76,9 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
         }
       }
     )
-  })
+  )
 
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar {
+  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
     config = MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
@@ -87,12 +86,12 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
         setState { snackbarText = "" }
       }
     )
-  }
+  )
 
   override fun ChildrenBuilder.render() {
     renderSnackbar()
     renderAddGuestCheckInDialog()
-    renderToolbarView {
+    renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.guest_checkin.get(),
         buttons = listOf(
@@ -107,8 +106,8 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
           )
         )
       )
-    }
-    renderMbLinearProgress { show = state.loadingCheckInList }
+    )
+    renderMbLinearProgress(show = state.loadingCheckInList)
 
     when {
       state.activeGuestCheckIns?.isNotEmpty() == true -> Table {
@@ -122,7 +121,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
         }
         TableBody {
           state.activeGuestCheckIns!!.forEach { activeCheckIn ->
-            renderGuestCheckIntRow {
+            renderGuestCheckInRow(
               config = GuestCheckInRowConfig(
                 activeCheckIn,
                 onCheckedOut = {
@@ -133,21 +132,19 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
                   setState { snackbarText = text }
                 }
               )
-            }
+            )
           }
         }
       }
       state.activeGuestCheckIns == null && !state.loadingCheckInList -> networkErrorView()
-      !state.loadingCheckInList -> genericErrorView {
-        title = Strings.guest_checkin_not_yet_added_title.get()
+      !state.loadingCheckInList -> genericErrorView(
+        title = Strings.guest_checkin_not_yet_added_title.get(),
         subtitle = Strings.guest_checkin_not_yet_added_subtitle.get()
-      }
+      )
     }
   }
 }
 
-fun ChildrenBuilder.renderGuestCheckInOverview(handler: GuestCheckinOverviewProps.() -> Unit = {}) {
-  GuestCheckInOverview::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderGuestCheckInOverview() {
+  GuestCheckInOverview::class.react {}
 }

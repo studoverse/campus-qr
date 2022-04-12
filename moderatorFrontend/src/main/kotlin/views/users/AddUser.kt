@@ -7,7 +7,6 @@ import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.*
 import csstype.*
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import react.*
@@ -287,8 +286,9 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
   }
 }
 
-fun ChildrenBuilder.renderAddUser(handler: AddUserProps.() -> Unit) {
+fun ChildrenBuilder.renderAddUser(config: AddUserConfig, userData: UserData) {
   AddUser::class.react {
-    +jso(handler)
+    this.config = config
+    this.userData = userData
   }
 }

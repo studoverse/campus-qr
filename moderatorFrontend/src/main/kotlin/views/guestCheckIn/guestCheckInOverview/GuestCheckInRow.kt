@@ -4,7 +4,6 @@ import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import com.studo.campusqr.common.payloads.CheckOutData
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.*
 import react.ChildrenBuilder
 import react.Props
@@ -71,8 +70,8 @@ private class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRow
   }
 }
 
-fun ChildrenBuilder.renderGuestCheckIntRow(handler: GuestCheckInRowProps.() -> Unit) {
+fun ChildrenBuilder.renderGuestCheckInRow(config: GuestCheckInRowConfig) {
   GuestCheckInRow::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -206,8 +206,8 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
   }
 }
 
-fun ChildrenBuilder.timePicker(handler: TimePickerProps.() -> Unit) {
+fun ChildrenBuilder.timePicker(config: TimePickerConfig) {
   TimePicker::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -3,7 +3,6 @@ package views.settings
 import app.baseUrl
 import csstype.Globals
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.Button
 import mui.material.ButtonColor
 import mui.system.sx
@@ -22,7 +21,7 @@ external interface SettingsState : State
 
 private class Settings : RComponent<SettingsProps, SettingsState>() {
   override fun ChildrenBuilder.render() {
-    renderLanguageSwitch {}
+    renderLanguageSwitch()
     br {}
     Button {
       sx {
@@ -37,9 +36,7 @@ private class Settings : RComponent<SettingsProps, SettingsState>() {
   }
 }
 
-fun ChildrenBuilder.renderSettings(handler: SettingsProps.() -> Unit = {}) {
-  Settings::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderSettings() {
+  Settings::class.react {}
 }
   

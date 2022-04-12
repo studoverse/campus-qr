@@ -2,7 +2,6 @@ package views.users
 
 import com.studo.campusqr.common.payloads.UserData
 import csstype.px
-import kotlinx.js.jso
 import mui.material.Box
 import mui.system.sx
 import react.ChildrenBuilder
@@ -35,12 +34,12 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
   }
 
   override fun ChildrenBuilder.render() {
-    renderToolbarView {
+    renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.account_settings.get(),
         buttons = emptyList()
       )
-    }
+    )
     Box {
       sx {
         marginTop = 32.px
@@ -48,7 +47,7 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
         marginRight = marginLeft
         marginBottom = 32.px
       }
-      mbSnackbar {
+      mbSnackbar(
         config = MbSnackbarConfig(
           show = state.snackbarText.isNotEmpty(),
           message = state.snackbarText,
@@ -58,8 +57,8 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
             }
           }
         )
-      }
-      renderAddUser {
+      )
+      renderAddUser(
         config = AddUserConfig.Edit(
           props.config.userData.clientUser!!,
           onFinished = { result ->
@@ -71,15 +70,15 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
               }
             }
           }
-        )
+        ),
         userData = props.config.userData
-      }
+      )
     }
   }
 }
 
-fun ChildrenBuilder.renderMyAccount(handler: MyAccountProps.() -> Unit) {
+fun ChildrenBuilder.renderMyAccount(config: MyAccountConfig) {
   MyAccount::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

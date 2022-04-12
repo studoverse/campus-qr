@@ -294,7 +294,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                     sx {
                       timeSlotColumn()
                     }
-                    datePicker {
+                    datePicker(
                       config = DatePickerConfig(
                         disabled = props.config is AccessManagementDetailsConfig.Details,
                         date = Date(clientDateRange.from),
@@ -328,14 +328,14 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                           }
                         },
                       )
-                    }
+                    )
                   }
                   horizontalSpacer(12)
                   Box {
                     sx {
                       timeSlotColumn()
                     }
-                    timePicker {
+                    timePicker(
                       config = TimePickerConfig(
                         disabled = props.config is AccessManagementDetailsConfig.Details,
                         time = Date(clientDateRange.from),
@@ -365,7 +365,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                           }
                         },
                       )
-                    }
+                    )
                   }
                 }
                 spacer(16)
@@ -377,7 +377,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                     sx {
                       timeSlotColumn()
                     }
-                    datePicker {
+                    datePicker(
                       config = DatePickerConfig(
                         disabled = props.config is AccessManagementDetailsConfig.Details,
                         date = Date(clientDateRange.to),
@@ -405,14 +405,14 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                           }
                         },
                       )
-                    }
+                    )
                   }
                   horizontalSpacer(12)
                   Box {
                     sx {
                       timeSlotColumn()
                     }
-                    timePicker {
+                    timePicker(
                       config = TimePickerConfig(
                         disabled = props.config is AccessManagementDetailsConfig.Details,
                         time = Date(clientDateRange.to),
@@ -437,7 +437,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
                           }
                         },
                       )
-                    }
+                    )
                   }
                 }
               }
@@ -632,7 +632,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
   }
 
   override fun ChildrenBuilder.render() {
-    renderMbLinearProgress { show = state.showProgress }
+    renderMbLinearProgress(show = state.showProgress)
 
     if (!state.locationFetchInProgress && state.locationNameToLocationMap.isEmpty()) {
       networkErrorView()
@@ -655,8 +655,8 @@ private class AddLocation(props: AccessManagementDetailsProps) :
   }
 }
 
-fun ChildrenBuilder.renderAccessManagementDetails(handler: AccessManagementDetailsProps.() -> Unit) {
+fun ChildrenBuilder.renderAccessManagementDetails(config: AccessManagementDetailsConfig) {
   AddLocation::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

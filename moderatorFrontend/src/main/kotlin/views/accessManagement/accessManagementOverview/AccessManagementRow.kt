@@ -55,12 +55,12 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
     showProgress = false
   }
 
-  private fun ChildrenBuilder.renderEditAccessManagementDialog() = mbMaterialDialog(handler = {
+  private fun ChildrenBuilder.renderEditAccessManagementDialog() = mbMaterialDialog(
     config = MbMaterialDialogConfig(
       show = true,
       title = Strings.location_edit.get(),
       customContent = {
-        renderAccessManagementDetails {
+        renderAccessManagementDetails(
           config = AccessManagementDetailsConfig.Edit(
             accessManagement = props.config.accessManagement,
             onEdited = { success ->
@@ -69,7 +69,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
                 showAccessManagementEditDialog = false
               }
             })
-        }
+        )
       },
       buttons = null,
       onClose = {
@@ -78,18 +78,18 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
         }
       }
     )
-  })
+  )
 
-  private fun ChildrenBuilder.renderDetailsAccessManagementDialog() = mbMaterialDialog(handler = {
+  private fun ChildrenBuilder.renderDetailsAccessManagementDialog() = mbMaterialDialog(
     config = MbMaterialDialogConfig(
       show = true,
       title = Strings.access_control.get(),
       customContent = {
-        renderAccessManagementDetails {
+        renderAccessManagementDetails(
           config = AccessManagementDetailsConfig.Details(
             accessManagement = props.config.accessManagement,
           )
-        }
+        )
       },
       buttons = null,
       onClose = {
@@ -98,7 +98,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
         }
       }
     )
-  })
+  )
 
   override fun ChildrenBuilder.render() {
     if (state.showAccessManagementEditDialog) {
@@ -150,7 +150,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
         if (state.showProgress) {
           CircularProgress {}
         } else {
-          materialMenu {
+          materialMenu(
             config = MaterialMenuConfig(
               menuItems = listOf(
                 MenuItem(text = Strings.edit.get(), icon = Edit, onClick = {
@@ -174,7 +174,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
                 }),
               )
             )
-          }
+          )
         }
       }
     }
@@ -208,8 +208,8 @@ private fun Date.format(showDate: Boolean = true): String {
   return if (showDate) "$date $time" else time
 }
 
-fun ChildrenBuilder.renderAccessManagementRow(handler: AccessManagementTableRowProps.() -> Unit) {
+fun ChildrenBuilder.renderAccessManagementRow(config: AccessManagementTableRowConfig) {
   AccessManagementTableRow::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -5,7 +5,6 @@ import app.RouteContext
 import app.routeContext
 import csstype.ClassName
 import csstype.px
-import kotlinx.js.jso
 import mui.icons.material.ArrowBack
 import mui.material.*
 import mui.system.sx
@@ -91,8 +90,8 @@ private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   }
 }
 
-fun ChildrenBuilder.renderToolbarView(handler: ToolbarViewProps.() -> Unit) {
+fun ChildrenBuilder.renderToolbarView(config: ToolbarViewConfig) {
   ToolbarView::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

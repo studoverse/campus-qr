@@ -5,7 +5,6 @@ import com.studo.campusqr.common.payloads.DeleteUserData
 import com.studo.campusqr.common.payloads.UserData
 import csstype.px
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.icons.material.Delete
 import mui.icons.material.Edit
 import mui.material.Box
@@ -47,12 +46,12 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
     snackbarText = ""
   }
 
-  private fun ChildrenBuilder.renderEditUserDialog() = mbMaterialDialog(handler = {
+  private fun ChildrenBuilder.renderEditUserDialog() = mbMaterialDialog(
     config = MbMaterialDialogConfig(
       show = true,
       title = Strings.user_edit.get(),
       customContent = {
-        renderAddUser {
+        renderAddUser(
           config = AddUserConfig.Edit(props.config.user, onFinished = { response ->
             setState {
               if (response == "ok") {
@@ -63,9 +62,9 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
               }
             }
             props.config.onEditFinished(response)
-          })
+          }),
           userData = props.userData
-        }
+        )
       },
       buttons = null,
       onClose = {
@@ -74,11 +73,10 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
         }
       }
     )
-  }
   )
 
   override fun ChildrenBuilder.render() {
-    mbSnackbar {
+    mbSnackbar(
       config = MbSnackbarConfig(
         show = state.snackbarText.isNotEmpty(),
         message = state.snackbarText,
@@ -88,7 +86,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
           }
         }
       )
-    }
+    )
     if (state.showEditUserDialog) {
       renderEditUserDialog()
     }
@@ -118,7 +116,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
         +props.config.user.firstLoginDate
       }
       TableCell {
-        materialMenu {
+        materialMenu(
           config = MaterialMenuConfig(
             menuItems = listOf(
               MenuItem(text = Strings.user_edit.get(), icon = Edit, onClick = {
@@ -139,14 +137,15 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
               }, enabled = props.config.user.id != props.userData.clientUser!!.id), // Don't delete own user for better UX
             )
           )
-        }
+        )
       }
     }
   }
 }
 
-fun ChildrenBuilder.renderUserTableRow(handler: UserTableRowProps.() -> Unit) {
+fun ChildrenBuilder.renderUserTableRow(config: UserTableRowConfig, userData: UserData) {
   UserTableRow::class.react {
-    +jso(handler)
+    this.config = config
+    this.userData = userData
   }
 }

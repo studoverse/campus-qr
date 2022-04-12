@@ -263,18 +263,18 @@ private class App : RComponent<AppProps, AppState>() {
             minHeight = 100.vh
             flexDirection = FlexDirection.column
           }
-          centeredProgress {}
+          centeredProgress()
         }
       } else {
         networkErrorView()
       }
     } else {
-      renderAppContent {
+      renderAppContent(
         config = AppContentConfig(
           currentAppRoute = state.currentAppRoute,
           userData = state.userData
         )
-      }
+      )
     }
   }
 
@@ -296,7 +296,7 @@ private class App : RComponent<AppProps, AppState>() {
             if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
               renderViewContent()
             } else {
-              appShell {
+              appShell(
                 config = AppShellConfig(
                   appBarElevation = 0,
                   mobileNavOpen = state.mobileNavOpen,
@@ -306,7 +306,7 @@ private class App : RComponent<AppProps, AppState>() {
                     renderViewContent()
                   },
                   drawerList = {
-                    renderAppDrawerItems {
+                    renderAppDrawerItems(
                       config = AppDrawerItemsConfig(
                         userData = state.userData,
                         currentAppRoute = state.currentAppRoute,
@@ -318,13 +318,13 @@ private class App : RComponent<AppProps, AppState>() {
                           setState { mobileNavOpen = false }
                         }
                       )
-                    }
+                    )
                   },
                   toolbarIcon = null,
                   hideDrawer = false,
                   themeColor = this@App.theme.palette.primary.main,
                 )
-              }
+              )
             }
           }
         }
@@ -347,8 +347,6 @@ object GlobalCss {
   const val fullWidth = "fullWidth"
 }
 
-fun ChildrenBuilder.app(handler: AppProps.() -> Unit = {}) {
-  App::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.app() {
+  App::class.react {}
 }

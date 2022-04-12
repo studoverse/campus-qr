@@ -7,7 +7,6 @@ import com.studo.campusqr.common.payloads.isAuthenticated
 import csstype.*
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLImageElement
@@ -90,9 +89,10 @@ private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
   }
 }
 
-fun ChildrenBuilder.renderLoginView(handler: LoginViewProps.() -> Unit) {
+fun ChildrenBuilder.renderLoginView(loginMode: LoginMode, userData: UserData) {
   LoginView::class.react {
-    +jso(handler)
+    this.loginMode = loginMode
+    this.userData = userData
     if (userData.isAuthenticated) {
       // User is authenticated so redirect to main page
       window.location.href = "/admin"

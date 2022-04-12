@@ -2,7 +2,6 @@ package webcore.shell
 
 import app.themeContext
 import csstype.*
-import kotlinx.js.jso
 import mui.material.Box
 import mui.system.Breakpoint
 import mui.system.sx
@@ -33,7 +32,7 @@ class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(
     themeContext.Consumer {
       children = { theme ->
         Fragment.create {
-          renderAppShellDrawer {
+          renderAppShellDrawer(
             config = AppShellDrawerConfig(
               props.config.mobileNavOpen,
               props.config.hideDrawer,
@@ -44,8 +43,7 @@ class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(
               props.config.stickyNavigation,
               props.config.appBarElevation
             )
-          }
-
+          )
 
           Box {
             sx {
@@ -81,8 +79,8 @@ class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(
   }
 }
 
-fun ChildrenBuilder.appShell(handler: AppShellProps.() -> Unit) {
+fun ChildrenBuilder.appShell(config: AppShellConfig) {
   AppShell::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

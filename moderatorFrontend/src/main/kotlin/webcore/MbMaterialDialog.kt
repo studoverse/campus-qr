@@ -2,7 +2,6 @@ package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
 import csstype.*
-import kotlinx.js.jso
 import mui.icons.material.SvgIconComponent
 import mui.material.*
 import mui.system.sx
@@ -103,7 +102,7 @@ fun ChildrenBuilder.mbMaterialDialog(
   positiveButton: DialogButton? = positiveButton {},
   negativeButton: DialogButton? = negativeButton {},
   onClose: (() -> Unit)? = null
-) = mbMaterialDialog(handler = {
+) = mbMaterialDialog(
   config = MbMaterialDialogConfig(
     show,
     title,
@@ -116,10 +115,10 @@ fun ChildrenBuilder.mbMaterialDialog(
     },
     onClose,
   )
-})
+)
 
-fun ChildrenBuilder.mbMaterialDialog(handler: MbDialogProps.() -> Unit) {
+fun ChildrenBuilder.mbMaterialDialog(config: MbMaterialDialogConfig) {
   MbMaterialDialog::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

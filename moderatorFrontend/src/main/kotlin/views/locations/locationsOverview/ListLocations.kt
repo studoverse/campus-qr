@@ -5,7 +5,6 @@ import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.common.payloads.canEditLocations
 import com.studo.campusqr.common.payloads.canViewCheckIns
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.*
 import react.ChildrenBuilder
 import react.Props
@@ -68,18 +67,18 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
     }
   }
 
-  private fun ChildrenBuilder.renderAddLocationDialog() = mbMaterialDialog(handler = {
+  private fun ChildrenBuilder.renderAddLocationDialog() = mbMaterialDialog(
     config = MbMaterialDialogConfig(
       show = state.showAddLocationDialog,
       title = Strings.location_add.get(),
       customContent = {
-        renderAddLocation {
+        renderAddLocation(
           config = AddLocationConfig.Create(
             onFinished = { response ->
               handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
             }
           )
-        }
+        )
       },
       buttons = null,
       onClose = {
@@ -88,7 +87,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
         }
       }
     )
-  })
+  )
 
   private fun ChildrenBuilder.renderImportButtonDialog() {
 
@@ -98,7 +97,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
       }
     }
 
-    mbMaterialDialog(handler = {
+    mbMaterialDialog(
       config = MbMaterialDialogConfig(
         show = state.showImportLocationDialog,
         title = Strings.location_import.get(),
@@ -112,10 +111,10 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
         ),
         onClose = ::closeDialog
       )
-    })
+    )
   }
 
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar {
+  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
     config = MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
@@ -123,13 +122,13 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
         setState { snackbarText = "" }
       }
     )
-  }
+  )
 
   override fun ChildrenBuilder.render() {
     renderAddLocationDialog()
     renderImportButtonDialog()
     renderSnackbar()
-    renderToolbarView {
+    renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.locations.get(),
         buttons = listOfNotNull(
@@ -171,9 +170,9 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
           } else null,
         )
       )
-    }
+    )
 
-    renderMbLinearProgress { show = state.loadingLocationList }
+    renderMbLinearProgress(show = state.loadingLocationList)
 
     if (state.locationList?.isNotEmpty() == true) {
       Table {
@@ -190,7 +189,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
         }
         TableBody {
           state.locationList!!.forEach { location ->
-            renderLocationTableRow {
+            renderLocationTableRow(
               config = LocationTableRowConfig(
                 location,
                 onEditFinished = { response ->
@@ -201,23 +200,23 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
                 },
                 userData = props.userData,
               )
-            }
+            )
           }
         }
       }
     } else if (state.locationList == null && !state.loadingLocationList) {
       networkErrorView()
     } else if (!state.loadingLocationList) {
-      genericErrorView {
-        title = Strings.location_no_locations_title.get()
+      genericErrorView(
+        title = Strings.location_no_locations_title.get(),
         subtitle = Strings.location_no_locations_subtitle.get()
-      }
+      )
     }
   }
 }
 
-fun ChildrenBuilder.renderListLocations(handler: ListLocationsProps.() -> Unit) {
+fun ChildrenBuilder.renderListLocations(userData: UserData) {
   ListLocations::class.react {
-    +jso(handler)
+    this.userData = userData
   }
 }

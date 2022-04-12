@@ -141,8 +141,8 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 }
 
-fun ChildrenBuilder.renderAppShellDrawer(handler: AppShellDrawerProps.() -> Unit) {
+fun ChildrenBuilder.renderAppShellDrawer(config: AppShellDrawerConfig) {
   AppShellDrawer::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

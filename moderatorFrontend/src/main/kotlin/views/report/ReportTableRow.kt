@@ -4,7 +4,6 @@ import com.studo.campusqr.common.payloads.ReportData
 import csstype.minus
 import csstype.pct
 import csstype.px
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import react.*
@@ -49,7 +48,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
 
   private fun ChildrenBuilder.renderApplyFilterDialog() {
     if (state.showApplyFilterDialog) {
-      mbMaterialDialog(handler = {
+      mbMaterialDialog(
         config = MbMaterialDialogConfig(
           onClose = {
             setState {
@@ -114,7 +113,6 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
             })
           )
         )
-      }
       )
     }
   }
@@ -179,8 +177,8 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
   }
 }
 
-fun ChildrenBuilder.renderReportTableRow(handler: ReportTableRowProps.() -> Unit) {
+fun ChildrenBuilder.renderReportTableRow(config: ReportTableRowConfig) {
   ReportTableRow::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -4,7 +4,6 @@ import csstype.Globals
 import csstype.PropertiesBuilder
 import csstype.px
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.Box
 import mui.material.Button
 import mui.material.ButtonColor
@@ -82,9 +81,7 @@ private class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
   }
 }
 
-fun ChildrenBuilder.renderAdminInfo(handler: AdminInfoProps.() -> Unit = {}) {
-  AdminInfo::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderAdminInfo() {
+  AdminInfo::class.react {}
 }
   
