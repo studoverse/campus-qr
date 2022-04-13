@@ -155,12 +155,12 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
   override fun ChildrenBuilder.render() {
     TextField<OutlinedTextFieldProps> {
       error = state.userEmailTextFieldError.isNotEmpty()
-      helperText = ReactNode(state.userEmailTextFieldError)
+      helperText = state.userEmailTextFieldError.toReactNode()
       fullWidth = true
       variant = FormControlVariant.outlined()
       value = state.userEmailTextFieldValue
       autoComplete = "username"
-      label = ReactNode(Strings.email_address.get())
+      label = Strings.email_address.get().toReactNode()
       type = InputType.email
       if (props.config is AddUserConfig.Edit) {
         disabled = true
@@ -179,14 +179,14 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
     if (!props.userData.externalAuthProvider) {
       TextField<OutlinedTextFieldProps> {
         error = state.userPasswordTextFieldError.isNotEmpty()
-        helperText = ReactNode(state.userPasswordTextFieldError)
+        helperText = state.userPasswordTextFieldError.toReactNode()
         fullWidth = true
         type = InputType.password
         variant = FormControlVariant.outlined()
         if (props.config is AddUserConfig.Create) {
-          label = ReactNode(Strings.login_email_form_pw_label.get())
+          label = Strings.login_email_form_pw_label.get().toReactNode()
         } else {
-          label = ReactNode(Strings.login_email_form_new_pw_label.get())
+          label = Strings.login_email_form_new_pw_label.get().toReactNode()
           autoComplete = "new-password"
         }
         value = state.userPasswordTextFieldValue
@@ -203,10 +203,10 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
 
     TextField<OutlinedTextFieldProps> {
       error = state.userNameTextFieldError.isNotEmpty()
-      helperText = ReactNode(state.userNameTextFieldError)
+      helperText = state.userNameTextFieldError.toReactNode()
       fullWidth = true
       variant = FormControlVariant.outlined()
-      label = ReactNode(Strings.user_name.get())
+      label = Strings.user_name.get().toReactNode()
       value = state.userNameTextFieldValue
       autoComplete = "off"
       onChange = { event ->
@@ -249,7 +249,7 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
                   }
                 }
               }
-              label = ReactNode(userPermission.localizedString.get())
+              label = userPermission.localizedString.get().toReactNode()
             }
           }
         }

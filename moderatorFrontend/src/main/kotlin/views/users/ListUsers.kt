@@ -106,7 +106,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
             sx {
               color = rgba(0, 0, 0, 0.54)
             }
-            variant = "body1"
+            variant = TypographyVariant.body1
             component = ReactHTML.span
             +Strings.user_sso_info_details1.get()
             spacer(16)

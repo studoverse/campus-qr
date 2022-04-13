@@ -9,19 +9,19 @@ import kotlinx.browser.document
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLElement
-import react.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
 import react.dom.events.ChangeEvent
 import react.dom.html.InputType
 import react.dom.html.ReactHTML.form
+import react.react
 import util.Strings
 import util.apiBase
 import util.get
 import views.common.spacer
-import webcore.NetworkManager
+import webcore.*
 import webcore.extensions.launch
-import webcore.invoke
-import webcore.setState
-import webcore.value
 
 external interface MailLoginProps : Props
 
@@ -77,7 +77,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
       sx {
         description()
       }
-      variant = "body1"
+      variant = TypographyVariant.body1
       +Strings.login_email_form_body.get()
     }
 
@@ -93,7 +93,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
         }
         TextField<StandardTextFieldProps> {
           fullWidth = true
-          label = ReactNode(Strings.email_address.get())
+          label = Strings.email_address.get().toReactNode()
           onChange = { event: ChangeEvent<HTMLElement> ->
             setState {
               email = event.target.value
@@ -107,7 +107,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
         TextField<StandardTextFieldProps> {
           fullWidth = true
           type = InputType.password
-          label = ReactNode(Strings.login_email_form_pw_label.get())
+          label = Strings.login_email_form_pw_label.get().toReactNode()
           onChange = { event: dynamic ->
             val value = event.target.value
             setState {
@@ -120,7 +120,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
         }
         state.errorMessage?.let { errorMessage ->
           Typography {
-            variant = "body1"
+            variant = TypographyVariant.body1
             sx {
               description()
             }

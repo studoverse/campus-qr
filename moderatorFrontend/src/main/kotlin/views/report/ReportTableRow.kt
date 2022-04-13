@@ -97,7 +97,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
                   TextField.create {
                     +params
                     variant = FormControlVariant.outlined
-                    label = ReactNode(Strings.report_checkin_seat_filter.get())
+                    label = Strings.report_checkin_seat_filter.get().toReactNode()
                   }
                 }
               }
@@ -148,7 +148,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
             Chip {
               color = ChipColor.primary
               variant = ChipVariant.outlined
-              label = ReactNode("${Strings.report_checkin_seat_filter.get()}: ${currentFilteredSeats.joinToString()}")
+              label = "${Strings.report_checkin_seat_filter.get()}: ${currentFilteredSeats.joinToString()}".toReactNode()
               onDelete = {
                 with(props.config) {
                   onDeleteFilter(userLocation)
@@ -163,7 +163,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
           } else {
             Chip {
               variant = ChipVariant.outlined
-              label = ReactNode(Strings.report_checkin_add_filter_title.get())
+              label = Strings.report_checkin_add_filter_title.get().toReactNode()
               onClick = {
                 setState {
                   showApplyFilterDialog = true

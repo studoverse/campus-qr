@@ -19,6 +19,7 @@ import util.Strings
 import util.get
 import views.login.LoginMode.EMAIL
 import webcore.RComponent
+import webcore.TypographyVariant
 
 external interface LoginViewProps : Props {
   var loginMode: LoginMode
@@ -79,7 +80,7 @@ private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
         textAlign = TextAlign.center
         color = Color(ColorPalette.gray)
       }
-      variant = "body2"
+      variant = TypographyVariant.body2
 
       a {
         href = baseUrl

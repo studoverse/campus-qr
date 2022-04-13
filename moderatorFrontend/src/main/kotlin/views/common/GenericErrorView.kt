@@ -17,6 +17,7 @@ import react.react
 import util.Strings
 import util.get
 import webcore.RComponent
+import webcore.TypographyVariant
 
 external interface GenericErrorViewProps : Props {
   var title: String
@@ -33,14 +34,14 @@ private class PathNotFound : RComponent<GenericErrorViewProps, State>() {
         sx {
           centeredText()
         }
-        variant = "h1"
+        variant = TypographyVariant.h1
         +"404"
       }
       Typography {
         sx {
           centeredText()
         }
-        variant = "body1"
+        variant = TypographyVariant.body1
         +"Path \""
         span {
           code {
@@ -63,14 +64,14 @@ private class GenericErrorView : RComponent<GenericErrorViewProps, State>() {
         sx {
           centeredText()
         }
-        variant = "h5"
+        variant = TypographyVariant.h5
         +props.title
       }
       Typography {
         sx {
           centeredText()
         }
-        variant = "body1"
+        variant = TypographyVariant.body1
         +props.subtitle
       }
     }

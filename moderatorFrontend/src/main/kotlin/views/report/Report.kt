@@ -11,8 +11,11 @@ import csstype.PropertiesBuilder
 import csstype.px
 import mui.material.*
 import mui.system.sx
-import react.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
 import react.dom.html.ReactHTML.form
+import react.react
 import util.Strings
 import util.apiBase
 import util.fileDownload
@@ -139,7 +142,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
 
     renderSnackbar()
     Typography {
-      variant = "h5"
+      variant = TypographyVariant.h5
       sx {
         content()
       }
@@ -180,10 +183,10 @@ private class Report : RComponent<ReportProps, ReportState>() {
             TextField<OutlinedTextFieldProps> {
               fullWidth = true
               variant = FormControlVariant.outlined()
-              label = ReactNode(Strings.report_email.get())
+              label = Strings.report_email.get().toReactNode()
               value = state.emailTextFieldValue
               error = state.emailTextFieldError.isNotEmpty()
-              helperText = ReactNode(state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get())
+              helperText = (state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()).toReactNode()
               onChange = { event ->
                 val value = event.target.value
                 setState {
@@ -220,7 +223,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
             content()
           }
           Typography {
-            variant = "h6"
+            variant = TypographyVariant.h6
             +Strings.report_affected_people.get()
               .format(
                 reportData.impactedUsersCount.toString(),

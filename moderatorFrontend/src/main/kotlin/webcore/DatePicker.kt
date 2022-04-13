@@ -112,8 +112,8 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
           max = maxProp.toInputTypeDateValueString()
         }
       }
-      props.config.label?.let { label = ReactNode(it) }
-      props.config.helperText?.let { helperText = ReactNode(it) }
+      props.config.label?.let { label = it.toReactNode() }
+      props.config.helperText?.let { helperText = it.toReactNode() }
       fullWidth = props.config.fullWidth
       variant = props.config.variant
       disabled = props.config.disabled
@@ -166,7 +166,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
         type = react.dom.html.InputType.number
         placeholder = dayString
-        label = ReactNode(dayString)
+        label = dayString.toReactNode()
         inputProps = jso {
           min = 1
           max = 31
@@ -190,7 +190,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
         type = react.dom.html.InputType.number
         placeholder = monthString
-        label = ReactNode(monthString)
+        label = monthString.toReactNode()
         inputProps = jso {
           min = 1
           max = 12
@@ -214,7 +214,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
         type = react.dom.html.InputType.number
         placeholder = yearString
-        label = ReactNode(yearString)
+        label = yearString.toReactNode()
         value = state.oldBrowsersInputValues.year
         onChange = { event ->
           event as ChangeEvent<HTMLElement>

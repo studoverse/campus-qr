@@ -54,7 +54,7 @@ private class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, Stat
           textAlign = TextAlign.center
         }
         Typography {
-          variant = "h5"
+          variant = TypographyVariant.h5
           +props.config.badgeTitle
         }
         props.config.badgeSubtitle?.let { badgeSubtitle ->
@@ -64,7 +64,7 @@ private class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, Stat
               wordBreak = WordBreak.breakWord
             }
             Typography {
-              variant = "subtitle1"
+              variant = TypographyVariant.subtitle1
               +badgeSubtitle
             }
           }

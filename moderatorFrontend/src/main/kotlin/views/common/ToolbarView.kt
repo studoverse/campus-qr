@@ -13,6 +13,7 @@ import react.*
 import util.Url
 import util.toRoute
 import webcore.RComponent
+import webcore.TypographyVariant
 
 class ToolbarButton(
   val text: String,
@@ -63,7 +64,7 @@ private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
         sx {
           margin = 16.px
         }
-        variant = "h5"
+        variant = TypographyVariant.h5
         +props.config.title
       }
       Box {

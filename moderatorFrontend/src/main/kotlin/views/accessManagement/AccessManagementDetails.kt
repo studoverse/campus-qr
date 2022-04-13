@@ -219,10 +219,10 @@ private class AddLocation(props: AccessManagementDetailsProps) :
           TextField<OutlinedTextFieldProps> {
             Object.assign(this, params)
             error = state.selectedLocationTextFieldError.isNotEmpty()
-            helperText = ReactNode(state.selectedLocationTextFieldError)
+            helperText = state.selectedLocationTextFieldError.toReactNode()
             fullWidth = true
             variant = FormControlVariant.outlined()
-            label = ReactNode(Strings.location_name.get())
+            label = Strings.location_name.get().toReactNode()
           }
         }
       }
@@ -234,7 +234,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
       variant = FormControlVariant.outlined()
-      label = ReactNode(Strings.access_control_note.get())
+      label = Strings.access_control_note.get().toReactNode()
       value = state.accessControlNoteTextFieldValue
       onChange = { event ->
         val value = event.target.value
@@ -250,7 +250,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
       variant = FormControlVariant.outlined
-      label = ReactNode(Strings.access_control_reason.get())
+      label = Strings.access_control_reason.get().toReactNode()
       value = state.accessControlReasonTextFieldValue
       onChange = { event ->
         event as ChangeEvent<HTMLElement>
@@ -273,7 +273,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
       }
       if (props.config !is AccessManagementDetailsConfig.Details) {
         Tooltip {
-          title = ReactNode(Strings.access_control_time_slot_add.get())
+          title = Strings.access_control_time_slot_add.get().toReactNode()
           IconButton {
             sx {
               padding = 0.px
@@ -451,7 +451,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
         if (props.config !is AccessManagementDetailsConfig.Details) {
           gridItem(GridSize(xs = 1)) {
             Tooltip {
-              title = ReactNode(Strings.access_control_time_slot_remove.get())
+              title = Strings.access_control_time_slot_remove.get().toReactNode()
               Box {
                 component = span
                 IconButton {
@@ -524,10 +524,10 @@ private class AddLocation(props: AccessManagementDetailsProps) :
           className = ClassName(GlobalCss.flex)
           TextField<OutlinedTextFieldProps> {
             disabled = props.config is AccessManagementDetailsConfig.Details
-            helperText = ReactNode(Strings.access_control_add_permitted_people_tip.get())
+            helperText = Strings.access_control_add_permitted_people_tip.get().toReactNode()
             fullWidth = true
             variant = FormControlVariant.outlined()
-            label = ReactNode(Strings.email_address.get())
+            label = Strings.email_address.get().toReactNode()
             value = state.personEmailTextFieldValue
             onChange = { event: ChangeEvent<HTMLElement> ->
               val value: String = event.target.value

@@ -171,10 +171,10 @@ private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckIn
           TextField.create {
             +params
             error = state.selectedLocationTextFieldError.isNotEmpty()
-            helperText = ReactNode(state.selectedLocationTextFieldError)
+            helperText = state.selectedLocationTextFieldError.toReactNode()
             fullWidth = true
             variant = FormControlVariant.outlined
-            label = ReactNode(Strings.location_name.get())
+            label = Strings.location_name.get().toReactNode()
           }
 
         }
@@ -182,10 +182,10 @@ private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckIn
       spacer(16)
       TextField<OutlinedTextFieldProps> {
         error = state.personEmailTextFieldError.isNotEmpty()
-        helperText = ReactNode(state.personEmailTextFieldError)
+        helperText = state.personEmailTextFieldError.toReactNode()
         fullWidth = true
         variant = FormControlVariant.outlined()
-        label = ReactNode(Strings.email_address.get())
+        label = Strings.email_address.get().toReactNode()
         value = state.personEmailTextFieldValue
         onChange = { event ->
           val value = event.target.value
@@ -215,9 +215,9 @@ private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckIn
             TextField.create {
               +params
               error = state.seatInputError.isNotEmpty()
-              helperText = ReactNode(state.seatInputError)
+              helperText = state.seatInputError.toReactNode()
               variant = FormControlVariant.outlined
-              label = ReactNode(Strings.report_checkin_seat.get())
+              label = Strings.report_checkin_seat.get().toReactNode()
             }
           }
         }
