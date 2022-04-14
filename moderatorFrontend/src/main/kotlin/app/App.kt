@@ -146,13 +146,6 @@ private class App : RComponent<AppProps, AppState>() {
     handleHistoryChange()
   }
 
-  // TODO: @mh How to update the userData correctly? fetch it again or send it as response to add/edit? because currently only after refreshing the userData is updated
-  private fun updateUserData(data: UserData?) {
-    setState {
-      userData = data
-    }
-  }
-
   private fun calculateRedirectQueryParams(): Map<String, String> = window.location.relativeUrl
     .removeSuffix("/")
     .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
@@ -181,7 +174,7 @@ private class App : RComponent<AppProps, AppState>() {
     activeLanguage = MbLocalizedStringConfig.selectedLanguage
   }
 
-  private fun fetchUserDataAndInit(block: () -> Unit) = launch {
+  private fun fetchUserDataAndInit(block: (() -> Unit)? = null) = launch {
     val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
 
     if (fetchedUserData != null) {
@@ -191,7 +184,7 @@ private class App : RComponent<AppProps, AppState>() {
           loadingUserData = false
         }
       }
-      block()
+      block?.invoke()
     } else {
       setState {
         loadingUserData = false
@@ -290,7 +283,7 @@ private class App : RComponent<AppProps, AppState>() {
           languageContext = LanguageContext(state.activeLanguage, ::onLangChange),
           routeContext = RouteContext(state.currentAppRoute, ::pushAppRoute),
           themeContext = ThemeContext(this@App.theme),
-          userDataContext = UserDataContext(userData = state.userData, state.loadingUserData, ::updateUserData)
+          userDataContext = UserDataContext(userData = state.userData, state.loadingUserData, ::fetchUserDataAndInit)
         )
       ) {
         // Render content without side drawer and toolbar, if no shell option is activated via url hash

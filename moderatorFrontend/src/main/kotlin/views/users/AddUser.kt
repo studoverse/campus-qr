@@ -95,17 +95,23 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
 
   private fun editUser() = launch {
     setState { userCreationInProgress = true }
+    val user = (props.config as AddUserConfig.Edit).user
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/edit",
       body = EditUserData(
-        userId = (props.config as AddUserConfig.Edit).user.id,
+        userId = user.id,
         name = state.userNameTextFieldValue.emptyToNull(),
         password = state.userPasswordTextFieldValue.emptyToNull(),
         permissions = state.userPermissions
-          .takeIf { (props.config as AddUserConfig.Edit).user.permissions != it }
+          .takeIf { user.permissions != it }
           ?.map { it.name }
       )
     )
+    val userData = appContext.userDataContext.userData!!
+    if (response != null && user.id == userData.clientUser?.id) {
+      // Only update currently logged-in user
+      appContext.userDataContext.fetchNewUserData()
+    }
     setState {
       userCreationInProgress = false
     }

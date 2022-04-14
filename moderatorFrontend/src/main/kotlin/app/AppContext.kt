@@ -21,7 +21,7 @@ data class ThemeContext(val theme: Theme)
 data class UserDataContext(
   val userData: UserData?,
   val loadingUserData: Boolean,
-  val updateUserData: (UserData) -> Unit,
+  val fetchNewUserData: () -> Unit,
 )
 
 data class AppContext(
