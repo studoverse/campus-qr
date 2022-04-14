@@ -1,15 +1,13 @@
 package views.locations.locationsOverview
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.payloads.ClientLocation
-import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.common.payloads.canEditLocations
 import com.studo.campusqr.common.payloads.canViewCheckIns
 import kotlinx.browser.window
 import mui.material.*
-import react.ChildrenBuilder
-import react.Props
-import react.State
-import react.react
+import react.*
 import util.Strings
 import util.apiBase
 import util.get
@@ -19,9 +17,7 @@ import views.locations.renderAddLocation
 import webcore.*
 import webcore.extensions.launch
 
-external interface ListLocationsProps : Props {
-  var userData: UserData
-}
+external interface ListLocationsProps : Props
 
 external interface ListLocationsState : State {
   var locationList: List<ClientLocation>?
@@ -32,6 +28,15 @@ external interface ListLocationsState : State {
 }
 
 private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ListLocations::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun ListLocationsState.init() {
     locationList = null
@@ -125,6 +130,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
   )
 
   override fun ChildrenBuilder.render() {
+    val userData = appContext.userDataContext.userData!!
     renderAddLocationDialog()
     renderImportButtonDialog()
     renderSnackbar()
@@ -146,7 +152,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
               window.open("/location/qr-codes", "_blank")
             }
           ),
-          if (props.userData.clientUser!!.canEditLocations) {
+          if (userData.clientUser!!.canEditLocations) {
             ToolbarButton(
               text = Strings.location_import.get(),
               variant = ButtonVariant.outlined,
@@ -157,7 +163,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
               }
             )
           } else null,
-          if (props.userData.clientUser!!.canEditLocations) {
+          if (userData.clientUser!!.canEditLocations) {
             ToolbarButton(
               text = Strings.location_create.get(),
               variant = ButtonVariant.contained,
@@ -179,7 +185,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
         TableHead {
           TableRow {
             TableCell { +Strings.location_name.get() }
-            if (props.userData.clientUser!!.canViewCheckIns) {
+            if (userData.clientUser!!.canViewCheckIns) {
               TableCell { +Strings.location_check_in_count.get() }
             }
             TableCell { +Strings.location_access_type.get() }
@@ -198,7 +204,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
                 onDeleteFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_deleted.get())
                 },
-                userData = props.userData,
+                userData = userData,
               )
             )
           }
@@ -215,8 +221,6 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
   }
 }
 
-fun ChildrenBuilder.renderListLocations(userData: UserData) {
-  ListLocations::class.react {
-    this.userData = userData
-  }
+fun ChildrenBuilder.renderListLocations() {
+  ListLocations::class.react {}
 }

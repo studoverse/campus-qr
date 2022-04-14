@@ -1,18 +1,16 @@
 package views.users
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.payloads.ClientUser
-import com.studo.campusqr.common.payloads.UserData
 import csstype.px
 import csstype.rgb
 import csstype.rgba
 import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.html.ReactHTML
-import react.react
 import util.Strings
 import util.apiBase
 import util.get
@@ -20,9 +18,7 @@ import views.common.*
 import webcore.*
 import webcore.extensions.launch
 
-external interface ListUsersProps : Props {
-  var userData: UserData
-}
+external interface ListUsersProps : Props
 
 external interface ListUsersState : State {
   var userList: List<ClientUser>?
@@ -33,6 +29,15 @@ external interface ListUsersState : State {
 }
 
 private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ListUsers::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun ListUsersState.init() {
     userList = null
@@ -76,7 +81,6 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       customContent = {
         renderAddUser(
           config = AddUserConfig.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
-          userData = props.userData
         )
       },
       buttons = null,
@@ -132,6 +136,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   )
 
   override fun ChildrenBuilder.render() {
+    val userData = appContext.userDataContext.userData!!
     renderAddUserDialog()
     renderSsoInfoButtonDialog()
     renderSnackbar()
@@ -148,7 +153,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
               }
             }
           ),
-          if (props.userData.externalAuthProvider) null else ToolbarButton(
+          if (userData.externalAuthProvider) null else ToolbarButton(
             text = Strings.user_add.get(),
             variant = ButtonVariant.contained,
             onClick = {
@@ -161,7 +166,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       )
     )
 
-    if (props.userData.externalAuthProvider) {
+    if (userData.externalAuthProvider) {
       Box {
         sx {
           backgroundColor = rgb(232, 244, 253)
@@ -194,7 +199,6 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
               config = UserTableRowConfig(user, onEditFinished = { response ->
                 handleCreateOrAddUserResponse(response)
               }),
-              userData = props.userData
             )
           }
         }
@@ -207,8 +211,6 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 }
 
-fun ChildrenBuilder.renderUsers(userData: UserData) {
-  ListUsers::class.react {
-    this.userData = userData
-  }
+fun ChildrenBuilder.renderUsers() {
+  ListUsers::class.react {}
 }

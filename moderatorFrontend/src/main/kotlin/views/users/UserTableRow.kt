@@ -1,8 +1,9 @@
 package views.users
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.DeleteUserData
-import com.studo.campusqr.common.payloads.UserData
 import csstype.px
 import kotlinx.browser.window
 import mui.icons.material.Delete
@@ -11,12 +12,9 @@ import mui.material.Box
 import mui.material.TableCell
 import mui.material.TableRow
 import mui.system.sx
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.ul
-import react.react
 import util.Strings
 import util.apiBase
 import util.get
@@ -31,7 +29,6 @@ class UserTableRowConfig(
 
 external interface UserTableRowProps : Props {
   var config: UserTableRowConfig
-  var userData: UserData
 }
 
 external interface UserTableRowState : State {
@@ -40,6 +37,15 @@ external interface UserTableRowState : State {
 }
 
 private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(UserTableRow::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun UserTableRowState.init() {
     showEditUserDialog = false
@@ -63,7 +69,6 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
             }
             props.config.onEditFinished(response)
           }),
-          userData = props.userData
         )
       },
       buttons = null,
@@ -76,6 +81,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
   )
 
   override fun ChildrenBuilder.render() {
+    val userData = appContext.userDataContext.userData!!
     mbSnackbar(
       config = MbSnackbarConfig(
         show = state.snackbarText.isNotEmpty(),
@@ -134,7 +140,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
                     props.config.onEditFinished(response)
                   }
                 }
-              }, enabled = props.config.user.id != props.userData.clientUser!!.id), // Don't delete own user for better UX
+              }, enabled = props.config.user.id != userData.clientUser!!.id), // Don't delete own user for better UX
             )
           )
         )
@@ -143,9 +149,8 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
   }
 }
 
-fun ChildrenBuilder.renderUserTableRow(config: UserTableRowConfig, userData: UserData) {
+fun ChildrenBuilder.renderUserTableRow(config: UserTableRowConfig) {
   UserTableRow::class.react {
     this.config = config
-    this.userData = userData
   }
 }

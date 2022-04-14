@@ -21,6 +21,7 @@ import org.w3c.dom.url.URL
 import react.ChildrenBuilder
 import react.Props
 import react.State
+import react.dom.flushSync
 import react.react
 import util.*
 import views.common.centeredProgress
@@ -145,6 +146,13 @@ private class App : RComponent<AppProps, AppState>() {
     handleHistoryChange()
   }
 
+  // TODO: @mh How to update the userData correctly? fetch it again or send it as response to add/edit? because currently only after refreshing the userData is updated
+  private fun updateUserData(data: UserData?) {
+    setState {
+      userData = data
+    }
+  }
+
   private fun calculateRedirectQueryParams(): Map<String, String> = window.location.relativeUrl
     .removeSuffix("/")
     .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
@@ -177,9 +185,11 @@ private class App : RComponent<AppProps, AppState>() {
     val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
 
     if (fetchedUserData != null) {
-      setState {
-        userData = fetchedUserData
-        loadingUserData = false
+      flushSync {
+        setState {
+          userData = fetchedUserData
+          loadingUserData = false
+        }
       }
       block()
     } else {
@@ -260,12 +270,7 @@ private class App : RComponent<AppProps, AppState>() {
         networkErrorView()
       }
     } else {
-      renderAppContent(
-        config = AppContentConfig(
-          currentAppRoute = state.currentAppRoute,
-          userData = state.userData
-        )
-      )
+      renderAppContent()
     }
   }
 
@@ -283,8 +288,9 @@ private class App : RComponent<AppProps, AppState>() {
       appContext.Provider(
         AppContext(
           languageContext = LanguageContext(state.activeLanguage, ::onLangChange),
-          routeContext = RouteContext(::pushAppRoute),
+          routeContext = RouteContext(state.currentAppRoute, ::pushAppRoute),
           themeContext = ThemeContext(this@App.theme),
+          userDataContext = UserDataContext(userData = state.userData, state.loadingUserData, ::updateUserData)
         )
       ) {
         // Render content without side drawer and toolbar, if no shell option is activated via url hash
@@ -303,8 +309,6 @@ private class App : RComponent<AppProps, AppState>() {
               drawerList = {
                 renderAppDrawerItems(
                   config = AppDrawerItemsConfig(
-                    userData = state.userData,
-                    currentAppRoute = state.currentAppRoute,
                     checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
                     moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
                     adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,

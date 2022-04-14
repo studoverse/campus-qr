@@ -1,13 +1,11 @@
 package views.users
 
-import com.studo.campusqr.common.payloads.UserData
+import app.AppContext
+import app.appContext
 import csstype.px
 import mui.material.Box
 import mui.system.sx
-import react.ChildrenBuilder
-import react.Props
-import react.State
-import react.react
+import react.*
 import util.Strings
 import util.get
 import views.common.ToolbarViewConfig
@@ -17,10 +15,7 @@ import webcore.RComponent
 import webcore.mbSnackbar
 import webcore.setState
 
-class MyAccountConfig(val userData: UserData)
-
 external interface MyAccountProps : Props {
-  var config: MyAccountConfig
 }
 
 external interface MyAccountState : State {
@@ -29,11 +24,21 @@ external interface MyAccountState : State {
 
 private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
 
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(MyAccount::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun MyAccountState.init() {
     snackbarText = ""
   }
 
   override fun ChildrenBuilder.render() {
+    val userData = appContext.userDataContext.userData!!
     renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.account_settings.get(),
@@ -60,7 +65,7 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
       )
       renderAddUser(
         config = AddUserConfig.Edit(
-          props.config.userData.clientUser!!,
+          userData.clientUser!!,
           onFinished = { result ->
             setState {
               snackbarText = if (result == "ok") {
@@ -71,14 +76,11 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
             }
           }
         ),
-        userData = props.config.userData
       )
     }
   }
 }
 
-fun ChildrenBuilder.renderMyAccount(config: MyAccountConfig) {
-  MyAccount::class.react {
-    this.config = config
-  }
+fun ChildrenBuilder.renderMyAccount() {
+  MyAccount::class.react {}
 }

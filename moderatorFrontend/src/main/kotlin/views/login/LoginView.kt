@@ -1,8 +1,9 @@
 package views.login
 
+import app.AppContext
 import app.ColorPalette
+import app.appContext
 import app.baseUrl
-import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.common.payloads.isAuthenticated
 import csstype.*
 import kotlinx.browser.document
@@ -23,7 +24,6 @@ import webcore.TypographyVariant
 
 external interface LoginViewProps : Props {
   var loginMode: LoginMode
-  var userData: UserData
 }
 
 enum class LoginMode {
@@ -33,6 +33,22 @@ enum class LoginMode {
 external interface LoginViewState : State
 
 private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(LoginView::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
+  override fun componentDidMount() {
+    if (appContext.userDataContext.userData!!.isAuthenticated) {
+      // User is authenticated so redirect to main page
+      window.location.href = "/admin"
+    }
+  }
 
   override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "#f2f2f2"
@@ -90,14 +106,9 @@ private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
   }
 }
 
-fun ChildrenBuilder.renderLoginView(loginMode: LoginMode, userData: UserData) {
+fun ChildrenBuilder.renderLoginView(loginMode: LoginMode) {
   LoginView::class.react {
     this.loginMode = loginMode
-    this.userData = userData
-    if (userData.isAuthenticated) {
-      // User is authenticated so redirect to main page
-      window.location.href = "/admin"
-    }
   }
 }
   

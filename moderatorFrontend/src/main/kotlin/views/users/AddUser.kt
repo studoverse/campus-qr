@@ -1,11 +1,16 @@
 package views.users
 
+import app.AppContext
 import app.GlobalCss
+import app.appContext
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
-import com.studo.campusqr.common.payloads.*
+import com.studo.campusqr.common.payloads.ClientUser
+import com.studo.campusqr.common.payloads.EditUserData
+import com.studo.campusqr.common.payloads.NewUserData
+import com.studo.campusqr.common.payloads.canEditUsers
 import csstype.*
 import mui.material.*
 import mui.system.sx
@@ -27,7 +32,6 @@ sealed class AddUserConfig(val onFinished: (response: String?) -> Unit) {
 
 external interface AddUserProps : Props {
   var config: AddUserConfig
-  var userData: UserData
 }
 
 external interface AddUserState : State {
@@ -47,6 +51,15 @@ external interface AddUserState : State {
 
 @Suppress("UPPER_BOUND_VIOLATED")
 private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddUser::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun AddUserState.init(props: AddUserProps) {
     userCreationInProgress = false
@@ -153,6 +166,7 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
   }
 
   override fun ChildrenBuilder.render() {
+    val userData = appContext.userDataContext.userData!!
     TextField<OutlinedTextFieldProps> {
       error = state.userEmailTextFieldError.isNotEmpty()
       helperText = state.userEmailTextFieldError.toReactNode()
@@ -176,7 +190,7 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
 
     spacer(16)
 
-    if (!props.userData.externalAuthProvider) {
+    if (!userData.externalAuthProvider) {
       TextField<OutlinedTextFieldProps> {
         error = state.userPasswordTextFieldError.isNotEmpty()
         helperText = state.userPasswordTextFieldError.toReactNode()
@@ -221,7 +235,7 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
     spacer(16)
 
     // This view is is either used for user management, or to change own user properties
-    if (props.userData.clientUser!!.canEditUsers) {
+    if (userData.clientUser!!.canEditUsers) {
       Typography {
         +Strings.user_permissions.get()
       }
@@ -286,9 +300,8 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
   }
 }
 
-fun ChildrenBuilder.renderAddUser(config: AddUserConfig, userData: UserData) {
+fun ChildrenBuilder.renderAddUser(config: AddUserConfig) {
   AddUser::class.react {
     this.config = config
-    this.userData = userData
   }
 }

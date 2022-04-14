@@ -50,8 +50,8 @@ dependencies {
   implementation(devNpm("style-loader", "2.0.0"))
   implementation(devNpm("css-loader", "5.2.6"))
 
-  api(npm("react", "17.0.2"))
-  api(npm("react-dom", "17.0.2"))
+  api(npm("react", "18.0.0"))
+  api(npm("react-dom", "18.0.0"))
 
   api(npm("@mui/material", "5.6.1"))
 
