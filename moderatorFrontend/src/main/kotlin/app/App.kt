@@ -178,6 +178,7 @@ private class App : RComponent<AppProps, AppState>() {
     val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
 
     if (fetchedUserData != null) {
+      // userData needs to be set when calling `block`, so execute the state update beforehand
       flushSync {
         setState {
           userData = fetchedUserData
