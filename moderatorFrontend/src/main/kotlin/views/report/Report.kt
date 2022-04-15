@@ -9,11 +9,13 @@ import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
 import csstype.PropertiesBuilder
 import csstype.px
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
-import react.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
 import react.dom.html.ReactHTML.form
+import react.react
 import util.Strings
 import util.apiBase
 import util.fileDownload
@@ -50,7 +52,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
     infectionDate = Date().addDays(-14)
   }
 
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar {
+  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
     config = MbSnackbarConfig(
       show = state.snackbarText.isNotEmpty(),
       message = state.snackbarText,
@@ -60,7 +62,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
         }
       }
     )
-  }
+  )
 
   private fun validateInput(): Boolean {
     if (state.emailTextFieldValue.isEmpty()) {
@@ -140,7 +142,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
 
     renderSnackbar()
     Typography {
-      variant = "h5"
+      variant = TypographyVariant.h5
       sx {
         content()
       }
@@ -153,7 +155,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
       }
       gridContainer(GridDirection.row) {
         gridItem(GridSize(xs = 12, sm = 3)) {
-          datePicker {
+          datePicker(
             config = DatePickerConfig(
               date = state.infectionDate,
               label = Strings.report_infection_date.get(),
@@ -167,7 +169,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
                 }
               },
             )
-          }
+          )
         }
         gridItem(GridSize(xs = 12, sm = 6)) {
           form {
@@ -181,10 +183,10 @@ private class Report : RComponent<ReportProps, ReportState>() {
             TextField<OutlinedTextFieldProps> {
               fullWidth = true
               variant = FormControlVariant.outlined()
-              label = ReactNode(Strings.report_email.get())
+              label = Strings.report_email.get().toReactNode()
               value = state.emailTextFieldValue
               error = state.emailTextFieldError.isNotEmpty()
-              helperText = ReactNode(state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get())
+              helperText = (state.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()).toReactNode()
               onChange = { event ->
                 val value = event.target.value
                 setState {
@@ -214,14 +216,14 @@ private class Report : RComponent<ReportProps, ReportState>() {
     }
     when {
       state.reportData != null -> {
-        renderMbLinearProgress { show = state.showProgress }
+        renderMbLinearProgress(show = state.showProgress)
         val reportData = state.reportData!!
         Box {
           sx {
             content()
           }
           Typography {
-            variant = "h6"
+            variant = TypographyVariant.h6
             +Strings.report_affected_people.get()
               .format(
                 reportData.impactedUsersCount.toString(),
@@ -246,14 +248,14 @@ private class Report : RComponent<ReportProps, ReportState>() {
             }
             TableBody {
               reportData.reportedUserLocations.forEach { userLocation ->
-                renderReportTableRow {
+                renderReportTableRow(
                   config = ReportTableRowConfig(
                     userLocation = userLocation,
                     showEmailAddress = showEmailAddress,
                     onApplyFilterChange = this@Report::applyFilter,
                     onDeleteFilter = this@Report::deleteFilter
                   )
-                }
+                )
               }
             }
           }
@@ -292,8 +294,6 @@ private class Report : RComponent<ReportProps, ReportState>() {
   }
 }
 
-fun ChildrenBuilder.renderReport(handler: ReportProps.() -> Unit = {}) {
-  Report::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderReport() {
+  Report::class.react {}
 }

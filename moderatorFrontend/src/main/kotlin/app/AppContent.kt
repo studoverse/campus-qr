@@ -1,12 +1,6 @@
 package app
 
-import com.studo.campusqr.common.payloads.UserData
-import kotlinx.js.jso
-import react.ChildrenBuilder
-import react.Props
-import react.State
-import react.react
-import util.AppRoute
+import react.*
 import util.Url
 import views.accessManagement.accessManagementExport.renderAccessManagementExportList
 import views.accessManagement.accessManagementOverview.renderAccessManagementList
@@ -17,51 +11,47 @@ import views.locations.locationsOverview.renderListLocations
 import views.login.LoginMode
 import views.login.renderLoginView
 import views.report.renderReport
-import views.users.MyAccountConfig
 import views.users.renderMyAccount
 import views.users.renderUsers
 import webcore.RComponent
 
-class AppContentConfig(
-  val currentAppRoute: AppRoute?,
-  val userData: UserData?,
-)
-
-external interface AppContentProps : Props {
-  var config: AppContentConfig
-}
+external interface AppContentProps : Props
 
 external interface AppContentState : State
 
 private class AppContent : RComponent<AppContentProps, AppContentState>() {
 
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AppContent::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun ChildrenBuilder.render() {
-    val currentAppRoute = props.config.currentAppRoute
+    val currentAppRoute = appContext.routeContext.currentAppRoute
 
     when (currentAppRoute?.url) {
-      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList { locationId = null }
-      Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList { locationId = currentAppRoute.pathParams["id"] }
-      Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList { locationId = null }
-      Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList { locationId = currentAppRoute.pathParams["id"] }
+      Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(locationId = null)
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList(locationId = currentAppRoute.pathParams["id"])
+      Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
+      Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
       Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()
-      Url.LOCATIONS_LIST -> renderListLocations { userData = props.config.userData!! }
+      Url.LOCATIONS_LIST -> renderListLocations()
       Url.REPORT -> renderReport()
-      Url.USERS -> renderUsers { userData = props.config.userData!! }
-      Url.ACCOUNT_SETTINGS -> renderMyAccount { config = MyAccountConfig(props.config.userData!!) }
+      Url.USERS -> renderUsers()
+      Url.ACCOUNT_SETTINGS -> renderMyAccount()
       Url.ADMIN_INFO -> renderAdminInfo()
-      Url.LOGIN_EMAIL -> renderLoginView {
-        userData = props.config.userData!!
-        loginMode = LoginMode.EMAIL
-      }
+      Url.LOGIN_EMAIL -> renderLoginView(loginMode = LoginMode.EMAIL)
       Url.BLANK -> Unit
-      null -> pathNotFoundView {}
+      null -> pathNotFoundView()
     }
 
   }
 }
 
-fun ChildrenBuilder.renderAppContent(handler: AppContentProps.() -> Unit) {
-  AppContent::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderAppContent() {
+  AppContent::class.react {}
 }

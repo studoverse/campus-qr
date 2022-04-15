@@ -1,11 +1,11 @@
 package views.common
 
+import app.AppContext
 import app.GlobalCss
 import app.RouteContext
-import app.routeContext
+import app.appContext
 import csstype.ClassName
 import csstype.px
-import kotlinx.js.jso
 import mui.icons.material.ArrowBack
 import mui.material.*
 import mui.system.sx
@@ -13,6 +13,7 @@ import react.*
 import util.Url
 import util.toRoute
 import webcore.RComponent
+import webcore.TypographyVariant
 
 class ToolbarButton(
   val text: String,
@@ -33,22 +34,29 @@ external interface ToolbarViewProps : Props {
 interface ToolbarViewState : State
 
 private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ToolbarView::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun ChildrenBuilder.render() {
+    val routeContext = appContext.routeContext
     Box {
       className = ClassName(GlobalCss.flex)
       props.config.backButtonUrl?.let { backButtonUrl ->
-        routeContext.Consumer {
-          children = { routeContext ->
-            IconButton.create {
-              sx {
-                width = 60.px
-                height = 60.px
-              }
-              ArrowBack()
-              onClick = {
-                routeContext.pushRoute(backButtonUrl.toRoute()!!)
-              }
-            }
+        IconButton.create {
+          sx {
+            width = 60.px
+            height = 60.px
+          }
+          ArrowBack()
+          onClick = {
+            routeContext.pushRoute(backButtonUrl.toRoute()!!)
           }
         }
       }
@@ -56,33 +64,29 @@ private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
         sx {
           margin = 16.px
         }
-        variant = "h5"
+        variant = TypographyVariant.h5
         +props.config.title
       }
       Box {
         className = ClassName(GlobalCss.flexEnd)
-        routeContext.Consumer {
-          children = { routeContext ->
-            Box.create {
+        Box {
+          sx {
+            marginLeft = 16.px
+          }
+          props.config.buttons.forEach { toolbarButton ->
+            Button {
               sx {
-                marginLeft = 16.px
+                marginRight = 16.px
+                marginTop = 16.px
+                marginBottom = 16.px
+                marginLeft = 0.px
               }
-              props.config.buttons.forEach { toolbarButton ->
-                Button {
-                  sx {
-                    marginRight = 16.px
-                    marginTop = 16.px
-                    marginBottom = 16.px
-                    marginLeft = 0.px
-                  }
-                  variant = toolbarButton.variant
-                  color = ButtonColor.primary
-                  onClick = {
-                    toolbarButton.onClick(routeContext)
-                  }
-                  +toolbarButton.text
-                }
+              variant = toolbarButton.variant
+              color = ButtonColor.primary
+              onClick = {
+                toolbarButton.onClick(routeContext)
               }
+              +toolbarButton.text
             }
           }
         }
@@ -91,8 +95,8 @@ private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   }
 }
 
-fun ChildrenBuilder.renderToolbarView(handler: ToolbarViewProps.() -> Unit) {
+fun ChildrenBuilder.renderToolbarView(config: ToolbarViewConfig) {
   ToolbarView::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

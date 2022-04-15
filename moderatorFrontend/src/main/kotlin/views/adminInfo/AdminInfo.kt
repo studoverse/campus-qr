@@ -4,7 +4,6 @@ import csstype.Globals
 import csstype.PropertiesBuilder
 import csstype.px
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.Box
 import mui.material.Button
 import mui.material.ButtonColor
@@ -13,12 +12,13 @@ import mui.system.sx
 import react.ChildrenBuilder
 import react.Props
 import react.State
-import react.dom.html.ReactHTML.br
 import react.react
 import util.Strings
 import util.get
 import views.common.spacer
 import webcore.RComponent
+import webcore.TypographyVariant
+import webcore.verticalMargin
 
 external interface AdminInfoProps : Props
 
@@ -38,24 +38,24 @@ private class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
           marginTop = 8.px
           marginBottom = 16.px
         }
-        variant = "h5"
+        variant = TypographyVariant.h5
         +Strings.admin_info.get()
       }
       Typography {
         sx {
           subheader()
         }
-        variant = "h6"
+        variant = TypographyVariant.h6
         +Strings.user_sso_info.get()
       }
       +Strings.user_sso_info_details1.get()
-      br {}
+      verticalMargin(16)
       +Strings.user_sso_info_details2.get()
       Typography {
         sx {
           subheader()
         }
-        variant = "h6"
+        variant = TypographyVariant.h6
         +Strings.admin_info_configuration.get()
       }
       +Strings.admin_info_configuration_details.get()
@@ -82,9 +82,7 @@ private class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
   }
 }
 
-fun ChildrenBuilder.renderAdminInfo(handler: AdminInfoProps.() -> Unit = {}) {
-  AdminInfo::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderAdminInfo() {
+  AdminInfo::class.react {}
 }
   

@@ -99,8 +99,8 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
           }
           list = stepListId
         }
-        label = ReactNode(props.config.label ?: "")
-        helperText = ReactNode(props.config.helperText ?: "")
+        label = (props.config.label ?: "").toReactNode()
+        helperText = (props.config.helperText ?: "").toReactNode()
         fullWidth = props.config.fullWidth
         variant = props.config.variant
         disabled = props.config.disabled
@@ -159,7 +159,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         }
         type = react.dom.html.InputType.number
         placeholder = hourString
-        label = ReactNode(hourString)
+        label = hourString.toReactNode()
         inputProps = jso {
           min = 0
           max = 23
@@ -182,7 +182,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         }
         type = react.dom.html.InputType.number
         placeholder = minuteString
-        label = ReactNode(minuteString)
+        label = minuteString.toReactNode()
         inputProps = jso {
           min = 0
           max = 59
@@ -206,8 +206,8 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
   }
 }
 
-fun ChildrenBuilder.timePicker(handler: TimePickerProps.() -> Unit) {
+fun ChildrenBuilder.timePicker(config: TimePickerConfig) {
   TimePicker::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

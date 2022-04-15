@@ -1,22 +1,16 @@
 package app
 
-import com.studo.campusqr.common.payloads.UserData
 import com.studo.campusqr.common.utils.LocalizedString
 import csstype.*
-import kotlinx.js.jso
 import mui.icons.material.Person
 import mui.icons.material.SvgIconComponent
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLAnchorElement
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.events.MouseEvent
 import react.dom.html.AnchorTarget
 import react.dom.html.ReactHTML.a
-import react.react
-import util.AppRoute
 import util.Strings
 import util.Url
 import util.get
@@ -34,8 +28,6 @@ class SideDrawerItem(
 )
 
 class AppDrawerItemsConfig(
-  val userData: UserData?,
-  val currentAppRoute: AppRoute?,
   val loading: Boolean,
   val checkInSideDrawerItems: List<SideDrawerItem>,
   val moderatorSideDrawerItems: List<SideDrawerItem>,
@@ -50,15 +42,26 @@ external interface AppDrawerItemsProps : Props {
 external interface AppDrawerItemsState : State
 
 private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AppDrawerItems::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun ChildrenBuilder.render() {
-    logoBadge {
+    val userData = appContext.userDataContext.userData
+    logoBadge(
       config = LogoBadgeConfig(
         logoUrl = "$baseUrl/static/images/logo_campusqr.png",
         logoAlt = "Campus QR",
-        badgeTitle = props.config.userData?.appName ?: "",
-        badgeSubtitle = props.config.userData?.clientUser?.name ?: ""
+        badgeTitle = userData?.appName ?: "",
+        badgeSubtitle = userData?.clientUser?.name ?: ""
       )
-    }
+    )
 
     if (props.config.loading) {
       LinearProgress {}
@@ -121,6 +124,8 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
     }
 
     fun drawerItems() {
+      val currentAppRoute = appContext.routeContext.currentAppRoute
+      val userData = appContext.userDataContext.userData
       if (props.config.checkInSideDrawerItems.isNotEmpty()) {
         ListSubheader {
           +Strings.check_in.get()
@@ -129,7 +134,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
           drawerListItem(
             label = sideDrawerItem.label.get(),
             icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+            selected = currentAppRoute?.url == sideDrawerItem.url,
             url = sideDrawerItem.url.path
           )
         }
@@ -144,7 +149,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
           drawerListItem(
             label = sideDrawerItem.label.get(),
             icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+            selected = currentAppRoute?.url == sideDrawerItem.url,
             url = sideDrawerItem.url.path
           )
         }
@@ -159,13 +164,13 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
           drawerListItem(
             label = sideDrawerItem.label.get(),
             icon = sideDrawerItem.icon,
-            selected = props.config.currentAppRoute?.url == sideDrawerItem.url,
+            selected = currentAppRoute?.url == sideDrawerItem.url,
             url = sideDrawerItem.url.path
           )
         }
       }
 
-      if (props.config.userData?.externalAuthProvider == false) {
+      if (userData?.externalAuthProvider == false) {
         Divider {}
         ListSubheader {
           +Strings.other.get()
@@ -173,13 +178,13 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
         drawerListItem(
           label = Strings.account_settings.get(),
           icon = Person,
-          selected = props.config.currentAppRoute?.url == Url.ACCOUNT_SETTINGS,
+          selected = currentAppRoute?.url == Url.ACCOUNT_SETTINGS,
           url = Url.ACCOUNT_SETTINGS.path,
         )
       }
     }
 
-    mui.material.List {
+    List {
       disablePadding = true
 
       // Student specific features
@@ -197,8 +202,8 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
   }
 }
 
-fun ChildrenBuilder.renderAppDrawerItems(handler: AppDrawerItemsProps.() -> Unit) {
+fun ChildrenBuilder.renderAppDrawerItems(config: AppDrawerItemsConfig) {
   AppDrawerItems::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

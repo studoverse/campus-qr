@@ -1,19 +1,16 @@
 package views.users
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.payloads.ClientUser
-import com.studo.campusqr.common.payloads.UserData
 import csstype.px
 import csstype.rgb
 import csstype.rgba
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.html.ReactHTML
-import react.react
 import util.Strings
 import util.apiBase
 import util.get
@@ -21,9 +18,7 @@ import views.common.*
 import webcore.*
 import webcore.extensions.launch
 
-external interface ListUsersProps : Props {
-  var userData: UserData
-}
+external interface ListUsersProps : Props
 
 external interface ListUsersState : State {
   var userList: List<ClientUser>?
@@ -34,6 +29,15 @@ external interface ListUsersState : State {
 }
 
 private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ListUsers::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun ListUsersState.init() {
     userList = null
@@ -70,15 +74,14 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     }
   }
 
-  private fun ChildrenBuilder.renderAddUserDialog() = mbMaterialDialog(handler = {
+  private fun ChildrenBuilder.renderAddUserDialog() = mbMaterialDialog(
     config = MbMaterialDialogConfig(
       show = state.showAddUserDialog,
       title = Strings.user_add.get(),
       customContent = {
-        renderAddUser {
-          config = AddUserConfig.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) })
-          userData = props.userData
-        }
+        renderAddUser(
+          config = AddUserConfig.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
+        )
       },
       buttons = null,
       onClose = {
@@ -87,7 +90,6 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         }
       }
     )
-  }
   )
 
 
@@ -99,7 +101,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       }
     }
 
-    mbMaterialDialog(handler = {
+    mbMaterialDialog(
       config = MbMaterialDialogConfig(
         show = state.showSsoInfoDialog,
         title = Strings.user_sso_info.get(),
@@ -108,7 +110,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
             sx {
               color = rgba(0, 0, 0, 0.54)
             }
-            variant = "body1"
+            variant = TypographyVariant.body1
             component = ReactHTML.span
             +Strings.user_sso_info_details1.get()
             spacer(16)
@@ -124,20 +126,21 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         ),
         onClose = ::closeDialog
       )
-    })
+    )
   }
 
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar {
+  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
     config = MbSnackbarConfig(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
       setState { snackbarText = "" }
     })
-  }
+  )
 
   override fun ChildrenBuilder.render() {
+    val userData = appContext.userDataContext.userData!!
     renderAddUserDialog()
     renderSsoInfoButtonDialog()
     renderSnackbar()
-    renderToolbarView {
+    renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.user_management.get(),
         buttons = listOfNotNull(
@@ -150,7 +153,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
               }
             }
           ),
-          if (props.userData.externalAuthProvider) null else ToolbarButton(
+          if (userData.externalAuthProvider) null else ToolbarButton(
             text = Strings.user_add.get(),
             variant = ButtonVariant.contained,
             onClick = {
@@ -161,9 +164,9 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
           )
         )
       )
-    }
+    )
 
-    if (props.userData.externalAuthProvider) {
+    if (userData.externalAuthProvider) {
       Box {
         sx {
           backgroundColor = rgb(232, 244, 253)
@@ -177,7 +180,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       }
     }
 
-    renderMbLinearProgress { show = state.loadingUserList }
+    renderMbLinearProgress(show = state.loadingUserList)
 
     if (state.userList?.isNotEmpty() == true) {
       Table {
@@ -192,12 +195,11 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         }
         TableBody {
           state.userList!!.forEach { user ->
-            renderUserTableRow {
+            renderUserTableRow(
               config = UserTableRowConfig(user, onEditFinished = { response ->
                 handleCreateOrAddUserResponse(response)
-              })
-              userData = props.userData
-            }
+              }),
+            )
           }
         }
       }
@@ -209,8 +211,6 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 }
 
-fun ChildrenBuilder.renderUsers(handler: ListUsersProps.() -> Unit) {
-  ListUsers::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.renderUsers() {
+  ListUsers::class.react {}
 }

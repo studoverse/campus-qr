@@ -1,23 +1,20 @@
 package views.users
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.DeleteUserData
-import com.studo.campusqr.common.payloads.UserData
 import csstype.px
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.icons.material.Delete
 import mui.icons.material.Edit
 import mui.material.Box
 import mui.material.TableCell
 import mui.material.TableRow
 import mui.system.sx
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.ul
-import react.react
 import util.Strings
 import util.apiBase
 import util.get
@@ -32,7 +29,6 @@ class UserTableRowConfig(
 
 external interface UserTableRowProps : Props {
   var config: UserTableRowConfig
-  var userData: UserData
 }
 
 external interface UserTableRowState : State {
@@ -42,17 +38,26 @@ external interface UserTableRowState : State {
 
 private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
 
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(UserTableRow::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun UserTableRowState.init() {
     showEditUserDialog = false
     snackbarText = ""
   }
 
-  private fun ChildrenBuilder.renderEditUserDialog() = mbMaterialDialog(handler = {
+  private fun ChildrenBuilder.renderEditUserDialog() = mbMaterialDialog(
     config = MbMaterialDialogConfig(
       show = true,
       title = Strings.user_edit.get(),
       customContent = {
-        renderAddUser {
+        renderAddUser(
           config = AddUserConfig.Edit(props.config.user, onFinished = { response ->
             setState {
               if (response == "ok") {
@@ -63,9 +68,8 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
               }
             }
             props.config.onEditFinished(response)
-          })
-          userData = props.userData
-        }
+          }),
+        )
       },
       buttons = null,
       onClose = {
@@ -74,11 +78,11 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
         }
       }
     )
-  }
   )
 
   override fun ChildrenBuilder.render() {
-    mbSnackbar {
+    val userData = appContext.userDataContext.userData!!
+    mbSnackbar(
       config = MbSnackbarConfig(
         show = state.snackbarText.isNotEmpty(),
         message = state.snackbarText,
@@ -88,7 +92,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
           }
         }
       )
-    }
+    )
     if (state.showEditUserDialog) {
       renderEditUserDialog()
     }
@@ -118,7 +122,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
         +props.config.user.firstLoginDate
       }
       TableCell {
-        materialMenu {
+        materialMenu(
           config = MaterialMenuConfig(
             menuItems = listOf(
               MenuItem(text = Strings.user_edit.get(), icon = Edit, onClick = {
@@ -136,17 +140,17 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
                     props.config.onEditFinished(response)
                   }
                 }
-              }, enabled = props.config.user.id != props.userData.clientUser!!.id), // Don't delete own user for better UX
+              }, enabled = props.config.user.id != userData.clientUser!!.id), // Don't delete own user for better UX
             )
           )
-        }
+        )
       }
     }
   }
 }
 
-fun ChildrenBuilder.renderUserTableRow(handler: UserTableRowProps.() -> Unit) {
+fun ChildrenBuilder.renderUserTableRow(config: UserTableRowConfig) {
   UserTableRow::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -2,7 +2,6 @@ package views.accessManagement.accessManagementExport
 
 import com.studo.campusqr.common.payloads.AccessManagementExportData
 import com.studo.campusqr.common.payloads.ClientLocation
-import kotlinx.js.jso
 import mui.material.*
 import react.ChildrenBuilder
 import react.Props
@@ -67,7 +66,7 @@ private class ListAccessManagementExport : RComponent<ListAccessManagementExport
   }
 
   override fun ChildrenBuilder.render() {
-    renderToolbarView {
+    renderToolbarView(
       config = ToolbarViewConfig(
         title = StringBuilder().apply {
           append(Strings.access_control_export.get())
@@ -81,9 +80,9 @@ private class ListAccessManagementExport : RComponent<ListAccessManagementExport
         backButtonUrl = Url.ACCESS_MANAGEMENT_LIST,
         buttons = emptyList()
       )
-    }
+    )
 
-    renderMbLinearProgress { show = state.loadingPermitList }
+    renderMbLinearProgress(show = state.loadingPermitList)
 
     if (state.permitList != null) {
       Table {
@@ -95,7 +94,7 @@ private class ListAccessManagementExport : RComponent<ListAccessManagementExport
         }
         TableBody {
           state.permitList!!.forEach { accessManagement ->
-            renderAccessManagementExportRow { config = AccessManagementExportTableRowConfig(accessManagement) }
+            renderAccessManagementExportRow(config = AccessManagementExportTableRowConfig(accessManagement))
           }
         }
       }
@@ -105,8 +104,8 @@ private class ListAccessManagementExport : RComponent<ListAccessManagementExport
   }
 }
 
-fun ChildrenBuilder.renderAccessManagementExportList(handler: ListAccessManagementExportProps.() -> Unit) {
+fun ChildrenBuilder.renderAccessManagementExportList(locationId: String?) {
   ListAccessManagementExport::class.react {
-    +jso(handler)
+    this.locationId = locationId
   }
 }

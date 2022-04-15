@@ -4,7 +4,6 @@ import com.studo.campusqr.common.payloads.ReportData
 import csstype.minus
 import csstype.pct
 import csstype.px
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import react.*
@@ -49,7 +48,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
 
   private fun ChildrenBuilder.renderApplyFilterDialog() {
     if (state.showApplyFilterDialog) {
-      mbMaterialDialog(handler = {
+      mbMaterialDialog(
         config = MbMaterialDialogConfig(
           onClose = {
             setState {
@@ -98,7 +97,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
                   TextField.create {
                     +params
                     variant = FormControlVariant.outlined
-                    label = ReactNode(Strings.report_checkin_seat_filter.get())
+                    label = Strings.report_checkin_seat_filter.get().toReactNode()
                   }
                 }
               }
@@ -114,7 +113,6 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
             })
           )
         )
-      }
       )
     }
   }
@@ -150,7 +148,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
             Chip {
               color = ChipColor.primary
               variant = ChipVariant.outlined
-              label = ReactNode("${Strings.report_checkin_seat_filter.get()}: ${currentFilteredSeats.joinToString()}")
+              label = "${Strings.report_checkin_seat_filter.get()}: ${currentFilteredSeats.joinToString()}".toReactNode()
               onDelete = {
                 with(props.config) {
                   onDeleteFilter(userLocation)
@@ -165,7 +163,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
           } else {
             Chip {
               variant = ChipVariant.outlined
-              label = ReactNode(Strings.report_checkin_add_filter_title.get())
+              label = Strings.report_checkin_add_filter_title.get().toReactNode()
               onClick = {
                 setState {
                   showApplyFilterDialog = true
@@ -179,8 +177,8 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
   }
 }
 
-fun ChildrenBuilder.renderReportTableRow(handler: ReportTableRowProps.() -> Unit) {
+fun ChildrenBuilder.renderReportTableRow(config: ReportTableRowConfig) {
   ReportTableRow::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

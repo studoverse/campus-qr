@@ -1,13 +1,17 @@
 package views.users
 
+import app.AppContext
 import app.GlobalCss
+import app.appContext
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
-import com.studo.campusqr.common.payloads.*
+import com.studo.campusqr.common.payloads.ClientUser
+import com.studo.campusqr.common.payloads.EditUserData
+import com.studo.campusqr.common.payloads.NewUserData
+import com.studo.campusqr.common.payloads.canEditUsers
 import csstype.*
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import react.*
@@ -28,7 +32,6 @@ sealed class AddUserConfig(val onFinished: (response: String?) -> Unit) {
 
 external interface AddUserProps : Props {
   var config: AddUserConfig
-  var userData: UserData
 }
 
 external interface AddUserState : State {
@@ -48,6 +51,15 @@ external interface AddUserState : State {
 
 @Suppress("UPPER_BOUND_VIOLATED")
 private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddUser::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun AddUserState.init(props: AddUserProps) {
     userCreationInProgress = false
@@ -83,17 +95,23 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
 
   private fun editUser() = launch {
     setState { userCreationInProgress = true }
+    val user = (props.config as AddUserConfig.Edit).user
     val response = NetworkManager.post<String>(
       url = "$apiBase/user/edit",
       body = EditUserData(
-        userId = (props.config as AddUserConfig.Edit).user.id,
+        userId = user.id,
         name = state.userNameTextFieldValue.emptyToNull(),
         password = state.userPasswordTextFieldValue.emptyToNull(),
         permissions = state.userPermissions
-          .takeIf { (props.config as AddUserConfig.Edit).user.permissions != it }
+          .takeIf { user.permissions != it }
           ?.map { it.name }
       )
     )
+    val userData = appContext.userDataContext.userData!!
+    if (response != null && user.id == userData.clientUser?.id) {
+      // Only update currently logged-in user
+      appContext.userDataContext.fetchNewUserData()
+    }
     setState {
       userCreationInProgress = false
     }
@@ -154,14 +172,15 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
   }
 
   override fun ChildrenBuilder.render() {
+    val userData = appContext.userDataContext.userData!!
     TextField<OutlinedTextFieldProps> {
       error = state.userEmailTextFieldError.isNotEmpty()
-      helperText = ReactNode(state.userEmailTextFieldError)
+      helperText = state.userEmailTextFieldError.toReactNode()
       fullWidth = true
       variant = FormControlVariant.outlined()
       value = state.userEmailTextFieldValue
       autoComplete = "username"
-      label = ReactNode(Strings.email_address.get())
+      label = Strings.email_address.get().toReactNode()
       type = InputType.email
       if (props.config is AddUserConfig.Edit) {
         disabled = true
@@ -177,17 +196,17 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
 
     spacer(16)
 
-    if (!props.userData.externalAuthProvider) {
+    if (!userData.externalAuthProvider) {
       TextField<OutlinedTextFieldProps> {
         error = state.userPasswordTextFieldError.isNotEmpty()
-        helperText = ReactNode(state.userPasswordTextFieldError)
+        helperText = state.userPasswordTextFieldError.toReactNode()
         fullWidth = true
         type = InputType.password
         variant = FormControlVariant.outlined()
         if (props.config is AddUserConfig.Create) {
-          label = ReactNode(Strings.login_email_form_pw_label.get())
+          label = Strings.login_email_form_pw_label.get().toReactNode()
         } else {
-          label = ReactNode(Strings.login_email_form_new_pw_label.get())
+          label = Strings.login_email_form_new_pw_label.get().toReactNode()
           autoComplete = "new-password"
         }
         value = state.userPasswordTextFieldValue
@@ -204,10 +223,10 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
 
     TextField<OutlinedTextFieldProps> {
       error = state.userNameTextFieldError.isNotEmpty()
-      helperText = ReactNode(state.userNameTextFieldError)
+      helperText = state.userNameTextFieldError.toReactNode()
       fullWidth = true
       variant = FormControlVariant.outlined()
-      label = ReactNode(Strings.user_name.get())
+      label = Strings.user_name.get().toReactNode()
       value = state.userNameTextFieldValue
       autoComplete = "off"
       onChange = { event ->
@@ -222,7 +241,7 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
     spacer(16)
 
     // This view is is either used for user management, or to change own user properties
-    if (props.userData.clientUser!!.canEditUsers) {
+    if (userData.clientUser!!.canEditUsers) {
       Typography {
         +Strings.user_permissions.get()
       }
@@ -250,7 +269,7 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
                   }
                 }
               }
-              label = ReactNode(userPermission.localizedString.get())
+              label = userPermission.localizedString.get().toReactNode()
             }
           }
         }
@@ -287,8 +306,8 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
   }
 }
 
-fun ChildrenBuilder.renderAddUser(handler: AddUserProps.() -> Unit) {
+fun ChildrenBuilder.renderAddUser(config: AddUserConfig) {
   AddUser::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -1,12 +1,12 @@
 package views.accessManagement
 
+import app.AppContext
 import app.GlobalCss
-import app.themeContext
+import app.appContext
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.payloads.*
 import csstype.*
 import kotlinx.js.Object
-import kotlinx.js.jso
 import mui.icons.material.Close
 import mui.material.*
 import mui.material.Size
@@ -56,6 +56,15 @@ external interface AccessManagementDetailsState : State {
 @Suppress("UPPER_BOUND_VIOLATED")
 private class AddLocation(props: AccessManagementDetailsProps) :
   RComponent<AccessManagementDetailsProps, AccessManagementDetailsState>(props) {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddLocation::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun AccessManagementDetailsState.init(props: AccessManagementDetailsProps) {
     fun initFields(accessManagement: ClientAccessManagement?) {
@@ -210,10 +219,10 @@ private class AddLocation(props: AccessManagementDetailsProps) :
           TextField<OutlinedTextFieldProps> {
             Object.assign(this, params)
             error = state.selectedLocationTextFieldError.isNotEmpty()
-            helperText = ReactNode(state.selectedLocationTextFieldError)
+            helperText = state.selectedLocationTextFieldError.toReactNode()
             fullWidth = true
             variant = FormControlVariant.outlined()
-            label = ReactNode(Strings.location_name.get())
+            label = Strings.location_name.get().toReactNode()
           }
         }
       }
@@ -225,7 +234,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
       variant = FormControlVariant.outlined()
-      label = ReactNode(Strings.access_control_note.get())
+      label = Strings.access_control_note.get().toReactNode()
       value = state.accessControlNoteTextFieldValue
       onChange = { event ->
         val value = event.target.value
@@ -241,7 +250,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
       variant = FormControlVariant.outlined
-      label = ReactNode(Strings.access_control_reason.get())
+      label = Strings.access_control_reason.get().toReactNode()
       value = state.accessControlReasonTextFieldValue
       onChange = { event ->
         event as ChangeEvent<HTMLElement>
@@ -254,247 +263,242 @@ private class AddLocation(props: AccessManagementDetailsProps) :
   }
 
   private fun ChildrenBuilder.renderTimeSlotPickers() {
-    themeContext.Consumer {
-      children = { theme ->
-        Fragment.create {
-          val now = Date()
-          val inThreeYears = now.addYears(3)
-          Box {
-            className = ClassName(GlobalCss.flex)
-            Typography {
-              +Strings.access_control_time_slots.get()
+    val theme = appContext.theme
+    val now = Date()
+    val inThreeYears = now.addYears(3)
+    Box {
+      className = ClassName(GlobalCss.flex)
+      Typography {
+        +Strings.access_control_time_slots.get()
+      }
+      if (props.config !is AccessManagementDetailsConfig.Details) {
+        Tooltip {
+          title = Strings.access_control_time_slot_add.get().toReactNode()
+          IconButton {
+            sx {
+              padding = 0.px
+              marginLeft = 8.px
             }
-            if (props.config !is AccessManagementDetailsConfig.Details) {
-              Tooltip {
-                title = ReactNode(Strings.access_control_time_slot_add.get())
-                IconButton {
-                  sx {
-                    padding = 0.px
-                    marginLeft = 8.px
-                  }
-                  mui.icons.material.Add()
-                  onClick = {
-                    setState {
-                      timeSlots = (timeSlots + ClientDateRange(timeSlots.last().from, timeSlots.last().to))
-                    }
-                  }
-                }
+            mui.icons.material.Add()
+            onClick = {
+              setState {
+                timeSlots = (timeSlots + ClientDateRange(timeSlots.last().from, timeSlots.last().to))
               }
             }
-          }
-          spacer(12)
-          state.timeSlots.forEach { clientDateRange ->
-            gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1) {
-              gridItem(GridSize(xs = 12, sm = true)) {
-                Box {
-                  sx {
-                    timeSlotRow()
-                  }
-                  Box {
-                    sx {
-                      timeSlotColumn()
-                    }
-                    datePicker {
-                      config = DatePickerConfig(
-                        disabled = props.config is AccessManagementDetailsConfig.Details,
-                        date = Date(clientDateRange.from),
-                        label = Strings.access_control_from.get(),
-                        fullWidth = true,
-                        variant = FormControlVariant.outlined,
-                        min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
-                        max = inThreeYears,
-                        onChange = { selectedDate, _ ->
-                          setState {
-                            timeSlots = timeSlots.map { timeSlot ->
-                              if (timeSlot == clientDateRange) {
-                                val startDateBefore = Date(clientDateRange.from)
-                                val from = selectedDate.with(
-                                  hour = startDateBefore.getHours(),
-                                  minute = startDateBefore.getMinutes(),
-                                  second = startDateBefore.getSeconds(),
-                                  millisecond = startDateBefore.getMilliseconds()
-                                ).coerceAtMost(inThreeYears).getTime()
-
-                                // Default end date is start date + 2h
-                                val to = if (from >= clientDateRange.to) {
-                                  selectedDate.coerceAtMost(inThreeYears).addHours(2).getTime()
-                                } else clientDateRange.to
-                                ClientDateRange(
-                                  from = from,
-                                  to = to
-                                )
-                              } else timeSlot
-                            }
-                          }
-                        },
-                      )
-                    }
-                  }
-                  horizontalSpacer(12)
-                  Box {
-                    sx {
-                      timeSlotColumn()
-                    }
-                    timePicker {
-                      config = TimePickerConfig(
-                        disabled = props.config is AccessManagementDetailsConfig.Details,
-                        time = Date(clientDateRange.from),
-                        fullWidth = true,
-                        variant = FormControlVariant.outlined,
-                        min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
-                        onChange = { selectedTime ->
-                          setState {
-                            timeSlots = timeSlots.map { timeSlot ->
-                              if (timeSlot == clientDateRange) {
-                                val startDateBefore = Date(clientDateRange.from)
-                                val from = selectedTime.with(
-                                  year = startDateBefore.getFullYear(),
-                                  month = startDateBefore.getMonth(),
-                                  day = startDateBefore.getDate()
-                                ).getTime()
-                                // Default end date is start date + 2h
-                                val to = if (from >= clientDateRange.to) {
-                                  selectedTime.addHours(2).getTime()
-                                } else clientDateRange.to
-                                ClientDateRange(
-                                  from = from,
-                                  to = to
-                                )
-                              } else timeSlot
-                            }
-                          }
-                        },
-                      )
-                    }
-                  }
-                }
-                spacer(16)
-                Box {
-                  sx {
-                    timeSlotRow()
-                  }
-                  Box {
-                    sx {
-                      timeSlotColumn()
-                    }
-                    datePicker {
-                      config = DatePickerConfig(
-                        disabled = props.config is AccessManagementDetailsConfig.Details,
-                        date = Date(clientDateRange.to),
-                        label = Strings.access_control_to.get(),
-                        fullWidth = true,
-                        variant = FormControlVariant.outlined,
-                        min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
-                        max = inThreeYears,
-                        onChange = { selectedDate, _ ->
-                          setState {
-                            timeSlots = timeSlots.map { timeSlot ->
-                              if (timeSlot == clientDateRange) {
-                                val endDateBefore = Date(clientDateRange.to)
-                                ClientDateRange(
-                                  from = clientDateRange.from,
-                                  to = selectedDate.with(
-                                    hour = endDateBefore.getHours(),
-                                    minute = endDateBefore.getMinutes(),
-                                    second = endDateBefore.getSeconds(),
-                                    millisecond = endDateBefore.getMilliseconds()
-                                  ).coerceAtMost(inThreeYears).getTime()
-                                )
-                              } else timeSlot
-                            }
-                          }
-                        },
-                      )
-                    }
-                  }
-                  horizontalSpacer(12)
-                  Box {
-                    sx {
-                      timeSlotColumn()
-                    }
-                    timePicker {
-                      config = TimePickerConfig(
-                        disabled = props.config is AccessManagementDetailsConfig.Details,
-                        time = Date(clientDateRange.to),
-                        fullWidth = true,
-                        variant = FormControlVariant.outlined,
-                        min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
-                        onChange = { selectedTime ->
-                          setState {
-                            timeSlots = timeSlots.map { timeSlot ->
-                              if (timeSlot == clientDateRange) {
-                                val endDateBefore = Date(clientDateRange.to)
-                                ClientDateRange(
-                                  from = clientDateRange.from,
-                                  to = selectedTime.with(
-                                    year = endDateBefore.getFullYear(),
-                                    month = endDateBefore.getMonth(),
-                                    day = endDateBefore.getDate()
-                                  ).getTime()
-                                )
-                              } else timeSlot
-                            }
-                          }
-                        },
-                      )
-                    }
-                  }
-                }
-              }
-              if (props.config !is AccessManagementDetailsConfig.Details) {
-                gridItem(GridSize(xs = 1)) {
-                  Tooltip {
-                    title = ReactNode(Strings.access_control_time_slot_remove.get())
-                    Box {
-                      component = span
-                      IconButton {
-                        sx {
-                          marginLeft = 4.px
-                          marginRight = 8.px
-                        }
-                        // At least one time slot must be set
-                        disabled = state.timeSlots.count() == 1
-                        Close()
-                        onClick = {
-                          setState {
-                            timeSlots = timeSlots.filter { it != clientDateRange }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1) {
-              gridItem(GridSize(xs = 12, sm = true)) {
-                if (state.fromDateTextFieldError.isNotEmpty()) {
-                  Typography {
-                    sx {
-                      color = theme.palette.error.main
-                    }
-                    +state.fromDateTextFieldError
-                  }
-                }
-              }
-              gridItem(GridSize(xs = 12, sm = true)) {
-                if (state.toDateTextFieldError.isNotEmpty()) {
-                  Typography {
-                    sx {
-                      color = theme.palette.error.main
-                    }
-                    +state.toDateTextFieldError
-                  }
-                }
-              }
-              if (props.config !is AccessManagementDetailsConfig.Details) {
-                gridItem(GridSize(xs = 1)) {}
-              }
-            }
-            spacer(24)
           }
         }
       }
+    }
+    spacer(12)
+    state.timeSlots.forEach { clientDateRange ->
+      gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1) {
+        gridItem(GridSize(xs = 12, sm = true)) {
+          Box {
+            sx {
+              timeSlotRow()
+            }
+            Box {
+              sx {
+                timeSlotColumn()
+              }
+              datePicker(
+                config = DatePickerConfig(
+                  disabled = props.config is AccessManagementDetailsConfig.Details,
+                  date = Date(clientDateRange.from),
+                  label = Strings.access_control_from.get(),
+                  fullWidth = true,
+                  variant = FormControlVariant.outlined,
+                  min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
+                  max = inThreeYears,
+                  onChange = { selectedDate, _ ->
+                    setState {
+                      timeSlots = timeSlots.map { timeSlot ->
+                        if (timeSlot == clientDateRange) {
+                          val startDateBefore = Date(clientDateRange.from)
+                          val from = selectedDate.with(
+                            hour = startDateBefore.getHours(),
+                            minute = startDateBefore.getMinutes(),
+                            second = startDateBefore.getSeconds(),
+                            millisecond = startDateBefore.getMilliseconds()
+                          ).coerceAtMost(inThreeYears).getTime()
+
+                          // Default end date is start date + 2h
+                          val to = if (from >= clientDateRange.to) {
+                            selectedDate.coerceAtMost(inThreeYears).addHours(2).getTime()
+                          } else clientDateRange.to
+                          ClientDateRange(
+                            from = from,
+                            to = to
+                          )
+                        } else timeSlot
+                      }
+                    }
+                  },
+                )
+              )
+            }
+            horizontalSpacer(12)
+            Box {
+              sx {
+                timeSlotColumn()
+              }
+              timePicker(
+                config = TimePickerConfig(
+                  disabled = props.config is AccessManagementDetailsConfig.Details,
+                  time = Date(clientDateRange.from),
+                  fullWidth = true,
+                  variant = FormControlVariant.outlined,
+                  min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
+                  onChange = { selectedTime ->
+                    setState {
+                      timeSlots = timeSlots.map { timeSlot ->
+                        if (timeSlot == clientDateRange) {
+                          val startDateBefore = Date(clientDateRange.from)
+                          val from = selectedTime.with(
+                            year = startDateBefore.getFullYear(),
+                            month = startDateBefore.getMonth(),
+                            day = startDateBefore.getDate()
+                          ).getTime()
+                          // Default end date is start date + 2h
+                          val to = if (from >= clientDateRange.to) {
+                            selectedTime.addHours(2).getTime()
+                          } else clientDateRange.to
+                          ClientDateRange(
+                            from = from,
+                            to = to
+                          )
+                        } else timeSlot
+                      }
+                    }
+                  },
+                )
+              )
+            }
+          }
+          spacer(16)
+          Box {
+            sx {
+              timeSlotRow()
+            }
+            Box {
+              sx {
+                timeSlotColumn()
+              }
+              datePicker(
+                config = DatePickerConfig(
+                  disabled = props.config is AccessManagementDetailsConfig.Details,
+                  date = Date(clientDateRange.to),
+                  label = Strings.access_control_to.get(),
+                  fullWidth = true,
+                  variant = FormControlVariant.outlined,
+                  min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
+                  max = inThreeYears,
+                  onChange = { selectedDate, _ ->
+                    setState {
+                      timeSlots = timeSlots.map { timeSlot ->
+                        if (timeSlot == clientDateRange) {
+                          val endDateBefore = Date(clientDateRange.to)
+                          ClientDateRange(
+                            from = clientDateRange.from,
+                            to = selectedDate.with(
+                              hour = endDateBefore.getHours(),
+                              minute = endDateBefore.getMinutes(),
+                              second = endDateBefore.getSeconds(),
+                              millisecond = endDateBefore.getMilliseconds()
+                            ).coerceAtMost(inThreeYears).getTime()
+                          )
+                        } else timeSlot
+                      }
+                    }
+                  },
+                )
+              )
+            }
+            horizontalSpacer(12)
+            Box {
+              sx {
+                timeSlotColumn()
+              }
+              timePicker(
+                config = TimePickerConfig(
+                  disabled = props.config is AccessManagementDetailsConfig.Details,
+                  time = Date(clientDateRange.to),
+                  fullWidth = true,
+                  variant = FormControlVariant.outlined,
+                  min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
+                  onChange = { selectedTime ->
+                    setState {
+                      timeSlots = timeSlots.map { timeSlot ->
+                        if (timeSlot == clientDateRange) {
+                          val endDateBefore = Date(clientDateRange.to)
+                          ClientDateRange(
+                            from = clientDateRange.from,
+                            to = selectedTime.with(
+                              year = endDateBefore.getFullYear(),
+                              month = endDateBefore.getMonth(),
+                              day = endDateBefore.getDate()
+                            ).getTime()
+                          )
+                        } else timeSlot
+                      }
+                    }
+                  },
+                )
+              )
+            }
+          }
+        }
+        if (props.config !is AccessManagementDetailsConfig.Details) {
+          gridItem(GridSize(xs = 1)) {
+            Tooltip {
+              title = Strings.access_control_time_slot_remove.get().toReactNode()
+              Box {
+                component = span
+                IconButton {
+                  sx {
+                    marginLeft = 4.px
+                    marginRight = 8.px
+                  }
+                  // At least one time slot must be set
+                  disabled = state.timeSlots.count() == 1
+                  Close()
+                  onClick = {
+                    setState {
+                      timeSlots = timeSlots.filter { it != clientDateRange }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1) {
+        gridItem(GridSize(xs = 12, sm = true)) {
+          if (state.fromDateTextFieldError.isNotEmpty()) {
+            Typography {
+              sx {
+                color = theme.palette.error.main
+              }
+              +state.fromDateTextFieldError
+            }
+          }
+        }
+        gridItem(GridSize(xs = 12, sm = true)) {
+          if (state.toDateTextFieldError.isNotEmpty()) {
+            Typography {
+              sx {
+                color = theme.palette.error.main
+              }
+              +state.toDateTextFieldError
+            }
+          }
+        }
+        if (props.config !is AccessManagementDetailsConfig.Details) {
+          gridItem(GridSize(xs = 1)) {}
+        }
+      }
+      spacer(24)
     }
   }
 
@@ -520,10 +524,10 @@ private class AddLocation(props: AccessManagementDetailsProps) :
           className = ClassName(GlobalCss.flex)
           TextField<OutlinedTextFieldProps> {
             disabled = props.config is AccessManagementDetailsConfig.Details
-            helperText = ReactNode(Strings.access_control_add_permitted_people_tip.get())
+            helperText = Strings.access_control_add_permitted_people_tip.get().toReactNode()
             fullWidth = true
             variant = FormControlVariant.outlined()
-            label = ReactNode(Strings.email_address.get())
+            label = Strings.email_address.get().toReactNode()
             value = state.personEmailTextFieldValue
             onChange = { event: ChangeEvent<HTMLElement> ->
               val value: String = event.target.value
@@ -632,7 +636,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
   }
 
   override fun ChildrenBuilder.render() {
-    renderMbLinearProgress { show = state.showProgress }
+    renderMbLinearProgress(show = state.showProgress)
 
     if (!state.locationFetchInProgress && state.locationNameToLocationMap.isEmpty()) {
       networkErrorView()
@@ -655,8 +659,8 @@ private class AddLocation(props: AccessManagementDetailsProps) :
   }
 }
 
-fun ChildrenBuilder.renderAccessManagementDetails(handler: AccessManagementDetailsProps.() -> Unit) {
+fun ChildrenBuilder.renderAccessManagementDetails(config: AccessManagementDetailsConfig) {
   AddLocation::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

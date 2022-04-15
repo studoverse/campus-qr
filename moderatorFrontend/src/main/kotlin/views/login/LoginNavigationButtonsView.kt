@@ -3,7 +3,6 @@ package views.login
 import app.GlobalCss
 import csstype.ClassName
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.*
 import react.ChildrenBuilder
 import react.Props
@@ -63,8 +62,8 @@ private class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsView
   }
 }
 
-fun ChildrenBuilder.renderLoginNavigationButtonsView(handler: LoginNavigationButtonsViewProps.() -> Unit) {
+fun ChildrenBuilder.renderLoginNavigationButtonsView(config: LoginNavigationButtonsViewConfig) {
   LoginNavigationButtonsView::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -1,7 +1,6 @@
 package webcore
 
 import csstype.px
-import kotlinx.js.jso
 import mui.icons.material.MoreVert
 import mui.icons.material.SvgIconComponent
 import mui.material.IconButton
@@ -113,8 +112,8 @@ private class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() 
   }
 }
 
-fun ChildrenBuilder.materialMenu(handler: MaterialMenuProps.() -> Unit) {
+fun ChildrenBuilder.materialMenu(config: MaterialMenuConfig) {
   MaterialMenu::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

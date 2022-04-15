@@ -2,8 +2,6 @@ package webcore
 
 import csstype.Flex
 import csstype.FlexGrow
-import csstype.Length
-import csstype.Padding
 import mui.material.FormControlVariant
 import mui.material.InputBaseComponentProps
 import mui.system.Union
@@ -49,11 +47,6 @@ var InputBaseComponentProps.pattern: String?
     asDynamic().pattern = value
   }
 
-fun Padding(
-  allSides: Length,
-): Padding =
-  "$allSides".unsafeCast<Padding>()
-
 /** flex-grow: [grow], flex-shrink: 1, flex-basis: 0px */
 fun Flex(
   grow: FlexGrow
@@ -69,20 +62,20 @@ operator fun FormControlVariant.invoke(): Union = when (this) {
   else -> throw IllegalArgumentException("There is no variant with this name")
 }
 
-enum class TypographyVariant(val value: String) {
-  H1("h1"),
-  H2("h2"),
-  H3("h3"),
-  H4("h4"),
-  H5("h5"),
-  H6("h6"),
-  SUBTITLE1("subtitle1"),
-  SUBTITLE2("subtitle2"),
-  BODY1("body1"),
-  BODY2("body2"),
-  CAPTION("caption"),
-  BUTTON("button"),
-  OVERLINE("overline"),
-  SR_ONLY("srOnly"),
-  INHERIT("inherit")
+object TypographyVariant {
+  val h1 = "h1"
+  val h2 = "h2"
+  val h3 = "h3"
+  val h4 = "h4"
+  val h5 = "h5"
+  val h6 = "h6"
+  val subtitle1 = "subtitle1"
+  val subtitle2 = "subtitle2"
+  val body1 = "body1"
+  val body2 = "body2"
+  val caption = "caption"
+  val button = "button"
+  val overline = "overline"
+  val srOnly = "srOnly"
+  val inherit = "inherit"
 }

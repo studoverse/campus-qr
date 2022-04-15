@@ -22,7 +22,7 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+        api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
       }
     }
     val commonTest by getting

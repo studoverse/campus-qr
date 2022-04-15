@@ -86,8 +86,8 @@ private class MbSnackbar : RComponent<MbSnackbarProps, State>() {
 
 // you only need to define one snackbar in your page
 // control the message, type, positions through state variables
-fun ChildrenBuilder.mbSnackbar(handler: MbSnackbarProps.() -> Unit) {
+fun ChildrenBuilder.mbSnackbar(config: MbSnackbarConfig) {
   MbSnackbar::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

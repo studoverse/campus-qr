@@ -9,8 +9,11 @@ import csstype.*
 import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
-import react.*
+import react.ChildrenBuilder
+import react.Props
+import react.State
 import react.dom.html.InputType
+import react.react
 import util.Strings
 import util.apiBase
 import util.get
@@ -80,10 +83,10 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
   override fun ChildrenBuilder.render() {
     TextField<OutlinedTextFieldProps> {
       error = state.locationTextFieldError.isNotEmpty()
-      helperText = ReactNode(state.locationTextFieldError)
+      helperText = state.locationTextFieldError.toReactNode()
       fullWidth = true
       variant = FormControlVariant.outlined()
-      label = ReactNode(Strings.location_name.get())
+      label = Strings.location_name.get().toReactNode()
       value = state.locationTextFieldValue
       inputProps = jso {
         maxLength = 40 // Make sure names stay printable
@@ -116,14 +119,13 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
           // TODO: @mh See: https://youtrack.jetbrains.com/issue/KT-51698
           this as ChildrenBuilder
           value = state.locationAccessType.toString()
-          // TODO: @mh See: https://github.com/JetBrains/kotlin-wrappers/issues/1356
-          asDynamic().onChange = { event: dynamic ->
+          onChange = { event, _ ->
             setState {
               locationAccessType = LocationAccessType.valueOf(event.target.value)
             }
           }
           variant = SelectVariant.outlined
-          label = ReactNode(Strings.location_access_type.get())
+          label = Strings.location_access_type.get().toReactNode()
 
           LocationAccessType.values().forEach { accessType ->
             MenuItem {
@@ -142,7 +144,7 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
       fullWidth = true
       variant = FormControlVariant.outlined()
       type = InputType.number
-      label = ReactNode(Strings.location_number_of_seats_hint.get())
+      label = Strings.location_number_of_seats_hint.get().toReactNode()
       value = state.locationSeatCount?.toString() ?: ""
       onChange = { event ->
         val value = event.target.value
@@ -180,8 +182,8 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
   }
 }
 
-fun ChildrenBuilder.renderAddLocation(handler: AddLocationProps.() -> Unit) {
+fun ChildrenBuilder.renderAddLocation(config: AddLocationConfig) {
   AddLocation::class.react {
-    +jso(handler)
+    this.config = config
   }
 }

@@ -4,7 +4,6 @@ import csstype.AlignSelf
 import csstype.Auto
 import csstype.Display
 import csstype.JustifyContent
-import kotlinx.js.jso
 import mui.material.Box
 import mui.material.CircularProgress
 import mui.system.sx
@@ -33,8 +32,6 @@ private class CenteredProgress : RComponent<CenteredProgressProps, CenteredProgr
   }
 }
 
-fun ChildrenBuilder.centeredProgress(handler: CenteredProgressProps.() -> Unit = {}) {
-  CenteredProgress::class.react {
-    +jso(handler)
-  }
+fun ChildrenBuilder.centeredProgress() {
+  CenteredProgress::class.react {}
 }
