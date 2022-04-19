@@ -10,6 +10,7 @@ import com.studo.campusqr.common.payloads.ReportData
 import csstype.PropertiesBuilder
 import csstype.px
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.ChildrenBuilder
 import react.Props

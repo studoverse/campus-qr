@@ -7,6 +7,7 @@ import csstype.px
 import kotlinx.browser.window
 import mui.material.Box
 import mui.material.Typography
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.ChildrenBuilder
 import react.Props
@@ -17,7 +18,6 @@ import react.react
 import util.Strings
 import util.get
 import webcore.RComponent
-import webcore.TypographyVariant
 
 external interface GenericErrorViewProps : Props {
   var title: String

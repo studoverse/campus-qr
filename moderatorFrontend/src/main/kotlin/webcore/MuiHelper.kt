@@ -61,21 +61,3 @@ operator fun FormControlVariant.invoke(): Union = when (this) {
   FormControlVariant.standard -> "standard"
   else -> throw IllegalArgumentException("There is no variant with this name")
 }
-
-object TypographyVariant {
-  val h1 = "h1"
-  val h2 = "h2"
-  val h3 = "h3"
-  val h4 = "h4"
-  val h5 = "h5"
-  val h6 = "h6"
-  val subtitle1 = "subtitle1"
-  val subtitle2 = "subtitle2"
-  val body1 = "body1"
-  val body2 = "body2"
-  val caption = "caption"
-  val button = "button"
-  val overline = "overline"
-  val srOnly = "srOnly"
-  val inherit = "inherit"
-}

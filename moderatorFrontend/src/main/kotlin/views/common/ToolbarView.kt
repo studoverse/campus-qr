@@ -8,12 +8,12 @@ import csstype.ClassName
 import csstype.px
 import mui.icons.material.ArrowBack
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.*
 import util.Url
 import util.toRoute
 import webcore.RComponent
-import webcore.TypographyVariant
 
 class ToolbarButton(
   val text: String,

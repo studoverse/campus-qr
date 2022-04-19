@@ -8,6 +8,7 @@ import csstype.rgb
 import csstype.rgba
 import kotlinx.browser.window
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.*
 import react.dom.html.ReactHTML

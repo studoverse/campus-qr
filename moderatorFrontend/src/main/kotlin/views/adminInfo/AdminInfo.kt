@@ -8,6 +8,7 @@ import mui.material.Box
 import mui.material.Button
 import mui.material.ButtonColor
 import mui.material.Typography
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.ChildrenBuilder
 import react.Props
@@ -17,7 +18,6 @@ import util.Strings
 import util.get
 import views.common.spacer
 import webcore.RComponent
-import webcore.TypographyVariant
 import webcore.verticalMargin
 
 external interface AdminInfoProps : Props
