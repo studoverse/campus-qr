@@ -161,7 +161,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         disabled = props.config.disabled
         error = props.config.error || state.fieldError
         sx {
-          flex = Flex(number(1.0))
+          flex = number(1.0)
           paddingTop = 16.px
         }
         type = react.dom.html.InputType.number
@@ -185,7 +185,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         disabled = props.config.disabled
         error = props.config.error || state.fieldError
         sx {
-          flex = Flex(number(2.0))
+          flex = number(2.0)
           paddingTop = 16.px
         }
         type = react.dom.html.InputType.number
@@ -209,7 +209,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         disabled = props.config.disabled
         error = props.config.error || state.fieldError
         sx {
-          flex = Flex(number(2.0))
+          flex = number(2.0)
           paddingTop = 16.px
         }
         type = react.dom.html.InputType.number

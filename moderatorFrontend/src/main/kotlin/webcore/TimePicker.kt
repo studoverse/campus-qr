@@ -154,7 +154,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         disabled = props.config.disabled
         error = props.config.error
         sx {
-          flex = Flex(number(1.0))
+          flex = number(1.0)
           paddingTop = 16.px
         }
         type = react.dom.html.InputType.number
@@ -177,7 +177,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         disabled = props.config.disabled
         error = props.config.error
         sx {
-          flex = Flex(number(1.0))
+          flex = number(1.0)
           paddingTop = 16.px
         }
         type = react.dom.html.InputType.number

@@ -16,7 +16,6 @@ import util.Url
 import util.get
 import views.common.spacer
 import views.settings.renderSettings
-import webcore.Flex
 import webcore.LogoBadgeConfig
 import webcore.RComponent
 import webcore.logoBadge
@@ -193,7 +192,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
 
     Box {
       sx {
-        flex = Flex(number(1.0))
+        flex = number(1.0)
       }
     }
     renderSettings()
