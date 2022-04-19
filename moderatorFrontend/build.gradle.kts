@@ -15,7 +15,7 @@ repositories {
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-val kotlinWrappersVersion = "0.0.1-pre.329-kotlin-1.6.20"
+val kotlinWrappersVersion = "0.0.1-pre.330-kotlin-1.6.20"
 
 kotlin {
   js {

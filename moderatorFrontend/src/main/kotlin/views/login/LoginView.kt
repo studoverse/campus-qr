@@ -64,7 +64,7 @@ private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
       CardHeader {
         sx {
           padding = 0.px
-          background = Color("white")
+          background = NamedColor.white
         }
         title = div.create {
           Box {
