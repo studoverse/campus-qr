@@ -1,14 +1,14 @@
 package webcore
 
-import csstype.Flex
-import csstype.FlexGrow
+import csstype.*
+import kotlinx.js.jso
 import mui.material.FormControlVariant
 import mui.material.InputBaseComponentProps
 import mui.system.Union
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLTextAreaElement
-import react.ReactNode
+import react.*
 
 val HTMLElement.value: String
   get() = when (this) {
@@ -47,17 +47,31 @@ var InputBaseComponentProps.pattern: String?
     asDynamic().pattern = value
   }
 
-/** flex-grow: [grow], flex-shrink: 1, flex-basis: 0px */
-fun Flex(
-  grow: FlexGrow
-): Flex =
-  "$grow".unsafeCast<Flex>()
-
-fun String.toReactNode() = ReactNode(source = this)
-
 operator fun FormControlVariant.invoke(): Union = when (this) {
   FormControlVariant.outlined -> "outlined"
   FormControlVariant.filled -> "filled"
   FormControlVariant.standard -> "standard"
   else -> throw IllegalArgumentException("There is no variant with this name")
 }
+
+fun String.toReactNode() = ReactNode(source = this)
+
+fun buildElements(handler: ChildrenBuilder.() -> Unit) {
+  createElement(Fragment, jso {}, Fragment.create {
+    handler()
+  })
+}
+
+/** Select nested class */
+fun PropertiesBuilder.nested(className: ClassName, style: PropertiesBuilder.() -> Unit) {
+  (Selector("&.${className}")) {
+    style()
+  }
+}
+
+/** Used to set the marks of a Mui Slider component */
+external interface SliderMark {
+  var value: Int
+  var label: String?
+}
+
