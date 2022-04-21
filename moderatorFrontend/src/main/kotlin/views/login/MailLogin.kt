@@ -7,6 +7,7 @@ import csstype.TextAlign
 import csstype.px
 import kotlinx.browser.document
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import org.w3c.dom.HTMLElement
 import react.ChildrenBuilder

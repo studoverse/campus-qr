@@ -3,13 +3,10 @@ package webcore
 import csstype.px
 import mui.icons.material.MoreVert
 import mui.icons.material.SvgIconComponent
-import mui.material.IconButton
-import mui.material.ListItemIcon
-import mui.material.Menu
-import mui.material.MenuItem
+import mui.material.*
 import mui.system.sx
+import org.w3c.dom.Element
 import org.w3c.dom.events.Event
-import org.w3c.dom.events.EventTarget
 import react.ChildrenBuilder
 import react.Props
 import react.State
@@ -30,7 +27,7 @@ class MenuItem(
 
 class MaterialMenuConfig(
   var className: String = "",
-  var fontSize: String? = null,
+  var fontSize: SvgIconSize? = null,
   var menuItems: List<MenuItem>,
 )
 
@@ -40,7 +37,7 @@ external interface MaterialMenuProps : Props {
 
 external interface MaterialMenuState : State {
   var open: Boolean
-  var anchorEl: EventTarget?
+  var anchorEl: Element?
   var ariaId: String
 }
 
@@ -71,7 +68,7 @@ private class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() 
       ariaLabel = "More"
       MoreVert {
         if (props.config.fontSize != null) {
-          asDynamic().fontSize = props.config.fontSize!!
+          fontSize = props.config.fontSize!!
         }
       }
     }
@@ -86,7 +83,9 @@ private class MaterialMenu : RComponent<MaterialMenuProps, MaterialMenuState>() 
       }
       id = ariaId
       open = state.open
-      asDynamic().anchorEl = state.anchorEl
+      state.anchorEl?.let { anchorElement ->
+        anchorEl = { anchorElement }
+      }
       props.config.menuItems.forEach { item ->
         MenuItem {
           item.icon?.let { icon ->

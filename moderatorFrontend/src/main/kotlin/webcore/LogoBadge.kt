@@ -3,6 +3,7 @@ package webcore
 import csstype.*
 import mui.material.Box
 import mui.material.Typography
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import org.w3c.dom.HTMLImageElement
 import react.ChildrenBuilder

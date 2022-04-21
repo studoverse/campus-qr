@@ -86,7 +86,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
             }
             mui.icons.material.Menu {
               sx {
-                color = (Color("#fff"))
+                color = NamedColor.white
               }
             }
             onClick = {

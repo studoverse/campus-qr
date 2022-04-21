@@ -54,7 +54,7 @@ private class MbSnackbar : RComponent<MbSnackbarProps, State>() {
               MbSnackbarType.ERROR -> backgroundColor = Color(redColor[500] as String)
               MbSnackbarType.INFO -> backgroundColor = Color(blueColor[500] as String)
               MbSnackbarType.WARNING -> {
-                color = Color("black")
+                color = NamedColor.black
                 backgroundColor = Color(yellowColor[500] as String)
               }
               null -> ""

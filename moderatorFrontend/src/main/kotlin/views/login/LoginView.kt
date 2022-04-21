@@ -9,6 +9,7 @@ import csstype.*
 import kotlinx.browser.document
 import kotlinx.browser.window
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import org.w3c.dom.HTMLImageElement
 import react.*
@@ -20,7 +21,6 @@ import util.Strings
 import util.get
 import views.login.LoginMode.EMAIL
 import webcore.RComponent
-import webcore.TypographyVariant
 
 external interface LoginViewProps : Props {
   var loginMode: LoginMode
@@ -64,7 +64,7 @@ private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
       CardHeader {
         sx {
           padding = 0.px
-          background = Color("white")
+          background = NamedColor.white
         }
         title = div.create {
           Box {
