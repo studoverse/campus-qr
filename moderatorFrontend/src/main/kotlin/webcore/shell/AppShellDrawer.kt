@@ -53,6 +53,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
 
   override fun ChildrenBuilder.render() {
     val theme = appContext.theme
+    val topLineHeight = 12.px
     AppBar {
       if (!props.config.hideDrawer) {
         sx {
@@ -60,7 +61,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
             marginLeft = drawerWidth.px
             width = 100.pct - drawerWidth.px
             if (props.config.smallToolbar) {
-              height = 12.px
+              height = topLineHeight
             }
           }
         }
@@ -70,10 +71,11 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
       props.config.appBarElevation?.let { elevation = it }
       Toolbar {
         sx {
-          borderTop = Border(width = 6.px, style = LineStyle.solid, color = props.config.themeColor)
           (theme.breakpoints.up(Breakpoint.md)) {
+            // No top border for small screens because menu button is otherwise not symmetric
+            borderTop = Border(width = topLineHeight, style = LineStyle.solid, color = props.config.themeColor)
             if (props.config.smallToolbar) {
-              minHeight = 12.px
+              minHeight = topLineHeight
             }
           }
         }
