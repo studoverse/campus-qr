@@ -1,8 +1,10 @@
 package views.report
 
 import app.AppContext
+import app.GlobalCss.flex
 import app.appContext
 import com.studo.campusqr.common.payloads.ReportData
+import csstype.Auto
 import csstype.minus
 import csstype.pct
 import csstype.px
@@ -165,6 +167,7 @@ class AddFilterDialog(props: AddFilterDialogProps) :
 
     spacer(16)
 
+
     Box {
       sx {
         // Make sure that dialog's apply button doesn't get overlaid by autocomplete's dropdown
@@ -202,7 +205,15 @@ class AddFilterDialog(props: AddFilterDialogProps) :
           }
         }
       }
+    }
+    Box {
+      sx {
+        flex()
+      }
       Button {
+        sx {
+          marginLeft = Auto.auto
+        }
         +Strings.apply.get()
         onClick = {
           with(props.config) {

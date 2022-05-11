@@ -3,9 +3,7 @@ package app
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.payloads.*
-import csstype.Display
-import csstype.FlexDirection
-import csstype.vh
+import csstype.*
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.js.jso
@@ -21,6 +19,7 @@ import org.w3c.dom.url.URL
 import react.*
 import react.dom.flushSync
 import util.*
+import util.Url
 import views.common.centeredProgress
 import views.common.networkErrorView
 import webcore.*
@@ -356,6 +355,12 @@ object GlobalCss {
   const val flex = "flex"
   const val flexEnd = "flexEnd"
   const val fullWidth = "fullWidth"
+
+  fun PropertiesBuilder.flex() {
+    display = Display.flex
+    flexDirection = FlexDirection.row
+    flexWrap = FlexWrap.wrap
+  }
 }
 
 fun ChildrenBuilder.app() {
