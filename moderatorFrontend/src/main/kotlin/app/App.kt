@@ -18,19 +18,14 @@ import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URL
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.flushSync
-import react.react
 import util.*
 import views.common.centeredProgress
 import views.common.networkErrorView
-import webcore.NetworkManager
-import webcore.RComponent
+import webcore.*
 import webcore.extensions.findParent
 import webcore.extensions.launch
-import webcore.setState
 import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
@@ -47,6 +42,17 @@ external interface AppState : State {
 }
 
 private class App : RComponent<AppProps, AppState>() {
+
+  private var snackbarRef = createRef<MbSnackbar>()
+  private var dialogRef = createRef<MbMaterialDialog>()
+
+  override fun AppState.init() {
+    userData = null
+    loadingUserData = true
+    currentAppRoute = AppRoute(Url.BLANK)
+    mobileNavOpen = false
+    activeLanguage = MbLocalizedStringConfig.selectedLanguage
+  }
 
   private val checkInSideDrawerItems: List<SideDrawerItem>
     get() {
@@ -166,14 +172,6 @@ private class App : RComponent<AppProps, AppState>() {
     }
   }
 
-  override fun AppState.init() {
-    userData = null
-    loadingUserData = true
-    currentAppRoute = AppRoute(Url.BLANK)
-    mobileNavOpen = false
-    activeLanguage = MbLocalizedStringConfig.selectedLanguage
-  }
-
   private fun fetchUserDataAndInit(block: (() -> Unit)? = null) = launch {
     val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
 
@@ -275,6 +273,22 @@ private class App : RComponent<AppProps, AppState>() {
     MbLocalizedStringConfig.selectedLanguage = newLang
   }
 
+  private fun showSnackbar(text: String) {
+    snackbarRef.current!!.showSnackbar(text)
+  }
+
+  private fun showSnackbarAdvanced(config: MbSnackbarConfig) {
+    snackbarRef.current!!.showSnackbar(config)
+  }
+
+  private fun showDialog(dialogConfig: DialogConfig) {
+    dialogRef.current!!.showDialog(dialogConfig)
+  }
+
+  private fun closeDialog() {
+    dialogRef.current!!.closeDialog()
+  }
+
   override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "white"
     ThemeProvider {
@@ -282,11 +296,17 @@ private class App : RComponent<AppProps, AppState>() {
       appContext.Provider(
         AppContext(
           languageContext = LanguageContext(state.activeLanguage, ::onLangChange),
+          snackbarContext = MbSnackbarContext(::showSnackbar, ::showSnackbarAdvanced),
+          dialogContext = MbDialogContext(::showDialog, ::closeDialog),
           routeContext = RouteContext(state.currentAppRoute, ::pushAppRoute),
           themeContext = ThemeContext(this@App.theme),
           userDataContext = UserDataContext(userData = state.userData, state.loadingUserData, ::fetchUserDataAndInit)
         )
       ) {
+        // Global components
+        mbSnackbar(ref = snackbarRef)
+        mbMaterialDialog(ref = dialogRef)
+
         // Render content without side drawer and toolbar, if no shell option is activated via url hash
         if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
           renderViewContent()

@@ -1,14 +1,13 @@
 package views.guestCheckIn.guestCheckInOverview
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import com.studo.campusqr.common.payloads.CheckOutData
 import kotlinx.browser.window
 import mui.material.*
-import react.ChildrenBuilder
-import react.Props
-import react.State
-import react.react
+import react.*
 import util.Strings
 import util.apiBase
 import util.get
@@ -20,7 +19,6 @@ import webcore.extensions.launch
 class GuestCheckInRowConfig(
   val activeCheckIn: ActiveCheckIn,
   val onCheckedOut: () -> Unit,
-  val onShowSnackbar: (String) -> Unit,
 )
 
 external interface GuestCheckInRowProps : Props {
@@ -30,6 +28,16 @@ external interface GuestCheckInRowProps : Props {
 external interface GuestCheckInRowState : State
 
 private class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRowState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(GuestCheckInRow::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun ChildrenBuilder.render() {
     TableRow {
       TableCell {
@@ -57,8 +65,9 @@ private class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRow
                 )
                 if (response == "ok") {
                   props.config.onCheckedOut()
+                  appContext.showSnackbar(Strings.guest_checkin_checkout_successful.get())
                 } else {
-                  props.config.onShowSnackbar(Strings.error_try_again.get())
+                  appContext.showSnackbar(Strings.error_try_again.get())
                 }
               }
             }

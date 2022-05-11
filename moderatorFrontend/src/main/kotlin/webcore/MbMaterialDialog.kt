@@ -1,56 +1,125 @@
 package webcore
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.utils.LocalizedString
 import csstype.*
 import mui.icons.material.SvgIconComponent
 import mui.material.*
 import mui.system.sx
-import react.ChildrenBuilder
-import react.Props
-import react.State
-import react.react
+import react.*
 import util.get
+import kotlin.reflect.KClass
 
-external interface MbDialogProps : Props {
-  var config: MbMaterialDialogConfig
+external interface MbDialogProps : Props
+
+external interface MbDialogState : State {
+  var config: DialogConfig?
 }
 
-external interface MbDialogState : State
+open class DialogConfig(
+  val icon: SvgIconComponent? = null,
+  val title: String? = null,
+  val text: String? = null,
+  val customContent: CustomContent<*>? = null,
+  val buttons: List<DialogButton>? = null, // Buttons can also be defined in customContent for more complex behaviour or styling
+  val contentMargin: Boolean = true,
+  val onClose: (() -> Unit)? = null,
+  val scroll: DialogScroll? = DialogScroll.paper,
+  val overflow: OverflowForDialog? = null,
+  val customDialogConfig: (DialogProps.() -> Unit)? = null,
+  val isCancelable: Boolean = true,
+) {
+  init {
+    require(title != null || text != null || customContent != null) { "DialogConfig: At least title or text or customContent must be set" }
+    if (icon != null) require(title != null) { "DialogConfig: Title must be set when icon is set" }
+  }
 
-class MbMaterialDialogConfig(
-  var show: Boolean = false,
-  var title: String? = null,
-  var titleIcon: SvgIconComponent? = null,
-  var textContent: String? = null,
-  var customContent: (ChildrenBuilder.() -> Unit)? = null,
-  var buttons: List<DialogButton>? = null,
-  var onClose: (() -> Unit)? = null,
-  var disableAutoFocus: Boolean = false,
+  /**
+   *  For custom dialog content define an own component and pass it to [customContent]
+   *  Reason: State updates only work when the code is exposed to a render function so that a state update can change the dialog
+   *  Since dialogs are normally triggered by onClick callbacks the customContent will only be updated if it is wrapped in a separate
+   *  component that rerenders after state updates
+   */
+  class CustomContent<P : Props>(private val component: KClass<out Component<P, *>>, private val setProps: (P.() -> Unit)? = null) {
+    fun ChildrenBuilder.renderCustomContent() {
+      component.react {
+        setProps?.let { this.it() }
+      }
+    }
+  }
+}
+
+open class DialogButton(
+  val text: String,
+  val disabled: Boolean = false,
+  val color: ButtonColor? = null, // Will choose neutral (black) color if null (see createTheme)
+  val onClick: (() -> Unit)? = null
 )
 
-open class DialogButton(val text: String, val disabled: Boolean = false, val onClick: () -> Unit)
+fun positiveButton(
+  text: String = "OK",
+  disabled: Boolean = false,
+  onClick: (() -> Unit)? = null
+) = DialogButton(text = text, disabled = disabled, onClick = onClick)
 
-fun positiveButton(text: String = "OK", onClick: () -> Unit) = DialogButton(text = text, onClick = onClick)
-fun negativeButton(text: String = LocalizedString("Cancel", "Abbrechen").get(), onClick: () -> Unit) =
-  DialogButton(text = text, onClick = onClick)
+fun negativeButton(
+  text: String = LocalizedString("Cancel", "Abbrechen").get(),
+  disabled: Boolean = false,
+  onClick: (() -> Unit)? = null
+) = DialogButton(text = text, disabled = disabled, onClick = onClick)
 
-private class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
+class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(MbMaterialDialog::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
+  private fun ChildrenBuilder.renderContent(config: DialogConfig) {
+    config.text?.let { content ->
+      content.split("\n").map { DialogContentText { +it } } // Split into paragraphs
+    }
+    config.customContent?.let { customContent ->
+      Box {
+        with(customContent) {
+          renderCustomContent()
+        }
+      }
+    }
+  }
 
   override fun ChildrenBuilder.render() {
+    val config = state.config ?: return
+
     Dialog {
-      disableAutoFocus = props.config.disableAutoFocus
-      disableEnforceFocus = props.config.disableAutoFocus
+      config.scroll?.let { scroll = it }
       fullWidth = true
       sx {
         margin = 12.px
+        MuiDialog.paper {
+          config.overflow?.let { overflow ->
+            overflowY = overflow.overflowY
+            overflowX = overflow.overflowX
+          }
+        }
       }
-      open = props.config.show
-      onClose = { event: dynamic, reason: String ->
-        props.config.onClose?.invoke()
+      open = true
+      onClose = { _, _ ->
+        if (config.isCancelable) {
+          setState {
+            this.config = null
+          }
+        }
+        config.onClose?.invoke()
       }
-      props.config.title?.let { title ->
+      config.title?.let { title ->
         DialogTitle {
-          props.config.titleIcon?.let { titleIcon ->
+          config.icon?.let { titleIcon ->
             Box {
               sx {
                 display = Display.inlineFlex
@@ -63,62 +132,52 @@ private class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
           +title
         }
       }
-      DialogContent {
-        sx {
-          padding = important(Padding(vertical = 8.px, horizontal = 24.px))
+
+      if (config.contentMargin) {
+        DialogContent {
+          renderContent(config)
         }
-        props.config.textContent?.let { content ->
-          DialogContentText { +content }
-        }
-        Box {
-          props.config.customContent?.invoke(this@Box)
-        }
+      } else {
+        renderContent(config)
       }
 
-      if (props.config.buttons?.isEmpty() == false) {
+      if (!config.buttons.isNullOrEmpty()) {
         DialogActions {
-          props.config.buttons?.forEach { button ->
+          config.buttons.forEach { button ->
             Button {
+              button.color?.let { color ->
+                this.color = color
+              }
               disabled = button.disabled
               +button.text
               onClick = {
-                button.onClick()
+                button.onClick?.invoke()
+                // Close dialog on click
+                setState {
+                  this.config = null
+                }
               }
             }
           }
         }
       }
+      config.customDialogConfig?.invoke(this)
     }
+  }
+
+  fun showDialog(dialogConfig: DialogConfig) {
+    setState { this.config = dialogConfig }
+  }
+
+  fun closeDialog() {
+    setState { this.config = null }
   }
 }
 
-@Deprecated("Use buttons, insead of positiveButton and negativeButtion")
-fun ChildrenBuilder.mbMaterialDialog(
-  show: Boolean = false,
-  title: String? = null,
-  titleIcon: SvgIconComponent? = null,
-  textContent: String? = null,
-  customContent: (ChildrenBuilder.() -> Unit)? = null,
-  positiveButton: DialogButton? = positiveButton {},
-  negativeButton: DialogButton? = negativeButton {},
-  onClose: (() -> Unit)? = null
-) = mbMaterialDialog(
-  config = MbMaterialDialogConfig(
-    show,
-    title,
-    titleIcon,
-    textContent,
-    customContent,
-    mutableListOf<DialogButton>().apply {
-      positiveButton?.let { this.add(it) }
-      negativeButton?.let { this.add(it) }
-    },
-    onClose,
-  )
-)
-
-fun ChildrenBuilder.mbMaterialDialog(config: MbMaterialDialogConfig) {
+fun ChildrenBuilder.mbMaterialDialog(ref: Ref<MbMaterialDialog>? = null) {
   MbMaterialDialog::class.react {
-    this.config = config
+    if (ref != null) {
+      this.ref = ref
+    }
   }
 }

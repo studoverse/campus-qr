@@ -1,16 +1,15 @@
 package views.accessManagement.accessManagementOverview
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.payloads.AccessManagementData
 import com.studo.campusqr.common.payloads.ClientAccessManagement
 import com.studo.campusqr.common.payloads.ClientLocation
 import mui.material.*
-import react.ChildrenBuilder
-import react.Props
-import react.State
-import react.react
+import react.*
 import util.*
 import views.accessManagement.AccessManagementDetailsConfig
-import views.accessManagement.renderAccessManagementDetails
+import views.accessManagement.AddLocation
 import views.common.*
 import webcore.*
 import webcore.extensions.launch
@@ -22,21 +21,26 @@ external interface ListAccessManagementProps : Props {
 external interface ListAccessManagementState : State {
   var accessManagementList: List<ClientAccessManagement>?
   var clientLocation: ClientLocation?
-  var showAddAccessManagementDialog: Boolean
   var showAccessManagementImportDialog: Boolean
   var loadingAccessManagementList: Boolean
-  var snackbarText: String
 }
 
 private class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessManagementState>() {
 
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ListAccessManagement::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun ListAccessManagementState.init() {
     accessManagementList = null
     clientLocation = null
-    showAddAccessManagementDialog = false
     showAccessManagementImportDialog = false
     loadingAccessManagementList = false
-    snackbarText = ""
   }
 
   private fun fetchAccessManagementList() = launch {
@@ -66,49 +70,21 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
     fetchAccessManagementList()
   }
 
-  private fun ChildrenBuilder.renderAddAccessManagementDialog() = mbMaterialDialog(
-    config = MbMaterialDialogConfig(
-      show = state.showAddAccessManagementDialog,
+  private fun renderAddAccessManagementDialog() = appContext.showDialog(
+    DialogConfig(
       title = Strings.access_control_create.get(),
-      customContent = {
-        renderAccessManagementDetails(
-          config = AccessManagementDetailsConfig.Create(
-            locationId = props.locationId,
-            onCreated = { success ->
-              setState {
-                showAddAccessManagementDialog = false
-                snackbarText = if (success) {
-                  Strings.access_control_created_successfully.get()
-                } else {
-                  Strings.error_try_again.get()
-                }
-              }
-              fetchAccessManagementList()
-            })
+      customContent = DialogConfig.CustomContent(AddLocation::class) {
+        config = AccessManagementDetailsConfig.Create(
+          locationId = props.locationId,
+          onCreated = {
+            fetchAccessManagementList()
+          }
         )
       },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddAccessManagementDialog = false
-        }
-      }
-    )
-  )
-
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
-    config = MbSnackbarConfig(
-      show = state.snackbarText.isNotEmpty(),
-      message = state.snackbarText,
-      onClose = {
-        setState { snackbarText = "" }
-      }
     )
   )
 
   override fun ChildrenBuilder.render() {
-    renderAddAccessManagementDialog()
-    renderSnackbar()
     renderToolbarView(
       config = ToolbarViewConfig(
         title = StringBuilder().apply {
@@ -135,10 +111,8 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
           ToolbarButton(
             text = Strings.access_control_create.get(),
             variant = ButtonVariant.contained,
-            onClick = { _ ->
-              setState {
-                showAddAccessManagementDialog = true
-              }
+            onClick = {
+              renderAddAccessManagementDialog()
             }
           )
         )
@@ -163,18 +137,17 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
             renderAccessManagementRow(
               config = AccessManagementTableRowConfig(accessManagement,
                 onOperationFinished = { operation, success ->
-                  setState {
-                    snackbarText = if (success) {
-                      fetchAccessManagementList()
-                      when (operation) {
-                        AccessManagementTableRowOperation.Edit -> Strings.access_control_edited_successfully.get()
-                        AccessManagementTableRowOperation.Duplicate -> Strings.access_control_duplicated_successfully.get()
-                        AccessManagementTableRowOperation.Delete -> Strings.access_control_deleted_successfully.get()
-                      }
-                    } else {
-                      Strings.error_try_again.get()
+                  val snackbarText = if (success) {
+                    fetchAccessManagementList()
+                    when (operation) {
+                      AccessManagementTableRowOperation.Edit -> Strings.access_control_edited_successfully.get()
+                      AccessManagementTableRowOperation.Duplicate -> Strings.access_control_duplicated_successfully.get()
+                      AccessManagementTableRowOperation.Delete -> Strings.access_control_deleted_successfully.get()
                     }
+                  } else {
+                    Strings.error_try_again.get()
                   }
+                  appContext.showSnackbar(snackbarText)
                 }
               )
             )

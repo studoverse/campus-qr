@@ -1,6 +1,8 @@
 package views.guestCheckIn
 
+import app.AppContext
 import app.GlobalCss
+import app.appContext
 import app.baseUrl
 import com.studo.campusqr.common.payloads.CheckInData
 import com.studo.campusqr.common.payloads.ClientLocation
@@ -21,7 +23,6 @@ import webcore.extensions.launch
 
 class AddGuestCheckInConfig(
   val onGuestCheckedIn: () -> Unit,
-  val onShowSnackbar: (String) -> Unit
 )
 
 external interface AddGuestCheckInProps : Props {
@@ -43,8 +44,16 @@ external interface AddGuestCheckInState : State {
   var seatInputError: String
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
-private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
+@Suppress("UPPER_BOUND_VIOLATED") class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddGuestCheckIn::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun AddGuestCheckInState.init() {
     locationFetchInProgress = false
@@ -85,9 +94,12 @@ private class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckIn
       showProgress = false
     }
     when (response) {
-      "ok" -> props.config.onGuestCheckedIn()
-      "forbidden_email" -> props.config.onShowSnackbar(Strings.invalid_email.get())
-      else -> props.config.onShowSnackbar(Strings.error_try_again.get())
+      "ok" -> {
+        props.config.onGuestCheckedIn()
+        appContext.closeDialog()
+      }
+      "forbidden_email" -> appContext.showSnackbar(Strings.invalid_email.get())
+      else -> appContext.showSnackbar(Strings.error_try_again.get())
     }
   }
 

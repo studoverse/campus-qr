@@ -26,7 +26,7 @@ import webcore.extensions.*
 import kotlin.js.Date
 
 sealed class AccessManagementDetailsConfig {
-  class Create(val locationId: String?, val onCreated: (Boolean) -> Unit) : AccessManagementDetailsConfig()
+  class Create(val locationId: String?, val onCreated: () -> Unit) : AccessManagementDetailsConfig()
   class Edit(val accessManagement: ClientAccessManagement, val onEdited: (Boolean) -> Unit) : AccessManagementDetailsConfig()
   class Details(val accessManagement: ClientAccessManagement) : AccessManagementDetailsConfig()
 }
@@ -54,7 +54,7 @@ external interface AccessManagementDetailsState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-private class AddLocation(props: AccessManagementDetailsProps) :
+class AddLocation(props: AccessManagementDetailsProps) :
   RComponent<AccessManagementDetailsProps, AccessManagementDetailsState>(props) {
 
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
@@ -141,7 +141,14 @@ private class AddLocation(props: AccessManagementDetailsProps) :
     setState {
       showProgress = false
     }
-    (props.config as AccessManagementDetailsConfig.Create).onCreated(response == "ok")
+    (props.config as AccessManagementDetailsConfig.Create).onCreated()
+    appContext.closeDialog()
+    val snackbarText = if (response == "ok") {
+      Strings.access_control_created_successfully.get()
+    } else {
+      Strings.error_try_again.get()
+    }
+    appContext.showSnackbar(snackbarText)
   }
 
   private fun editAccessControl() = launch {
@@ -162,6 +169,7 @@ private class AddLocation(props: AccessManagementDetailsProps) :
       showProgress = false
     }
     (props.config as AccessManagementDetailsConfig.Edit).onEdited(response == "ok")
+    appContext.closeDialog()
   }
 
   private fun validateInput(): Boolean {

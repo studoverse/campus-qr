@@ -12,8 +12,8 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
+import views.locations.AddLocation
 import views.locations.AddLocationConfig
-import views.locations.renderAddLocation
 import webcore.*
 import webcore.extensions.launch
 
@@ -21,10 +21,7 @@ external interface ListLocationsProps : Props
 
 external interface ListLocationsState : State {
   var locationList: List<ClientLocation>?
-  var showAddLocationDialog: Boolean
-  var showImportLocationDialog: Boolean
   var loadingLocationList: Boolean
-  var snackbarText: String
 }
 
 private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>() {
@@ -40,10 +37,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
 
   override fun ListLocationsState.init() {
     locationList = null
-    showAddLocationDialog = false
-    showImportLocationDialog = false
     loadingLocationList = false
-    snackbarText = ""
   }
 
   private fun fetchLocationList() = launch {
@@ -60,80 +54,46 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
   }
 
   private fun handleCreateOrEditLocationResponse(response: String?, successText: String) {
-    setState {
-      snackbarText = when (response) {
-        "ok" -> {
-          fetchLocationList()
-          showAddLocationDialog = false
-          successText
-        }
-        else -> Strings.error_try_again.get()
+    val snackbarText = when (response) {
+      "ok" -> {
+        fetchLocationList()
+        successText
       }
+      else -> Strings.error_try_again.get()
     }
+    appContext.showSnackbar(snackbarText)
   }
 
-  private fun ChildrenBuilder.renderAddLocationDialog() = mbMaterialDialog(
-    config = MbMaterialDialogConfig(
-      show = state.showAddLocationDialog,
+  private fun renderAddLocationDialog() = appContext.showDialog(
+    DialogConfig(
       title = Strings.location_add.get(),
-      customContent = {
-        renderAddLocation(
-          config = AddLocationConfig.Create(
-            onFinished = { response ->
-              handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
-            }
-          )
+      customContent = DialogConfig.CustomContent(AddLocation::class) {
+        config = AddLocationConfig.Create(
+          onFinished = { response ->
+            handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
+          }
         )
       },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddLocationDialog = false
-        }
-      }
     )
   )
 
-  private fun ChildrenBuilder.renderImportButtonDialog() {
-
-    fun closeDialog() {
-      setState {
-        showImportLocationDialog = false
-      }
-    }
-
-    mbMaterialDialog(
-      config = MbMaterialDialogConfig(
-        show = state.showImportLocationDialog,
+  private fun renderImportButtonDialog() {
+    appContext.showDialog(
+      DialogConfig(
         title = Strings.location_import.get(),
-        textContent = Strings.location_import_details.get(),
+        text = Strings.location_import_details.get(),
         buttons = listOf(
           DialogButton(Strings.more_about_studo.get(), onClick = {
-            closeDialog()
             window.open("https://studo.com", "_blank")
           }),
-          DialogButton("OK", onClick = ::closeDialog)
+          DialogButton("OK")
         ),
-        onClose = ::closeDialog
       )
     )
   }
 
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
-    config = MbSnackbarConfig(
-      show = state.snackbarText.isNotEmpty(),
-      message = state.snackbarText,
-      onClose = {
-        setState { snackbarText = "" }
-      }
-    )
-  )
-
   override fun ChildrenBuilder.render() {
     val userData = appContext.userDataContext.userData!!
-    renderAddLocationDialog()
-    renderImportButtonDialog()
-    renderSnackbar()
     renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.locations.get(),
@@ -157,9 +117,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
               text = Strings.location_import.get(),
               variant = ButtonVariant.outlined,
               onClick = {
-                setState {
-                  showImportLocationDialog = true
-                }
+                renderImportButtonDialog()
               }
             )
           } else null,
@@ -168,9 +126,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
               text = Strings.location_create.get(),
               variant = ButtonVariant.contained,
               onClick = {
-                setState {
-                  showAddLocationDialog = true
-                }
+                renderAddLocationDialog()
               }
             )
           } else null,

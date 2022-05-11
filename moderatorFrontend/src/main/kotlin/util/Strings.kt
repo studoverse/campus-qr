@@ -688,6 +688,11 @@ object Strings {
     "Account Details wurden aktualisiert"
   )
 
+  val user_created_account_details = LocalizedString(
+    "Created new account",
+    "Account wurde erstellt"
+  )
+
   val admin_info = LocalizedString(
     "App Configuration",
     "App-Konfiguration"

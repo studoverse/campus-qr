@@ -31,10 +31,7 @@ external interface UserTableRowProps : Props {
   var config: UserTableRowConfig
 }
 
-external interface UserTableRowState : State {
-  var showEditUserDialog: Boolean
-  var snackbarText: String
-}
+external interface UserTableRowState : State
 
 private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() {
 
@@ -47,56 +44,23 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  override fun UserTableRowState.init() {
-    showEditUserDialog = false
-    snackbarText = ""
-  }
-
-  private fun ChildrenBuilder.renderEditUserDialog() = mbMaterialDialog(
-    config = MbMaterialDialogConfig(
-      show = true,
+  private fun renderEditUserDialog() = appContext.showDialog(
+    DialogConfig(
       title = Strings.user_edit.get(),
-      customContent = {
-        renderAddUser(
-          config = AddUserConfig.Edit(props.config.user, onFinished = { response ->
-            setState {
-              if (response == "ok") {
-                showEditUserDialog = false
-                snackbarText = Strings.user_updated_account_details.get()
-              } else {
-                snackbarText = Strings.network_error.get()
-              }
-            }
+      customContent = DialogConfig.CustomContent(AddUser::class) {
+        config = AddUserConfig.Edit(
+          user = props.config.user,
+          onFinished = { response ->
             props.config.onEditFinished(response)
-          }),
+            appContext.closeDialog()
+          }
         )
       },
-      buttons = null,
-      onClose = {
-        setState {
-          showEditUserDialog = false
-        }
-      }
     )
   )
 
   override fun ChildrenBuilder.render() {
     val userData = appContext.userDataContext.userData!!
-    mbSnackbar(
-      config = MbSnackbarConfig(
-        show = state.snackbarText.isNotEmpty(),
-        message = state.snackbarText,
-        onClose = {
-          setState {
-            snackbarText = ""
-          }
-        }
-      )
-    )
-    if (state.showEditUserDialog) {
-      renderEditUserDialog()
-    }
-
     TableRow {
       TableCell {
         +props.config.user.name
@@ -126,9 +90,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
           config = MaterialMenuConfig(
             menuItems = listOf(
               MenuItem(text = Strings.user_edit.get(), icon = Edit, onClick = {
-                setState {
-                  showEditUserDialog = true
-                }
+                renderEditUserDialog()
               }),
               MenuItem(text = Strings.user_delete.get(), icon = Delete, onClick = {
                 if (window.confirm(Strings.user_delete_are_you_sure.get())) {
