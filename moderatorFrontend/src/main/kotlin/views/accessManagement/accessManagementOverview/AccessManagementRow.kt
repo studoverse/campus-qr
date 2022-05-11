@@ -38,9 +38,7 @@ external interface AccessManagementTableRowProps : Props {
   var config: AccessManagementTableRowConfig
 }
 
-external interface AccessManagementTableRowState : State {
-  var showProgress: Boolean
-}
+external interface AccessManagementTableRowState : State
 
 private class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, AccessManagementTableRowState>() {
 
@@ -52,10 +50,6 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
   }
 
   private val appContext get() = this.asDynamic().context as AppContext
-
-  override fun AccessManagementTableRowState.init() {
-    showProgress = false
-  }
 
   private fun renderEditAccessManagementDialog() {
     appContext.showDialog(
@@ -123,33 +117,30 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
         +props.config.accessManagement.note
       }
       TableCell {
-        if (state.showProgress) {
-          CircularProgress {}
-        } else {
-          materialMenu(
-            config = MaterialMenuConfig(
-              menuItems = listOf(
-                MenuItem(text = Strings.edit.get(), icon = Edit, onClick = {
-                  renderEditAccessManagementDialog()
-                }),
-                MenuItem(text = Strings.duplicate.get(), icon = FileCopyOutlined, onClick = {
+        materialMenu(
+          config = MaterialMenuConfig(
+            menuItems = listOf(
+              MenuItem(text = Strings.edit.get(), icon = Edit, onClick = {
+                renderEditAccessManagementDialog()
+              }),
+              MenuItem(text = Strings.duplicate.get(), icon = FileCopyOutlined, onClick = {
+                launch {
+                  val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
+                  props.config.onOperationFinished(AccessManagementTableRowOperation.Duplicate, response == "ok")
+                }
+              }),
+              MenuItem(text = Strings.delete.get(), icon = Delete, onClick = {
+                if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
                   launch {
-                    val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
-                    props.config.onOperationFinished(AccessManagementTableRowOperation.Duplicate, response == "ok")
+                    val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
+                    props.config.onOperationFinished(AccessManagementTableRowOperation.Delete, response == "ok")
                   }
-                }),
-                MenuItem(text = Strings.delete.get(), icon = Delete, onClick = {
-                  if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
-                    launch {
-                      val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
-                      props.config.onOperationFinished(AccessManagementTableRowOperation.Delete, response == "ok")
-                    }
-                  }
-                }),
-              )
+                }
+              }),
             )
           )
-        }
+        )
+
       }
     }
   }

@@ -21,6 +21,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
+import views.common.renderMbLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.launch
@@ -183,6 +184,8 @@ external interface AddUserState : State {
   }
 
   override fun ChildrenBuilder.render() {
+    renderMbLinearProgress(show = state.userCreationInProgress)
+
     val userData = appContext.userDataContext.userData!!
     TextField<OutlinedTextFieldProps> {
       error = state.userEmailTextFieldError.isNotEmpty()

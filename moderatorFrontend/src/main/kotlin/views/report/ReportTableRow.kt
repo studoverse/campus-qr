@@ -27,9 +27,7 @@ external interface ReportTableRowProps : Props {
   var config: ReportTableRowConfig
 }
 
-external interface ReportTableRowState : State {
-  var showProgress: Boolean
-}
+external interface ReportTableRowState : State
 
 @Suppress("UPPER_BOUND_VIOLATED")
 private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProps, ReportTableRowState>(props) {
@@ -42,10 +40,6 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
   }
 
   private val appContext get() = this.asDynamic().context as AppContext
-
-  override fun ReportTableRowState.init(props: ReportTableRowProps) {
-    showProgress = false
-  }
 
   override fun componentWillReceiveProps(nextProps: ReportTableRowProps) {
     setState { init(nextProps) }

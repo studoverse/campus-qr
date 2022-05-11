@@ -17,6 +17,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
+import views.common.renderMbLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.launch
@@ -92,6 +93,8 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
   }
 
   override fun ChildrenBuilder.render() {
+    renderMbLinearProgress(show = state.locationCreationInProgress)
+
     TextField<OutlinedTextFieldProps> {
       error = state.locationTextFieldError.isNotEmpty()
       helperText = state.locationTextFieldError.toReactNode()
