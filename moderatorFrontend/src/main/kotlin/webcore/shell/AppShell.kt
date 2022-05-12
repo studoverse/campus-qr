@@ -1,7 +1,7 @@
 package webcore.shell
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import csstype.*
 import mui.material.Box
 import mui.system.Breakpoint
@@ -32,7 +32,7 @@ class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AppShell::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

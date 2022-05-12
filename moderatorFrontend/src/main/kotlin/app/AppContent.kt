@@ -24,7 +24,7 @@ private class AppContent : RComponent<AppContentProps, AppContentState>() {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AppContent::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

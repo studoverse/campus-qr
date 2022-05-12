@@ -1,7 +1,7 @@
 package webcore.shell
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import csstype.*
 import kotlinx.js.jso
 import mui.material.*
@@ -37,7 +37,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AppShellDrawer::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

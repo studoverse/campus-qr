@@ -2,7 +2,7 @@ package views.guestCheckIn
 
 import app.AppContext
 import app.GlobalCss
-import app.appContext
+import app.appContextToInject
 import app.baseUrl
 import com.studo.campusqr.common.payloads.CheckInData
 import com.studo.campusqr.common.payloads.ClientLocation
@@ -49,7 +49,7 @@ external interface AddGuestCheckInState : State {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddGuestCheckIn::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

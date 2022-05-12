@@ -2,7 +2,7 @@ package views.report
 
 import app.AppContext
 import app.GlobalCss.flex
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.payloads.ReportData
 import csstype.Auto
 import csstype.minus
@@ -39,7 +39,7 @@ class AddFilterDialog(props: AddFilterDialogProps) :
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddFilterDialog::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

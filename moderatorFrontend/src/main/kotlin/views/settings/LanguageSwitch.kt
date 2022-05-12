@@ -1,7 +1,7 @@
 package views.settings
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import csstype.AlignItems
 import csstype.Display
 import csstype.JustifyContent
@@ -21,7 +21,7 @@ private class LanguageSwitch(props: LanguageSwitchProps) : RComponent<LanguageSw
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(LanguageSwitch::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

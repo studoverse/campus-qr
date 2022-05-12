@@ -1,7 +1,7 @@
 package views.guestCheckIn.guestCheckInOverview
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import com.studo.campusqr.common.payloads.CheckOutData
@@ -32,7 +32,7 @@ private class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRow
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(GuestCheckInRow::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

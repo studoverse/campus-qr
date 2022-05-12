@@ -1,7 +1,7 @@
 package views.users
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import csstype.px
 import mui.material.Box
 import mui.system.sx
@@ -10,10 +10,7 @@ import util.Strings
 import util.get
 import views.common.ToolbarViewConfig
 import views.common.renderToolbarView
-import webcore.MbSnackbarConfig
 import webcore.RComponent
-import webcore.mbSnackbar
-import webcore.setState
 
 external interface MyAccountProps : Props {
 }
@@ -25,7 +22,7 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(MyAccount::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 
