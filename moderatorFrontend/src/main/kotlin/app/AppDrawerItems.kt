@@ -31,7 +31,7 @@ class AppDrawerItemsConfig(
   val checkInSideDrawerItems: List<SideDrawerItem>,
   val moderatorSideDrawerItems: List<SideDrawerItem>,
   val adminSideDrawerItems: List<SideDrawerItem>,
-  val onCloseMobileNav: () -> Unit
+  val mobileNavOpenChange: (mobileNavOpen: Boolean) -> Unit,
 )
 
 external interface AppDrawerItemsProps : Props {
@@ -89,7 +89,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
         onClick?.let { onClickEvent ->
           this.onClick = { event ->
             onClickEvent(event)
-            props.config.onCloseMobileNav()
+            props.config.mobileNavOpenChange(false) // Close menu on click
           }
         }
         if (openInNewTab) {
