@@ -1,5 +1,7 @@
 package views.report
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
@@ -12,11 +14,8 @@ import csstype.px
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.html.ReactHTML.form
-import react.react
 import util.Strings
 import util.apiBase
 import util.fileDownload
@@ -37,33 +36,28 @@ external interface ReportState : State {
   var emailTextFieldError: String
   var reportData: ReportData?
   var showProgress: Boolean
-  var snackbarText: String
   var infectionDate: Date
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
 private class Report : RComponent<ReportProps, ReportState>() {
 
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(Report::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun ReportState.init() {
     emailTextFieldValue = ""
     emailTextFieldError = ""
     reportData = null
     showProgress = false
-    snackbarText = ""
     infectionDate = Date().addDays(-14)
   }
-
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
-    config = MbSnackbarConfig(
-      show = state.snackbarText.isNotEmpty(),
-      message = state.snackbarText,
-      onClose = {
-        setState {
-          snackbarText = ""
-        }
-      }
-    )
-  )
 
   private fun validateInput(): Boolean {
     if (state.emailTextFieldValue.isEmpty()) {
@@ -93,7 +87,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
           // re-trace contacts
           traceContacts()
         } else {
-          snackbarText = Strings.error_try_again.get()
+          appContext.showSnackbar(Strings.error_try_again.get())
           showProgress = false
         }
       }
@@ -111,7 +105,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
         // re-trace contacts
         traceContacts()
       } else {
-        snackbarText = Strings.error_try_again.get()
+        appContext.showSnackbar(Strings.error_try_again.get())
         showProgress = false
       }
     }
@@ -128,11 +122,11 @@ private class Report : RComponent<ReportProps, ReportState>() {
     )
     setState {
       showProgress = false
-      if (response == null) {
-        snackbarText = Strings.error_try_again.get()
-        reportData = null
+      reportData = if (response == null) {
+        appContext.showSnackbar(Strings.error_try_again.get())
+        null
       } else {
-        reportData = response
+        response
       }
     }
   }
@@ -141,7 +135,6 @@ private class Report : RComponent<ReportProps, ReportState>() {
     val now = Date()
     val showEmailAddress = state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
-    renderSnackbar()
     Typography {
       variant = TypographyVariant.h5
       sx {

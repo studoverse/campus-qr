@@ -75,3 +75,18 @@ external interface SliderMark {
   var label: String?
 }
 
+class OverflowForDialog(
+  val overflowY: Overflow,
+  val overflowX: Overflow,
+)
+
+/**
+ * Due to issues with the `Portal` it is deactivated which leads to overflowing content being cut off at the edges of a Dialog/Popover etc.
+ * To get the same behaviour as with a working `Portal` set overflow-y to `visible`
+ * Note that overflowX needs to be set as well because if overflowY is `visible` and overflowX is `hidden`, `scroll` or `auto`
+ * overflowY will be set to `auto` implicitly
+ */
+fun overflowForDialog(overflowX: Overflow = Overflow.visible): OverflowForDialog = OverflowForDialog(
+  overflowY = Overflow.visible,
+  overflowX = overflowX,
+)

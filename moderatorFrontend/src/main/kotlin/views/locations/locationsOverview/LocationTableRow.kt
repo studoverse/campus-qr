@@ -12,7 +12,6 @@ import mui.material.TableRow
 import react.*
 import util.*
 import views.locations.AddLocationConfig
-import views.locations.renderAddLocation
 import webcore.*
 import webcore.extensions.launch
 
@@ -30,7 +29,6 @@ external interface LocationTableRowProps : Props {
 }
 
 external interface LocationTableRowState : State {
-  var showEditLocationDialog: Boolean
   var showProgress: Boolean
 }
 
@@ -46,40 +44,21 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
   private val appContext get() = this.asDynamic().context as AppContext
 
   override fun LocationTableRowState.init() {
-    showEditLocationDialog = false
     showProgress = false
   }
 
-  private fun ChildrenBuilder.renderEditLocationDialog() = mbMaterialDialog(
-    config = MbMaterialDialogConfig(
-      show = true,
+  private fun renderEditLocationDialog() = appContext.showDialog(
+    DialogConfig(
       title = Strings.location_edit.get(),
-      customContent = {
-        renderAddLocation(
-          config = AddLocationConfig.Edit(props.config.location, onFinished = { response ->
-            if (response == "ok") {
-              setState {
-                showEditLocationDialog = false
-              }
-            }
-            props.config.onEditFinished(response)
-          })
-        )
+      customContent = DialogConfig.CustomContent(views.locations.AddLocation::class) {
+        config = AddLocationConfig.Edit(props.config.location, onFinished = { response ->
+          props.config.onEditFinished(response)
+        })
       },
-      buttons = null,
-      onClose = {
-        setState {
-          showEditLocationDialog = false
-        }
-      }
     )
   )
 
   override fun ChildrenBuilder.render() {
-    if (state.showEditLocationDialog) {
-      renderEditLocationDialog()
-    }
-
     TableRow {
       TableCell {
         +props.config.location.name
@@ -104,9 +83,7 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
               menuItems = listOfNotNull(
                 if (props.config.clientUser.canEditLocations) {
                   MenuItem(text = Strings.edit.get(), icon = Edit, onClick = {
-                    setState {
-                      showEditLocationDialog = true
-                    }
+                    renderEditLocationDialog()
                   })
                 } else null,
                 MenuItem(text = Strings.locations_element_download_qr_code.get(), icon = ImageRounded, onClick = {

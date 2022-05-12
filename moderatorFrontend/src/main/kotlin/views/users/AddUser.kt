@@ -21,6 +21,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
+import views.common.renderMbLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.launch
@@ -49,8 +50,7 @@ external interface AddUserState : State {
   var userPermissions: Set<UserPermission>
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
-private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
+@Suppress("UPPER_BOUND_VIOLATED") class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
 
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddUser::class) {
@@ -91,6 +91,12 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
       userCreationInProgress = false
     }
     props.config.onFinished(response)
+    val snackbarText = if (response == "ok") {
+      Strings.user_created_account_details.get()
+    } else {
+      Strings.network_error.get()
+    }
+    appContext.showSnackbar(snackbarText)
   }
 
   private fun editUser() = launch {
@@ -116,6 +122,12 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
       userCreationInProgress = false
     }
     props.config.onFinished(response)
+    val snackbarText = if (response == "ok") {
+      Strings.user_updated_account_details.get()
+    } else {
+      Strings.network_error.get()
+    }
+    appContext.showSnackbar(snackbarText)
   }
 
   private fun validateNameInput(): Boolean {
@@ -172,6 +184,8 @@ private class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserSta
   }
 
   override fun ChildrenBuilder.render() {
+    renderMbLinearProgress(show = state.userCreationInProgress)
+
     val userData = appContext.userDataContext.userData!!
     TextField<OutlinedTextFieldProps> {
       error = state.userEmailTextFieldError.isNotEmpty()

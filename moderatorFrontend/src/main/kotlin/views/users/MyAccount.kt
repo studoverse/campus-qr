@@ -18,9 +18,7 @@ import webcore.setState
 external interface MyAccountProps : Props {
 }
 
-external interface MyAccountState : State {
-  var snackbarText: String
-}
+external interface MyAccountState : State
 
 private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
 
@@ -32,10 +30,6 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
   }
 
   private val appContext get() = this.asDynamic().context as AppContext
-
-  override fun MyAccountState.init() {
-    snackbarText = ""
-  }
 
   override fun ChildrenBuilder.render() {
     val userData = appContext.userDataContext.userData!!
@@ -52,29 +46,10 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
         marginRight = marginLeft
         marginBottom = 32.px
       }
-      mbSnackbar(
-        config = MbSnackbarConfig(
-          show = state.snackbarText.isNotEmpty(),
-          message = state.snackbarText,
-          onClose = {
-            setState {
-              snackbarText = ""
-            }
-          }
-        )
-      )
       renderAddUser(
         config = AddUserConfig.Edit(
           userData.clientUser!!,
-          onFinished = { result ->
-            setState {
-              snackbarText = if (result == "ok") {
-                Strings.user_updated_account_details.get()
-              } else {
-                Strings.network_error.get()
-              }
-            }
-          }
+          onFinished = {},
         ),
       )
     }

@@ -1,5 +1,7 @@
 package views.accessManagement.accessManagementOverview
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.payloads.ClientAccessManagement
 import com.studo.campusqr.common.payloads.ClientDateRange
 import kotlinx.browser.window
@@ -10,17 +12,14 @@ import mui.material.CircularProgress
 import mui.material.TableCell
 import mui.material.TableRow
 import org.w3c.dom.HTMLTableCellElement
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.events.MouseEvent
 import react.dom.html.ReactHTML.strong
-import react.react
 import util.Strings
 import util.apiBase
 import util.get
 import views.accessManagement.AccessManagementDetailsConfig
-import views.accessManagement.renderAccessManagementDetails
+import views.accessManagement.AddLocation
 import webcore.*
 import webcore.extensions.launch
 import webcore.extensions.twoDigitString
@@ -39,77 +38,50 @@ external interface AccessManagementTableRowProps : Props {
   var config: AccessManagementTableRowConfig
 }
 
-external interface AccessManagementTableRowState : State {
-  var showAccessManagementEditDialog: Boolean
-  var showAccessManagementDetailsDialog: Boolean
-  var showProgress: Boolean
-}
+external interface AccessManagementTableRowState : State
 
 private class AccessManagementTableRow : RComponent<AccessManagementTableRowProps, AccessManagementTableRowState>() {
 
-  override fun AccessManagementTableRowState.init() {
-    showAccessManagementEditDialog = false
-    showAccessManagementDetailsDialog = false
-    showProgress = false
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AccessManagementTableRow::class) {
+    init {
+      this.contextType = appContext
+    }
   }
 
-  private fun ChildrenBuilder.renderEditAccessManagementDialog() = mbMaterialDialog(
-    config = MbMaterialDialogConfig(
-      show = true,
-      title = Strings.location_edit.get(),
-      customContent = {
-        renderAccessManagementDetails(
+  private val appContext get() = this.asDynamic().context as AppContext
+
+  private fun renderEditAccessManagementDialog() {
+    appContext.showDialog(
+      DialogConfig(
+        title = Strings.location_edit.get(),
+        customContent = DialogConfig.CustomContent(AddLocation::class) {
           config = AccessManagementDetailsConfig.Edit(
             accessManagement = props.config.accessManagement,
             onEdited = { success ->
               props.config.onOperationFinished(AccessManagementTableRowOperation.Edit, success)
-              setState {
-                showAccessManagementEditDialog = false
-              }
-            })
-        )
-      },
-      buttons = null,
-      onClose = {
-        setState {
-          showAccessManagementEditDialog = false
-        }
-      }
-    )
-  )
-
-  private fun ChildrenBuilder.renderDetailsAccessManagementDialog() = mbMaterialDialog(
-    config = MbMaterialDialogConfig(
-      show = true,
-      title = Strings.access_control.get(),
-      customContent = {
-        renderAccessManagementDetails(
-          config = AccessManagementDetailsConfig.Details(
-            accessManagement = props.config.accessManagement,
+            }
           )
+        },
+      )
+    )
+  }
+
+  private fun renderDetailsAccessManagementDialog() = appContext.showDialog(
+    DialogConfig(
+      title = Strings.access_control.get(),
+      customContent = DialogConfig.CustomContent(AddLocation::class) {
+        config = AccessManagementDetailsConfig.Details(
+          accessManagement = props.config.accessManagement,
         )
       },
-      buttons = null,
-      onClose = {
-        setState {
-          showAccessManagementDetailsDialog = false
-        }
-      }
     )
   )
 
   override fun ChildrenBuilder.render() {
-    if (state.showAccessManagementEditDialog) {
-      renderEditAccessManagementDialog()
-    }
-    if (state.showAccessManagementDetailsDialog) {
-      renderDetailsAccessManagementDialog()
-    }
     TableRow {
       val tableRowClick = { _: MouseEvent<HTMLTableCellElement, *> ->
-        setState {
-          showAccessManagementDetailsDialog = true
-        }
+        renderDetailsAccessManagementDialog()
       }
       hover = true
 
@@ -145,35 +117,30 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
         +props.config.accessManagement.note
       }
       TableCell {
-        if (state.showProgress) {
-          CircularProgress {}
-        } else {
-          materialMenu(
-            config = MaterialMenuConfig(
-              menuItems = listOf(
-                MenuItem(text = Strings.edit.get(), icon = Edit, onClick = {
-                  setState {
-                    showAccessManagementEditDialog = true
-                  }
-                }),
-                MenuItem(text = Strings.duplicate.get(), icon = FileCopyOutlined, onClick = {
+        materialMenu(
+          config = MaterialMenuConfig(
+            menuItems = listOf(
+              MenuItem(text = Strings.edit.get(), icon = Edit, onClick = {
+                renderEditAccessManagementDialog()
+              }),
+              MenuItem(text = Strings.duplicate.get(), icon = FileCopyOutlined, onClick = {
+                launch {
+                  val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
+                  props.config.onOperationFinished(AccessManagementTableRowOperation.Duplicate, response == "ok")
+                }
+              }),
+              MenuItem(text = Strings.delete.get(), icon = Delete, onClick = {
+                if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
                   launch {
-                    val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/duplicate")
-                    props.config.onOperationFinished(AccessManagementTableRowOperation.Duplicate, response == "ok")
+                    val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
+                    props.config.onOperationFinished(AccessManagementTableRowOperation.Delete, response == "ok")
                   }
-                }),
-                MenuItem(text = Strings.delete.get(), icon = Delete, onClick = {
-                  if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
-                    launch {
-                      val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
-                      props.config.onOperationFinished(AccessManagementTableRowOperation.Delete, response == "ok")
-                    }
-                  }
-                }),
-              )
+                }
+              }),
             )
           )
-        }
+        )
+
       }
     }
   }

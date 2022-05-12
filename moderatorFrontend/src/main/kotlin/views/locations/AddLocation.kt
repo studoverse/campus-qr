@@ -1,6 +1,8 @@
 package views.locations
 
+import app.AppContext
 import app.GlobalCss
+import app.appContext
 import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ClientLocation
@@ -9,15 +11,13 @@ import csstype.*
 import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
-import react.ChildrenBuilder
-import react.Props
-import react.State
+import react.*
 import react.dom.html.InputType
-import react.react
 import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
+import views.common.renderMbLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.launch
@@ -40,7 +40,16 @@ external interface AddLocationState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
+class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
+
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddLocation::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
 
   override fun AddLocationState.init(props: AddLocationProps) {
     locationCreationInProgress = false
@@ -68,6 +77,9 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
       locationCreationInProgress = false
     }
     props.config.onFinished(response)
+    if (response == "ok") {
+      appContext.closeDialog()
+    }
   }
 
   private fun validateInput(): Boolean {
@@ -81,6 +93,8 @@ private class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps
   }
 
   override fun ChildrenBuilder.render() {
+    renderMbLinearProgress(show = state.locationCreationInProgress)
+
     TextField<OutlinedTextFieldProps> {
       error = state.locationTextFieldError.isNotEmpty()
       helperText = state.locationTextFieldError.toReactNode()

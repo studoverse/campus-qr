@@ -1,17 +1,16 @@
 package views.guestCheckIn.guestCheckInOverview
 
+import app.AppContext
+import app.appContext
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import mui.material.*
-import react.ChildrenBuilder
-import react.Props
-import react.State
-import react.react
+import react.*
 import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
+import views.guestCheckIn.AddGuestCheckIn
 import views.guestCheckIn.AddGuestCheckInConfig
-import views.guestCheckIn.renderAddGuestCheckIn
 import webcore.*
 import webcore.extensions.launch
 
@@ -19,18 +18,23 @@ external interface GuestCheckinOverviewProps : Props
 
 external interface GuestCheckInOverviewState : State {
   var activeGuestCheckIns: List<ActiveCheckIn>?
-  var showAddGuestCheckInDialog: Boolean
   var loadingCheckInList: Boolean
-  var snackbarText: String
 }
 
 private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInOverviewState>() {
 
+  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
+  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(GuestCheckInOverview::class) {
+    init {
+      this.contextType = appContext
+    }
+  }
+
+  private val appContext get() = this.asDynamic().context as AppContext
+
   override fun GuestCheckInOverviewState.init() {
     activeGuestCheckIns = emptyList()
-    showAddGuestCheckInDialog = false
     loadingCheckInList = false
-    snackbarText = ""
   }
 
   private fun fetchActiveGuestCheckIns() = launch {
@@ -40,7 +44,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
       if (response != null) {
         activeGuestCheckIns = response.toList()
       } else {
-        snackbarText = Strings.error_try_again.get()
+        appContext.showSnackbar(Strings.error_try_again.get())
       }
       loadingCheckInList = false
     }
@@ -50,47 +54,20 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
     fetchActiveGuestCheckIns()
   }
 
-  private fun ChildrenBuilder.renderAddGuestCheckInDialog() = mbMaterialDialog(
-    config = MbMaterialDialogConfig(
-      show = state.showAddGuestCheckInDialog,
+  private fun renderAddGuestCheckInDialog() = appContext.showDialog(
+    DialogConfig(
       title = Strings.guest_checkin_add_guest.get(),
-      customContent = {
-        renderAddGuestCheckIn(
-          config = AddGuestCheckInConfig(
-            onGuestCheckedIn = {
-              setState { showAddGuestCheckInDialog = false }
-              fetchActiveGuestCheckIns()
-            },
-            onShowSnackbar = { text ->
-              setState {
-                snackbarText = text
-              }
-            }
-          )
+      customContent = DialogConfig.CustomContent(AddGuestCheckIn::class) {
+        config = AddGuestCheckInConfig(
+          onGuestCheckedIn = {
+            fetchActiveGuestCheckIns()
+          },
         )
       },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddGuestCheckInDialog = false
-        }
-      }
-    )
-  )
-
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
-    config = MbSnackbarConfig(
-      show = state.snackbarText.isNotEmpty(),
-      message = state.snackbarText,
-      onClose = {
-        setState { snackbarText = "" }
-      }
     )
   )
 
   override fun ChildrenBuilder.render() {
-    renderSnackbar()
-    renderAddGuestCheckInDialog()
     renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.guest_checkin.get(),
@@ -99,9 +76,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
             text = Strings.guest_checkin_add_guest.get(),
             variant = ButtonVariant.contained,
             onClick = {
-              setState {
-                showAddGuestCheckInDialog = true
-              }
+              renderAddGuestCheckInDialog()
             }
           )
         )
@@ -126,11 +101,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
                 activeCheckIn,
                 onCheckedOut = {
                   fetchActiveGuestCheckIns()
-                  setState { snackbarText = Strings.guest_checkin_checkout_successful.get() }
                 },
-                onShowSnackbar = { text ->
-                  setState { snackbarText = text }
-                }
               )
             )
           }

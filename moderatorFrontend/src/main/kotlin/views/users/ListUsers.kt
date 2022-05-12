@@ -23,10 +23,7 @@ external interface ListUsersProps : Props
 
 external interface ListUsersState : State {
   var userList: List<ClientUser>?
-  var showAddUserDialog: Boolean
-  var showSsoInfoDialog: Boolean
   var loadingUserList: Boolean
-  var snackbarText: String
 }
 
 private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
@@ -42,10 +39,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 
   override fun ListUsersState.init() {
     userList = null
-    showAddUserDialog = false
-    showSsoInfoDialog = false
     loadingUserList = false
-    snackbarText = ""
   }
 
   private fun fetchUserList() = launch {
@@ -62,51 +56,35 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 
   private fun handleCreateOrAddUserResponse(response: String?) {
-    setState {
-      snackbarText = when (response) {
-        "already_exists" -> Strings.user_already_exists.get()
-        "ok" -> {
-          fetchUserList()
-          showAddUserDialog = false
-          Strings.user_created.get()
-        }
-        else -> Strings.error_try_again.get()
+    val snackbarText = when (response) {
+      "already_exists" -> Strings.user_already_exists.get()
+      "ok" -> {
+        fetchUserList()
+        Strings.user_created.get()
       }
+      else -> Strings.error_try_again.get()
     }
+    appContext.showSnackbar(snackbarText)
   }
 
-  private fun ChildrenBuilder.renderAddUserDialog() = mbMaterialDialog(
-    config = MbMaterialDialogConfig(
-      show = state.showAddUserDialog,
+  private fun renderAddUserDialog() = appContext.showDialog(
+    DialogConfig(
       title = Strings.user_add.get(),
-      customContent = {
-        renderAddUser(
-          config = AddUserConfig.Create(onFinished = { response -> handleCreateOrAddUserResponse(response) }),
-        )
+      customContent = DialogConfig.CustomContent(AddUser::class) {
+        config = AddUserConfig.Create(onFinished = { response ->
+          handleCreateOrAddUserResponse(response)
+          appContext.closeDialog()
+        })
       },
-      buttons = null,
-      onClose = {
-        setState {
-          showAddUserDialog = false
-        }
-      }
     )
   )
 
 
-  private fun ChildrenBuilder.renderSsoInfoButtonDialog() {
-
-    fun closeDialog() {
-      setState {
-        showSsoInfoDialog = false
-      }
-    }
-
-    mbMaterialDialog(
-      config = MbMaterialDialogConfig(
-        show = state.showSsoInfoDialog,
+  private fun renderSsoInfoButtonDialog() {
+    appContext.showDialog(
+      DialogConfig(
         title = Strings.user_sso_info.get(),
-        customContent = {
+        customContent = basicCustomContent {
           Typography {
             sx {
               color = rgba(0, 0, 0, 0.54)
@@ -120,27 +98,16 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         },
         buttons = listOf(
           DialogButton(Strings.more_about_studo.get(), onClick = {
-            closeDialog()
             window.open("https://studo.com", "_blank")
           }),
-          DialogButton("OK", onClick = ::closeDialog)
+          DialogButton("OK")
         ),
-        onClose = ::closeDialog
       )
     )
   }
 
-  private fun ChildrenBuilder.renderSnackbar() = mbSnackbar(
-    config = MbSnackbarConfig(show = state.snackbarText.isNotEmpty(), message = state.snackbarText, onClose = {
-      setState { snackbarText = "" }
-    })
-  )
-
   override fun ChildrenBuilder.render() {
     val userData = appContext.userDataContext.userData!!
-    renderAddUserDialog()
-    renderSsoInfoButtonDialog()
-    renderSnackbar()
     renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.user_management.get(),
@@ -149,18 +116,14 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
             text = Strings.user_sso_info.get(),
             variant = ButtonVariant.outlined,
             onClick = {
-              setState {
-                showSsoInfoDialog = true
-              }
+              renderSsoInfoButtonDialog()
             }
           ),
           if (userData.externalAuthProvider) null else ToolbarButton(
             text = Strings.user_add.get(),
             variant = ButtonVariant.contained,
             onClick = {
-              setState {
-                showAddUserDialog = true
-              }
+              renderAddUserDialog()
             }
           )
         )
