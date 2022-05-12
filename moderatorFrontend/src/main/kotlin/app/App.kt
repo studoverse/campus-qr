@@ -292,7 +292,7 @@ private class App : RComponent<AppProps, AppState>() {
     document.body?.style?.backgroundColor = "white"
     ThemeProvider {
       this.theme = this@App.theme
-      appContext.Provider(
+      appContextToInject.Provider(
         AppContext(
           languageContext = LanguageContext(state.activeLanguage, ::onLangChange),
           snackbarContext = MbSnackbarContext(::showSnackbar, ::showSnackbarAdvanced),

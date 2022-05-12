@@ -2,7 +2,7 @@ package views.users
 
 import app.AppContext
 import app.GlobalCss
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emailRegex
 import com.studo.campusqr.common.extensions.emptyToNull
@@ -55,7 +55,7 @@ external interface AddUserState : State {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddUser::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

@@ -1,7 +1,7 @@
 package webcore
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import csstype.*
 import kotlinx.js.jso
 import mui.icons.material.*
@@ -37,7 +37,7 @@ class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(MbSnackbar::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

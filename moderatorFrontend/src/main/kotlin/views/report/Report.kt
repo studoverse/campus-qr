@@ -1,7 +1,7 @@
 package views.report
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
@@ -45,7 +45,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(Report::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

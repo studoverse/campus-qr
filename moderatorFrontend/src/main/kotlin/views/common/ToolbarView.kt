@@ -3,7 +3,7 @@ package views.common
 import app.AppContext
 import app.GlobalCss
 import app.RouteContext
-import app.appContext
+import app.appContextToInject
 import csstype.ClassName
 import csstype.px
 import mui.icons.material.ArrowBack
@@ -38,7 +38,7 @@ private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ToolbarView::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

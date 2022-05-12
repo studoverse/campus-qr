@@ -2,7 +2,7 @@ package views.locations
 
 import app.AppContext
 import app.GlobalCss
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ClientLocation
@@ -45,7 +45,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddLocation::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

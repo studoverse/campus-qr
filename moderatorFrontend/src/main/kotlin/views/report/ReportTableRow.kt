@@ -1,19 +1,12 @@
 package views.report
 
 import app.AppContext
-import app.GlobalCss.flex
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.payloads.ReportData
-import csstype.Auto
-import csstype.minus
-import csstype.pct
-import csstype.px
 import mui.material.*
-import mui.system.sx
 import react.*
 import util.Strings
 import util.get
-import views.common.spacer
 import webcore.*
 
 class ReportTableRowConfig(
@@ -35,7 +28,7 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ReportTableRow::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

@@ -45,7 +45,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AppDrawerItems::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

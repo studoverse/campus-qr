@@ -1,7 +1,7 @@
 package webcore
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.utils.LocalizedString
 import csstype.*
 import mui.icons.material.SvgIconComponent
@@ -74,7 +74,7 @@ class MbMaterialDialog : RComponent<MbDialogProps, MbDialogState>() {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(MbMaterialDialog::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

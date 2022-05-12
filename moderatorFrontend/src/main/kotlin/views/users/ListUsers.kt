@@ -1,7 +1,7 @@
 package views.users
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientUser
 import csstype.px
 import csstype.rgb
@@ -31,7 +31,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ListUsers::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

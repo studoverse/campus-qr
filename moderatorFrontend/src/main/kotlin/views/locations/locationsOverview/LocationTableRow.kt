@@ -1,7 +1,7 @@
 package views.locations.locationsOverview
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import app.baseUrl
 import com.studo.campusqr.common.payloads.*
 import kotlinx.browser.window
@@ -37,7 +37,7 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(LocationTableRow::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

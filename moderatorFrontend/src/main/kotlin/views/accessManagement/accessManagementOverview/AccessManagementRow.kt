@@ -1,14 +1,13 @@
 package views.accessManagement.accessManagementOverview
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientAccessManagement
 import com.studo.campusqr.common.payloads.ClientDateRange
 import kotlinx.browser.window
 import mui.icons.material.Delete
 import mui.icons.material.Edit
 import mui.icons.material.FileCopyOutlined
-import mui.material.CircularProgress
 import mui.material.TableCell
 import mui.material.TableRow
 import org.w3c.dom.HTMLTableCellElement
@@ -45,7 +44,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AccessManagementTableRow::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

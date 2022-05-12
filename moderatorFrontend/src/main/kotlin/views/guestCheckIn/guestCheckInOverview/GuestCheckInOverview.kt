@@ -1,7 +1,7 @@
 package views.guestCheckIn.guestCheckInOverview
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import mui.material.*
 import react.*
@@ -26,7 +26,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(GuestCheckInOverview::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

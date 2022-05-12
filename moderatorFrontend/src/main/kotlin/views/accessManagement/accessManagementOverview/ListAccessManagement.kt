@@ -1,7 +1,7 @@
 package views.accessManagement.accessManagementOverview
 
 import app.AppContext
-import app.appContext
+import app.appContextToInject
 import com.studo.campusqr.common.payloads.AccessManagementData
 import com.studo.campusqr.common.payloads.ClientAccessManagement
 import com.studo.campusqr.common.payloads.ClientLocation
@@ -30,7 +30,7 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ListAccessManagement::class) {
     init {
-      this.contextType = appContext
+      this.contextType = appContextToInject
     }
   }
 

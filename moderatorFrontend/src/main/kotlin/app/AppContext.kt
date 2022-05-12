@@ -62,4 +62,4 @@ data class AppContext(
   fun showSnackbar(config: MbSnackbarConfig) = snackbarContext.showSnackbarAdvanced(config)
 }
 
-val appContext = createContext<AppContext>()
+val appContextToInject = createContext<AppContext>()
