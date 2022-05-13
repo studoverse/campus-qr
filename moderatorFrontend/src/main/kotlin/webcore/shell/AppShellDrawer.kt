@@ -3,32 +3,33 @@ package webcore.shell
 import app.AppContext
 import app.appContextToInject
 import csstype.*
+import kotlinx.browser.window
 import kotlinx.js.jso
+import kotlinx.js.timers.setTimeout
 import mui.material.*
 import mui.system.Breakpoint
 import mui.system.sx
+import org.w3c.dom.events.Event
 import react.*
 import webcore.RComponent
-import webcore.setState
 
 class AppShellDrawerConfig(
   var mobileNavOpen: Boolean,
+  val mobileNavOpenChange: (mobileNavOpen: Boolean) -> Unit,
   var hideDrawer: Boolean,
   var drawerList: ChildrenBuilder.() -> Unit,
   var toolbarIcon: (ChildrenBuilder.() -> Unit)?,
   var themeColor: Color,
   var smallToolbar: Boolean,
   var stickyNavigation: Boolean,
-  var appBarElevation: Int?
+  var appBarElevation: Int?,
 )
 
 external interface AppShellDrawerProps : Props {
   var config: AppShellDrawerConfig
 }
 
-external interface AppShellDrawerState : State {
-  var mobileNavOpen: Boolean
-}
+external interface AppShellDrawerState : State
 
 const val drawerWidth = 240
 
@@ -43,12 +44,23 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  override fun AppShellDrawerState.init(props: AppShellDrawerProps) {
-    mobileNavOpen = props.config.mobileNavOpen
+  private fun onResize(event: Event) {
+    fixDrawerIssue()
   }
 
-  override fun componentWillReceiveProps(nextProps: AppShellDrawerProps) {
-    setState { mobileNavOpen = nextProps.config.mobileNavOpen }
+  private fun fixDrawerIssue() {
+    if (window.innerWidth >= appContext.theme.breakpoints.values[Breakpoint.md]!!.toInt() && props.config.mobileNavOpen) {
+      console.log("Applying workaround for https://github.com/mui/material-ui/issues/32251")
+      props.config.mobileNavOpenChange(false)
+    }
+  }
+
+  override fun UNSAFE_componentWillMount() {
+    window.addEventListener("resize", ::onResize)
+  }
+
+  override fun componentWillUnmount() {
+    window.removeEventListener("resize", ::onResize)
   }
 
   override fun ChildrenBuilder.render() {
@@ -92,9 +104,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
               }
             }
             onClick = {
-              setState {
-                mobileNavOpen = !state.mobileNavOpen
-              }
+              props.config.mobileNavOpenChange(!props.config.mobileNavOpen)
             }
           }
         }
@@ -103,6 +113,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
     }
 
     if (!props.config.hideDrawer) {
+      // Desktop drawer
       Drawer {
         sx {
           (theme.breakpoints.down(Breakpoint.md)) {
@@ -116,10 +127,11 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
         variant = DrawerVariant.permanent
         props.config.drawerList(this)
       }
+      // Mobile drawer
       Drawer {
-        open = state.mobileNavOpen
+        open = props.config.mobileNavOpen
         variant = DrawerVariant.temporary
-        onClose = { _, _ -> setState { mobileNavOpen = false } }
+        onClose = { _, _ -> props.config.mobileNavOpenChange(false) }
         ModalProps = jso {
           keepMounted = true // Better open performance on mobile
         }
@@ -138,6 +150,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
         }
         props.config.drawerList(this)
       }
+      setTimeout(::fixDrawerIssue, 0)
     }
   }
 

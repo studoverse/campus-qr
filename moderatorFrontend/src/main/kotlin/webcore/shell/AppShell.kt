@@ -17,6 +17,7 @@ class AppShellConfig(
   var hideDrawer: Boolean,
   var smallToolbar: Boolean,
   var mobileNavOpen: Boolean,
+  val mobileNavOpenChange: (mobileNavOpen: Boolean) -> Unit,
   var appBarElevation: Int?,
   var stickyNavigation: Boolean,
 )
@@ -43,6 +44,7 @@ class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(
     renderAppShellDrawer(
       config = AppShellDrawerConfig(
         props.config.mobileNavOpen,
+        props.config.mobileNavOpenChange,
         props.config.hideDrawer,
         props.config.drawerList,
         props.config.toolbarIcon,

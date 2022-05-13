@@ -314,6 +314,9 @@ private class App : RComponent<AppProps, AppState>() {
             config = AppShellConfig(
               appBarElevation = 0,
               mobileNavOpen = state.mobileNavOpen,
+              mobileNavOpenChange = { mobileNavOpen ->
+                setState { this.mobileNavOpen = mobileNavOpen }
+              },
               smallToolbar = true,
               stickyNavigation = true,
               viewContent = {
@@ -326,8 +329,8 @@ private class App : RComponent<AppProps, AppState>() {
                     moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
                     adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
                     loading = false,
-                    onCloseMobileNav = {
-                      setState { mobileNavOpen = false }
+                    mobileNavOpenChange = { mobileNavOpen ->
+                      setState { this.mobileNavOpen = mobileNavOpen }
                     }
                   )
                 )
