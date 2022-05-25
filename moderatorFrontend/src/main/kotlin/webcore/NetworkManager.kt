@@ -45,7 +45,7 @@ object NetworkManager {
   ): T? = try {
     val response: HttpResponse = client.post(url) {
       body?.let {
-        contentType(ContentType.Application.Json)
+        contentType(ContentType.Application.Json.withParameter("charset", "utf-8"))
         this.body = body // Let the Ktor client handle @Serializable classes.
       }
       urlParams.forEach { parameter(it.key, it.value) }
