@@ -25,6 +25,11 @@ kotlin {
   }
 }
 
+// Fixes webpack-cli incompatibility by pinning the newest version.
+rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+  versions.webpackCli.version = "4.10.0"
+}
+
 dependencies {
   implementation(kotlin("stdlib-js"))
   implementation(project(":common"))
