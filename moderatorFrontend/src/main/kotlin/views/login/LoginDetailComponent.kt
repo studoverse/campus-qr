@@ -2,8 +2,8 @@ package views.login
 
 import kotlinx.browser.window
 import org.w3c.dom.url.URL
-import util.toRoute
 import webcore.RComponent
+import webcore.extensions.toRoute
 
 abstract class LoginDetailComponent<P : react.Props, S : react.State> : RComponent<P, S>() {
   protected fun redirectAfterLogin() {

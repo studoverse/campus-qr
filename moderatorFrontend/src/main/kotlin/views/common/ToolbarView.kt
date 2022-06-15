@@ -12,8 +12,8 @@ import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.*
 import util.Url
-import util.toRoute
 import webcore.RComponent
+import webcore.extensions.toRoute
 
 class ToolbarButton(
   val text: String,

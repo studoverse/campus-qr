@@ -25,6 +25,7 @@ import views.common.networkErrorView
 import webcore.*
 import webcore.extensions.findParent
 import webcore.extensions.launch
+import webcore.extensions.toRoute
 import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
@@ -310,8 +311,9 @@ private class App : RComponent<AppProps, AppState>() {
 
         // Render content without side drawer and toolbar, if no shell option is activated via url hash
         if (window.location.hash.contains("noShell") ||
-          window.location.pathname.startsWith("/admin/login") /*||
-          state.currentAppRoute?.url?.showWithShell != true*/) { // TODO: @mh Backport showWithShell
+          window.location.pathname.startsWith("/admin/login") || // TODO: @mh Can this line be removed now?
+          state.currentAppRoute?.url?.showWithShell != true
+        ) {
           Box {
             sx {
               // Viewport height to take up whole screen because parent has no height set (similar as for appShell).

@@ -45,7 +45,7 @@ private class AppContent : RComponent<AppContentProps, AppContentState>() {
       Url.ACCOUNT_SETTINGS -> renderMyAccount()
       Url.ADMIN_INFO -> renderAdminInfo()
       Url.LOGIN_EMAIL -> renderLoginView(loginMode = LoginMode.EMAIL)
-      Url.BLANK -> Unit
+      Url.BLANK -> +"." // Just show something here, so we don't have a blank page which would be hard for debugging
       null -> pathNotFoundView()
     }
 

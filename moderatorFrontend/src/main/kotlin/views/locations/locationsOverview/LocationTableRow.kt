@@ -14,6 +14,7 @@ import util.*
 import views.locations.AddLocationConfig
 import webcore.*
 import webcore.extensions.launch
+import webcore.extensions.toRoute
 
 class LocationTableRowConfig(
   val location: ClientLocation,

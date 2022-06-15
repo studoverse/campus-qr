@@ -13,6 +13,7 @@ import views.accessManagement.AddLocation
 import views.common.*
 import webcore.*
 import webcore.extensions.launch
+import webcore.extensions.toRoute
 
 external interface ListAccessManagementProps : Props {
   var locationId: String?
