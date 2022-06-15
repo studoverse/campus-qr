@@ -311,7 +311,6 @@ private class App : RComponent<AppProps, AppState>() {
 
         // Render content without side drawer and toolbar, if no shell option is activated via url hash
         if (window.location.hash.contains("noShell") ||
-          window.location.pathname.startsWith("/admin/login") || // TODO: @mh Can this line be removed now?
           state.currentAppRoute?.url?.showWithShell != true
         ) {
           Box {
