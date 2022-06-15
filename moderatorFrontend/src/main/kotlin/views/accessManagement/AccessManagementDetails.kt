@@ -31,6 +31,8 @@ sealed class AccessManagementDetailsConfig {
   class Details(val accessManagement: ClientAccessManagement) : AccessManagementDetailsConfig()
 }
 
+class TimeSlotError(val text: String, val timeSlot: ClientDateRange)
+
 external interface AccessManagementDetailsProps : Props {
   var config: AccessManagementDetailsConfig
 }
@@ -49,8 +51,8 @@ external interface AccessManagementDetailsState : State {
   var permittedPeopleList: List<String>
   var timeSlots: List<ClientDateRange>
 
-  var fromDateTextFieldError: String
-  var toDateTextFieldError: String
+  var fromDateTimeSlotErrors: MutableList<TimeSlotError>
+  var toDateTimeSlotErrors: MutableList<TimeSlotError>
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
@@ -80,8 +82,8 @@ class AddLocation(props: AccessManagementDetailsProps) :
       personEmailTextFieldValue = ""
       permittedPeopleList = accessManagement?.allowedEmails?.toList() ?: emptyList()
 
-      fromDateTextFieldError = ""
-      toDateTextFieldError = ""
+      fromDateTimeSlotErrors = mutableListOf()
+      toDateTimeSlotErrors = mutableListOf()
 
       val fromDate = Date().addHours(1).with(minute = 0)
       timeSlots = accessManagement?.dateRanges?.toList() ?: listOf(
@@ -192,7 +194,7 @@ class AddLocation(props: AccessManagementDetailsProps) :
       // End time cannot be before start time
       if (timeSlot.to < timeSlot.from) {
         setState {
-          toDateTextFieldError = Strings.access_control_end_date_before_start_date.get()
+          toDateTimeSlotErrors.add(TimeSlotError(text = Strings.access_control_end_date_before_start_date.get(), timeSlot = timeSlot))
         }
         return false
       }
@@ -483,22 +485,24 @@ class AddLocation(props: AccessManagementDetailsProps) :
       }
       gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1) {
         gridItem(GridSize(xs = 12, sm = true)) {
-          if (state.fromDateTextFieldError.isNotEmpty()) {
+          val fromDateTimeSlotError = state.fromDateTimeSlotErrors.singleOrNull { it.timeSlot == clientDateRange }
+          if (fromDateTimeSlotError != null) {
             Typography {
               sx {
                 color = theme.palette.error.main
               }
-              +state.fromDateTextFieldError
+              +fromDateTimeSlotError.text
             }
           }
         }
         gridItem(GridSize(xs = 12, sm = true)) {
-          if (state.toDateTextFieldError.isNotEmpty()) {
+          val toDateTimeSlotError = state.toDateTimeSlotErrors.singleOrNull { it.timeSlot == clientDateRange }
+          if (toDateTimeSlotError != null) {
             Typography {
               sx {
                 color = theme.palette.error.main
               }
-              +state.toDateTextFieldError
+              +toDateTimeSlotError.text
             }
           }
         }
@@ -597,7 +601,7 @@ class AddLocation(props: AccessManagementDetailsProps) :
     }
   }
 
-  private fun ChildrenBuilder.renderSubmitButton() {
+  private fun ChildrenBuilder.renderActionButtons() {
     val createButtonText = when (props.config) {
       is AccessManagementDetailsConfig.Create -> Strings.access_control_create.get()
       is AccessManagementDetailsConfig.Edit -> Strings.access_control_save.get()
@@ -607,14 +611,29 @@ class AddLocation(props: AccessManagementDetailsProps) :
       Box {
         className = ClassName(GlobalCss.flex)
         Box {
+          sx {
+            marginBottom = 16.px
+          }
           className = ClassName(GlobalCss.flexEnd)
           Button {
             sx {
-              marginBottom = 16.px
+              marginRight = 16.px
             }
+            +Strings.cancel.get()
+            variant = ButtonVariant.text
+            onClick = {
+              appContext.closeDialog()
+            }
+          }
+          Button {
             variant = ButtonVariant.contained
             color = ButtonColor.primary
             onClick = {
+              // Reset errors from previous submit attempt
+              setState {
+                fromDateTimeSlotErrors.clear()
+                toDateTimeSlotErrors.clear()
+              }
               if (validateInput()) {
                 when (props.config) {
                   is AccessManagementDetailsConfig.Create -> createAccessControl()
@@ -640,7 +659,7 @@ class AddLocation(props: AccessManagementDetailsProps) :
     renderTimeSlotPickers()
     renderPermittedPeople()
     spacer(32)
-    renderSubmitButton()
+    renderActionButtons()
   }
 
   override fun ChildrenBuilder.render() {

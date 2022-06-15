@@ -6,6 +6,11 @@ import com.studo.campusqr.common.utils.LocalizedString
 
 object Strings {
 
+  val cancel = LocalizedString(
+    "Cancel",
+    "Abbrechen"
+  )
+
   val edit = LocalizedString(
     "Edit",
     "Bearbeiten"
