@@ -6,7 +6,7 @@ import webcore.extensions.decodeURIComponent
 import webcore.extensions.encodeURIComponent
 
 class AppRoute(
-  val url: Url,
+  val url: MbUrl,
   val pathParams: Map<String, String> = emptyMap(),
   val queryParams: Map<String, String> = emptyMap()
 ) {
@@ -42,13 +42,14 @@ class AppRoute(
  *
  * Query params of [this] are encoded, therefore the get decoded in toRoute(). queryParams and pathParams need no encoding.
  */
-private fun String.toRoute(
+fun String.toRoute(
+  allUrls: Collection<MbUrl>,
   pathParams: Map<String, String> = emptyMap(),
-  queryParams: Map<String, String> = emptyMap()
+  queryParams: Map<String, String> = emptyMap(),
 ): AppRoute? {
-  val splitPath = this.substringBefore("?").split("/")
+  val splitPath = this.substringBefore("#").substringBefore("?").split("/")
   // Find the matching view
-  val matchingView = Url.values().find {
+  val matchingView = allUrls.find {
     val pattern = it.path.split("/")
     (pattern.size == splitPath.size) && (splitPath zip pattern).all { (pathPart, patternPart) ->
       ((pathPart == patternPart) || patternPart.startsWith(":"))
@@ -64,49 +65,21 @@ private fun String.toRoute(
     .toMap() + pathParams
 
   // Construct a map of query parameters
-  val allQueryParams = this
-    .substringAfter("?", missingDelimiterValue = "")
-    .split("&")
-    .map { it.split("=") } // List<String> -> List<List<String>>
-    .mapNotNull { it.takeIf { it.count() == 2 } } // Only take key-value params
-    .associate { (key, value) -> decodeURIComponent(key) to decodeURIComponent(value) } + queryParams
+  val allQueryParams = this.queryParams + queryParams
 
   return AppRoute(matchingView, allPathParams, allQueryParams)
 }
 
 val URL.relativeUrl: String get() = href.removePrefix(origin).substringBefore("#")
 
-/**
- * Add additional pathParams and queryParams here, to avoid doing string operations and
- * manual encoding when constructing a route with any params.
- *
- * Query params of URL are encoded, therefore the get decoded in toRoute(). queryParams and pathParams need no encoding.
- */
-fun URL.toRoute(
-  pathParams: Map<String, String> = emptyMap(),
-  queryParams: Map<String, String> = emptyMap()
-): AppRoute? = relativeUrl.toRoute(pathParams, queryParams)
-
 val Location.relativeUrl: String get() = href.removePrefix(origin).substringBefore("#")
 
-/**
- * Add additional pathParams and queryParams here, to avoid doing string operations and
- * manual encoding when constructing a route with any params.
- *
- * Query params of Location are encoded, therefore the get decoded in toRoute(). queryParams and pathParams need no encoding.
- */
-fun Location.toRoute(
-  pathParams: Map<String, String> = emptyMap(),
-  queryParams: Map<String, String> = emptyMap()
-): AppRoute? = relativeUrl.toRoute(pathParams, queryParams)
-
-/**
- * Add additional pathParams and queryParams here, to avoid doing string operations and
- * manual encoding when constructing a route with any params.
- *
- * Query params of Url are encoded, therefore the get decoded in toRoute(). queryParams and pathParams need no encoding.
- */
-fun Url.toRoute(
-  pathParams: Map<String, String> = emptyMap(),
-  queryParams: Map<String, String> = emptyMap()
-): AppRoute? = path.toRoute(pathParams, queryParams)
+val String.queryParams: Map<String, String>
+  get() = this
+    .substringBefore("#")
+    .substringAfter("?", missingDelimiterValue = "")
+    .split("&")
+    .map { it.split("=") } // List<String> -> List<List<String>>
+    .mapNotNull { it.takeIf { it.count() == 2 } } // Only take key-value params
+    .map { (key, value) -> decodeURIComponent(key) to decodeURIComponent(value) } // List<String> -> key - value
+    .toMap()

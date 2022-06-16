@@ -25,6 +25,7 @@ import views.common.networkErrorView
 import webcore.*
 import webcore.extensions.findParent
 import webcore.extensions.launch
+import webcore.extensions.toRoute
 import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
@@ -35,7 +36,7 @@ external interface AppProps : Props
 external interface AppState : State {
   var userData: UserData?
   var loadingUserData: Boolean
-  var currentAppRoute: AppRoute
+  var currentAppRoute: AppRoute?
   var mobileNavOpen: Boolean
   var activeLanguage: MbLocalizedStringConfig.SupportedLanguage
 }
@@ -48,7 +49,7 @@ private class App : RComponent<AppProps, AppState>() {
   override fun AppState.init() {
     userData = null
     loadingUserData = true
-    currentAppRoute = AppRoute(Url.BLANK)
+    currentAppRoute = null
     mobileNavOpen = false
     activeLanguage = MbLocalizedStringConfig.selectedLanguage
   }
@@ -124,6 +125,7 @@ private class App : RComponent<AppProps, AppState>() {
       val mouseEvent = event as MouseEvent
       val target = mouseEvent.target
       if (target != null && !mouseEvent.altKey && !mouseEvent.ctrlKey && !mouseEvent.metaKey && !mouseEvent.shiftKey) {
+        // Only handle click for anchor elements
         val linkNode = (target as Node).findParent { it.nodeName.lowercase() == "a" } ?: return@addEventListener
         val anchor = linkNode as HTMLAnchorElement
         val parsedUrl = try {
@@ -158,16 +160,16 @@ private class App : RComponent<AppProps, AppState>() {
     ?.let { mapOf("redirect" to it) }
     ?: emptyMap()
 
-  private fun handleHistoryChange() {
-    val activeView = window.location.toRoute() ?: return
-
-    if (isNotAuthenticatedButRequiresAuth(activeView)) {
+  private fun handleHistoryChange(newRoute: AppRoute? = window.location.toRoute()) {
+    if (newRoute == null) {
+      console.log("Omit history change for 404 page")
+    } else if (isNotAuthenticatedButRequiresAuth(newRoute)) {
       // The user might end here by clicking back after logging out.
       // componentDidMount() won't be called as going back is not mounting a new component.
       // The user is not logged in so push him to login page
       pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
     } else {
-      setState { currentAppRoute = activeView }
+      setState { currentAppRoute = newRoute }
     }
   }
 
@@ -248,6 +250,7 @@ private class App : RComponent<AppProps, AppState>() {
 
   private fun ChildrenBuilder.renderViewContent() {
     if (state.userData == null) {
+      // In this case state.currentAppRoute is null.
       if (state.loadingUserData) {
         Box {
           sx {
@@ -307,8 +310,20 @@ private class App : RComponent<AppProps, AppState>() {
         mbMaterialDialog(ref = dialogRef)
 
         // Render content without side drawer and toolbar, if no shell option is activated via url hash
-        if (window.location.hash.contains("noShell") || window.location.pathname.startsWith("/admin/login")) {
-          renderViewContent()
+        if (window.location.hash.contains("noShell") ||
+          state.currentAppRoute?.url?.showWithShell != true
+        ) {
+          Box {
+            sx {
+              // Viewport height to take up whole screen because parent has no height set (similar as for appShell).
+              // Especially important when we show only the iFrameView.
+              minHeight = 100.vh
+              width = 100.pct
+              display = Display.flex
+              flexDirection = FlexDirection.column
+            }
+            renderViewContent()
+          }
         } else {
           appShell(
             config = AppShellConfig(
