@@ -1,33 +1,26 @@
 package com.studo.campusqr.utils
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.moshbit.katerbase.JsonHandler.constructCollectionType
-import com.moshbit.katerbase.JsonHandler.fromTree
-import java.text.SimpleDateFormat
-import kotlin.reflect.KClass
+ import com.fasterxml.jackson.core.json.JsonReadFeature
+ import com.fasterxml.jackson.databind.DeserializationFeature
+ import com.fasterxml.jackson.databind.MapperFeature
+ import com.fasterxml.jackson.databind.ObjectMapper
+ import com.fasterxml.jackson.databind.json.JsonMapper
+ import com.fasterxml.jackson.module.kotlin.KotlinModule
+ import com.moshbit.katerbase.JsonHandler.constructCollectionType
+ import com.moshbit.katerbase.JsonHandler.fromTree
+ import java.text.SimpleDateFormat
+ import kotlin.reflect.KClass
 
 object JsonHandler {
-  private val clientJacksonMapper: ObjectMapper = ObjectMapper()
-    .configure(
-      DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-      false
-    ) // Don't fail when JSON has new/additional values
-    .configure(
-      MapperFeature.PROPAGATE_TRANSIENT_MARKER,
-      true
-    ) // Jackson doesn't ignore Transient members, so make it ignore them
-    .configure(DeserializationFeature.ACCEPT_FLOAT_AS_INT, true)
-    .configure(
-      DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
-      true
-    ) // This is used to handle db migration of enum values softly
-    .configure(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS, true) // Used for Double.INFINITY
-    .registerKotlinModule()
-    .setDateFormat(SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX"))!!
+  private val clientJacksonMapper: ObjectMapper = JsonMapper.builder()
+    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Don't fail when JSON has new/additional values
+    .enable(MapperFeature.PROPAGATE_TRANSIENT_MARKER) // Jackson doesn't ignore Transient members, so make it ignore them
+    .enable(DeserializationFeature.ACCEPT_FLOAT_AS_INT)
+    .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
+    .enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS) // Used for Double.INFINITY
+    .addModule(KotlinModule())
+    .defaultDateFormat(SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX"))!! // BaseSettings.java: Threadsafe, because "The configured [date] format object will be cloned once per deserialization process"
+    .build()
 
   fun <T : Any> toJsonString(payload: T): String = clientJacksonMapper.writeValueAsString(payload)
 
