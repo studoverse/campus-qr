@@ -18,15 +18,15 @@ dependencies {
   implementation("io.ktor:ktor-html-builder:1.6.7")
   implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
-  implementation("org.mongodb:mongodb-driver-sync:4.1.0")
+  implementation("org.mongodb:mongodb-driver-sync:4.6.0")
 
-  implementation("com.fasterxml.jackson.core:jackson-core:2.11.2")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2")
+  implementation("com.fasterxml.jackson.core:jackson-core:2.13.3")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
 
-  implementation("ch.qos.logback:logback-classic:1.2.3")
+  implementation("ch.qos.logback:logback-classic:1.2.11")
 
-  implementation("commons-codec:commons-codec:1.14")
-  implementation("com.github.studo-app:katerbase:13741464f6")
+  implementation("commons-codec:commons-codec:1.15")
+  implementation("com.github.studo-app:katerbase:f4491711daea2b6e66fb72f9b761cbc0007833ba")
 }
 
 application {
