@@ -5,7 +5,7 @@ plugins {
   id("io.github.turansky.kfc.legacy-union") version "5.8.0"
 }
 
-val ktor_version: String = "1.6.7"
+val ktor_version: String = "2.0.2"
 val kotlinx_html_version: String = "0.7.3"
 val kotlinx_serialization_version: String = "1.3.1"
 val kotlinx_coroutines_version: String = "1.5.2"
@@ -35,13 +35,13 @@ dependencies {
   implementation(project(":common"))
   implementation(enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
 
-  implementation("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
-  implementation(kotlinw("react"))
-  implementation(kotlinw("emotion"))
-  implementation(kotlinw("react-dom"))
-  implementation(kotlinw("mui"))
-  implementation(kotlinw("mui-icons"))
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+  api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
+  api(kotlinw("react"))
+  api(kotlinw("emotion"))
+  api(kotlinw("react-dom"))
+  api(kotlinw("mui"))
+  api(kotlinw("mui-icons"))
+  api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
 
   implementation(npm("@emotion/react", "11.7.1"))
   implementation(npm("@emotion/styled", "11.6.0"))
