@@ -42,6 +42,8 @@ dependencies {
   api(kotlinw("mui"))
   api(kotlinw("mui-icons"))
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+  api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+  api("io.ktor:ktor-client-content-negotiation:$ktor_version")
 
   implementation(npm("@emotion/react", "11.7.1"))
   implementation(npm("@emotion/styled", "11.6.0"))
