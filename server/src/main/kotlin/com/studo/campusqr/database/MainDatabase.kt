@@ -34,7 +34,7 @@ object MainDatabase : MongoDatabase(mongoUri, collections = {
     // Compound index of 2 dates makes sense here because the index is partial, the first date is always null.
     index(
       CheckIn::checkOutDate.descending(), CheckIn::date.descending(),
-      // FIXME partialIndex = arrayOf(CheckIn::checkOutDate equal null)
+      partialIndex = arrayOf(CheckIn::checkOutDate equal null)
     )
 
     // Guest check in / check out
