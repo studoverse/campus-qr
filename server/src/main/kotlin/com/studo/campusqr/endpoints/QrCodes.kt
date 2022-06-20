@@ -8,8 +8,8 @@ import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import io.ktor.html.*
 import io.ktor.http.*
+import io.ktor.server.html.*
 import kotlinx.html.*
 import kotlin.collections.set
 

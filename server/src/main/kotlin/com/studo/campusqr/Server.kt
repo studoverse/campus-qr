@@ -11,13 +11,17 @@ import com.studo.campusqr.endpoints.*
 import com.studo.campusqr.utils.Session
 import com.studo.campusqr.utils.getAuthenticatedCall
 import com.studo.campusqr.utils.setLogLevel
-import io.ktor.application.*
-import io.ktor.features.*
-import io.ktor.http.content.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
-import io.ktor.sessions.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.compression.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.defaultheaders.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +69,7 @@ suspend fun main() {
       install(CallLogging)
     }
     install(StatusPages) {
-      exception<Throwable> { cause ->
+      exception<Throwable> { _, cause ->
         println(cause) // For easier error debugging print all errors that happen on the server side
         throw cause
       }
@@ -82,9 +86,9 @@ suspend fun main() {
     }
 
     install(CORS) {
-      host(URL(baseUrl).host, schemes = listOf("https", "http"))
+      allowHost(URL(baseUrl).host, schemes = listOf("https", "http"))
       if (localDebug) {
-        host("localhost:8072")
+        allowHost("localhost:8072")
       }
       allowNonSimpleContentTypes = true
       allowCredentials = true

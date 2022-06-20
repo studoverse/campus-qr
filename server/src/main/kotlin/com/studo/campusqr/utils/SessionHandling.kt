@@ -10,8 +10,8 @@ import com.studo.campusqr.extensions.addDays
 import com.studo.campusqr.extensions.addYears
 import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.extensions.runOnDb
-import io.ktor.application.*
-import io.ktor.sessions.*
+import io.ktor.server.application.*
+import io.ktor.server.sessions.*
 import java.util.*
 
 /**

@@ -2,9 +2,9 @@ package com.studo.campusqr.endpoints
 
 import com.studo.campusqr.common.utils.LocalizedString
 import com.studo.campusqr.extensions.get
-import io.ktor.application.*
-import io.ktor.html.*
 import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.html.*
 import kotlinx.html.*
 
 suspend fun ApplicationCall.index() {

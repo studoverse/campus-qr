@@ -7,7 +7,7 @@ import com.studo.campusqr.database.BackendDateRange
 import com.studo.campusqr.database.BackendLocation
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import io.ktor.features.*
+import io.ktor.server.plugins.*
 import java.util.*
 
 suspend fun getAccess(id: String): BackendAccess? = runOnDb {
