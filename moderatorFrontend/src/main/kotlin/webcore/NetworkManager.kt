@@ -2,11 +2,11 @@ package webcore
 
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.*
 import kotlinx.browser.window
 
@@ -16,8 +16,11 @@ import kotlinx.browser.window
  */
 object NetworkManager {
   val client = HttpClient {
-    install(JsonFeature) {
-      serializer = KotlinxSerializer()
+    install(ContentNegotiation) {
+      json(kotlinx.serialization.json.Json {
+        classDiscriminator = "@class"
+        ignoreUnknownKeys = true
+      })
     }
   }
 
@@ -31,7 +34,7 @@ object NetworkManager {
       headers.forEach { header(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
-    response.receive<T>()
+    response.body<T>()
   } catch (e: Exception) {
     console.log("get", e)
     null
@@ -46,13 +49,13 @@ object NetworkManager {
     val response: HttpResponse = client.post(url) {
       body?.let {
         contentType(ContentType.Application.Json.withParameter("charset", "utf-8"))
-        this.body = body // Let the Ktor client handle @Serializable classes.
+        setBody(body) // Let the Ktor client handle @Serializable classes.
       }
       urlParams.forEach { parameter(it.key, it.value) }
       headers.forEach { header(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
-    response.receive<T>()
+    response.body<T>()
   } catch (e: Exception) {
     console.log("post", e)
     null
@@ -68,7 +71,7 @@ object NetworkManager {
       headers.forEach { header(it.key, it.value) }
     }
     response.reloadIfLocalVersionIsOutdated()
-    response.receive<T>()
+    response.body<T>()
   } catch (e: Exception) {
     console.log("put", e)
     null

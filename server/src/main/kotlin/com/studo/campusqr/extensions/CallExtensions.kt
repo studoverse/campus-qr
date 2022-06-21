@@ -3,11 +3,11 @@ package com.studo.campusqr.extensions
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.studo.campusqr.common.payloads.ClientPayload
 import com.studo.campusqr.utils.JsonHandler
-import io.ktor.application.*
-import io.ktor.features.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
+import io.ktor.server.application.*
+import io.ktor.server.plugins.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import kotlin.reflect.KClass
 
 suspend fun ApplicationCall.respondOk() = respond(HttpStatusCode.OK, "ok")

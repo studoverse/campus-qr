@@ -10,12 +10,27 @@ repositories {
   maven("https://jitpack.io")
 }
 
+val ktor_version: String = "2.0.2"
+
 dependencies {
   implementation(project(":common"))
   testImplementation(kotlin("test-junit"))
 
-  implementation("io.ktor:ktor-server-netty:1.6.7")
-  implementation("io.ktor:ktor-html-builder:1.6.7")
+  implementation("io.ktor:ktor-server-netty:$ktor_version")
+  implementation("io.ktor:ktor-server-core:$ktor_version")
+  implementation("io.ktor:ktor-server-sessions:$ktor_version")
+  implementation("io.ktor:ktor-server-compression:$ktor_version")
+  implementation("io.ktor:ktor-server-http-redirect:$ktor_version")
+  implementation("io.ktor:ktor-server-forwarded-header:$ktor_version")
+  implementation("io.ktor:ktor-server-status-pages:$ktor_version")
+  implementation("io.ktor:ktor-server-cors:$ktor_version")
+  implementation("io.ktor:ktor-server-call-logging:$ktor_version")
+  implementation("io.ktor:ktor-server-default-headers:$ktor_version")
+  implementation("io.ktor:ktor-server-locations:$ktor_version")
+  implementation("io.ktor:ktor-server-netty:$ktor_version")
+  implementation("io.ktor:ktor-server-servlet:$ktor_version")
+  implementation("io.ktor:ktor-server-metrics:$ktor_version")
+  implementation("io.ktor:ktor-server-html-builder:$ktor_version")
   implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
   implementation("org.mongodb:mongodb-driver-sync:4.6.0")

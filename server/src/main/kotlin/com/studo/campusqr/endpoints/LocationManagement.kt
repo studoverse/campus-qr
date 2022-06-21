@@ -9,9 +9,9 @@ import com.studo.campusqr.database.*
 import com.studo.campusqr.database.MainDatabase.getConfig
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import io.ktor.application.*
-import io.ktor.features.*
 import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import java.util.*
 
 /**

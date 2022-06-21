@@ -13,9 +13,9 @@ import com.studo.campusqr.database.SessionToken
 import com.studo.campusqr.extensions.*
 import com.studo.campusqr.localDebug
 import com.studo.campusqr.utils.*
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.sessions.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.sessions.*
 import java.util.*
 
 /**

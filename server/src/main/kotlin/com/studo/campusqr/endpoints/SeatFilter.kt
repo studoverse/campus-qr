@@ -10,7 +10,7 @@ import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.extensions.respondOk
 import com.studo.campusqr.extensions.runOnDb
 import com.studo.campusqr.utils.AuthenticatedApplicationCall
-import io.ktor.features.*
+import io.ktor.server.plugins.*
 import java.util.*
 
 /**

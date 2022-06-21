@@ -5,9 +5,9 @@ import com.studo.campusqr.database.getConfigs
 import com.studo.campusqr.extensions.get
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.extensions.runOnDb
-import io.ktor.application.*
-import io.ktor.html.*
 import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.html.*
 import kotlinx.html.*
 import java.util.*
 

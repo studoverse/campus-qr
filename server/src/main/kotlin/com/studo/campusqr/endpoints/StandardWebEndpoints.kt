@@ -1,8 +1,8 @@
 package com.studo.campusqr.endpoints
 
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.response.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 
 /**
  * This file contains endpoints which are related to browser/http standards or conventions.

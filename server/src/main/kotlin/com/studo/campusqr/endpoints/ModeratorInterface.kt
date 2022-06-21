@@ -4,10 +4,10 @@ import com.studo.campusqr.extensions.getResourceAsStream
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.localDebug
 import com.studo.campusqr.utils.getCsrfToken
-import io.ktor.application.*
-import io.ktor.html.*
 import io.ktor.http.*
-import io.ktor.response.*
+import io.ktor.server.application.*
+import io.ktor.server.html.*
+import io.ktor.server.response.*
 import io.ktor.util.date.*
 import kotlinx.html.*
 

@@ -5,7 +5,7 @@ plugins {
   id("io.github.turansky.kfc.legacy-union") version "5.8.0"
 }
 
-val ktor_version: String = "1.6.7"
+val ktor_version: String = "2.0.2"
 val kotlinx_html_version: String = "0.7.3"
 val kotlinx_serialization_version: String = "1.3.1"
 val kotlinx_coroutines_version: String = "1.5.2"
@@ -42,6 +42,8 @@ dependencies {
   api(kotlinw("mui"))
   api(kotlinw("mui-icons"))
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+  api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+  api("io.ktor:ktor-client-content-negotiation:$ktor_version")
 
   implementation(npm("@emotion/react", "11.7.1"))
   implementation(npm("@emotion/styled", "11.6.0"))
