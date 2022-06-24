@@ -2,13 +2,13 @@ plugins {
   kotlin("js")
 
   // Workaround for https://youtrack.jetbrains.com/issue/KT-51921 respectively https://github.com/JetBrains/kotlin-wrappers/issues/1077
-  id("io.github.turansky.kfc.legacy-union") version "5.8.0"
+  id("io.github.turansky.kfc.legacy-union") version "5.8.0" // TODO: @mh Remove when using IR compiler because otherwise compilation fails
 }
 
 val ktor_version: String = "2.0.2"
 val kotlinx_html_version: String = "0.7.3"
-val kotlinx_serialization_version: String = "1.3.1"
-val kotlinx_coroutines_version: String = "1.5.2"
+val kotlinx_serialization_version: String = "1.3.3"
+val kotlinx_coroutines_version: String = "1.6.3"
 
 repositories {
   mavenCentral()
