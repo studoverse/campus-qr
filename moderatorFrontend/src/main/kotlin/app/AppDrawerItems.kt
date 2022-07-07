@@ -124,7 +124,6 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
 
     fun drawerItems() {
       val currentAppRoute = appContext.routeContext.currentAppRoute
-      val userData = appContext.userDataContext.userData
       if (props.config.checkInSideDrawerItems.isNotEmpty()) {
         ListSubheader {
           +Strings.check_in.get()
@@ -169,7 +168,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
         }
       }
 
-      if (userData?.externalAuthProvider == false) {
+      if (appContext.userDataContext.userData?.externalAuthProvider == false) {
         Divider {}
         ListSubheader {
           +Strings.other.get()

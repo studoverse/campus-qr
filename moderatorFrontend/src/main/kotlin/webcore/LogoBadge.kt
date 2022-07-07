@@ -45,6 +45,7 @@ private class LogoBadge(props: LogoBadgeProps) : RComponent<LogoBadgeProps, Stat
           height = 48.px
           margin = Margin(vertical = 8.px, horizontal = 0.px)
         }
+        @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
         this as ImgHTMLAttributes<HTMLImageElement>
         src = props.config.logoUrl
         alt = props.config.logoAlt

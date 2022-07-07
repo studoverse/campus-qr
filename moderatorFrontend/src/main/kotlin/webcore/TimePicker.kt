@@ -107,6 +107,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         error = props.config.error
         type = react.dom.html.InputType.time
         onChange = { event ->
+          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
           event as ChangeEvent<HTMLElement>
           event.target.value.emptyToNull()?.let { value ->
             val hourToMinute = value.split(":").map { it.removePrefix("0").toInt() }
@@ -166,6 +167,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         }
         value = state.oldBrowsersInputValues.hour
         this.onChange = { event ->
+          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
           event as ChangeEvent<HTMLElement>
           val value: String = event.target.value
           tryParsingInputFields(value, state.oldBrowsersInputValues.minute)
@@ -189,6 +191,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         }
         value = state.oldBrowsersInputValues.minute
         onChange = { event ->
+          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
           event as ChangeEvent<HTMLElement>
           val value: String = event.target.value
           tryParsingInputFields(state.oldBrowsersInputValues.hour, value)

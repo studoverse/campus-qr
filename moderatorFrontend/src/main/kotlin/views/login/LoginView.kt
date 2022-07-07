@@ -77,6 +77,7 @@ private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
               height = Auto.auto
               width = 100.px
             }
+            @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
             this as ImgHTMLAttributes<HTMLImageElement>
             src = "$baseUrl/static/images/logo_campusqr.png"
             alt = "Logo"

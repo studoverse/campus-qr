@@ -157,7 +157,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
               fullWidth = true,
               variant = FormControlVariant.outlined,
               max = now,
-              onChange = { selectedDate: Date, isValid: Boolean ->
+              onChange = { selectedDate: Date, _: Boolean ->
                 setState {
                   infectionDate = selectedDate.coerceAtMost(now)
                 }
