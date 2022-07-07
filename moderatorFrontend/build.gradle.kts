@@ -45,9 +45,6 @@ dependencies {
   api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
   api("io.ktor:ktor-client-content-negotiation:$ktor_version")
 
-  implementation(npm("@emotion/react", "11.7.1"))
-  implementation(npm("@emotion/styled", "11.6.0"))
-
   // kotlinx-serialization + Ktor client
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
   implementation("io.ktor:ktor-client-core:$ktor_version")
