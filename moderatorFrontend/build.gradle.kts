@@ -51,8 +51,8 @@ dependencies {
   implementation("io.ktor:ktor-client-serialization:$ktor_version")
 
   implementation(npm("normalize.css", "8.0.1"))
-  implementation(devNpm("style-loader", "2.0.0"))
-  implementation(devNpm("css-loader", "5.2.6"))
+  implementation(devNpm("style-loader", "3.3.1"))
+  implementation(devNpm("css-loader", "6.7.1"))
 
   api(npm("react", "18.0.0"))
   api(npm("react-dom", "18.0.0"))
