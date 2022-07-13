@@ -58,7 +58,6 @@ dependencies {
   api(npm("react-dom", "18.0.0"))
 
   api(npm("@mui/material", "5.6.1"))
-  api(npm("@mui/icons-material", "5.6.1"))
 
   api(npm("js-file-download", "0.4.12"))
 
