@@ -44,7 +44,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  private fun onResize(event: Event) {
+  private fun onResize(@Suppress("UNUSED_PARAMETER") event: Event) {
     fixDrawerIssue()
   }
 

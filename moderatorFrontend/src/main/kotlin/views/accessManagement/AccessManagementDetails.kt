@@ -263,6 +263,7 @@ class AddLocation(props: AccessManagementDetailsProps) :
       label = Strings.access_control_reason.get().toReactNode()
       value = state.accessControlReasonTextFieldValue
       onChange = { event ->
+        @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
         event as ChangeEvent<HTMLElement>
         val value = event.target.value
         setState {

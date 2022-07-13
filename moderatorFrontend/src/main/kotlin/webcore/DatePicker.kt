@@ -120,6 +120,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
       error = props.config.error || state.fieldError
 
       onChange = { event ->
+        @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
         event as ChangeEvent<HTMLElement>
         event.target.value.emptyToNull()?.let { value ->
           setState {
@@ -173,6 +174,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
         value = state.oldBrowsersInputValues.day
         onChange = { event ->
+          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
           event as ChangeEvent<HTMLElement>
           val value = event.target.value
           setState { oldBrowsersInputValues.day = value }
@@ -197,6 +199,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
         value = state.oldBrowsersInputValues.month
         onChange = { event ->
+          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
           event as ChangeEvent<HTMLElement>
           val value = event.target.value
           setState { oldBrowsersInputValues.month = value }
@@ -217,6 +220,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         label = yearString.toReactNode()
         value = state.oldBrowsersInputValues.year
         onChange = { event ->
+          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
           event as ChangeEvent<HTMLElement>
           val value = event.target.value
           setState { oldBrowsersInputValues.year = value }

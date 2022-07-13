@@ -45,17 +45,14 @@ dependencies {
   api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
   api("io.ktor:ktor-client-content-negotiation:$ktor_version")
 
-  implementation(npm("@emotion/react", "11.7.1"))
-  implementation(npm("@emotion/styled", "11.6.0"))
-
   // kotlinx-serialization + Ktor client
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
   implementation("io.ktor:ktor-client-core:$ktor_version")
   implementation("io.ktor:ktor-client-serialization:$ktor_version")
 
   implementation(npm("normalize.css", "8.0.1"))
-  implementation(devNpm("style-loader", "2.0.0"))
-  implementation(devNpm("css-loader", "5.2.6"))
+  api(devNpm("style-loader", "3.3.1"))
+  api(devNpm("css-loader", "6.7.1"))
 
   api(npm("react", "18.0.0"))
   api(npm("react-dom", "18.0.0"))

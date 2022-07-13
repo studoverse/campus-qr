@@ -18,7 +18,7 @@ object JsonHandler {
     .enable(DeserializationFeature.ACCEPT_FLOAT_AS_INT)
     .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
     .enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS) // Used for Double.INFINITY
-    .addModule(KotlinModule())
+    .addModule(KotlinModule.Builder().build())
     .defaultDateFormat(SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX"))!! // BaseSettings.java: Threadsafe, because "The configured [date] format object will be cloned once per deserialization process"
     .build()
 
