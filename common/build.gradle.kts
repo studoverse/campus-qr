@@ -8,6 +8,9 @@ repositories {
 }
 
 kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of("17")) // Auto-download JDK for developers
+  }
   jvm {
     compilations.all {
       kotlinOptions.jvmTarget = "17"
