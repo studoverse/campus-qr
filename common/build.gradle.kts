@@ -16,7 +16,7 @@ kotlin {
       kotlinOptions.jvmTarget = "17"
     }
   }
-  js {
+  js(LEGACY) {
     useCommonJs()
     browser()
     binaries.executable()
