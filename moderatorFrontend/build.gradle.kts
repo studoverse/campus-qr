@@ -15,7 +15,6 @@ repositories {
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-// TODO: @mh Try testing with newest version and IR enabled to see if there are any changes required when switching
 val kotlinWrappersVersion = "1.0.0-pre.523"
 
 kotlin {
