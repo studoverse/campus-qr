@@ -6,14 +6,13 @@ plugins {
 }
 
 val ktor_version: String = "2.0.2"
-val kotlinx_html_version: String = "0.7.3"
+val kotlinx_html_version: String = "0.8.0"
 val kotlinx_serialization_version: String = "1.3.3"
 val kotlinx_coroutines_version: String = "1.6.3"
 
 // TODO: @mh Check if new versions below can be used
 /* This would be the new versions
 val ktor_version: String = "2.3.0"
-val kotlinx_html_version: String = "0.8.0"
 val kotlinx_serialization_version: String = "1.5.0"
 val kotlinx_coroutines_version: String = "1.6.4"
 */
@@ -23,6 +22,7 @@ repositories {
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
+// TODO: @mh Try testing with newest version and IR enabled to see if there are any changes required when switching
 val kotlinWrappersVersion = "1.0.0-pre.523"
 
 kotlin {
