@@ -5,17 +5,10 @@ plugins {
   id("io.github.turansky.kfc.legacy-union") version "6.15.0" // TODO: @mh Remove when using IR compiler because otherwise compilation fails
 }
 
-val ktor_version: String = "2.0.2"
+val ktor_version: String = "2.2.3" // 2.3.0 requires new IR compiler
 val kotlinx_html_version: String = "0.8.0"
-val kotlinx_serialization_version: String = "1.3.3"
-val kotlinx_coroutines_version: String = "1.6.3"
-
-// TODO: @mh Check if new versions below can be used
-/* This would be the new versions
-val ktor_version: String = "2.3.0"
-val kotlinx_serialization_version: String = "1.5.0"
+val kotlinx_serialization_version: String = "1.4.1" // 1.5.0 requires new IR compiler
 val kotlinx_coroutines_version: String = "1.6.4"
-*/
 
 repositories {
   mavenCentral()

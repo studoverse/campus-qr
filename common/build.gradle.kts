@@ -25,7 +25,7 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3") // TODO: @mh Update to 1.5.0
+        api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1") // 1.5.0 requires new IR compiler
       }
     }
     val commonTest by getting

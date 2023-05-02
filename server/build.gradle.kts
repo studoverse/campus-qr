@@ -10,7 +10,7 @@ repositories {
   maven("https://jitpack.io")
 }
 
-val ktor_version: String = "2.0.2" // TODO: @mh 2.3.0 is newest version
+val ktor_version: String = "2.2.3" // 2.3.0 requires new IR compiler
 
 dependencies {
   implementation(project(":common"))
