@@ -4,20 +4,20 @@ import com.studo.campusqr.common.utils.LocalizedString
 import csstype.number
 import csstype.pct
 import csstype.px
-import kotlinx.browser.document
 import js.core.jso
 import mui.material.Box
 import mui.material.FormControlVariant
 import mui.material.TextField
 import mui.system.sx
 import web.html.HTMLElement
-import web.html.HTMLInputElement
 import react.*
 import react.dom.events.ChangeEvent
 import react.dom.html.ReactHTML
 import react.dom.html.ReactHTML.option
 import react.dom.onChange
 import util.get
+import web.dom.document
+import web.html.HTML
 import webcore.extensions.*
 import kotlin.js.Date
 
@@ -62,7 +62,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
   }
 
   private fun detectInputTimeSupport(): Boolean {
-    val input = document.createElement("input") as HTMLInputElement
+    val input = document.createElement(HTML.input)
     input.setAttribute("type", "time")
     val invalidDateValue = "not-a-time"
     input.setAttribute("value", invalidDateValue)

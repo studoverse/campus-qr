@@ -5,7 +5,6 @@ import csstype.Display
 import csstype.number
 import csstype.pct
 import csstype.px
-import kotlinx.browser.document
 import js.core.jso
 import mui.material.Box
 import mui.material.FormControlVariant
@@ -17,6 +16,8 @@ import react.*
 import react.dom.events.ChangeEvent
 import react.dom.onChange
 import util.get
+import web.dom.document
+import web.html.HTML
 import webcore.extensions.emptyToNull
 import webcore.extensions.setFullYear
 import webcore.extensions.toInputTypeDateValueString
@@ -70,7 +71,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
   }
 
   private fun detectInputDateSupport(): Boolean {
-    val input = document.createElement("input") as HTMLInputElement
+    val input = document.createElement(HTML.input)
     input.setAttribute("type", "date")
     val invalidDateValue = "not-a-date"
     input.setAttribute("value", invalidDateValue)
