@@ -7,11 +7,10 @@ import app.baseUrl
 import com.studo.campusqr.common.payloads.isAuthenticated
 import csstype.*
 import kotlinx.browser.document
-import kotlinx.browser.window
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import org.w3c.dom.HTMLImageElement
+import web.html.HTMLImageElement
 import react.*
 import react.dom.html.ImgHTMLAttributes
 import react.dom.html.ReactHTML.a
@@ -20,6 +19,7 @@ import react.dom.html.ReactHTML.img
 import util.Strings
 import util.get
 import views.login.LoginMode.EMAIL
+import web.location.location
 import webcore.RComponent
 
 external interface LoginViewProps : Props {
@@ -46,7 +46,7 @@ private class LoginView : RComponent<LoginViewProps, LoginViewState>() {
   override fun componentDidMount() {
     if (appContext.userDataContext.userData!!.isAuthenticated) {
       // User is authenticated so redirect to main page
-      window.location.href = "/admin"
+      location.href = "/admin"
     }
   }
 

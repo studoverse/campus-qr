@@ -5,7 +5,7 @@ import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.canEditLocations
 import com.studo.campusqr.common.payloads.canViewCheckIns
-import kotlinx.browser.window
+import web.window.window
 import mui.material.*
 import react.*
 import util.Strings
@@ -14,6 +14,7 @@ import util.get
 import views.common.*
 import views.locations.AddLocation
 import views.locations.AddLocationConfig
+import web.window.WindowTarget
 import webcore.*
 import webcore.extensions.launch
 
@@ -84,7 +85,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
         text = Strings.location_import_details.get(),
         buttons = listOf(
           DialogButton(Strings.more_about_studo.get(), onClick = {
-            window.open("https://studo.com", "_blank")
+            window.open("https://studo.com", WindowTarget._blank)
           }),
           DialogButton("OK")
         ),
@@ -102,14 +103,14 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
             text = Strings.print_checkout_code.get(),
             variant = ButtonVariant.outlined,
             onClick = {
-              window.open("/location/qr-codes/checkout", "_blank")
+              window.open("/location/qr-codes/checkout", WindowTarget._blank)
             }
           ),
           ToolbarButton(
             text = Strings.print_all_qrcodes.get(),
             variant = ButtonVariant.outlined,
             onClick = {
-              window.open("/location/qr-codes", "_blank")
+              window.open("/location/qr-codes", WindowTarget._blank)
             }
           ),
           if (userData.clientUser!!.canEditLocations) {

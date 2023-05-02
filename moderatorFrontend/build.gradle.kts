@@ -2,7 +2,7 @@ plugins {
   kotlin("js")
 
   // Workaround for https://youtrack.jetbrains.com/issue/KT-51921 respectively https://github.com/JetBrains/kotlin-wrappers/issues/1077
-  id("io.github.turansky.kfc.legacy-union") version "5.8.0" // TODO: @mh Remove when using IR compiler because otherwise compilation fails
+  id("io.github.turansky.kfc.legacy-union") version "6.15.0" // TODO: @mh Remove when using IR compiler because otherwise compilation fails
 }
 
 val ktor_version: String = "2.0.2"
@@ -10,12 +10,20 @@ val kotlinx_html_version: String = "0.7.3"
 val kotlinx_serialization_version: String = "1.3.3"
 val kotlinx_coroutines_version: String = "1.6.3"
 
+// TODO: @mh Check if new versions below can be used
+/* This would be the new versions
+val ktor_version: String = "2.3.0"
+val kotlinx_html_version: String = "0.8.0"
+val kotlinx_serialization_version: String = "1.5.0"
+val kotlinx_coroutines_version: String = "1.6.4"
+*/
+
 repositories {
   mavenCentral()
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-val kotlinWrappersVersion = "0.0.1-pre.331-kotlin-1.6.20"
+val kotlinWrappersVersion = "1.0.0-pre.523"
 
 kotlin {
   js(LEGACY) {
@@ -27,6 +35,7 @@ kotlin {
 
 // Fixes webpack-cli incompatibility by pinning the newest version.
 rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+  // TODO: @mh Update this as well? Or is this even needed now?
   versions.webpackCli.version = "4.10.0"
 }
 
@@ -39,6 +48,7 @@ dependencies {
   api(kotlinw("react"))
   api(kotlinw("emotion"))
   api(kotlinw("react-dom"))
+  api(kotlinw("extensions"))
   api(kotlinw("mui"))
   api(kotlinw("mui-icons"))
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
@@ -54,10 +64,11 @@ dependencies {
   api(devNpm("style-loader", "3.3.1"))
   api(devNpm("css-loader", "6.7.1"))
 
-  api(npm("react", "18.0.0"))
-  api(npm("react-dom", "18.0.0"))
+  api(npm("react", "18.2.0"))
+  api(npm("react-dom", "18.2.0"))
 
-  api(npm("@mui/material", "5.6.1"))
+  api(npm("@mui/material", "5.9.1"))
+  api(npm("@mui/icons-material", "5.10.9"))
 
   api(npm("js-file-download", "0.4.12"))
 

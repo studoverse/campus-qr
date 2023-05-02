@@ -4,24 +4,29 @@ import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.payloads.*
 import csstype.*
+import js.core.jso
 import kotlinx.browser.document
-import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.icons.material.*
 import mui.material.Box
 import mui.material.styles.ThemeProvider
 import mui.material.styles.createTheme
 import mui.system.sx
-import org.w3c.dom.HTMLAnchorElement
-import org.w3c.dom.Node
-import org.w3c.dom.events.MouseEvent
-import org.w3c.dom.url.URL
+import web.dom.Node
+import web.url.URL
 import react.*
 import react.dom.flushSync
 import util.*
 import util.Url
 import views.common.centeredProgress
 import views.common.networkErrorView
+import web.history.POP_STATE
+import web.history.PopStateEvent
+import web.history.history
+import web.location.location
+import web.uievents.CLICK
+import web.uievents.MouseEvent
+import web.window.WindowTarget
+import web.window.window
 import webcore.*
 import webcore.extensions.findParent
 import webcore.extensions.launch
@@ -29,7 +34,7 @@ import webcore.extensions.toRoute
 import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
-val baseUrl = window.location.href.substringBefore("/admin")
+val baseUrl = location.href.substringBefore("/admin")
 
 external interface AppProps : Props
 
@@ -117,17 +122,16 @@ private class App : RComponent<AppProps, AppState>() {
     }
 
   private fun enableClientSideRouting() {
-    window.addEventListener("popstate", {
+    window.addEventListener(PopStateEvent.POP_STATE, {
       handleHistoryChange()
     })
 
-    window.addEventListener("click", { event ->
-      val mouseEvent = event as MouseEvent
-      val target = mouseEvent.target
-      if (target != null && !mouseEvent.altKey && !mouseEvent.ctrlKey && !mouseEvent.metaKey && !mouseEvent.shiftKey) {
+    window.addEventListener(MouseEvent.CLICK, { event ->
+      val target = event.target
+      if (target != null && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
         // Only handle click for anchor elements
         val linkNode = (target as Node).findParent { it.nodeName.lowercase() == "a" } ?: return@addEventListener
-        val anchor = linkNode as HTMLAnchorElement
+        val anchor = linkNode as web.html.HTMLAnchorElement
         val parsedUrl = try {
           URL(anchor.href)
         } catch (_: Throwable) {
@@ -135,9 +139,9 @@ private class App : RComponent<AppProps, AppState>() {
         }
         val relativeUrl = parsedUrl?.relativeUrl
         val activeView = parsedUrl?.toRoute()
-        if (relativeUrl != null && anchor.target != "_blank" && activeView != null) {
-          if (relativeUrl != window.location.relativeUrl) {
-            window.history.pushState(null, anchor.title, relativeUrl)
+        if (relativeUrl != null && anchor.target != WindowTarget._blank && activeView != null) {
+          if (relativeUrl != location.relativeUrl) {
+            history.pushState(null, anchor.title, relativeUrl)
             handleHistoryChange()
           }
           event.preventDefault()
@@ -147,20 +151,20 @@ private class App : RComponent<AppProps, AppState>() {
   }
 
   private fun pushAppRoute(route: AppRoute) {
-    if (route.relativeUrl != window.location.relativeUrl) {
-      window.history.pushState(data = null, title = route.url.title.get(), url = route.relativeUrl)
+    if (route.relativeUrl != location.relativeUrl) {
+      history.pushState(data = null, unused = route.url.title.get(), url = route.relativeUrl)
     }
     handleHistoryChange()
   }
 
-  private fun calculateRedirectQueryParams(): Map<String, String> = window.location.relativeUrl
+  private fun calculateRedirectQueryParams(): Map<String, String> = location.relativeUrl
     .removeSuffix("/")
     .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
     ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
     ?.let { mapOf("redirect" to it) }
     ?: emptyMap()
 
-  private fun handleHistoryChange(newRoute: AppRoute? = window.location.toRoute()) {
+  private fun handleHistoryChange(newRoute: AppRoute? = location.toRoute()) {
     if (newRoute == null) {
       console.log("Omit history change for 404 page")
     } else if (isNotAuthenticatedButRequiresAuth(newRoute)) {
@@ -199,14 +203,15 @@ private class App : RComponent<AppProps, AppState>() {
   override fun componentDidMount() {
     fetchUserDataAndInit {
       // Do not use state.currentAppRoute here, because that can represent the old route and not the new location
-      val currentRoute = window.location.toRoute()
+      val currentRoute = location.toRoute()
 
       when {
         isNotAuthenticatedButRequiresAuth(currentRoute) -> {
           // The user is not logged in so push him to login page
           pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
         }
-        window.location.pathname.removeSuffix("/") == "/admin" -> {
+
+        location.pathname.removeSuffix("/") == "/admin" -> {
           val clientUser = state.userData!!.clientUser!!
           when {
             UserPermission.EDIT_OWN_ACCESS in clientUser.permissions -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
@@ -215,6 +220,7 @@ private class App : RComponent<AppProps, AppState>() {
             UserPermission.EDIT_USERS in clientUser.permissions -> pushAppRoute(Url.USERS.toRoute()!!)
           }
         }
+
         else -> {
           // User linked directly to a sub-page
           handleHistoryChange()
@@ -310,7 +316,7 @@ private class App : RComponent<AppProps, AppState>() {
         mbMaterialDialog(ref = dialogRef)
 
         // Render content without side drawer and toolbar, if no shell option is activated via url hash
-        if (window.location.hash.contains("noShell") ||
+        if (location.hash.contains("noShell") ||
           state.currentAppRoute?.url?.showWithShell != true
         ) {
           Box {

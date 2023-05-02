@@ -5,13 +5,13 @@ import csstype.number
 import csstype.pct
 import csstype.px
 import kotlinx.browser.document
-import kotlinx.js.jso
+import js.core.jso
 import mui.material.Box
 import mui.material.FormControlVariant
 import mui.material.TextField
 import mui.system.sx
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLInputElement
+import web.html.HTMLElement
+import web.html.HTMLInputElement
 import react.*
 import react.dom.events.ChangeEvent
 import react.dom.html.ReactHTML
@@ -105,7 +105,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         variant = props.config.variant
         disabled = props.config.disabled
         error = props.config.error
-        type = react.dom.html.InputType.time
+        type = web.html.InputType.time
         onChange = { event ->
           @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
           event as ChangeEvent<HTMLElement>
@@ -158,7 +158,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
           flex = number(1.0)
           paddingTop = 16.px
         }
-        type = react.dom.html.InputType.number
+        type = web.html.InputType.number
         placeholder = hourString
         label = hourString.toReactNode()
         inputProps = jso {
@@ -182,7 +182,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
           flex = number(1.0)
           paddingTop = 16.px
         }
-        type = react.dom.html.InputType.number
+        type = web.html.InputType.number
         placeholder = minuteString
         label = minuteString.toReactNode()
         inputProps = jso {

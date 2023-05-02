@@ -1,9 +1,9 @@
 package webcore.extensions
 
-import kotlinx.browser.window
-import org.w3c.dom.Location
-import org.w3c.dom.url.URL
 import util.*
+import web.location.Location
+import web.location.location
+import web.url.URL
 
 /**
  * Add additional pathParams and queryParams here, to avoid doing string operations and
@@ -38,4 +38,4 @@ fun MbUrl.toRoute(
   queryParams: Map<String, String> = emptyMap(),
 ): AppRoute? = path.toRoute(MbUrl.urls, pathParams, queryParams)
 
-fun MbUrl.toRouteWithExistingQueryParams(): AppRoute? = toRoute(queryParams = window.location.href.queryParams)
+fun MbUrl.toRouteWithExistingQueryParams(): AppRoute? = toRoute(queryParams = location.href.queryParams)

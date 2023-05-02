@@ -5,7 +5,6 @@ import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.DeleteUserData
 import csstype.px
-import kotlinx.browser.window
 import mui.icons.material.Delete
 import mui.icons.material.Edit
 import mui.material.Box
@@ -19,6 +18,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
+import web.prompts.confirm
 import webcore.*
 import webcore.extensions.launch
 
@@ -93,7 +93,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
                 renderEditUserDialog()
               }),
               MenuItem(text = Strings.user_delete.get(), icon = Delete, onClick = {
-                if (window.confirm(Strings.user_delete_are_you_sure.get())) {
+                if (confirm(Strings.user_delete_are_you_sure.get())) {
                   launch {
                     val response = NetworkManager.post<String>(
                       "$apiBase/user/delete",

@@ -3,14 +3,15 @@ package webcore.shell
 import app.AppContext
 import app.appContextToInject
 import csstype.*
-import kotlinx.browser.window
-import kotlinx.js.jso
-import kotlinx.js.timers.setTimeout
+import web.window.window
+import js.core.jso
 import mui.material.*
 import mui.system.Breakpoint
 import mui.system.sx
-import org.w3c.dom.events.Event
 import react.*
+import web.events.Event
+import web.timers.setTimeout
+import web.window.RESIZE
 import webcore.RComponent
 
 class AppShellDrawerConfig(
@@ -56,11 +57,11 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 
   override fun UNSAFE_componentWillMount() {
-    window.addEventListener("resize", ::onResize)
+    window.addEventListener(Event.RESIZE, ::onResize)
   }
 
   override fun componentWillUnmount() {
-    window.removeEventListener("resize", ::onResize)
+    window.removeEventListener(Event.RESIZE, ::onResize)
   }
 
   override fun ChildrenBuilder.render() {

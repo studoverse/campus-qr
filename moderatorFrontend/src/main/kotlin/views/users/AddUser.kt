@@ -15,7 +15,7 @@ import csstype.*
 import mui.material.*
 import mui.system.sx
 import react.*
-import react.dom.html.InputType
+import web.html.InputType
 import react.dom.html.ReactHTML.div
 import util.Strings
 import util.apiBase

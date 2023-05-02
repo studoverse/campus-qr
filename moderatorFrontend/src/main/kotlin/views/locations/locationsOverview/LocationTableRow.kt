@@ -4,7 +4,7 @@ import app.AppContext
 import app.appContextToInject
 import app.baseUrl
 import com.studo.campusqr.common.payloads.*
-import kotlinx.browser.window
+import web.window.window
 import mui.icons.material.*
 import mui.material.CircularProgress
 import mui.material.TableCell
@@ -12,6 +12,8 @@ import mui.material.TableRow
 import react.*
 import util.*
 import views.locations.AddLocationConfig
+import web.prompts.confirm
+import web.window.WindowTarget
 import webcore.*
 import webcore.extensions.launch
 import webcore.extensions.toRoute
@@ -88,17 +90,17 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
                   })
                 } else null,
                 MenuItem(text = Strings.locations_element_download_qr_code.get(), icon = ImageRounded, onClick = {
-                  window.open("$baseUrl/location/${props.config.location.id}/qr-code", target = "_blank")
+                  window.open("$baseUrl/location/${props.config.location.id}/qr-code", target = WindowTarget._blank)
                 }),
                 if (props.config.userData.liveCheckInsViewEnabled) {
                   MenuItem(text = Strings.live_check_ins.get(), icon = SettingsBackupRestore, onClick = {
-                    window.open("$apiBase/campus-qr/liveCheckIns?l=" + props.config.location.id, target = "_blank")
+                    window.open("$apiBase/campus-qr/liveCheckIns?l=" + props.config.location.id, target = WindowTarget._blank)
                   })
                 } else null,
                 if (props.config.clientUser.canViewCheckIns) {
                   MenuItem(text = Strings.locations_element_simulate_scan.get(), icon = Fullscreen, onClick = {
                     val locationIdSuffix = if (props.config.location.seatCount == null) "" else "-1" // Check-in at seat 1 if needed
-                    window.open("$apiBase/campus-qr?s=1&l=" + props.config.location.id + locationIdSuffix, target = "_blank")
+                    window.open("$apiBase/campus-qr?s=1&l=" + props.config.location.id + locationIdSuffix, target = WindowTarget._blank)
                   })
                 } else null,
                 if (props.config.clientUser.canEditAllLocationAccess) {
@@ -124,7 +126,7 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
                 } else null,
                 if (props.config.clientUser.canEditLocations) {
                   MenuItem(text = Strings.location_delete.get(), icon = Delete, onClick = {
-                    if (window.confirm(Strings.location_delete_are_you_sure.get())) {
+                    if (confirm(Strings.location_delete_are_you_sure.get())) {
                       launch {
                         val response = NetworkManager.post<String>("$apiBase/location/${props.config.location.id}/delete")
                         props.config.onDeleteFinished(response)

@@ -3,7 +3,7 @@ package webcore
 import app.AppContext
 import app.appContextToInject
 import csstype.*
-import kotlinx.js.jso
+import js.core.jso
 import mui.icons.material.*
 import mui.material.*
 import mui.system.sx
@@ -27,7 +27,7 @@ class MbSnackbarConfig(
   }
 }
 
-external interface MbSnackbarProps : Props
+external interface MbSnackbarProps : PropsWithRef<MbSnackbar>
 
 external interface MbSnackbarState : State {
   var config: MbSnackbarConfig?

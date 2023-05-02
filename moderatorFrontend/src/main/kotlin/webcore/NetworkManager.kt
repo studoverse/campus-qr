@@ -8,7 +8,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.*
-import kotlinx.browser.window
+import web.location.location
 
 /**
  * NetworkManager uses Ktor client with kotlinx.serialization to create network requests.
@@ -89,7 +89,7 @@ object NetworkManager {
       localFrontendVersionHash == null -> localFrontendVersionHash = remoteVersionHash
       localFrontendVersionHash != remoteVersionHash -> {
         console.log("Reloading page because a newer version is available!")
-        window.location.reload()
+        location.reload()
       }
     }
   }

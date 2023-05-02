@@ -11,7 +11,7 @@ import react.*
 import util.get
 import kotlin.reflect.KClass
 
-external interface MbDialogProps : Props
+external interface MbDialogProps : PropsWithRef<MbMaterialDialog>
 
 external interface MbDialogState : State {
   var config: DialogConfig?

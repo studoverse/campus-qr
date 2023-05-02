@@ -6,17 +6,16 @@ import app.appContextToInject
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.payloads.*
 import csstype.*
-import kotlinx.js.Object
+import js.core.Object
 import mui.icons.material.Close
 import mui.material.*
 import mui.material.Size
 import mui.system.sx
-import org.w3c.dom.HTMLElement
+import web.html.HTMLElement
 import react.*
 import react.dom.events.ChangeEvent
 import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.span
-import react.dom.onChange
 import util.Strings
 import util.apiBase
 import util.get
@@ -256,15 +255,13 @@ class AddLocation(props: AccessManagementDetailsProps) :
   }
 
   private fun ChildrenBuilder.renderReasonTextField() {
-    TextField {
+    TextField<OutlinedTextFieldProps> {
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
-      variant = FormControlVariant.outlined
+      variant = FormControlVariant.outlined()
       label = Strings.access_control_reason.get().toReactNode()
       value = state.accessControlReasonTextFieldValue
       onChange = { event ->
-        @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-        event as ChangeEvent<HTMLElement>
         val value = event.target.value
         setState {
           accessControlReasonTextFieldValue = value
