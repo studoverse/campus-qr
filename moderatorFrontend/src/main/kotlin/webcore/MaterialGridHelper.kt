@@ -6,7 +6,7 @@ import csstype.*
 import mui.material.Box
 import mui.material.Grid
 import mui.material.GridDirection
-import mui.system.ResponsiveStyleValue
+import mui.system.responsive
 import mui.system.sx
 import react.ChildrenBuilder
 import react.dom.html.ReactHTML.span
@@ -29,8 +29,8 @@ fun ChildrenBuilder.gridContainer(
     containerStyle?.let { className = ClassName(it) }
     container = true
     item = false
-    this.direction = ResponsiveStyleValue(direction)
-    this.spacing = ResponsiveStyleValue(spacing)
+    this.direction = responsive(direction)
+    this.spacing = responsive(spacing)
     items()
   }
 }

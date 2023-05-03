@@ -2,15 +2,15 @@ package views.login
 
 import app.GlobalCss
 import csstype.ClassName
-import kotlinx.browser.window
 import mui.material.*
 import react.ChildrenBuilder
 import react.Props
 import react.State
-import react.dom.html.ButtonType
 import react.react
 import util.Strings
 import util.get
+import web.history.history
+import web.html.ButtonType
 import webcore.RComponent
 
 class LoginNavigationButtonsViewConfig(
@@ -36,7 +36,7 @@ private class LoginNavigationButtonsView : RComponent<LoginNavigationButtonsView
           variant = ButtonVariant.outlined
           color = ButtonColor.primary
           onClick = {
-            window.history.back()
+            history.back()
           }
           +Strings.back.get().uppercase()
         }

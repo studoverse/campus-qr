@@ -1,7 +1,7 @@
 package util
 
-import org.w3c.dom.Location
-import org.w3c.dom.url.URL
+import web.location.Location
+import web.url.URL
 import webcore.extensions.decodeURIComponent
 import webcore.extensions.encodeURIComponent
 

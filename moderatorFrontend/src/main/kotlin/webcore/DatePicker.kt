@@ -5,18 +5,19 @@ import csstype.Display
 import csstype.number
 import csstype.pct
 import csstype.px
-import kotlinx.browser.document
-import kotlinx.js.jso
+import js.core.jso
 import mui.material.Box
 import mui.material.FormControlVariant
 import mui.material.TextField
 import mui.system.sx
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLInputElement
+import web.html.HTMLElement
+import web.html.HTMLInputElement
 import react.*
 import react.dom.events.ChangeEvent
 import react.dom.onChange
 import util.get
+import web.dom.document
+import web.html.HTML
 import webcore.extensions.emptyToNull
 import webcore.extensions.setFullYear
 import webcore.extensions.toInputTypeDateValueString
@@ -70,7 +71,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
   }
 
   private fun detectInputDateSupport(): Boolean {
-    val input = document.createElement("input") as HTMLInputElement
+    val input = document.createElement(HTML.input)
     input.setAttribute("type", "date")
     val invalidDateValue = "not-a-date"
     input.setAttribute("value", invalidDateValue)
@@ -102,7 +103,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
 
   private fun ChildrenBuilder.renderWithInputTypeDateSupport() {
     TextField {
-      type = react.dom.html.InputType.date
+      type = web.html.InputType.date
       value = state.dateTimeInputValue
       inputProps = jso {
         props.config.min?.let { minProp ->
@@ -165,7 +166,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
           flex = number(1.0)
           paddingTop = 16.px
         }
-        type = react.dom.html.InputType.number
+        type = web.html.InputType.number
         placeholder = dayString
         label = dayString.toReactNode()
         inputProps = jso {
@@ -190,7 +191,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
           flex = number(2.0)
           paddingTop = 16.px
         }
-        type = react.dom.html.InputType.number
+        type = web.html.InputType.number
         placeholder = monthString
         label = monthString.toReactNode()
         inputProps = jso {
@@ -215,7 +216,7 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
           flex = number(2.0)
           paddingTop = 16.px
         }
-        type = react.dom.html.InputType.number
+        type = web.html.InputType.number
         placeholder = yearString
         label = yearString.toReactNode()
         value = state.oldBrowsersInputValues.year

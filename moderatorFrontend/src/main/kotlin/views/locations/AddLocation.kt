@@ -8,11 +8,11 @@ import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
 import csstype.*
-import kotlinx.js.jso
+import js.core.jso
 import mui.material.*
 import mui.system.sx
 import react.*
-import react.dom.html.InputType
+import web.html.InputType
 import util.Strings
 import util.apiBase
 import util.get

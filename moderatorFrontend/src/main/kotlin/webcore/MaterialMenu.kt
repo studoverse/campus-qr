@@ -5,8 +5,8 @@ import mui.icons.material.MoreVert
 import mui.icons.material.SvgIconComponent
 import mui.material.*
 import mui.system.sx
-import org.w3c.dom.Element
-import org.w3c.dom.events.Event
+import web.dom.Element
+import web.events.Event
 import react.ChildrenBuilder
 import react.Props
 import react.State

@@ -4,7 +4,7 @@ import csstype.Auto
 import csstype.PropertiesBuilder
 import csstype.TextAlign
 import csstype.px
-import kotlinx.browser.window
+import web.window.window
 import mui.material.Box
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
@@ -17,6 +17,7 @@ import react.dom.html.ReactHTML.span
 import react.react
 import util.Strings
 import util.get
+import web.location.location
 import webcore.RComponent
 
 external interface GenericErrorViewProps : Props {
@@ -45,7 +46,7 @@ private class PathNotFound : RComponent<GenericErrorViewProps, State>() {
         +"Path \""
         span {
           code {
-            +window.location.pathname
+            +location.pathname
           }
         }
         +"\" doesn't seem to exist. Try something else."

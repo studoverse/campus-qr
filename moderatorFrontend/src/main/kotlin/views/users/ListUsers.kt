@@ -6,7 +6,7 @@ import com.studo.campusqr.common.payloads.ClientUser
 import csstype.px
 import csstype.rgb
 import csstype.rgba
-import kotlinx.browser.window
+import web.window.window
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
@@ -16,6 +16,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
+import web.window.WindowTarget
 import webcore.*
 import webcore.extensions.launch
 
@@ -98,7 +99,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         },
         buttons = listOf(
           DialogButton(Strings.more_about_studo.get(), onClick = {
-            window.open("https://studo.com", "_blank")
+            window.open("https://studo.com", WindowTarget._blank)
           }),
           DialogButton("OK")
         ),

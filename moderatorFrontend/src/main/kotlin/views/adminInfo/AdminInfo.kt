@@ -3,7 +3,7 @@ package views.adminInfo
 import csstype.Globals
 import csstype.PropertiesBuilder
 import csstype.px
-import kotlinx.browser.window
+import web.window.window
 import mui.material.Box
 import mui.material.Button
 import mui.material.ButtonColor
@@ -17,6 +17,7 @@ import react.react
 import util.Strings
 import util.get
 import views.common.spacer
+import web.window.WindowTarget
 import webcore.RComponent
 import webcore.verticalMargin
 
@@ -68,7 +69,7 @@ private class AdminInfo : RComponent<AdminInfoProps, AdminInfoState>() {
           }
           color = ButtonColor.primary
           onClick = {
-            window.open("https://studo.com", "_blank")
+            window.open("https://studo.com", WindowTarget._blank)
           }
           +Strings.more_about_studo.get()
         }

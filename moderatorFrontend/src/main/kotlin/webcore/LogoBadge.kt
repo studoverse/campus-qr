@@ -5,7 +5,7 @@ import mui.material.Box
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import org.w3c.dom.HTMLImageElement
+import web.html.HTMLImageElement
 import react.ChildrenBuilder
 import react.Props
 import react.State

@@ -2,7 +2,6 @@ package views.settings
 
 import app.baseUrl
 import csstype.Globals
-import kotlinx.browser.window
 import mui.material.Button
 import mui.material.ButtonColor
 import mui.system.sx
@@ -12,6 +11,7 @@ import react.State
 import react.react
 import util.Strings
 import util.get
+import web.location.location
 import webcore.RComponent
 import webcore.verticalMargin
 
@@ -29,7 +29,7 @@ private class Settings : RComponent<SettingsProps, SettingsState>() {
       }
       color = ButtonColor.primary
       onClick = {
-        window.location.href = "$baseUrl/user/logout"
+        location.href = "$baseUrl/user/logout"
       }
       +Strings.logout.get()
     }

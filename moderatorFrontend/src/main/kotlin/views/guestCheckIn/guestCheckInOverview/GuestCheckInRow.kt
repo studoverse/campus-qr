@@ -5,13 +5,13 @@ import app.appContextToInject
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import com.studo.campusqr.common.payloads.CheckOutData
-import kotlinx.browser.window
 import mui.material.*
 import react.*
 import util.Strings
 import util.apiBase
 import util.get
 import views.guestCheckIn.locationIdWithSeat
+import web.prompts.confirm
 import webcore.NetworkManager
 import webcore.RComponent
 import webcore.extensions.launch
@@ -56,7 +56,7 @@ private class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRow
           onClick = {
             val areYouSureText =
               Strings.guest_checkin_checkout_are_you_sure.get().format(props.config.activeCheckIn.email)
-            if (window.confirm(areYouSureText)) {
+            if (confirm(areYouSureText)) {
               val locationId = with(props.config.activeCheckIn) { locationIdWithSeat(locationId, seat) }
               launch {
                 val response = NetworkManager.post<String>(

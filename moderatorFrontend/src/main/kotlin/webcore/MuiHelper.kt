@@ -1,13 +1,14 @@
 package webcore
 
 import csstype.*
-import kotlinx.js.jso
+import js.core.jso
 import mui.material.FormControlVariant
+import mui.material.GridProps
 import mui.material.InputBaseComponentProps
 import mui.system.Union
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.HTMLTextAreaElement
+import web.html.HTMLElement
+import web.html.HTMLInputElement
+import web.html.HTMLTextAreaElement
 import react.*
 
 val HTMLElement.value: String
@@ -45,6 +46,36 @@ var InputBaseComponentProps.pattern: String?
   get() = asDynamic().pattern
   set(value) {
     asDynamic().pattern = value
+  }
+
+inline var GridProps.xs: Any?
+  get() = asDynamic().xs
+  set(value) {
+    asDynamic().xs = value
+  }
+
+inline var GridProps.sm: Any?
+  get() = asDynamic().sm
+  set(value) {
+    asDynamic().sm = value
+  }
+
+inline var GridProps.md: Any?
+  get() = asDynamic().md
+  set(value) {
+    asDynamic().md = value
+  }
+
+inline var GridProps.lg: Any?
+  get() = asDynamic().lg
+  set(value) {
+    asDynamic().lg = value
+  }
+
+inline var GridProps.xl: Any?
+  get() = asDynamic().xl
+  set(value) {
+    asDynamic().xl = value
   }
 
 operator fun FormControlVariant.invoke(): Union = when (this) {

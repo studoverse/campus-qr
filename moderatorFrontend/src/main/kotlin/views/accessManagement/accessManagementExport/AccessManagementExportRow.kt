@@ -1,7 +1,6 @@
 package views.accessManagement.accessManagementExport
 
 import com.studo.campusqr.common.payloads.AccessManagementExportData
-import kotlinx.js.jso
 import mui.material.TableCell
 import mui.material.TableRow
 import react.ChildrenBuilder

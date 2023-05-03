@@ -1,6 +1,6 @@
 package webcore.extensions
 
-import org.w3c.dom.Node
+import web.dom.Node
 
 // Traverses the DOM tree upwards. Returns first node where predicate returns true else null
 fun Node.findParent(pred: (Node) -> Boolean): Node? {

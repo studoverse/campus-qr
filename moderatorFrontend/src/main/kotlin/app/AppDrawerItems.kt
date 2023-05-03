@@ -6,16 +6,15 @@ import mui.icons.material.Person
 import mui.icons.material.SvgIconComponent
 import mui.material.*
 import mui.system.sx
-import org.w3c.dom.HTMLAnchorElement
 import react.*
 import react.dom.events.MouseEvent
-import react.dom.html.AnchorTarget
 import react.dom.html.ReactHTML.a
 import util.Strings
 import util.Url
 import util.get
 import views.common.spacer
 import views.settings.renderSettings
+import web.window.WindowTarget
 import webcore.LogoBadgeConfig
 import webcore.RComponent
 import webcore.logoBadge
@@ -69,7 +68,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
     fun drawerListItem(
       label: String,
       url: String? = null,
-      onClick: ((event: MouseEvent<HTMLAnchorElement, *>) -> Unit)? = null,
+      onClick: ((event: MouseEvent<web.html.HTMLAnchorElement, *>) -> Unit)? = null,
       icon: SvgIconComponent? = null,
       selected: Boolean = false,
       openInNewTab: Boolean = false,
@@ -93,7 +92,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
           }
         }
         if (openInNewTab) {
-          target = AnchorTarget._blank
+          target = WindowTarget._blank
         }
         rel = "noopener"
         ListItemButton {

@@ -4,13 +4,11 @@ import app.AppContext
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientAccessManagement
 import com.studo.campusqr.common.payloads.ClientDateRange
-import kotlinx.browser.window
 import mui.icons.material.Delete
 import mui.icons.material.Edit
 import mui.icons.material.FileCopyOutlined
 import mui.material.TableCell
 import mui.material.TableRow
-import org.w3c.dom.HTMLTableCellElement
 import react.*
 import react.dom.events.MouseEvent
 import react.dom.html.ReactHTML.strong
@@ -19,6 +17,8 @@ import util.apiBase
 import util.get
 import views.accessManagement.AccessManagementDetailsConfig
 import views.accessManagement.AddLocation
+import web.html.HTMLTableCellElement
+import web.prompts.confirm
 import webcore.*
 import webcore.extensions.launch
 import webcore.extensions.twoDigitString
@@ -129,7 +129,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
                 }
               }),
               MenuItem(text = Strings.delete.get(), icon = Delete, onClick = {
-                if (window.confirm(Strings.access_control_delete_are_your_sure.get())) {
+                if (confirm(Strings.access_control_delete_are_your_sure.get())) {
                   launch {
                     val response = NetworkManager.post<String>("$apiBase/access/${props.config.accessManagement.id}/delete")
                     props.config.onOperationFinished(AccessManagementTableRowOperation.Delete, response == "ok")

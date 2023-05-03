@@ -9,18 +9,18 @@ import kotlinx.browser.document
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import org.w3c.dom.HTMLElement
+import web.html.HTMLElement
 import react.ChildrenBuilder
 import react.Props
 import react.State
 import react.dom.events.ChangeEvent
-import react.dom.html.InputType
 import react.dom.html.ReactHTML.form
 import react.react
 import util.Strings
 import util.apiBase
 import util.get
 import views.common.spacer
+import web.html.InputType
 import webcore.*
 import webcore.extensions.launch
 

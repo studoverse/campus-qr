@@ -1,7 +1,6 @@
 package webcore.extensions
 
-import kotlinx.browser.document
-import org.w3c.dom.HTMLTextAreaElement
+import web.navigator.navigator
 
 val emailRegex = Regex("[^,;:<> ]+@[^,;:<> ]+\\.[^,;:<> ]+")
 
@@ -32,16 +31,7 @@ fun String.format(vararg parameters: String): String {
 }
 
 fun String.copyToClipboard() {
-  val textArea = document.createElement("textarea") as HTMLTextAreaElement
-  textArea.value = this
-  textArea.style.top = "0"
-  textArea.style.left = "0"
-  textArea.style.position = "fixed"
-  document.body?.appendChild(textArea)
-  textArea.focus()
-  textArea.select()
-  document.execCommand("copy")
-  document.body?.removeChild(textArea)
+  navigator.clipboard.writeText(this)
 }
 
 external fun decodeURIComponent(encodedUriComponent: String): String
