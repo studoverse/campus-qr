@@ -30,8 +30,15 @@ fun String.format(vararg parameters: String): String {
   return resultBuilder.toString()
 }
 
-fun String.copyToClipboard() {
-  navigator.clipboard.writeText(this)
+fun String.copyToClipboard(onFulfilled: () -> Unit, onRejected: (throwable: Throwable) -> Unit) {
+  navigator.clipboard.writeText(this).then(
+    onFulfilled = {
+      onFulfilled()
+    },
+    onRejected = { throwable ->
+      onRejected(throwable)
+    },
+  )
 }
 
 external fun decodeURIComponent(encodedUriComponent: String): String
