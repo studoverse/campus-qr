@@ -30,13 +30,13 @@ fun String.format(vararg parameters: String): String {
   return resultBuilder.toString()
 }
 
-fun String.copyToClipboard(onFulfilled: () -> Unit, onRejected: (throwable: Throwable) -> Unit) {
+fun String.copyToClipboard(onFulfilled: (() -> Unit)? = null, onRejected: ((throwable: Throwable) -> Unit)? = null) {
   navigator.clipboard.writeText(this).then(
     onFulfilled = {
-      onFulfilled()
+      onFulfilled?.invoke()
     },
     onRejected = { throwable ->
-      onRejected(throwable)
+      onRejected?.invoke(throwable)
     },
   )
 }
