@@ -1,5 +1,6 @@
 package util
 
+import app.allUrls
 import web.location.Location
 import web.url.URL
 import webcore.extensions.decodeURIComponent
@@ -43,7 +44,6 @@ class AppRoute(
  * Query params of [this] are encoded, therefore the get decoded in toRoute(). queryParams and pathParams need no encoding.
  */
 fun String.toRoute(
-  allUrls: Collection<MbUrl>,
   pathParams: Map<String, String> = emptyMap(),
   queryParams: Map<String, String> = emptyMap(),
 ): AppRoute? {

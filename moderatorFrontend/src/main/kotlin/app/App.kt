@@ -35,6 +35,8 @@ import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
 val baseUrl = location.href.substringBefore("/admin")
+lateinit var allUrls: List<MbUrl>
+  private set
 
 external interface AppProps : Props
 
@@ -201,6 +203,8 @@ private class App : RComponent<AppProps, AppState>() {
   }
 
   override fun componentDidMount() {
+    allUrls = Url.values().toList()
+
     fetchUserDataAndInit {
       // Do not use state.currentAppRoute here, because that can represent the old route and not the new location
       val currentRoute = location.toRoute()
