@@ -2,7 +2,7 @@ plugins {
   kotlin("js")
 
   // Workaround for https://youtrack.jetbrains.com/issue/KT-51921 respectively https://github.com/JetBrains/kotlin-wrappers/issues/1077
-  // We stick for now with 5.8.0, as for newer versions (fails up to 6.15.0) the processDceKotlinJs task fails?
+  // We stick for now with 5.8.0, as for newer versions (tested up to 6.15.0) the processDceKotlinJs task fails?
   // TODO: @mh Legacy compiler only fix: Remove when using IR compiler because otherwise compilation fails.
   id("io.github.turansky.kfc.legacy-union") version "5.8.0"
 }
