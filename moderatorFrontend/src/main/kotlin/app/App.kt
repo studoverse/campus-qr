@@ -255,9 +255,8 @@ private class App : RComponent<AppProps, AppState>() {
   })
 
   private fun ChildrenBuilder.renderViewContent() {
-    if (state.userData == null) {
-      // In this case state.currentAppRoute is null.
-      if (state.loadingUserData) {
+    if (state.userData == null || state.currentAppRoute == null) {
+      if (state.loadingUserData || state.currentAppRoute == null) {
         Box {
           sx {
             display = Display.flex
