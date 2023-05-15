@@ -41,9 +41,13 @@ lateinit var allUrls: List<MbUrl>
 external interface AppProps : Props
 
 external interface AppState : State {
+  // Order of initialization:
+  // 1. userData and loadingUserData are set in fetchUserDataAndInit.
+  // 2. currentAppRoute is set in block() of fetchUserDataAndInit. block() is only called after userData is updated.
   var userData: UserData?
   var loadingUserData: Boolean
   var currentAppRoute: AppRoute?
+
   var mobileNavOpen: Boolean
   var activeLanguage: MbLocalizedStringConfig.SupportedLanguage
 }
@@ -206,7 +210,8 @@ private class App : RComponent<AppProps, AppState>() {
     allUrls = Url.values().toList()
 
     fetchUserDataAndInit {
-      // Do not use state.currentAppRoute here, because that can represent the old route and not the new location
+      // Do not use state.currentAppRoute here, because it's not set yet.
+      // currentAppRoute will be set in this function through pushAppRoute/handleHistoryChange.
       val currentRoute = location.toRoute()
 
       when {
@@ -259,8 +264,11 @@ private class App : RComponent<AppProps, AppState>() {
   })
 
   private fun ChildrenBuilder.renderViewContent() {
-    if (state.userData == null || state.currentAppRoute == null) {
-      if (state.loadingUserData || state.currentAppRoute == null) {
+    if (state.currentAppRoute == null) {
+      // currentAppRoute is set in componentDidMount
+      if (!state.loadingUserData && state.userData == null) {
+        networkErrorView()
+      } else {
         Box {
           sx {
             display = Display.flex
@@ -269,8 +277,6 @@ private class App : RComponent<AppProps, AppState>() {
           }
           centeredProgress()
         }
-      } else {
-        networkErrorView()
       }
     } else {
       renderAppContent()
