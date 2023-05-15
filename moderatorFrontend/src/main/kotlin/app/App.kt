@@ -206,10 +206,10 @@ private class App : RComponent<AppProps, AppState>() {
   }
 
   override fun componentDidMount() {
-    val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }
+    val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
     if (duplicatePaths.isNotEmpty()) {
       throw IllegalStateException(
-        "Duplicate path at ${duplicatePaths.keys.first()} is not allowed by design. " +
+        "Duplicate path at ${duplicatePaths.first()} is not allowed by design. " +
             "We need a 1:1 mapping of AppRoutes and paths"
       )
     }
