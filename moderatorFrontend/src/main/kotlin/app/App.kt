@@ -206,6 +206,13 @@ private class App : RComponent<AppProps, AppState>() {
   }
 
   override fun componentDidMount() {
+    val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }
+    if (duplicatePaths.isNotEmpty()) {
+      throw IllegalStateException(
+        "Duplicate path at ${duplicatePaths.keys.first()} is not allowed by design. " +
+            "We need a 1:1 mapping of AppRoutes and paths"
+      )
+    }
     fetchUserDataAndInit {
       // Do not use state.currentAppRoute here, because it's not set yet.
       // currentAppRoute will be set in this function through pushAppRoute/handleHistoryChange.
