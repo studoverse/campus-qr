@@ -14,7 +14,7 @@ import web.url.URL
 fun URL.toRoute(
   pathParams: Map<String, String> = emptyMap(),
   queryParams: Map<String, String> = emptyMap(),
-): AppRoute? = relativeUrl.toRoute(MbUrl.urls, pathParams, queryParams)
+): AppRoute? = relativeUrl.toRoute(pathParams, queryParams)
 
 /**
  * Add additional pathParams and queryParams here, to avoid doing string operations and
@@ -25,7 +25,7 @@ fun URL.toRoute(
 fun Location.toRoute(
   pathParams: Map<String, String> = emptyMap(),
   queryParams: Map<String, String> = emptyMap(),
-): AppRoute? = relativeUrl.toRoute(MbUrl.urls, pathParams, queryParams)
+): AppRoute? = relativeUrl.toRoute(pathParams, queryParams)
 
 /**
  * Add additional pathParams and queryParams here, to avoid doing string operations and
@@ -36,6 +36,6 @@ fun Location.toRoute(
 fun MbUrl.toRoute(
   pathParams: Map<String, String> = emptyMap(),
   queryParams: Map<String, String> = emptyMap(),
-): AppRoute? = path.toRoute(MbUrl.urls, pathParams, queryParams)
+): AppRoute? = path.toRoute(pathParams, queryParams)
 
 fun MbUrl.toRouteWithExistingQueryParams(): AppRoute? = toRoute(queryParams = location.href.queryParams)

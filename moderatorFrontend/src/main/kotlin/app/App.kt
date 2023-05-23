@@ -35,13 +35,18 @@ import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
 val baseUrl = location.href.substringBefore("/admin")
+val allUrls: List<MbUrl> = Url.values().toList()
 
 external interface AppProps : Props
 
 external interface AppState : State {
+  // Order of initialization:
+  // 1. userData and loadingUserData are set in fetchUserDataAndInit.
+  // 2. currentAppRoute is set in block() of fetchUserDataAndInit. block() is only called after userData is updated.
   var userData: UserData?
   var loadingUserData: Boolean
   var currentAppRoute: AppRoute?
+
   var mobileNavOpen: Boolean
   var activeLanguage: MbLocalizedStringConfig.SupportedLanguage
 }
@@ -201,8 +206,16 @@ private class App : RComponent<AppProps, AppState>() {
   }
 
   override fun componentDidMount() {
+    val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
+    if (duplicatePaths.isNotEmpty()) {
+      throw IllegalStateException(
+        "Duplicate path at ${duplicatePaths.first()} is not allowed by design. " +
+            "We need a 1:1 mapping of AppRoutes and paths"
+      )
+    }
     fetchUserDataAndInit {
-      // Do not use state.currentAppRoute here, because that can represent the old route and not the new location
+      // Do not use state.currentAppRoute here, because it's not set yet.
+      // currentAppRoute will be set in this function through pushAppRoute/handleHistoryChange.
       val currentRoute = location.toRoute()
 
       when {
@@ -255,9 +268,11 @@ private class App : RComponent<AppProps, AppState>() {
   })
 
   private fun ChildrenBuilder.renderViewContent() {
-    if (state.userData == null) {
-      // In this case state.currentAppRoute is null.
-      if (state.loadingUserData) {
+    if (state.currentAppRoute == null) {
+      // currentAppRoute is set in componentDidMount
+      if (!state.loadingUserData && state.userData == null) {
+        networkErrorView()
+      } else {
         Box {
           sx {
             display = Display.flex
@@ -266,8 +281,6 @@ private class App : RComponent<AppProps, AppState>() {
           }
           centeredProgress()
         }
-      } else {
-        networkErrorView()
       }
     } else {
       renderAppContent()
