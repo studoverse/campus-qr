@@ -13,25 +13,17 @@ import mui.material.Box
 import mui.material.styles.ThemeProvider
 import mui.material.styles.createTheme
 import mui.system.sx
-import web.dom.Node
-import web.url.URL
 import react.*
 import react.dom.flushSync
 import util.*
 import util.Url
 import views.common.centeredProgress
 import views.common.networkErrorView
-import web.history.POP_STATE
-import web.history.PopStateEvent
-import web.history.history
 import web.location.location
-import web.uievents.CLICK
-import web.uievents.MouseEvent
-import web.window.WindowTarget
+import web.scroll.ScrollBehavior
 import web.window.window
 import webcore.*
 import webcore.NavigationHandler.allUrls
-import webcore.extensions.findParent
 import webcore.extensions.launch
 import webcore.extensions.toRoute
 import webcore.shell.AppShellConfig
@@ -128,40 +120,23 @@ private class App : RComponent<AppProps, AppState>() {
       }
     }
 
-  private fun enableClientSideRouting() {
-    window.addEventListener(PopStateEvent.POP_STATE, {
-      handleHistoryChange()
-    })
-
-    window.addEventListener(MouseEvent.CLICK, { event ->
-      val target = event.target
-      if (target != null && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-        // Only handle click for anchor elements
-        val linkNode = (target as Node).findParent { it.nodeName.lowercase() == "a" } ?: return@addEventListener
-        val anchor = linkNode as web.html.HTMLAnchorElement
-        val parsedUrl = try {
-          URL(anchor.href)
-        } catch (_: Throwable) {
-          null
-        }
-        val relativeUrl = parsedUrl?.relativeUrl
-        val activeView = parsedUrl?.toRoute()
-        if (relativeUrl != null && anchor.target != WindowTarget._blank && activeView != null) {
-          if (relativeUrl != location.relativeUrl) {
-            history.pushState(null, anchor.title, relativeUrl)
-            handleHistoryChange()
-          }
-          event.preventDefault()
-        }
-      }
-    })
-  }
-
   private fun pushAppRoute(route: AppRoute) {
-    if (route.relativeUrl != location.relativeUrl) {
-      history.pushState(data = null, unused = route.url.title.get(), url = route.relativeUrl)
+    if (NavigationHandler.shouldNavigate(route, NavigationHandler.NavigationEvent.PUSH_APP_ROUTE, ::handleHistoryChange)) {
+      NavigationHandler.pushHistory(
+        relativeUrl = route.relativeUrl,
+        title = route.url.title.get(),
+        handleHistoryChange = ::handleHistoryChange,
+      )
+      // Reset scroll position.
+      // Otherwise, scroll position from previous route is kept.
+      window.scrollTo(
+        options = jso {
+          top = 0.0
+          left = 0.0
+          behavior = ScrollBehavior.instant
+        }
+      )
     }
-    handleHistoryChange()
   }
 
   private fun calculateRedirectQueryParams(): Map<String, String> = location.relativeUrl
@@ -174,12 +149,17 @@ private class App : RComponent<AppProps, AppState>() {
   private fun handleHistoryChange(newRoute: AppRoute? = location.toRoute()) {
     if (newRoute == null) {
       console.log("Omit history change for 404 page")
+    } else if (state.userData == null) {
+      // Do not update `currentAppRoute` when `userData` is not yet initialized.
+      // `isNotAuthenticatedButRequiresAuth` will then be checked again after mounting.
+      // `currentAppRoute` is set after mounting.
     } else if (isNotAuthenticatedButRequiresAuth(newRoute)) {
       // The user might end here by clicking back after logging out.
       // componentDidMount() won't be called as going back is not mounting a new component.
       // The user is not logged in so push him to login page
       pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
     } else {
+      console.info("Change route to ${newRoute.relativeUrl}")
       setState { currentAppRoute = newRoute }
     }
   }
@@ -247,8 +227,6 @@ private class App : RComponent<AppProps, AppState>() {
           handleHistoryChange()
         }
       }
-
-      enableClientSideRouting()
     }
   }
 
