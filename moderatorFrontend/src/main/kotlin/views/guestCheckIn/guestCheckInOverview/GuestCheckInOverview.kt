@@ -32,6 +32,8 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
 
   private val appContext get() = this.asDynamic().context as AppContext
 
+  private val dialogRef = createRef<MbDialog>()
+
   override fun GuestCheckInOverviewState.init() {
     activeGuestCheckIns = emptyList()
     loadingCheckInList = false
@@ -54,11 +56,12 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
     fetchActiveGuestCheckIns()
   }
 
-  private fun renderAddGuestCheckInDialog() = appContext.showDialog(
+  private fun renderAddGuestCheckInDialog() = dialogRef.current!!.showDialog(
     DialogConfig(
-      title = Strings.guest_checkin_add_guest.get(),
+      title = DialogConfig.Title(Strings.guest_checkin_add_guest.get()),
       customContent = DialogConfig.CustomContent(AddGuestCheckIn::class) {
         config = AddGuestCheckInConfig(
+          dialogRef = dialogRef,
           onGuestCheckedIn = {
             fetchActiveGuestCheckIns()
           },
@@ -68,6 +71,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
   )
 
   override fun ChildrenBuilder.render() {
+    mbDialog(ref = dialogRef)
     renderToolbarView(
       config = ToolbarViewConfig(
         title = Strings.guest_checkin.get(),

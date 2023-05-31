@@ -24,10 +24,15 @@ import webcore.*
 import webcore.extensions.*
 import kotlin.js.Date
 
-sealed class AccessManagementDetailsConfig {
-  class Create(val locationId: String?, val onCreated: () -> Unit) : AccessManagementDetailsConfig()
-  class Edit(val accessManagement: ClientAccessManagement, val onEdited: (Boolean) -> Unit) : AccessManagementDetailsConfig()
-  class Details(val accessManagement: ClientAccessManagement) : AccessManagementDetailsConfig()
+sealed class AccessManagementDetailsConfig(val dialogRef: RefObject<MbDialog>) {
+  class Create(val locationId: String?, dialogRef: RefObject<MbDialog>, val onCreated: () -> Unit) :
+    AccessManagementDetailsConfig(dialogRef)
+
+  class Edit(val accessManagement: ClientAccessManagement, dialogRef: RefObject<MbDialog>, val onEdited: (Boolean) -> Unit) :
+    AccessManagementDetailsConfig(dialogRef)
+
+  class Details(val accessManagement: ClientAccessManagement, dialogRef: RefObject<MbDialog>) :
+    AccessManagementDetailsConfig(dialogRef)
 }
 
 class TimeSlotError(val text: String, val timeSlot: ClientDateRange)
@@ -143,7 +148,7 @@ class AddLocation(props: AccessManagementDetailsProps) :
       showProgress = false
     }
     (props.config as AccessManagementDetailsConfig.Create).onCreated()
-    appContext.closeDialog()
+    props.config.dialogRef.current!!.closeDialog()
     val snackbarText = if (response == "ok") {
       Strings.access_control_created_successfully.get()
     } else {
@@ -170,7 +175,7 @@ class AddLocation(props: AccessManagementDetailsProps) :
       showProgress = false
     }
     (props.config as AccessManagementDetailsConfig.Edit).onEdited(response == "ok")
-    appContext.closeDialog()
+    props.config.dialogRef.current!!.closeDialog()
   }
 
   private fun validateInput(): Boolean {
@@ -620,7 +625,7 @@ class AddLocation(props: AccessManagementDetailsProps) :
             +Strings.cancel.get()
             variant = ButtonVariant.text
             onClick = {
-              appContext.closeDialog()
+              props.config.dialogRef.current!!.closeDialog()
             }
           }
           Button {

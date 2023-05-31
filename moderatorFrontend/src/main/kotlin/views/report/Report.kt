@@ -51,6 +51,8 @@ private class Report : RComponent<ReportProps, ReportState>() {
 
   private val appContext get() = this.asDynamic().context as AppContext
 
+  private val dialogRef = createRef<MbDialog>()
+
   override fun ReportState.init() {
     emailTextFieldValue = ""
     emailTextFieldError = ""
@@ -132,6 +134,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
   }
 
   override fun ChildrenBuilder.render() {
+    mbDialog(ref = dialogRef)
     val now = Date()
     val showEmailAddress = state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
@@ -246,6 +249,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
                   config = ReportTableRowConfig(
                     userLocation = userLocation,
                     showEmailAddress = showEmailAddress,
+                    dialogRef = dialogRef,
                     onApplyFilterChange = this@Report::applyFilter,
                     onDeleteFilter = this@Report::deleteFilter
                   )

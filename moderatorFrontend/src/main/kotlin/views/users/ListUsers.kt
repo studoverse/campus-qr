@@ -38,6 +38,8 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 
   private val appContext get() = this.asDynamic().context as AppContext
 
+  private val dialogRef = createRef<MbDialog>()
+
   override fun ListUsersState.init() {
     userList = null
     loadingUserList = false
@@ -68,13 +70,13 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     appContext.showSnackbar(snackbarText)
   }
 
-  private fun renderAddUserDialog() = appContext.showDialog(
+  private fun renderAddUserDialog() = dialogRef.current!!.showDialog(
     DialogConfig(
-      title = Strings.user_add.get(),
+      title = DialogConfig.Title(text = Strings.user_add.get()),
       customContent = DialogConfig.CustomContent(AddUser::class) {
         config = AddUserConfig.Create(onFinished = { response ->
           handleCreateOrAddUserResponse(response)
-          appContext.closeDialog()
+          dialogRef.current!!.closeDialog()
         })
       },
     )
@@ -82,9 +84,9 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 
 
   private fun renderSsoInfoButtonDialog() {
-    appContext.showDialog(
+    dialogRef.current!!.showDialog(
       DialogConfig(
-        title = Strings.user_sso_info.get(),
+        title = DialogConfig.Title(text = Strings.user_sso_info.get()),
         customContent = basicCustomContent {
           Typography {
             sx {
@@ -108,6 +110,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 
   override fun ChildrenBuilder.render() {
+    mbDialog(ref = dialogRef)
     val userData = appContext.userDataContext.userData!!
     renderToolbarView(
       config = ToolbarViewConfig(
@@ -161,9 +164,13 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         TableBody {
           state.userList!!.forEach { user ->
             renderUserTableRow(
-              config = UserTableRowConfig(user, onEditFinished = { response ->
-                handleCreateOrAddUserResponse(response)
-              }),
+              config = UserTableRowConfig(
+                user = user,
+                dialogRef = dialogRef,
+                onEditFinished = { response ->
+                  handleCreateOrAddUserResponse(response)
+                },
+              ),
             )
           }
         }

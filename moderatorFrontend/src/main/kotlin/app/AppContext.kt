@@ -1,26 +1,17 @@
 package app
 
+import MbSnackbar
+import MbSnackbarConfig
 import com.studo.campusqr.common.payloads.UserData
 import mui.material.styles.Theme
+import react.RefObject
 import react.createContext
 import util.AppRoute
 import util.MbLocalizedStringConfig
-import webcore.DialogConfig
-import webcore.MbSnackbarConfig
 
 data class LanguageContext(
   val activeLanguage: MbLocalizedStringConfig.SupportedLanguage,
   val onLanguageChange: (newLang: MbLocalizedStringConfig.SupportedLanguage) -> Unit
-)
-
-data class MbSnackbarContext(
-  val showSnackbar: (String) -> Unit,
-  val showSnackbarAdvanced: (MbSnackbarConfig) -> Unit
-)
-
-data class MbDialogContext(
-  val showDialog: (DialogConfig) -> Unit,
-  val closeDialog: () -> Unit,
 )
 
 data class RouteContext(
@@ -38,8 +29,7 @@ data class UserDataContext(
 
 data class AppContext(
   val languageContext: LanguageContext,
-  val snackbarContext: MbSnackbarContext,
-  val dialogContext: MbDialogContext,
+  private val snackbarRef: RefObject<MbSnackbar>,
   val routeContext: RouteContext,
   val themeContext: ThemeContext,
   val userDataContext: UserDataContext,
@@ -47,19 +37,16 @@ data class AppContext(
   // Shorthand to write `appContext.theme` instead of `appContext.themeContext.theme`
   val theme: Theme get() = themeContext.theme
 
-  fun showDialog(dialogConfig: DialogConfig) = dialogContext.showDialog(dialogConfig)
-
-  /**
-   * Close dialog
-   * Use only for buttons in customContent of DialogConfig()
-   */
-  fun closeDialog() = dialogContext.closeDialog()
-
   // Use showSnackbar(string) for simple snackbars that only show a simple information text.
-  fun showSnackbar(text: String) = snackbarContext.showSnackbar(text)
+  fun showSnackbar(text: String) = snackbarRef.current!!.showSnackbar(text)
 
   // Use showSnackbar(MbSnackbarConfig) for advanced snackbars
-  fun showSnackbar(config: MbSnackbarConfig) = snackbarContext.showSnackbarAdvanced(config)
+  fun showSnackbar(config: MbSnackbarConfig) = snackbarRef.current!!.showSnackbar(config)
+
+  // The snackbar always closes automatically after [SnackbarProps.autoHideDuration].
+  // [MbSnackbar.closeSnackbar] is only needed if you use [MbSnackbarConfig.action] or [MbSnackbarConfig.complexMessage] and
+  // have a custom close action where the snackbar should be closed immediately.
+  fun closeSnackbar() = snackbarRef.current!!.closeSnackbar()
 }
 
 val appContextToInject = createContext<AppContext>()

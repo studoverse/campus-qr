@@ -36,6 +36,8 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
 
   private val appContext get() = this.asDynamic().context as AppContext
 
+  private val dialogRef = createRef<MbDialog>()
+
   override fun ListLocationsState.init() {
     locationList = null
     loadingLocationList = false
@@ -65,11 +67,12 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
     appContext.showSnackbar(snackbarText)
   }
 
-  private fun renderAddLocationDialog() = appContext.showDialog(
+  private fun renderAddLocationDialog() = dialogRef.current!!.showDialog(
     DialogConfig(
-      title = Strings.location_add.get(),
+      title = DialogConfig.Title(text = Strings.location_add.get()),
       customContent = DialogConfig.CustomContent(AddLocation::class) {
         config = AddLocationConfig.Create(
+          dialogRef = dialogRef,
           onFinished = { response ->
             handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
           }
@@ -79,9 +82,9 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
   )
 
   private fun renderImportButtonDialog() {
-    appContext.showDialog(
+    dialogRef.current!!.showDialog(
       DialogConfig(
-        title = Strings.location_import.get(),
+        title = DialogConfig.Title(text = Strings.location_import.get()),
         text = Strings.location_import_details.get(),
         buttons = listOf(
           DialogButton(Strings.more_about_studo.get(), onClick = {
@@ -94,6 +97,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
   }
 
   override fun ChildrenBuilder.render() {
+    mbDialog(ref = dialogRef)
     val userData = appContext.userDataContext.userData!!
     renderToolbarView(
       config = ToolbarViewConfig(
@@ -154,7 +158,8 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
           state.locationList!!.forEach { location ->
             renderLocationTableRow(
               config = LocationTableRowConfig(
-                location,
+                location = location,
+                dialogRef = dialogRef,
                 onEditFinished = { response ->
                   handleCreateOrEditLocationResponse(response, Strings.location_edited.get())
                 },

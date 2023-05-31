@@ -26,6 +26,7 @@ import kotlin.js.Date
 
 class AccessManagementTableRowConfig(
   val accessManagement: ClientAccessManagement,
+  val dialogRef: RefObject<MbDialog>,
   val onOperationFinished: (operation: AccessManagementTableRowOperation, success: Boolean) -> Unit
 )
 
@@ -51,12 +52,13 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
   private val appContext get() = this.asDynamic().context as AppContext
 
   private fun renderEditAccessManagementDialog() {
-    appContext.showDialog(
+    props.config.dialogRef.current!!.showDialog(
       DialogConfig(
-        title = Strings.location_edit.get(),
+        title = DialogConfig.Title(text = Strings.location_edit.get()),
         customContent = DialogConfig.CustomContent(AddLocation::class) {
           config = AccessManagementDetailsConfig.Edit(
             accessManagement = props.config.accessManagement,
+            dialogRef = props.config.dialogRef,
             onEdited = { success ->
               props.config.onOperationFinished(AccessManagementTableRowOperation.Edit, success)
             }
@@ -66,12 +68,13 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
     )
   }
 
-  private fun renderDetailsAccessManagementDialog() = appContext.showDialog(
+  private fun renderDetailsAccessManagementDialog() = props.config.dialogRef.current!!.showDialog(
     DialogConfig(
-      title = Strings.access_control.get(),
+      title = DialogConfig.Title(text = Strings.access_control.get()),
       customContent = DialogConfig.CustomContent(AddLocation::class) {
         config = AccessManagementDetailsConfig.Details(
           accessManagement = props.config.accessManagement,
+          dialogRef = props.config.dialogRef,
         )
       },
     )

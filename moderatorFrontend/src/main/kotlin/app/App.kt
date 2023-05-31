@@ -1,11 +1,13 @@
 package app
 
+import MbSnackbar
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.payloads.*
 import csstype.*
 import js.core.jso
 import kotlinx.browser.document
+import mbSnackbar
 import mui.icons.material.*
 import mui.material.Box
 import mui.material.styles.ThemeProvider
@@ -28,6 +30,7 @@ import web.uievents.MouseEvent
 import web.window.WindowTarget
 import web.window.window
 import webcore.*
+import webcore.NavigationHandler.allUrls
 import webcore.extensions.findParent
 import webcore.extensions.launch
 import webcore.extensions.toRoute
@@ -35,7 +38,6 @@ import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
 val baseUrl = location.href.substringBefore("/admin")
-val allUrls: List<MbUrl> = Url.values().toList()
 
 external interface AppProps : Props
 
@@ -52,9 +54,9 @@ external interface AppState : State {
 }
 
 private class App : RComponent<AppProps, AppState>() {
-
+  // Only used for the NavigationHandler since this dialog must exist globally
+  private var navigationHandlerDialogRef = createRef<MbDialog>()
   private var snackbarRef = createRef<MbSnackbar>()
-  private var dialogRef = createRef<MbMaterialDialog>()
 
   override fun AppState.init() {
     userData = null
@@ -206,6 +208,12 @@ private class App : RComponent<AppProps, AppState>() {
   }
 
   override fun componentDidMount() {
+    NavigationHandler.initApp(
+      allUrls = Url.values().toList(),
+      dialogRef = navigationHandlerDialogRef,
+      handleHistoryChange = ::handleHistoryChange,
+    )
+
     val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
     if (duplicatePaths.isNotEmpty()) {
       throw IllegalStateException(
@@ -294,22 +302,6 @@ private class App : RComponent<AppProps, AppState>() {
     MbLocalizedStringConfig.selectedLanguage = newLang
   }
 
-  private fun showSnackbar(text: String) {
-    snackbarRef.current!!.showSnackbar(text)
-  }
-
-  private fun showSnackbarAdvanced(config: MbSnackbarConfig) {
-    snackbarRef.current!!.showSnackbar(config)
-  }
-
-  private fun showDialog(dialogConfig: DialogConfig) {
-    dialogRef.current!!.showDialog(dialogConfig)
-  }
-
-  private fun closeDialog() {
-    dialogRef.current!!.closeDialog()
-  }
-
   override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "white"
     ThemeProvider {
@@ -317,8 +309,7 @@ private class App : RComponent<AppProps, AppState>() {
       appContextToInject.Provider(
         AppContext(
           languageContext = LanguageContext(state.activeLanguage, ::onLangChange),
-          snackbarContext = MbSnackbarContext(::showSnackbar, ::showSnackbarAdvanced),
-          dialogContext = MbDialogContext(::showDialog, ::closeDialog),
+          snackbarRef = snackbarRef,
           routeContext = RouteContext(state.currentAppRoute, ::pushAppRoute),
           themeContext = ThemeContext(this@App.theme),
           userDataContext = UserDataContext(userData = state.userData, state.loadingUserData, ::fetchUserDataAndInit)
@@ -326,7 +317,7 @@ private class App : RComponent<AppProps, AppState>() {
       ) {
         // Global components
         mbSnackbar(ref = snackbarRef)
-        mbMaterialDialog(ref = dialogRef)
+        mbDialog(ref = navigationHandlerDialogRef)
 
         // Render content without side drawer and toolbar, if no shell option is activated via url hash
         if (location.hash.contains("noShell") ||

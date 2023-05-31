@@ -22,9 +22,12 @@ import views.common.spacer
 import webcore.*
 import webcore.extensions.launch
 
-sealed class AddLocationConfig(val onFinished: (response: String?) -> Unit) {
-  class Create(onFinished: (response: String?) -> Unit) : AddLocationConfig(onFinished)
-  class Edit(val location: ClientLocation, onFinished: (response: String?) -> Unit) : AddLocationConfig(onFinished)
+sealed class AddLocationConfig(val dialogRef: RefObject<MbDialog>, val onFinished: (response: String?) -> Unit) {
+  class Create(dialogRef: RefObject<MbDialog>, onFinished: (response: String?) -> Unit) :
+    AddLocationConfig(dialogRef = dialogRef, onFinished = onFinished)
+
+  class Edit(val location: ClientLocation, dialogRef: RefObject<MbDialog>, onFinished: (response: String?) -> Unit) :
+    AddLocationConfig(dialogRef = dialogRef, onFinished = onFinished)
 }
 
 external interface AddLocationProps : Props {
@@ -78,7 +81,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
     }
     props.config.onFinished(response)
     if (response == "ok") {
-      appContext.closeDialog()
+      props.config.dialogRef.current!!.closeDialog()
     }
   }
 
