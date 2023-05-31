@@ -43,7 +43,7 @@ external interface AddLocationState : State {
 }
 
 @Suppress("UPPER_BOUND_VIOLATED")
-class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props) {
+class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props), NavigateAwayObservable {
 
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddLocation::class) {
@@ -54,12 +54,36 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
 
   private val appContext get() = this.asDynamic().context as AppContext
 
+  override fun componentDidMount() {
+    NavigationHandler.navigateAwayListeners.add(this)
+  }
+
+  override fun componentWillUnmount() {
+    NavigationHandler.navigateAwayListeners.remove(this)
+  }
+
   override fun AddLocationState.init(props: AddLocationProps) {
     locationCreationInProgress = false
     locationTextFieldError = ""
     locationTextFieldValue = (props.config as? AddLocationConfig.Edit)?.location?.name ?: ""
     locationAccessType = (props.config as? AddLocationConfig.Edit)?.location?.accessType ?: LocationAccessType.FREE
     locationSeatCount = (props.config as? AddLocationConfig.Edit)?.location?.seatCount
+  }
+
+  override fun shouldNavigateAway(): Boolean {
+    return when (val config = props.config) {
+      is AddLocationConfig.Create -> {
+        state.locationTextFieldValue.isEmpty() &&
+            state.locationAccessType == LocationAccessType.FREE &&
+            state.locationSeatCount == null
+      }
+
+      is AddLocationConfig.Edit -> {
+        state.locationTextFieldValue == config.location.name &&
+            state.locationAccessType == config.location.accessType &&
+            state.locationSeatCount == config.location.seatCount
+      }
+    }
   }
 
   private fun createOrUpdateLocation() = launch {
