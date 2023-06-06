@@ -127,15 +127,7 @@ private class App : RComponent<AppProps, AppState>() {
         title = route.url.title.get(),
         handleHistoryChange = ::handleHistoryChange,
       )
-      // Reset scroll position.
-      // Otherwise, scroll position from previous route is kept.
-      window.scrollTo(
-        options = jso {
-          top = 0.0
-          left = 0.0
-          behavior = ScrollBehavior.instant
-        }
-      )
+      NavigationHandler.resetScrollPosition()
     }
   }
 

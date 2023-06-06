@@ -1,6 +1,7 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
+import js.core.jso
 import webcore.extensions.toRoute
 import web.window.window
 import mui.icons.material.Edit
@@ -19,6 +20,7 @@ import web.history.POP_STATE
 import web.history.PopStateEvent
 import web.history.history
 import web.location.location
+import web.scroll.ScrollBehavior
 import web.uievents.CLICK
 import web.url.URLSearchParams
 import web.window.BEFORE_UNLOAD
@@ -141,9 +143,8 @@ object NavigationHandler {
     })
 
     window.addEventListener(MouseEvent.CLICK, { event ->
-      val mouseEvent = event as MouseEvent
-      val target = mouseEvent.target
-      if (target != null && !mouseEvent.altKey && !mouseEvent.ctrlKey && !mouseEvent.metaKey && !mouseEvent.shiftKey) {
+      val target = event.target
+      if (target != null && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
         // Only handle click for anchor elements
         val linkNode = (target as Node).findParent { it.nodeName.lowercase() == "a" } ?: return@addEventListener
         val anchor = linkNode as HTMLAnchorElement
@@ -162,11 +163,24 @@ object NavigationHandler {
             )
           ) {
             pushHistory(relativeUrl = relativeUrl, title = anchor.title, handleHistoryChange = handleHistoryChange)
+            resetScrollPosition()
           }
           event.preventDefault()
         }
       }
     })
+  }
+
+  fun resetScrollPosition() {
+    // Reset scroll position.
+    // Otherwise, scroll position from previous route is kept sometimes.
+    window.scrollTo(
+      options = jso {
+        top = 0.0
+        left = 0.0
+        behavior = ScrollBehavior.instant
+      }
+    )
   }
 
   fun pushHistory(relativeUrl: String, title: String, handleHistoryChange: (newRoute: AppRoute?) -> Unit) {
