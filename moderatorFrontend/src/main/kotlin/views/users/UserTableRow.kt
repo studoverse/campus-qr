@@ -24,6 +24,7 @@ import webcore.extensions.launch
 
 class UserTableRowConfig(
   val user: ClientUser,
+  val dialogRef: RefObject<MbDialog>,
   val onEditFinished: (response: String?) -> Unit
 )
 
@@ -44,15 +45,15 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  private fun renderEditUserDialog() = appContext.showDialog(
+  private fun renderEditUserDialog() = props.config.dialogRef.current!!.showDialog(
     DialogConfig(
-      title = Strings.user_edit.get(),
+      title = DialogConfig.Title(text = Strings.user_edit.get()),
       customContent = DialogConfig.CustomContent(AddUser::class) {
         config = AddUserConfig.Edit(
           user = props.config.user,
           onFinished = { response ->
             props.config.onEditFinished(response)
-            appContext.closeDialog()
+            props.config.dialogRef.current!!.closeDialog()
           }
         )
       },

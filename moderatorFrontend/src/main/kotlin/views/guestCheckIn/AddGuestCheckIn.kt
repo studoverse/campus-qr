@@ -22,6 +22,7 @@ import webcore.*
 import webcore.extensions.launch
 
 class AddGuestCheckInConfig(
+  val dialogRef: RefObject<MbDialog>,
   val onGuestCheckedIn: () -> Unit,
 )
 
@@ -96,7 +97,7 @@ external interface AddGuestCheckInState : State {
     when (response) {
       "ok" -> {
         props.config.onGuestCheckedIn()
-        appContext.closeDialog()
+        props.config.dialogRef.current!!.closeDialog()
       }
       "forbidden_email" -> appContext.showSnackbar(Strings.invalid_email.get())
       else -> appContext.showSnackbar(Strings.error_try_again.get())

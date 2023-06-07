@@ -1,41 +1,35 @@
 package app
 
+import MbSnackbar
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.payloads.*
 import csstype.*
 import js.core.jso
 import kotlinx.browser.document
+import mbSnackbar
 import mui.icons.material.*
 import mui.material.Box
 import mui.material.styles.ThemeProvider
 import mui.material.styles.createTheme
 import mui.system.sx
-import web.dom.Node
-import web.url.URL
 import react.*
 import react.dom.flushSync
 import util.*
 import util.Url
 import views.common.centeredProgress
 import views.common.networkErrorView
-import web.history.POP_STATE
-import web.history.PopStateEvent
-import web.history.history
 import web.location.location
-import web.uievents.CLICK
-import web.uievents.MouseEvent
-import web.window.WindowTarget
+import web.scroll.ScrollBehavior
 import web.window.window
 import webcore.*
-import webcore.extensions.findParent
+import webcore.NavigationHandler.allUrls
 import webcore.extensions.launch
 import webcore.extensions.toRoute
 import webcore.shell.AppShellConfig
 import webcore.shell.appShell
 
 val baseUrl = location.href.substringBefore("/admin")
-val allUrls: List<MbUrl> = Url.values().toList()
 
 external interface AppProps : Props
 
@@ -52,9 +46,9 @@ external interface AppState : State {
 }
 
 private class App : RComponent<AppProps, AppState>() {
-
+  // Only used for the NavigationHandler since this dialog must exist globally
+  private var navigationHandlerDialogRef = createRef<MbDialog>()
   private var snackbarRef = createRef<MbSnackbar>()
-  private var dialogRef = createRef<MbMaterialDialog>()
 
   override fun AppState.init() {
     userData = null
@@ -126,40 +120,15 @@ private class App : RComponent<AppProps, AppState>() {
       }
     }
 
-  private fun enableClientSideRouting() {
-    window.addEventListener(PopStateEvent.POP_STATE, {
-      handleHistoryChange()
-    })
-
-    window.addEventListener(MouseEvent.CLICK, { event ->
-      val target = event.target
-      if (target != null && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-        // Only handle click for anchor elements
-        val linkNode = (target as Node).findParent { it.nodeName.lowercase() == "a" } ?: return@addEventListener
-        val anchor = linkNode as web.html.HTMLAnchorElement
-        val parsedUrl = try {
-          URL(anchor.href)
-        } catch (_: Throwable) {
-          null
-        }
-        val relativeUrl = parsedUrl?.relativeUrl
-        val activeView = parsedUrl?.toRoute()
-        if (relativeUrl != null && anchor.target != WindowTarget._blank && activeView != null) {
-          if (relativeUrl != location.relativeUrl) {
-            history.pushState(null, anchor.title, relativeUrl)
-            handleHistoryChange()
-          }
-          event.preventDefault()
-        }
-      }
-    })
-  }
-
   private fun pushAppRoute(route: AppRoute) {
-    if (route.relativeUrl != location.relativeUrl) {
-      history.pushState(data = null, unused = route.url.title.get(), url = route.relativeUrl)
+    if (NavigationHandler.shouldNavigate(route, NavigationHandler.NavigationEvent.PUSH_APP_ROUTE, ::handleHistoryChange)) {
+      NavigationHandler.pushHistory(
+        relativeUrl = route.relativeUrl,
+        title = route.url.title.get(),
+        handleHistoryChange = ::handleHistoryChange,
+      )
+      NavigationHandler.resetScrollPosition()
     }
-    handleHistoryChange()
   }
 
   private fun calculateRedirectQueryParams(): Map<String, String> = location.relativeUrl
@@ -172,12 +141,17 @@ private class App : RComponent<AppProps, AppState>() {
   private fun handleHistoryChange(newRoute: AppRoute? = location.toRoute()) {
     if (newRoute == null) {
       console.log("Omit history change for 404 page")
+    } else if (state.userData == null) {
+      // Do not update `currentAppRoute` when `userData` is not yet initialized.
+      // `isNotAuthenticatedButRequiresAuth` will then be checked again after mounting.
+      // `currentAppRoute` is set after mounting.
     } else if (isNotAuthenticatedButRequiresAuth(newRoute)) {
       // The user might end here by clicking back after logging out.
       // componentDidMount() won't be called as going back is not mounting a new component.
       // The user is not logged in so push him to login page
       pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
     } else {
+      console.info("Change route to ${newRoute.relativeUrl}")
       setState { currentAppRoute = newRoute }
     }
   }
@@ -206,6 +180,12 @@ private class App : RComponent<AppProps, AppState>() {
   }
 
   override fun componentDidMount() {
+    NavigationHandler.initApp(
+      allUrls = Url.values().toList(),
+      dialogRef = navigationHandlerDialogRef,
+      handleHistoryChange = ::handleHistoryChange,
+    )
+
     val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
     if (duplicatePaths.isNotEmpty()) {
       throw IllegalStateException(
@@ -239,8 +219,6 @@ private class App : RComponent<AppProps, AppState>() {
           handleHistoryChange()
         }
       }
-
-      enableClientSideRouting()
     }
   }
 
@@ -294,22 +272,6 @@ private class App : RComponent<AppProps, AppState>() {
     MbLocalizedStringConfig.selectedLanguage = newLang
   }
 
-  private fun showSnackbar(text: String) {
-    snackbarRef.current!!.showSnackbar(text)
-  }
-
-  private fun showSnackbarAdvanced(config: MbSnackbarConfig) {
-    snackbarRef.current!!.showSnackbar(config)
-  }
-
-  private fun showDialog(dialogConfig: DialogConfig) {
-    dialogRef.current!!.showDialog(dialogConfig)
-  }
-
-  private fun closeDialog() {
-    dialogRef.current!!.closeDialog()
-  }
-
   override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "white"
     ThemeProvider {
@@ -317,8 +279,7 @@ private class App : RComponent<AppProps, AppState>() {
       appContextToInject.Provider(
         AppContext(
           languageContext = LanguageContext(state.activeLanguage, ::onLangChange),
-          snackbarContext = MbSnackbarContext(::showSnackbar, ::showSnackbarAdvanced),
-          dialogContext = MbDialogContext(::showDialog, ::closeDialog),
+          snackbarRef = snackbarRef,
           routeContext = RouteContext(state.currentAppRoute, ::pushAppRoute),
           themeContext = ThemeContext(this@App.theme),
           userDataContext = UserDataContext(userData = state.userData, state.loadingUserData, ::fetchUserDataAndInit)
@@ -326,7 +287,7 @@ private class App : RComponent<AppProps, AppState>() {
       ) {
         // Global components
         mbSnackbar(ref = snackbarRef)
-        mbMaterialDialog(ref = dialogRef)
+        mbDialog(ref = navigationHandlerDialogRef)
 
         // Render content without side drawer and toolbar, if no shell option is activated via url hash
         if (location.hash.contains("noShell") ||

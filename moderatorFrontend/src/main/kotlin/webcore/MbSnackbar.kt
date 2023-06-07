@@ -1,5 +1,3 @@
-package webcore
-
 import app.AppContext
 import app.appContextToInject
 import csstype.*
@@ -8,7 +6,8 @@ import mui.icons.material.*
 import mui.material.*
 import mui.system.sx
 import react.*
-import react.dom.html.ReactHTML
+import react.dom.html.ReactHTML.span
+import webcore.*
 
 class MbSnackbarConfig(
   var message: String = "",
@@ -33,6 +32,13 @@ external interface MbSnackbarState : State {
   var config: MbSnackbarConfig?
 }
 
+/**
+ * Snackbar component for handling all snackbars of the application.
+ *
+ * The snackbar always closes automatically after [SnackbarProps.autoHideDuration].
+ * [MbSnackbar.closeSnackbar] is only needed if you use [MbSnackbarConfig.action] or [MbSnackbarConfig.complexMessage] and
+ * have a custom close action where the snackbar should be closed immediately.
+ */
 class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(MbSnackbar::class) {
@@ -41,7 +47,7 @@ class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
     }
   }
 
-  private val appContext get() = this.asDynamic().context as AppContext
+  private val mbAppContext get() = this.asDynamic().context as AppContext
 
   override fun ChildrenBuilder.render() {
     val config = state.config ?: return
@@ -55,7 +61,7 @@ class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
         marginBottom = 20.px
       }
       open = true
-      autoHideDuration = 3000
+      autoHideDuration = 3000 + config.message.count() * 50 + (if (action == null) 0 else 1000) // By experimentation this value feels good.
       onClose = { _, _ ->
         setState { this.config = null }
       }
@@ -69,14 +75,16 @@ class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
               color = NamedColor.black
               backgroundColor = Color(yellowColor[500] as String)
             }
+
             null -> Unit
           }
         }
         message = Box.create {
-          component = ReactHTML.span
+          component = span
           sx {
             display = Display.flex
             alignItems = AlignItems.center
+            whiteSpace = WhiteSpace.preLine
           }
           config.snackbarType?.icon?.let {
             it {
@@ -103,6 +111,10 @@ class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
 
   fun showSnackbar(config: MbSnackbarConfig) {
     setState { this.config = config }
+  }
+
+  fun closeSnackbar() {
+    setState { this.config = null }
   }
 }
 

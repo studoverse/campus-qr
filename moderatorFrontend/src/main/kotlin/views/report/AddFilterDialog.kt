@@ -14,12 +14,14 @@ import react.*
 import util.Strings
 import util.get
 import views.common.spacer
+import webcore.MbDialog
 import webcore.RComponentWithCoroutineScope
 import webcore.setState
 import webcore.toReactNode
 
 class AddFilterDialogConfig(
   val userLocation: ReportData.UserLocation,
+  val dialogRef: RefObject<MbDialog>,
   val onApplyFilterChange: (userLocation: ReportData.UserLocation, filteredSeats: List<Int>) -> Unit,
 )
 
@@ -111,7 +113,7 @@ class AddFilterDialog(props: AddFilterDialogProps) :
           with(props.config) {
             onApplyFilterChange(userLocation, state.filteredSeats)
           }
-          appContext.closeDialog()
+          props.config.dialogRef.current!!.closeDialog()
         }
       }
     }

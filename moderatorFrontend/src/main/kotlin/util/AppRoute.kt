@@ -1,8 +1,8 @@
 package util
 
-import app.allUrls
 import web.location.Location
 import web.url.URL
+import webcore.NavigationHandler.allUrls
 import webcore.extensions.decodeURIComponent
 import webcore.extensions.encodeURIComponent
 

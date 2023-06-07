@@ -37,6 +37,8 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
 
   private val appContext get() = this.asDynamic().context as AppContext
 
+  private val dialogRef = createRef<MbDialog>()
+
   override fun ListAccessManagementState.init() {
     accessManagementList = null
     clientLocation = null
@@ -71,12 +73,13 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
     fetchAccessManagementList()
   }
 
-  private fun renderAddAccessManagementDialog() = appContext.showDialog(
+  private fun renderAddAccessManagementDialog() = dialogRef.current!!.showDialog(
     DialogConfig(
-      title = Strings.access_control_create.get(),
+      title = DialogConfig.Title(text = Strings.access_control_create.get()),
       customContent = DialogConfig.CustomContent(AddLocation::class) {
         config = AccessManagementDetailsConfig.Create(
           locationId = props.locationId,
+          dialogRef = dialogRef,
           onCreated = {
             fetchAccessManagementList()
           }
@@ -86,6 +89,7 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
   )
 
   override fun ChildrenBuilder.render() {
+    mbDialog(ref = dialogRef)
     renderToolbarView(
       config = ToolbarViewConfig(
         title = StringBuilder().apply {
@@ -136,7 +140,9 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
         TableBody {
           state.accessManagementList!!.forEach { accessManagement ->
             renderAccessManagementRow(
-              config = AccessManagementTableRowConfig(accessManagement,
+              config = AccessManagementTableRowConfig(
+                accessManagement = accessManagement,
+                dialogRef = dialogRef,
                 onOperationFinished = { operation, success ->
                   val snackbarText = if (success) {
                     fetchAccessManagementList()
