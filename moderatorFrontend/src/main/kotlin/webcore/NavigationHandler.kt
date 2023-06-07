@@ -174,6 +174,7 @@ object NavigationHandler {
   fun resetScrollPosition() {
     // Reset scroll position.
     // Otherwise, scroll position from previous route is kept sometimes.
+    // We're not 100% sure when it is / isn't reset.
     window.scrollTo(
       options = jso {
         top = 0.0
