@@ -222,28 +222,41 @@ private class App : RComponent<AppProps, AppState>() {
     }
   }
 
-  private val theme = createTheme(jso {
+  private val locale
+    get() = when (state.activeLanguage) {
+      MbLocalizedStringConfig.SupportedLanguage.De -> {
+        deDE
+      }
 
-    typography = jso {
-      useNextVariants = true
+      MbLocalizedStringConfig.SupportedLanguage.En -> {
+        enUS
+      }
     }
-    palette = jso {
-      primary = jso {
-        main = ColorPalette.primaryColor
-        contrastText = "#fff"
-      }
 
-      secondary = jso {
-        main = ColorPalette.secondaryColor
+  private val theme = createTheme(
+    options = jso {
+      typography = jso {
+        useNextVariants = true
       }
+      palette = jso {
+        primary = jso {
+          main = ColorPalette.primaryColor
+          contrastText = "#fff"
+        }
 
-      success = jso {
-        main = "#41d856"
-        contrastText = "#fff"
+        secondary = jso {
+          main = ColorPalette.secondaryColor
+        }
+
+        success = jso {
+          main = "#41d856"
+          contrastText = "#fff"
+        }
+
       }
-
-    }
-  })
+    },
+    locale,
+  )
 
   private fun ChildrenBuilder.renderViewContent() {
     if (state.currentAppRoute == null) {
