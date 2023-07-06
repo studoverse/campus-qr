@@ -16,7 +16,7 @@ kotlin {
       kotlinOptions.jvmTarget = "17"
     }
   }
-  js(LEGACY) {
+  js(IR) {
     useCommonJs()
     browser()
     binaries.executable()
@@ -25,7 +25,7 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1") // 1.5.0 requires new IR compiler
+        api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
       }
     }
     val commonTest by getting

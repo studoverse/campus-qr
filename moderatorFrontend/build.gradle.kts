@@ -1,16 +1,11 @@
 plugins {
   kotlin("js")
-
-  // Workaround for https://youtrack.jetbrains.com/issue/KT-51921 respectively https://github.com/JetBrains/kotlin-wrappers/issues/1077
-  // We stick for now with 5.8.0, as for newer versions (tested up to 6.15.0) the processDceKotlinJs task fails?
-  // TODO: @mh Legacy compiler only fix: Remove when using IR compiler because otherwise compilation fails.
-  id("io.github.turansky.kfc.legacy-union") version "5.8.0"
 }
 
-val ktor_version: String = "2.2.3" // 2.3.0 requires new IR compiler
-val kotlinx_html_version: String = "0.8.0"
-val kotlinx_serialization_version: String = "1.4.1" // 1.5.0 requires new IR compiler
-val kotlinx_coroutines_version: String = "1.6.4"
+val ktor_version: String = "2.3.2"
+val kotlinx_html_version: String = "0.9.0"
+val kotlinx_serialization_version: String = "1.5.1"
+val kotlinx_coroutines_version: String = "1.7.2"
 
 repositories {
   mavenCentral()
@@ -20,7 +15,7 @@ fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$tar
 val kotlinWrappersVersion = "1.0.0-pre.523"
 
 kotlin {
-  js(LEGACY) {
+  js(IR) {
     useCommonJs()
     browser()
     binaries.executable()
@@ -65,7 +60,7 @@ dependencies {
 
 tasks {
   getByName<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserProductionWebpack") {
-    outputFileName = "campusqr-admin.js"
+    mainOutputFileName.set("campusqr-admin.js")
   }
 
   register<Copy>("copyProductionBuildToPreProcessedResources") {
