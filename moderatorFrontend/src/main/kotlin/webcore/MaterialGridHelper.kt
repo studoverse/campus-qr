@@ -2,7 +2,7 @@
 
 package webcore
 
-import csstype.*
+import web.cssom.*
 import mui.material.Box
 import mui.material.Grid
 import mui.material.GridDirection

@@ -1,7 +1,7 @@
 package views.login
 
 import app.GlobalCss
-import csstype.ClassName
+import web.cssom.*
 import mui.material.*
 import react.ChildrenBuilder
 import react.Props

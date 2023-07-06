@@ -1,5 +1,6 @@
 package views.login
 
+import web.cssom.*
 import app.AppContext
 import app.ColorPalette
 import app.appContextToInject

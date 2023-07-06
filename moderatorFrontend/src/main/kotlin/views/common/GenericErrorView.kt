@@ -1,10 +1,7 @@
 package views.common
 
-import csstype.Auto
+import web.cssom.*
 import csstype.PropertiesBuilder
-import csstype.TextAlign
-import csstype.px
-import web.window.window
 import mui.material.Box
 import mui.material.Typography
 import mui.material.styles.TypographyVariant

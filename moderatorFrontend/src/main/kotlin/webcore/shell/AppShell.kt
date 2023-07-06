@@ -2,7 +2,7 @@ package webcore.shell
 
 import app.AppContext
 import app.appContextToInject
-import csstype.*
+import web.cssom.*
 import mui.material.Box
 import mui.system.Breakpoint
 import mui.system.sx

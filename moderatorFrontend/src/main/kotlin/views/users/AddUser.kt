@@ -1,5 +1,6 @@
 package views.users
 
+import web.cssom.*
 import app.AppContext
 import app.GlobalCss
 import app.appContextToInject

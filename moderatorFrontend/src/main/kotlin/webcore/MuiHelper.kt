@@ -1,6 +1,7 @@
 package webcore
 
-import csstype.*
+import csstype.PropertiesBuilder
+import web.cssom.*
 import js.core.jso
 import mui.material.FormControlVariant
 import mui.material.GridProps

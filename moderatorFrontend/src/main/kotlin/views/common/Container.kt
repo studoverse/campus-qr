@@ -1,7 +1,6 @@
 package views.common
 
-import csstype.ClassName
-import csstype.px
+import web.cssom.*
 import mui.material.Box
 import mui.system.sx
 import react.ChildrenBuilder

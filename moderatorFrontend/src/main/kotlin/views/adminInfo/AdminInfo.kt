@@ -1,8 +1,7 @@
 package views.adminInfo
 
-import csstype.Globals
 import csstype.PropertiesBuilder
-import csstype.px
+import web.cssom.*
 import web.window.window
 import mui.material.Box
 import mui.material.Button

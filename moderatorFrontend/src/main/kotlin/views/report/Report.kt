@@ -10,8 +10,9 @@ import com.studo.campusqr.common.payloads.EditSeatFilter
 import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
 import csstype.PropertiesBuilder
-import csstype.px
+import web.cssom.*
 import mui.material.*
+import mui.material.Size
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.*

@@ -1,5 +1,6 @@
 package views.locations
 
+import web.cssom.*
 import app.AppContext
 import app.GlobalCss
 import app.appContextToInject

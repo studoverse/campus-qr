@@ -8,6 +8,7 @@ import mui.system.sx
 import react.*
 import react.dom.html.ReactHTML.span
 import webcore.*
+import web.cssom.*
 
 class MbSnackbarConfig(
   var message: String = "",

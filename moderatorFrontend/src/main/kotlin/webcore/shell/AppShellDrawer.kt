@@ -2,7 +2,8 @@ package webcore.shell
 
 import app.AppContext
 import app.appContextToInject
-import csstype.*
+import csstype.PropertiesBuilder
+import web.cssom.*
 import web.window.window
 import js.core.jso
 import mui.material.*
@@ -81,7 +82,10 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
       }
       color = AppBarColor.primary
       position = if (props.config.stickyNavigation) AppBarPosition.sticky else AppBarPosition.static
-      props.config.appBarElevation?.let { elevation = it }
+      props.config.appBarElevation?.let { appBarElevation ->
+        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+        (this as PaperProps).elevation = appBarElevation
+      }
       Toolbar {
         sx {
           (theme.breakpoints.up(Breakpoint.md)) {

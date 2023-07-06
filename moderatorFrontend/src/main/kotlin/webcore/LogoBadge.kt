@@ -1,6 +1,6 @@
 package webcore
 
-import csstype.*
+import web.cssom.*
 import mui.material.Box
 import mui.material.Typography
 import mui.material.styles.TypographyVariant

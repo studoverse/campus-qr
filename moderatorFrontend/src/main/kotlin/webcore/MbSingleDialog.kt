@@ -1,9 +1,9 @@
 package webcore
 
+import web.cssom.*
 import app.AppContext
 import app.appContextToInject
 import com.studo.campusqr.common.utils.LocalizedString
-import csstype.*
 import mui.icons.material.SvgIconComponent
 import mui.material.*
 import mui.system.Breakpoint

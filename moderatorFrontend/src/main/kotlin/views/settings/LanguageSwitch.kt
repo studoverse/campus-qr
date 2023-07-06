@@ -2,10 +2,7 @@ package views.settings
 
 import app.AppContext
 import app.appContextToInject
-import csstype.AlignItems
-import csstype.Display
-import csstype.JustifyContent
-import csstype.string
+import web.cssom.*
 import mui.material.Box
 import mui.material.Switch
 import mui.material.SwitchColor

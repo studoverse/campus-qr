@@ -1,9 +1,6 @@
 package views.common
 
-import csstype.AlignSelf
-import csstype.Auto
-import csstype.Display
-import csstype.JustifyContent
+import web.cssom.*
 import mui.material.Box
 import mui.material.CircularProgress
 import mui.system.sx

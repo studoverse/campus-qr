@@ -3,9 +3,7 @@ package views.users
 import app.AppContext
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientUser
-import csstype.px
-import csstype.rgb
-import csstype.rgba
+import web.cssom.*
 import web.window.window
 import mui.material.*
 import mui.material.styles.TypographyVariant
@@ -90,7 +88,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         customContent = basicCustomContent {
           Typography {
             sx {
-              color = rgba(0, 0, 0, 0.54)
+              color = rgb(0, 0, 0, 0.54)
             }
             variant = TypographyVariant.body1
             component = ReactHTML.span

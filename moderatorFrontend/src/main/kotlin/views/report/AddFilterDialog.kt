@@ -4,10 +4,7 @@ import app.AppContext
 import app.GlobalCss.flex
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ReportData
-import csstype.Auto
-import csstype.minus
-import csstype.pct
-import csstype.px
+import web.cssom.*
 import mui.material.*
 import mui.system.sx
 import react.*

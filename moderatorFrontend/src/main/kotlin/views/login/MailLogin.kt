@@ -3,8 +3,7 @@ package views.login
 import com.studo.campusqr.common.LoginResult
 import com.studo.campusqr.common.payloads.MailLoginData
 import csstype.PropertiesBuilder
-import csstype.TextAlign
-import csstype.px
+import web.cssom.*
 import kotlinx.browser.document
 import mui.material.*
 import mui.material.styles.TypographyVariant

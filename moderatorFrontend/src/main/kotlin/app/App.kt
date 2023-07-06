@@ -19,9 +19,8 @@ import util.*
 import util.Url
 import views.common.centeredProgress
 import views.common.networkErrorView
+import web.cssom.*
 import web.location.location
-import web.scroll.ScrollBehavior
-import web.window.window
 import webcore.*
 import webcore.NavigationHandler.allUrls
 import webcore.extensions.launch

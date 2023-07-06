@@ -1,6 +1,6 @@
 package views.common
 
-import csstype.px
+import web.cssom.*
 import mui.material.Box
 import mui.material.LinearProgress
 import mui.system.sx

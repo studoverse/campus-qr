@@ -1,7 +1,7 @@
 package views.settings
 
 import app.baseUrl
-import csstype.Globals
+import web.cssom.*
 import mui.material.Button
 import mui.material.ButtonColor
 import mui.system.sx

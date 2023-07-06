@@ -1,9 +1,7 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
-import csstype.number
-import csstype.pct
-import csstype.px
+import web.cssom.*
 import js.core.jso
 import mui.material.Box
 import mui.material.FormControlVariant

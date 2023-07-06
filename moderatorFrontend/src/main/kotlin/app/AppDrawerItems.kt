@@ -14,6 +14,7 @@ import util.Url
 import util.get
 import views.common.spacer
 import views.settings.renderSettings
+import web.cssom.*
 import web.window.WindowTarget
 import webcore.LogoBadgeConfig
 import webcore.RComponent
