@@ -109,7 +109,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
           fullWidth = true
           type = InputType.password
           label = Strings.login_email_form_pw_label.get().toReactNode()
-          onChange = { event: dynamic ->
+          onChange = { event ->
             val value = event.target.value
             setState {
               password = value
