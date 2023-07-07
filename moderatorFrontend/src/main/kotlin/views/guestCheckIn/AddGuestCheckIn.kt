@@ -166,7 +166,8 @@ external interface AddGuestCheckInState : State {
       centeredProgress()
       spacer(36)
     } else {
-      Autocomplete<AutocompleteProps<String>> {
+      @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST") // Workaround for https://youtrack.jetbrains.com/issue/KT-60185
+      Autocomplete {
         value = state.selectedLocation?.name ?: ""
         onChange = { _, target: String?, _, _ ->
           setState {
@@ -178,8 +179,8 @@ external interface AddGuestCheckInState : State {
           }
         }
         openOnFocus = true
-        options = state.locationNameToLocationMap.keys.toTypedArray()
-        getOptionLabel = { it }
+        (this as AutocompleteProps<String>).options = state.locationNameToLocationMap.keys.toTypedArray()
+        (this as AutocompleteProps<String>).getOptionLabel = { it }
         renderInput = { params ->
           TextField.create {
             +params
@@ -193,11 +194,11 @@ external interface AddGuestCheckInState : State {
         }
       }
       spacer(16)
-      TextField<OutlinedTextFieldProps> {
+      TextField {
         error = state.personEmailTextFieldError.isNotEmpty()
         helperText = state.personEmailTextFieldError.toReactNode()
         fullWidth = true
-        variant = FormControlVariant.outlined()
+        variant = FormControlVariant.outlined
         label = Strings.email_address.get().toReactNode()
         value = state.personEmailTextFieldValue
         onChange = { event ->
@@ -211,7 +212,8 @@ external interface AddGuestCheckInState : State {
       if (state.selectedLocation?.seatCount != null) {
         val options = (1..state.selectedLocation?.seatCount!!).map { it }.toTypedArray()
         spacer(16)
-        Autocomplete<AutocompleteProps<Int>> {
+        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST") // Workaround for https://youtrack.jetbrains.com/issue/KT-60185
+        Autocomplete {
           onChange = { _, target: Int?, _, _ ->
             setState {
               seatInputError = ""
@@ -221,7 +223,7 @@ external interface AddGuestCheckInState : State {
           fullWidth = true
           multiple = false
           openOnFocus = true
-          this.options = options
+          (this as AutocompleteProps<Int>).options = options
           value = state.seatInputValue
           getOptionLabel = { it.toString() }
           renderInput = { params ->
