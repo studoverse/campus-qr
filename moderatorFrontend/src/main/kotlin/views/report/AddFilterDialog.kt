@@ -64,7 +64,8 @@ class AddFilterDialog(props: AddFilterDialogProps) :
         // Make sure that dialog's apply button doesn't get overlaid by autocomplete's dropdown
         width = 100.pct - 70.px
       }
-      Autocomplete<AutocompleteProps<String>> {
+      @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST") // Workaround for https://youtrack.jetbrains.com/issue/KT-60185
+      Autocomplete {
         onChange = { _, target: Array<String>?, _, _ ->
           setState {
             filteredSeats = target?.map { it.toInt() } ?: emptyList()
@@ -85,9 +86,9 @@ class AddFilterDialog(props: AddFilterDialogProps) :
         fullWidth = true
         multiple = true
         openOnFocus = true
-        options = state.filterOptions.map { it.toString() }.toTypedArray()
+        (this as AutocompleteProps<String>).options = state.filterOptions.map { it.toString() }.toTypedArray()
         value = state.filteredSeats.map { it.toString() }.toTypedArray()
-        getOptionLabel = { it }
+        (this as AutocompleteProps<String>).getOptionLabel = { it }
         renderInput = { params ->
           TextField.create {
             +params

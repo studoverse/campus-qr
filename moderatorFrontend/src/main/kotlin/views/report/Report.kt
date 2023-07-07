@@ -178,9 +178,9 @@ private class Report : RComponent<ReportProps, ReportState>() {
                 traceContacts()
               }
             }
-            TextField<OutlinedTextFieldProps> {
+            TextField {
               fullWidth = true
-              variant = FormControlVariant.outlined()
+              variant = FormControlVariant.outlined
               label = Strings.report_email.get().toReactNode()
               value = state.emailTextFieldValue
               error = state.emailTextFieldError.isNotEmpty()

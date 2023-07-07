@@ -11,7 +11,6 @@ import mui.icons.material.Close
 import mui.material.*
 import mui.material.Size
 import mui.system.sx
-import web.html.HTMLElement
 import react.*
 import react.dom.events.ChangeEvent
 import react.dom.html.ReactHTML.form
@@ -20,6 +19,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
+import web.html.HTMLElement
 import web.cssom.*
 import webcore.*
 import webcore.extensions.*
@@ -217,7 +217,8 @@ class AddLocation(props: AccessManagementDetailsProps) :
   }
 
   private fun ChildrenBuilder.renderLocationSelection() {
-    Autocomplete<AutocompleteProps<String>> {
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST") // Workaround for https://youtrack.jetbrains.com/issue/KT-60185
+    Autocomplete {
       disabled = props.config is AccessManagementDetailsConfig.Details
       value = state.selectedLocation?.name ?: ""
       onChange = { _, target: String?, _, _ ->
@@ -227,16 +228,16 @@ class AddLocation(props: AccessManagementDetailsProps) :
         }
       }
       openOnFocus = true
-      options = state.locationNameToLocationMap.keys.toTypedArray()
-      getOptionLabel = { it }
+      (this as AutocompleteProps<String>).options = state.locationNameToLocationMap.keys.toTypedArray()
+      (this as AutocompleteProps<String>).getOptionLabel = { it }
       renderInput = { params ->
         Fragment.create {
-          TextField<OutlinedTextFieldProps> {
+          TextField {
             Object.assign(this, params)
             error = state.selectedLocationTextFieldError.isNotEmpty()
             helperText = state.selectedLocationTextFieldError.toReactNode()
             fullWidth = true
-            variant = FormControlVariant.outlined()
+            variant = FormControlVariant.outlined
             label = Strings.location_name.get().toReactNode()
           }
         }
@@ -245,10 +246,10 @@ class AddLocation(props: AccessManagementDetailsProps) :
   }
 
   private fun ChildrenBuilder.renderNoteTextField() {
-    TextField<OutlinedTextFieldProps> {
+    TextField {
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
-      variant = FormControlVariant.outlined()
+      variant = FormControlVariant.outlined
       label = Strings.access_control_note.get().toReactNode()
       value = state.accessControlNoteTextFieldValue
       onChange = { event ->
@@ -261,10 +262,10 @@ class AddLocation(props: AccessManagementDetailsProps) :
   }
 
   private fun ChildrenBuilder.renderReasonTextField() {
-    TextField<OutlinedTextFieldProps> {
+    TextField {
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
-      variant = FormControlVariant.outlined()
+      variant = FormControlVariant.outlined
       label = Strings.access_control_reason.get().toReactNode()
       value = state.accessControlReasonTextFieldValue
       onChange = { event ->
@@ -538,11 +539,11 @@ class AddLocation(props: AccessManagementDetailsProps) :
       if (props.config !is AccessManagementDetailsConfig.Details) {
         Box {
           className = ClassName(GlobalCss.flex)
-          TextField<OutlinedTextFieldProps> {
+          TextField {
             disabled = props.config is AccessManagementDetailsConfig.Details
             helperText = Strings.access_control_add_permitted_people_tip.get().toReactNode()
             fullWidth = true
-            variant = FormControlVariant.outlined()
+            variant = FormControlVariant.outlined
             label = Strings.email_address.get().toReactNode()
             value = state.personEmailTextFieldValue
             onChange = { event: ChangeEvent<HTMLElement> ->

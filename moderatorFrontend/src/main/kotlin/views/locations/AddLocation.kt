@@ -13,13 +13,13 @@ import js.core.jso
 import mui.material.*
 import mui.system.sx
 import react.*
-import web.html.InputType
 import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
 import views.common.renderMbLinearProgress
 import views.common.spacer
+import web.html.InputType
 import webcore.*
 import webcore.extensions.launch
 
@@ -123,11 +123,11 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
   override fun ChildrenBuilder.render() {
     renderMbLinearProgress(show = state.locationCreationInProgress)
 
-    TextField<OutlinedTextFieldProps> {
+    TextField {
       error = state.locationTextFieldError.isNotEmpty()
       helperText = state.locationTextFieldError.toReactNode()
       fullWidth = true
-      variant = FormControlVariant.outlined()
+      variant = FormControlVariant.outlined
       label = Strings.location_name.get().toReactNode()
       value = state.locationTextFieldValue
       inputProps = jso {
@@ -157,9 +157,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
           +Strings.user_permissions.get()
         }
         variant = FormControlVariant.outlined
-        Select<SelectProps<String>> {
-          // TODO: @mh See: https://youtrack.jetbrains.com/issue/KT-51698
-          this as ChildrenBuilder
+        Select {
           value = state.locationAccessType.toString()
           onChange = { event, _ ->
             setState {
@@ -181,10 +179,10 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
 
     spacer(16)
 
-    TextField<OutlinedTextFieldProps> {
+    TextField {
       placeholder = Strings.undefined.get()
       fullWidth = true
-      variant = FormControlVariant.outlined()
+      variant = FormControlVariant.outlined
       type = InputType.number
       label = Strings.location_number_of_seats_hint.get().toReactNode()
       value = state.locationSeatCount?.toString() ?: ""

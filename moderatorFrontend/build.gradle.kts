@@ -28,12 +28,17 @@ dependencies {
   implementation(enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
 
   api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
+
+  // When updating any of the below kotlinw dependencies, check
+  // https://repo.maven.apache.org/maven2/org/jetbrains/kotlin-wrappers/kotlin-mui-icons/ (or the corresponding url for other packages)
+  // to see which versions are available for which kotlinw version.
   api(kotlinw("react"))
   api(kotlinw("emotion"))
   api(kotlinw("react-dom"))
   api(kotlinw("extensions"))
   api(kotlinw("mui"))
   api(kotlinw("mui-icons"))
+
   api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
   api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
   api("io.ktor:ktor-client-content-negotiation:$ktor_version")

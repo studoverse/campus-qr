@@ -3,14 +3,14 @@ package webcore
 import csstype.PropertiesBuilder
 import web.cssom.*
 import js.core.jso
-import mui.material.FormControlVariant
 import mui.material.GridProps
 import mui.material.InputBaseComponentProps
-import mui.system.Union
+import mui.material.InputBaseProps
+import mui.material.TextFieldProps
+import react.*
 import web.html.HTMLElement
 import web.html.HTMLInputElement
 import web.html.HTMLTextAreaElement
-import react.*
 
 val HTMLElement.value: String
   get() = when (this) {
@@ -79,12 +79,20 @@ inline var GridProps.xl: Any?
     asDynamic().xl = value
   }
 
-operator fun FormControlVariant.invoke(): Union = when (this) {
-  FormControlVariant.outlined -> "outlined"
-  FormControlVariant.filled -> "filled"
-  FormControlVariant.standard -> "standard"
-  else -> throw IllegalArgumentException("There is no variant with this name")
-}
+// Use custom onChange here for TextFields, to specify that the ChangeEventHandler is of type HTMLInputElement
+var TextFieldProps.onChange: react.dom.events.ChangeEventHandler<HTMLInputElement>?
+  get() {
+    return asDynamic().onChange as? react.dom.events.ChangeEventHandler<HTMLInputElement>?
+  }
+  set(value) {
+    asDynamic().onChange = value
+  }
+
+inline var TextFieldProps.InputProps: InputBaseProps
+  get() = asDynamic().InputProps
+  set(value) {
+    asDynamic().InputProps = value
+  }
 
 fun String.toReactNode() = ReactNode(source = this)
 

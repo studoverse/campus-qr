@@ -16,7 +16,6 @@ import csstype.*
 import mui.material.*
 import mui.system.sx
 import react.*
-import web.html.InputType
 import react.dom.html.ReactHTML.div
 import util.Strings
 import util.apiBase
@@ -24,6 +23,7 @@ import util.get
 import util.localizedString
 import views.common.renderMbLinearProgress
 import views.common.spacer
+import web.html.InputType
 import webcore.*
 import webcore.extensions.launch
 
@@ -188,11 +188,11 @@ external interface AddUserState : State {
     renderMbLinearProgress(show = state.userCreationInProgress)
 
     val userData = appContext.userDataContext.userData!!
-    TextField<OutlinedTextFieldProps> {
+    TextField {
       error = state.userEmailTextFieldError.isNotEmpty()
       helperText = state.userEmailTextFieldError.toReactNode()
       fullWidth = true
-      variant = FormControlVariant.outlined()
+      variant = FormControlVariant.outlined
       value = state.userEmailTextFieldValue
       autoComplete = "username"
       label = Strings.email_address.get().toReactNode()
@@ -212,12 +212,12 @@ external interface AddUserState : State {
     spacer(16)
 
     if (!userData.externalAuthProvider) {
-      TextField<OutlinedTextFieldProps> {
+      TextField {
         error = state.userPasswordTextFieldError.isNotEmpty()
         helperText = state.userPasswordTextFieldError.toReactNode()
         fullWidth = true
         type = InputType.password
-        variant = FormControlVariant.outlined()
+        variant = FormControlVariant.outlined
         if (props.config is AddUserConfig.Create) {
           label = Strings.login_email_form_pw_label.get().toReactNode()
         } else {
@@ -236,11 +236,11 @@ external interface AddUserState : State {
       spacer(16)
     }
 
-    TextField<OutlinedTextFieldProps> {
+    TextField {
       error = state.userNameTextFieldError.isNotEmpty()
       helperText = state.userNameTextFieldError.toReactNode()
       fullWidth = true
-      variant = FormControlVariant.outlined()
+      variant = FormControlVariant.outlined
       label = Strings.user_name.get().toReactNode()
       value = state.userNameTextFieldValue
       autoComplete = "off"

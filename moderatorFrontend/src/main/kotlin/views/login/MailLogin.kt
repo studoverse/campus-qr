@@ -5,10 +5,12 @@ import com.studo.campusqr.common.payloads.MailLoginData
 import csstype.PropertiesBuilder
 import web.cssom.*
 import kotlinx.browser.document
-import mui.material.*
+import mui.material.Box
+import mui.material.FormControlVariant
+import mui.material.TextField
+import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import web.html.HTMLElement
 import react.ChildrenBuilder
 import react.Props
 import react.State
@@ -19,6 +21,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.common.spacer
+import web.html.HTMLElement
 import web.html.InputType
 import webcore.*
 import webcore.extensions.launch
@@ -91,7 +94,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
         sx {
           padding = 16.px
         }
-        TextField<StandardTextFieldProps> {
+        TextField {
           fullWidth = true
           label = Strings.email_address.get().toReactNode()
           onChange = { event: ChangeEvent<HTMLElement> ->
@@ -100,22 +103,22 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
               errorMessage = null
             }
           }
-          variant = FormControlVariant.standard()
+          variant = FormControlVariant.standard
           value = state.email
         }
         spacer()
-        TextField<StandardTextFieldProps> {
+        TextField {
           fullWidth = true
           type = InputType.password
           label = Strings.login_email_form_pw_label.get().toReactNode()
-          onChange = { event: dynamic ->
+          onChange = { event ->
             val value = event.target.value
             setState {
               password = value
               errorMessage = null
             }
           }
-          variant = FormControlVariant.standard()
+          variant = FormControlVariant.standard
           value = state.password
         }
         state.errorMessage?.let { errorMessage ->
