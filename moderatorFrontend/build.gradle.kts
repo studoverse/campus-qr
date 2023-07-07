@@ -4,7 +4,7 @@ plugins {
 
 val ktor_version: String = "2.2.3" // 2.3.0 requires new IR compiler
 val kotlinx_html_version: String = "0.8.0"
-val kotlinx_serialization_version: String = "1.4.1" // 1.5.0 requires new IR compiler
+val kotlinx_serialization_version: String = "1.5.1"
 val kotlinx_coroutines_version: String = "1.6.4"
 
 repositories {
