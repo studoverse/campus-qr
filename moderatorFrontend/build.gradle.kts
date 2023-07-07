@@ -12,7 +12,7 @@ repositories {
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-val kotlinWrappersVersion = "1.0.0-pre.588"
+val kotlinWrappersVersion = "1.0.0-pre.591"
 
 kotlin {
   js(IR) {
@@ -49,14 +49,14 @@ dependencies {
   implementation("io.ktor:ktor-client-serialization:$ktor_version")
 
   implementation(npm("normalize.css", "8.0.1"))
-  api(devNpm("style-loader", "3.3.1"))
-  api(devNpm("css-loader", "6.7.1"))
+  api(devNpm("style-loader", "3.3.3"))
+  api(devNpm("css-loader", "6.8.1"))
 
+  // Use versions that are specified in the kotlin-wrappers: https://github.com/JetBrains/kotlin-wrappers/blob/master/gradle.properties
   api(npm("react", "18.2.0"))
   api(npm("react-dom", "18.2.0"))
-
-  api(npm("@mui/material", "5.9.1"))
-  api(npm("@mui/icons-material", "5.10.9"))
+  api(npm("@mui/material", "5.13.6"))
+  api(npm("@mui/icons-material", "5.11.16"))
 
   api(npm("js-file-download", "0.4.12"))
 
