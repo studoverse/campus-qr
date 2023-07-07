@@ -41,7 +41,7 @@ dependencies {
   implementation("ch.qos.logback:logback-classic:1.2.11")
 
   implementation("commons-codec:commons-codec:1.15")
-  implementation("com.github.studo-app:katerbase:09cacb49c1")
+  implementation("com.github.studoverse:katerbase:621709cd1ad2838d860e2937691a63d32734ed1e")
 }
 
 application {
