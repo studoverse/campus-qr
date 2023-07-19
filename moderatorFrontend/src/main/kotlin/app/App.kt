@@ -254,6 +254,59 @@ private class App : RComponent<AppProps, AppState>() {
         }
 
       }
+
+      components = jso {
+        val autoCompleteOff = "off" // Prevent lastpass from adding the icon for autofill
+        this["MuiTooltip"] = jso {
+          styleOverrides = jso {
+            tooltip = jso {
+              backgroundColor = "#616161" // Default tooltip color but without alpha to improve readability
+              fontSize = "0.875rem" // Default body font size to improve readability
+            }
+          }
+        }
+
+        this["MuiAutocomplete"] = jso {
+          defaultProps = jso {
+            disablePortal = true // Without this, the absolute position of the dropdown element is sometimes ~400px too high
+          }
+        }
+        this["MuiTextField"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiInputBase"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiInput"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiOutlinedInput"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiFilledInput"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiSelect"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiNativeSelect"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+      }
     },
     locale,
   )
