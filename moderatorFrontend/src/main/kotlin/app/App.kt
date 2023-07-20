@@ -184,6 +184,7 @@ private class App : RComponent<AppProps, AppState>() {
       allUrls = Url.values().toList(),
       dialogRef = navigationHandlerDialogRef,
       handleHistoryChange = ::handleHistoryChange,
+      getCurrentAppRoute = { state.currentAppRoute },
     )
 
     val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
