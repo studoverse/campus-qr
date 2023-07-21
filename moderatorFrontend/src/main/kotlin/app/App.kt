@@ -313,20 +313,12 @@ private class App : RComponent<AppProps, AppState>() {
   )
 
   private fun ChildrenBuilder.renderViewContent() {
-    if (state.currentAppRoute == null) {
-      // currentAppRoute is set in componentDidMount
-      if (!state.loadingUserData && state.userData == null) {
-        networkErrorView()
-      } else {
-        Box {
-          sx {
-            display = Display.flex
-            minHeight = 100.vh
-            flexDirection = FlexDirection.column
-          }
-          centeredProgress()
-        }
-      }
+    if (state.loadingUserData || (location.toRoute() != null && state.currentAppRoute == null)) {
+      // Wait for the network request in fetchUserDataAndInit() to complete or wait for currentAppRoute to be set if the route exists.
+      // Path not found is handled in renderAppContent()
+      centeredProgress()
+    } else if (state.userData == null) {
+      networkErrorView()
     } else {
       renderAppContent()
     }
