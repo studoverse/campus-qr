@@ -33,14 +33,14 @@ dependencies {
   implementation("io.ktor:ktor-server-html-builder:$ktor_version")
   implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.9.0")
 
-  implementation("org.mongodb:mongodb-driver-sync:4.6.0")
+  implementation("org.mongodb:mongodb-driver-sync:4.10.2")
 
-  implementation("com.fasterxml.jackson.core:jackson-core:2.13.3")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
+  implementation("com.fasterxml.jackson.core:jackson-core:2.15.2")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
 
   implementation("ch.qos.logback:logback-classic:1.2.11")
 
-  implementation("commons-codec:commons-codec:1.15")
+  implementation("commons-codec:commons-codec:1.16.0")
   implementation("com.github.studoverse:katerbase:621709cd1ad2838d860e2937691a63d32734ed1e")
 }
 

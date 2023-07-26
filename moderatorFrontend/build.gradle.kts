@@ -5,16 +5,16 @@ plugins {
 }
 
 val ktor_version: String = "2.3.2"
-val kotlinx_html_version: String = "0.9.0"
+val kotlinx_html_version: String = "0.9.1"
 val kotlinx_serialization_version: String = "1.5.1"
-val kotlinx_coroutines_version: String = "1.7.2"
+val kotlinx_coroutines_version: String = "1.7.3"
 
 repositories {
   mavenCentral()
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-val kotlinWrappersVersion = "1.0.0-pre.591"
+val kotlinWrappersVersion = "1.0.0-pre.601"
 
 kotlin {
   js(IR) {
