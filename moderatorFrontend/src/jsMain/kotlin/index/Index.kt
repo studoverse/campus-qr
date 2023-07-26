@@ -10,7 +10,7 @@ import web.dom.document
 import web.html.HTML
 
 fun main() {
-  requireAll(require.context("../../../../../moderatorFrontend/src/main/kotlin", true, js("/\\.css$/")))
+  requireAll(require.context("../../../../../moderatorFrontend/src/jsMain/kotlin", true, js("/\\.css$/")))
   requireAll(require.context("normalize.css", true, js("/\\.css$/")))
 
   val container = document.createElement(HTML.div).also { htmlDivElement ->
