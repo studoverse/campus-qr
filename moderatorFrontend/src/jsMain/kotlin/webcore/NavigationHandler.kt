@@ -77,7 +77,12 @@ object NavigationHandler {
   /**
    * [allUrls]: Pass all urls, needed for `.toRoute()`.
    */
-  fun initApp(allUrls: List<MbUrl>, dialogRef: RefObject<MbDialog>, handleHistoryChange: (newRoute: AppRoute?) -> Unit) {
+  fun initApp(
+    allUrls: List<MbUrl>,
+    dialogRef: RefObject<MbDialog>,
+    handleHistoryChange: (newRoute: AppRoute?) -> Unit,
+    getCurrentAppRoute: () -> AppRoute?,
+  ) {
     val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
     if (duplicatePaths.isNotEmpty()) {
       throw IllegalStateException(
@@ -101,10 +106,13 @@ object NavigationHandler {
     historyStack.add(timestamp)
 
     // Enable client side routing
-    enableClientSideRouting(handleHistoryChange)
+    enableClientSideRouting(handleHistoryChange, getCurrentAppRoute)
   }
 
-  private fun enableClientSideRouting(handleHistoryChange: (newRoute: AppRoute?) -> Unit) {
+  private fun enableClientSideRouting(
+    handleHistoryChange: (newRoute: AppRoute?) -> Unit,
+    getCurrentAppRoute: () -> AppRoute?,
+  ) {
     window.addEventListener(BeforeUnloadEvent.BEFORE_UNLOAD, { event ->
       if (navigateAwayListeners.any { !it.shouldNavigateAway() }) {
         // Confirmation dialog is only shown when preventDefault is called
@@ -121,24 +129,36 @@ object NavigationHandler {
         return@addEventListener
       }
 
+      val newRoute = location.toRoute() ?: throw Exception("Could not parse route from URL: ${location.href}")
       if (shouldNavigate(
-          newRoute = location.toRoute() ?: throw Exception("Could not parse route from URL: ${location.href}"),
+          newRoute = newRoute,
           navigationEvent = NavigationEvent.POPSTATE,
           handleHistoryChange = handleHistoryChange,
         )
       ) {
         if (history.state == null) {
-          // Log for debugging
-          console.error(
-            "history.state is null in popstate. " +
-                "This should not happen! historyStack: ${historyStack.joinToString()}, currentHistoryState: $currentHistoryState"
-          )
+          if (newRoute == getCurrentAppRoute()) {
+            // This popstate event is triggered when the hash changes (e.g. when the user manually edits the #hash in the browser address bar).
+            pushHistoryEntryToNavigationHandlerState()
+            // For a new history entry the history state is not set yet, so call replaceHistory().
+            // Only applies to a hash change because for query params or route changes,
+            // the whole application mounts again (like a location.reload()).
+            replaceHistory(relativeUrl = location.hash, title = newRoute.url.title.get())
+          } else {
+            // Log for debugging
+            console.error(
+              "history.state is null in popstate without being caused by a hash change. " +
+                  "This should not happen! historyStack: ${historyStack.joinToString()}, currentHistoryState: $currentHistoryState"
+            )
+          }
         } else {
+          // This case covers navigating through the "existing" history
+
           // Update currentHistoryState to the history state of the page we are navigating to.
           currentHistoryState = history.state as Double
+          // Updating the currentAppRoute causes the new page to be shown, so only do it when we are sure we want to leave the page.
+          handleHistoryChange(location.toRoute())
         }
-        // Updating the currentAppRoute shows the new page, so only do it when we are sure we want to leave the page.
-        handleHistoryChange(location.toRoute())
       }
     })
 
@@ -187,16 +207,20 @@ object NavigationHandler {
   fun pushHistory(relativeUrl: String, title: String, handleHistoryChange: (newRoute: AppRoute?) -> Unit) {
     // Only handle navigation when the URL changes
     if (relativeUrl != location.relativeUrl) {
-      while (historyStack.isNotEmpty() && currentHistoryState != historyStack.last()) {
-        // Remove history entries that are after the current page, since they are no longer part of the history.
-        // This is the case when navigating from a history entry that is not the last one (= `history.forward()` works) to a new page
-        historyStack.removeLast()
-      }
-      currentHistoryState = Date().getTime()
-      historyStack.add(currentHistoryState!!)
+      pushHistoryEntryToNavigationHandlerState()
       history.pushState(data = currentHistoryState, unused = title, url = relativeUrl)
       handleHistoryChange(location.toRoute())
     }
+  }
+
+  private fun pushHistoryEntryToNavigationHandlerState() {
+    while (historyStack.isNotEmpty() && currentHistoryState != historyStack.last()) {
+      // Remove history entries that are after the current page, since they are no longer part of the history.
+      // This is the case when navigating from a history entry that is not the last one (= `history.forward()` works) to a new page
+      historyStack.removeLast()
+    }
+    currentHistoryState = Date().getTime()
+    historyStack.add(currentHistoryState!!)
   }
 
   fun pushHistoryHash(hash: String, title: String) {
@@ -205,6 +229,7 @@ object NavigationHandler {
   }
 
   fun replaceHistory(relativeUrl: String, title: String) {
+    // Do not update the currentHistoryState and the historyStack because we want to leave the history as it is except for the URL.
     history.replaceState(data = currentHistoryState, unused = title, url = relativeUrl)
   }
 

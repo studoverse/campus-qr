@@ -95,6 +95,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
           padding = 16.px
         }
         TextField {
+          autoComplete = "email"
           fullWidth = true
           label = Strings.email_address.get().toReactNode()
           onChange = { event: ChangeEvent<HTMLElement> ->
@@ -108,6 +109,7 @@ private class MailLogin : LoginDetailComponent<MailLoginProps, MailLoginState>()
         }
         spacer()
         TextField {
+          autoComplete = "current-password"
           fullWidth = true
           type = InputType.password
           label = Strings.login_email_form_pw_label.get().toReactNode()

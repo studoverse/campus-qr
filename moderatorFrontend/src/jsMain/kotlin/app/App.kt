@@ -183,6 +183,7 @@ private class App : RComponent<AppProps, AppState>() {
       allUrls = Url.values().toList(),
       dialogRef = navigationHandlerDialogRef,
       handleHistoryChange = ::handleHistoryChange,
+      getCurrentAppRoute = { state.currentAppRoute },
     )
 
     val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
@@ -221,44 +222,102 @@ private class App : RComponent<AppProps, AppState>() {
     }
   }
 
-  private val theme = createTheme(jso {
+  private val locale
+    get() = when (state.activeLanguage) {
+      MbLocalizedStringConfig.SupportedLanguage.De -> {
+        deDE
+      }
 
-    typography = jso {
-      useNextVariants = true
+      MbLocalizedStringConfig.SupportedLanguage.En -> {
+        enUS
+      }
     }
-    palette = jso {
-      primary = jso {
-        main = ColorPalette.primaryColor
-        contrastText = "#fff"
+
+  private val theme = createTheme(
+    options = jso {
+      typography = jso {
+        useNextVariants = true
+      }
+      palette = jso {
+        primary = jso {
+          main = ColorPalette.primaryColor
+          contrastText = "#fff"
+        }
+
+        secondary = jso {
+          main = ColorPalette.secondaryColor
+        }
+
+        success = jso {
+          main = "#41d856"
+          contrastText = "#fff"
+        }
+
       }
 
-      secondary = jso {
-        main = ColorPalette.secondaryColor
-      }
-
-      success = jso {
-        main = "#41d856"
-        contrastText = "#fff"
-      }
-
-    }
-  })
-
-  private fun ChildrenBuilder.renderViewContent() {
-    if (state.currentAppRoute == null) {
-      // currentAppRoute is set in componentDidMount
-      if (!state.loadingUserData && state.userData == null) {
-        networkErrorView()
-      } else {
-        Box {
-          sx {
-            display = Display.flex
-            minHeight = 100.vh
-            flexDirection = FlexDirection.column
+      components = jso {
+        val autoCompleteOff = "off" // Prevent lastpass from adding the icon for autofill
+        this["MuiTooltip"] = jso {
+          styleOverrides = jso {
+            tooltip = jso {
+              backgroundColor = "#616161" // Default tooltip color but without alpha to improve readability
+              fontSize = "0.875rem" // Default body font size to improve readability
+            }
           }
-          centeredProgress()
+        }
+
+        this["MuiAutocomplete"] = jso {
+          defaultProps = jso {
+            disablePortal = true // Without this, the absolute position of the dropdown element is sometimes ~400px too high
+          }
+        }
+        this["MuiTextField"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiInputBase"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiInput"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiOutlinedInput"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiFilledInput"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiSelect"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
+        }
+        this["MuiNativeSelect"] = jso {
+          defaultProps = jso {
+            autoComplete = autoCompleteOff
+          }
         }
       }
+    },
+    locale,
+  )
+
+  private fun ChildrenBuilder.renderViewContent() {
+    if (state.loadingUserData || (location.toRoute() != null && state.currentAppRoute == null)) {
+      // Wait for the network request in fetchUserDataAndInit() to complete or wait for currentAppRoute to be set if the route exists.
+      // Path not found is handled in renderAppContent()
+      centeredProgress()
+    } else if (state.userData == null) {
+      networkErrorView()
     } else {
       renderAppContent()
     }
