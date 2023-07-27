@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/moderatorFrontend/CampusQR.moderatorFrontend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/moderatorFrontend/CampusQR.moderatorFrontend.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/moderatorFrontend/CampusQR.moderatorFrontend.test.iml" filepath="$PROJECT_DIR$/.idea/modules/moderatorFrontend/CampusQR.moderatorFrontend.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/campus-qr.iml" filepath="$PROJECT_DIR$/.idea/campus-qr.iml" />
     </modules>
   </component>

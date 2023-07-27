@@ -4,18 +4,21 @@
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/moderatorFrontend" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="browserDevelopmentRun -t" />
+      <option name="scriptParameters" value="-t" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
-        <list />
+        <list>
+          <option value="jsBrowserDevelopmentRun" />
+        </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
+    <ForceTestExec>false</ForceTestExec>
     <method v="2" />
   </configuration>
 </component>

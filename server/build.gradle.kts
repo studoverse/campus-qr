@@ -10,7 +10,7 @@ repositories {
   maven("https://jitpack.io")
 }
 
-val ktor_version: String = "2.2.3" // 2.3.0 requires new IR compiler
+val ktor_version: String = "2.3.2"
 
 dependencies {
   implementation(project(":common"))
@@ -31,21 +31,21 @@ dependencies {
   implementation("io.ktor:ktor-server-servlet:$ktor_version")
   implementation("io.ktor:ktor-server-metrics:$ktor_version")
   implementation("io.ktor:ktor-server-html-builder:$ktor_version")
-  implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.9.0")
 
-  implementation("org.mongodb:mongodb-driver-sync:4.6.0")
+  implementation("org.mongodb:mongodb-driver-sync:4.10.2")
 
-  implementation("com.fasterxml.jackson.core:jackson-core:2.13.3")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
+  implementation("com.fasterxml.jackson.core:jackson-core:2.15.2")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
 
   implementation("ch.qos.logback:logback-classic:1.2.11")
 
-  implementation("commons-codec:commons-codec:1.15")
-  implementation("com.github.studo-app:katerbase:09cacb49c1")
+  implementation("commons-codec:commons-codec:1.16.0")
+  implementation("com.github.studoverse:katerbase:621709cd1ad2838d860e2937691a63d32734ed1e")
 }
 
 application {
-  mainClassName = "com.studo.campusqr.ServerKt"
+  mainClass.set("com.studo.campusqr.ServerKt")
 }
 
 tasks {
