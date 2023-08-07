@@ -157,9 +157,7 @@ suspend fun main() {
         get("campusqr-admin.js") { call.returnModeratorJs() }
         get("/{...}") { call.returnModeratorIndexHtml() }
       }
-      static("/static") {
-        resources()
-      }
+      staticResources(remotePath = "/static", basePackage = null)
     }
   }.start(wait = true)
 }
