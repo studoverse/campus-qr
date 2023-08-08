@@ -31,7 +31,7 @@ dependencies {
   implementation("io.ktor:ktor-server-servlet:$ktor_version")
   implementation("io.ktor:ktor-server-metrics:$ktor_version")
   implementation("io.ktor:ktor-server-html-builder:$ktor_version")
-  implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.9.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.9.1")
 
   implementation("org.mongodb:mongodb-driver-sync:4.10.2")
 
@@ -41,7 +41,7 @@ dependencies {
   implementation("ch.qos.logback:logback-classic:1.2.11")
 
   implementation("commons-codec:commons-codec:1.16.0")
-  implementation("com.github.studoverse:katerbase:621709cd1ad2838d860e2937691a63d32734ed1e")
+  implementation("com.github.studoverse:katerbase:6d198f71575680f46b2b95f93762aa38cfc6b1b8")
 }
 
 application {
