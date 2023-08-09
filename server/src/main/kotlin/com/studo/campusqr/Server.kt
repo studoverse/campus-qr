@@ -1,7 +1,6 @@
 package com.studo.campusqr
 
 import ch.qos.logback.classic.Level
-import com.moshbit.katerbase.connect
 import com.studo.campusqr.auth.AuthProvider
 import com.studo.campusqr.auth.getAuthProvider
 import com.studo.campusqr.database.MainDatabase
@@ -38,7 +37,6 @@ val localDebug: Boolean = System.getenv("DEBUG") == "true"
 lateinit var authProvider: AuthProvider
 
 suspend fun main() {
-  MainDatabase.connect()
   initialDatabaseSetup()
 
   authProvider = getAuthProvider()
