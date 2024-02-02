@@ -69,8 +69,7 @@ kotlin {
         api(npm("react", "18.2.0"))
         api(npm("react-dom", "18.2.0"))
         api(npm("@mui/material", "5.15.7"))
-        api(npm("@mui/icons-material", "5.11.16"))
-        //api(npm("@mui/icons-material", "5.15.17")) // TODO: @mh Fix
+        api(npm("@mui/icons-material", "5.15.7"))
 
         api(npm("js-file-download", "0.4.12"))
       }
