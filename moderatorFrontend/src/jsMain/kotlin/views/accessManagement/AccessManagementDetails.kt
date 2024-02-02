@@ -6,7 +6,7 @@ import app.appContextToInject
 import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.payloads.*
 import csstype.*
-import js.core.Object
+import js.objects.Object
 import mui.icons.material.Close
 import mui.material.*
 import mui.material.Size

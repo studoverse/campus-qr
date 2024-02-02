@@ -9,7 +9,7 @@ import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
 import csstype.*
-import js.core.jso
+import js.objects.jso
 import mui.material.*
 import mui.system.sx
 import react.*

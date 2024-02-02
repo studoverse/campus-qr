@@ -5,7 +5,7 @@ import app.appContextToInject
 import csstype.PropertiesBuilder
 import web.cssom.*
 import web.window.window
-import js.core.jso
+import js.objects.jso
 import mui.material.*
 import mui.system.Breakpoint
 import mui.system.sx

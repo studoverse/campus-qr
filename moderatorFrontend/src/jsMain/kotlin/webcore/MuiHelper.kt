@@ -1,13 +1,14 @@
 package webcore
 
 import csstype.PropertiesBuilder
-import web.cssom.*
-import js.core.jso
+import js.objects.jso
 import mui.material.GridProps
 import mui.material.InputBaseComponentProps
-import mui.material.InputBaseProps
+import mui.material.InputProps
 import mui.material.TextFieldProps
+import mui.material.Size
 import react.*
+import web.cssom.*
 import web.html.HTMLElement
 import web.html.HTMLInputElement
 import web.html.HTMLTextAreaElement
@@ -79,6 +80,11 @@ inline var GridProps.xl: Any?
     asDynamic().xl = value
   }
 
+val Size.Companion.medium: Size.medium
+  get() = pkcs8
+
+fun gridArea(value: String): GridArea = value.unsafeCast<GridArea>()
+
 // Use custom onChange here for TextFields, to specify that the ChangeEventHandler is of type HTMLInputElement
 var TextFieldProps.onChange: react.dom.events.ChangeEventHandler<HTMLInputElement>?
   get() {
@@ -88,7 +94,7 @@ var TextFieldProps.onChange: react.dom.events.ChangeEventHandler<HTMLInputElemen
     asDynamic().onChange = value
   }
 
-inline var TextFieldProps.InputProps: InputBaseProps
+inline var TextFieldProps.InputProps: InputProps
   get() = asDynamic().InputProps
   set(value) {
     asDynamic().InputProps = value
@@ -123,8 +129,9 @@ class OverflowForDialog(
 /**
  * Due to issues with the `Portal` it is deactivated which leads to overflowing content being cut off at the edges of a Dialog/Popover etc.
  * To get the same behaviour as with a working `Portal` set overflow-y to `visible`
- * Note that overflowX needs to be set as well because if overflowY is `visible` and overflowX is `hidden`, `scroll` or `auto`
- * overflowY will be set to `auto` implicitly
+ * Note that overflowX needs to be set as well because if overflowY is `visible` (default) and overflowX is `hidden`, `scroll` or `auto`
+ * overflowY will be set to `auto` implicitly.
+ * See: https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-y
  */
 fun overflowForDialog(overflowX: Overflow = Overflow.visible): OverflowForDialog = OverflowForDialog(
   overflowY = Overflow.visible,

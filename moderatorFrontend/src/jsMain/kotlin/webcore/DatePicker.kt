@@ -2,7 +2,7 @@ package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
 import web.cssom.*
-import js.core.jso
+import js.objects.jso
 import mui.material.Box
 import mui.material.FormControlVariant
 import mui.material.TextField

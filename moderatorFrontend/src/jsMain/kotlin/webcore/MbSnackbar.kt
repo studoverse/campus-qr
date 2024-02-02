@@ -1,7 +1,7 @@
 import app.AppContext
 import app.appContextToInject
 import csstype.*
-import js.core.jso
+import js.objects.jso
 import mui.icons.material.*
 import mui.material.*
 import mui.system.sx

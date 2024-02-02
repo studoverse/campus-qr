@@ -1,6 +1,6 @@
 package webcore.extensions
 
-import js.core.asList
+import js.array.asList
 import mui.material.MuiPaper
 import web.dom.document
 import web.html.HTMLTextAreaElement
