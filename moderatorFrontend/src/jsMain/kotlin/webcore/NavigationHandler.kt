@@ -1,7 +1,7 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
-import js.core.jso
+import js.objects.jso
 import webcore.extensions.toRoute
 import web.window.window
 import mui.icons.material.Edit
@@ -16,14 +16,11 @@ import util.AppRoute
 import util.MbUrl
 import util.get
 import util.relativeUrl
-import web.history.POP_STATE
 import web.history.PopStateEvent
 import web.history.history
 import web.location.location
 import web.scroll.ScrollBehavior
-import web.uievents.CLICK
 import web.url.URLSearchParams
-import web.window.BEFORE_UNLOAD
 import web.window.BeforeUnloadEvent
 import web.window.WindowTarget
 import webcore.extensions.findParent

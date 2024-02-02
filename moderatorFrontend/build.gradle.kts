@@ -5,8 +5,8 @@ plugins {
 }
 
 val ktor_version: String = "2.3.2"
-val kotlinx_html_version: String = "0.9.1"
-val kotlinx_serialization_version: String = "1.5.1"
+val kotlinx_html_version: String = "0.11.0"
+val kotlinx_serialization_version: String = "1.6.2"
 val kotlinx_coroutines_version: String = "1.7.3"
 
 repositories {
@@ -14,7 +14,7 @@ repositories {
 }
 
 fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-val kotlinWrappersVersion = "1.0.0-pre.603"
+val kotlinWrappersVersion = "1.0.0-pre.692"
 
 kotlin {
   js(IR) {
@@ -37,7 +37,7 @@ kotlin {
       dependencies {
         implementation(kotlin("stdlib-js"))
         implementation(project(":common"))
-        implementation(enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
+        implementation(project.dependencies.enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
 
         api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
 
@@ -48,8 +48,9 @@ kotlin {
         api(kotlinw("emotion"))
         api(kotlinw("react-dom"))
         api(kotlinw("extensions"))
-        api(kotlinw("mui"))
-        api(kotlinw("mui-icons"))
+        api(kotlinw("mui-material"))
+        api(kotlinw("mui-icons-material"))
+        api(kotlinw("mui-lab"))
 
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
         api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
@@ -67,8 +68,9 @@ kotlin {
         // Use versions that are specified in the kotlin-wrappers: https://github.com/JetBrains/kotlin-wrappers/blob/master/gradle.properties
         api(npm("react", "18.2.0"))
         api(npm("react-dom", "18.2.0"))
-        api(npm("@mui/material", "5.13.6"))
+        api(npm("@mui/material", "5.15.7"))
         api(npm("@mui/icons-material", "5.11.16"))
+        //api(npm("@mui/icons-material", "5.15.17")) // TODO: @mh Fix
 
         api(npm("js-file-download", "0.4.12"))
       }

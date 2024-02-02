@@ -1,7 +1,7 @@
 package webcore
 
 import kotlinext.js.assign
-import js.core.jso
+import js.objects.jso
 import react.*
 
 abstract class RComponent<P : Props, S : State> : Component<P, S> {
