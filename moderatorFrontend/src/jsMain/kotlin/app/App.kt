@@ -5,7 +5,7 @@ import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.payloads.*
 import csstype.*
-import js.core.jso
+import js.objects.jso
 import kotlinx.browser.document
 import mbSnackbar
 import mui.icons.material.*
