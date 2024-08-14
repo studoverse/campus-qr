@@ -13,10 +13,6 @@ repositories {
   mavenCentral()
 }
 
-// TODO: @mh Use new version catalog
-fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
-val kotlinWrappersVersion = "1.0.0-pre.791"
-
 kotlin {
   js(IR) {
     useCommonJs()
@@ -38,20 +34,16 @@ kotlin {
       dependencies {
         implementation(kotlin("stdlib-js"))
         implementation(project(":common"))
-        implementation(project.dependencies.enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
 
         api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
 
-        // When updating any of the below kotlinw dependencies, check
-        // https://repo.maven.apache.org/maven2/org/jetbrains/kotlin-wrappers/kotlin-mui-icons/ (or the corresponding url for other packages)
-        // to see which versions are available for which kotlinw version.
-        api(kotlinw("react"))
-        api(kotlinw("emotion"))
-        api(kotlinw("react-dom"))
-        api(kotlinw("extensions"))
-        api(kotlinw("mui-material"))
-        api(kotlinw("mui-icons-material"))
-        api(kotlinw("mui-lab"))
+        implementation(libs.wrappers.react)
+        implementation(libs.wrappers.react.dom)
+        implementation(libs.wrappers.emotion)
+        implementation(libs.wrappers.extensions)
+        implementation(libs.wrappers.mui.material)
+        implementation(libs.wrappers.mui.icons.material)
+        implementation(libs.wrappers.mui.lab)
 
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
         api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
