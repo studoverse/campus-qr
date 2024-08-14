@@ -37,13 +37,13 @@ kotlin {
 
         api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
 
-        implementation(libs.wrappers.react)
-        implementation(libs.wrappers.react.dom)
-        implementation(libs.wrappers.emotion)
-        implementation(libs.wrappers.extensions)
-        implementation(libs.wrappers.mui.material)
-        implementation(libs.wrappers.mui.icons.material)
-        implementation(libs.wrappers.mui.lab)
+        api(libs.wrappers.react)
+        api(libs.wrappers.react.dom)
+        api(libs.wrappers.emotion)
+        api(libs.wrappers.extensions)
+        api(libs.wrappers.mui.material)
+        api(libs.wrappers.mui.icons.material)
+        api(libs.wrappers.mui.lab)
 
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
         api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
