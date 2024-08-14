@@ -51,7 +51,7 @@ external interface AddUserState : State {
   var userPermissions: Set<UserPermission>
 }
 
-@Suppress("UPPER_BOUND_VIOLATED") class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
+class AddUser(props: AddUserProps) : RComponent<AddUserProps, AddUserState>(props) {
 
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddUser::class) {

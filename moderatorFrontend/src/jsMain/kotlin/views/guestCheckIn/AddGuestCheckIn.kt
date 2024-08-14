@@ -44,7 +44,7 @@ external interface AddGuestCheckInState : State {
   var seatInputError: String
 }
 
-@Suppress("UPPER_BOUND_VIOLATED") class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
+class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>() {
 
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
   companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AddGuestCheckIn::class) {
@@ -165,21 +165,21 @@ external interface AddGuestCheckInState : State {
       centeredProgress()
       spacer(36)
     } else {
-      @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST") // Workaround for https://youtrack.jetbrains.com/issue/KT-60185
-      Autocomplete {
-        value = state.selectedLocation?.name ?: ""
-        onChange = { _, target: String?, _, _ ->
+      Autocomplete<AutocompleteProps<String>> {
+        value = state.selectedLocation?.name
+        onChange = { _, target: Any?, _, _ ->
+          target as String?
           setState {
             selectedLocationTextFieldError = ""
-            selectedLocation = target?.let { locationNameToLocationMap[it] }
+            selectedLocation = target.let { locationNameToLocationMap[it] }
 
             // User should re-select seat if needed
             seatInputValue = null
           }
         }
         openOnFocus = true
-        (this as AutocompleteProps<String>).options = state.locationNameToLocationMap.keys.toTypedArray()
-        (this as AutocompleteProps<String>).getOptionLabel = { it }
+        options = state.locationNameToLocationMap.keys.toTypedArray()
+        getOptionLabel = { it }
         renderInput = { params ->
           TextField.create {
             +params
@@ -211,9 +211,9 @@ external interface AddGuestCheckInState : State {
       if (state.selectedLocation?.seatCount != null) {
         val options = (1..state.selectedLocation?.seatCount!!).map { it }.toTypedArray()
         spacer(16)
-        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST") // Workaround for https://youtrack.jetbrains.com/issue/KT-60185
-        Autocomplete {
-          onChange = { _, target: Int?, _, _ ->
+        Autocomplete<AutocompleteProps<Int>> {
+          onChange = { _, target: Any?, _, _ ->
+            target as Int?
             setState {
               seatInputError = ""
               seatInputValue = target
@@ -222,7 +222,7 @@ external interface AddGuestCheckInState : State {
           fullWidth = true
           multiple = false
           openOnFocus = true
-          (this as AutocompleteProps<Int>).options = options
+          this.options = options
           value = state.seatInputValue
           getOptionLabel = { it.toString() }
           renderInput = { params ->

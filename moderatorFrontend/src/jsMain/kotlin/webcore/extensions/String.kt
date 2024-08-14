@@ -1,7 +1,7 @@
 package webcore.extensions
 
 import js.array.asList
-import mui.material.MuiPaper
+import mui.material.paperClasses
 import web.dom.document
 import web.html.HTMLTextAreaElement
 import web.navigator.navigator
@@ -38,7 +38,7 @@ fun String.copyToClipboard(onSuccess: (() -> Unit)? = null, onFail: ((throwable:
   // Check for navigator.clipboard.writeText support
   @Suppress("UnsafeCastFromDynamic")
   if (navigator.clipboard.asDynamic().writeText) {
-    navigator.clipboard.writeText(this).then(
+    navigator.clipboard.writeTextAsync(this).then(
       onFulfilled = {
         onSuccess?.invoke()
       },
@@ -67,7 +67,7 @@ fun String.copyToClipboard(onSuccess: (() -> Unit)? = null, onFail: ((throwable:
       .getElementsByClassName("MuiModal-root")
       .asList()
       .singleOrNull { it.ariaHidden != true.toString() } // Try to find active modal, which doesn't have ariaHidden set
-      ?.getElementsByClassName(MuiPaper.root.toString())?.get(0) // Paper is present in all components that use a Modal
+      ?.getElementsByClassName(paperClasses.root.toString())?.get(0) // Paper is present in all components that use a Modal
       ?: document.body // Default case when we are not showing a modal component
     focusableElement.appendChild(textArea)
     textArea.focus()

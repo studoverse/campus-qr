@@ -24,7 +24,6 @@ external interface BasicCustomContentDialogProps : Props {
   var config: BasicCustomContentDialogConfig
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
 class BasicCustomContentDialog(props: BasicCustomContentDialogProps) :
   RComponentWithCoroutineScope<BasicCustomContentDialogProps, State>(props) {
 
