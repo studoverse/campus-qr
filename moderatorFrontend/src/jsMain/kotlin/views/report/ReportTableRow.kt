@@ -23,7 +23,6 @@ external interface ReportTableRowProps : Props {
 
 external interface ReportTableRowState : State
 
-@Suppress("UPPER_BOUND_VIOLATED")
 private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTableRowProps, ReportTableRowState>(props) {
 
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
@@ -34,10 +33,6 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
   }
 
   private val appContext get() = this.asDynamic().context as AppContext
-
-  override fun componentWillReceiveProps(nextProps: ReportTableRowProps) {
-    setState { init(nextProps) }
-  }
 
   private fun renderApplyFilterDialog() {
     props.config.dialogRef.current!!.showDialog(

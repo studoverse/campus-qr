@@ -6,7 +6,6 @@ import mui.material.GridProps
 import mui.material.InputBaseComponentProps
 import mui.material.InputProps
 import mui.material.TextFieldProps
-import mui.material.Size
 import react.*
 import web.cssom.*
 import web.html.HTMLElement
@@ -79,9 +78,6 @@ inline var GridProps.xl: Any?
   set(value) {
     asDynamic().xl = value
   }
-
-val Size.Companion.medium: Size.medium
-  get() = pkcs8
 
 fun gridArea(value: String): GridArea = value.unsafeCast<GridArea>()
 

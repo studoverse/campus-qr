@@ -31,7 +31,6 @@ external interface AddFilterDialogState : State {
   var filteredSeats: List<Int>
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
 class AddFilterDialog(props: AddFilterDialogProps) :
   RComponentWithCoroutineScope<AddFilterDialogProps, AddFilterDialogState>(props) {
 
@@ -64,11 +63,12 @@ class AddFilterDialog(props: AddFilterDialogProps) :
         // Make sure that dialog's apply button doesn't get overlaid by autocomplete's dropdown
         width = 100.pct - 70.px
       }
-      @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST") // Workaround for https://youtrack.jetbrains.com/issue/KT-60185
-      Autocomplete {
-        onChange = { _, target: Array<String>?, _, _ ->
+      Autocomplete<AutocompleteProps<String>> {
+        onChange = { _, target: Any, _, _ ->
+          @Suppress("UNCHECKED_CAST")
+          target as Array<String>
           setState {
-            filteredSeats = target?.map { it.toInt() } ?: emptyList()
+            filteredSeats = target.map { it.toInt() }
           }
         }
         onInputChange = { _, value, _ ->
@@ -86,9 +86,9 @@ class AddFilterDialog(props: AddFilterDialogProps) :
         fullWidth = true
         multiple = true
         openOnFocus = true
-        (this as AutocompleteProps<String>).options = state.filterOptions.map { it.toString() }.toTypedArray()
+        options = state.filterOptions.map { it.toString() }.toTypedArray()
         value = state.filteredSeats.map { it.toString() }.toTypedArray()
-        (this as AutocompleteProps<String>).getOptionLabel = { it }
+        getOptionLabel = { it }
         renderInput = { params ->
           TextField.create {
             +params

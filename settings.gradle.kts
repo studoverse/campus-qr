@@ -1,3 +1,5 @@
+rootProject.name = "CampusQR"
+
 pluginManagement {
   resolutionStrategy {
     eachPlugin {
@@ -6,14 +8,21 @@ pluginManagement {
       }
     }
   }
+}
 
+dependencyResolutionManagement {
   repositories {
     maven("https://plugins.gradle.org/m2/")
     mavenCentral()
   }
-}
 
-rootProject.name = "CampusQR"
+  versionCatalogs {
+    create("libs") {
+      val wrappersVersion = "0.0.1-pre.791"
+      from("org.jetbrains.kotlin-wrappers:kotlin-wrappers-catalog:$wrappersVersion")
+    }
+  }
+}
 
 include("common")
 include("moderatorFrontend")

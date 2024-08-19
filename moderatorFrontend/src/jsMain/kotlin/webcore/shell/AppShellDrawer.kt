@@ -11,8 +11,10 @@ import mui.system.Breakpoint
 import mui.system.sx
 import react.*
 import web.events.Event
+import web.events.addEventListener
+import web.events.removeEventListener
 import web.timers.setTimeout
-import web.window.RESIZE
+import web.window.resize
 import webcore.RComponent
 
 class AppShellDrawerConfig(
@@ -58,11 +60,11 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 
   override fun UNSAFE_componentWillMount() {
-    window.addEventListener(Event.RESIZE, ::onResize)
+    window.addEventListener(Event.resize(), ::onResize)
   }
 
   override fun componentWillUnmount() {
-    window.removeEventListener(Event.RESIZE, ::onResize)
+    window.removeEventListener(Event.resize(), ::onResize)
   }
 
   override fun ChildrenBuilder.render() {
@@ -83,8 +85,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
       color = AppBarColor.primary
       position = if (props.config.stickyNavigation) AppBarPosition.sticky else AppBarPosition.static
       props.config.appBarElevation?.let { appBarElevation ->
-        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-        (this as PaperProps).elevation = appBarElevation
+        elevation = appBarElevation
       }
       Toolbar {
         sx {
@@ -160,7 +161,7 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 
   private fun PropertiesBuilder.drawerStyle() {
-    MuiDrawer.paper {
+    drawerClasses.paper {
       width = drawerWidth.px
     }
   }

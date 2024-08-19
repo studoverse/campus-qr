@@ -7,11 +7,7 @@ import mui.material.Box
 import mui.material.FormControlVariant
 import mui.material.TextField
 import mui.system.sx
-import web.html.HTMLElement
-import web.html.HTMLInputElement
 import react.*
-import react.dom.events.ChangeEvent
-import react.dom.onChange
 import util.get
 import web.dom.document
 import web.html.HTML
@@ -43,7 +39,6 @@ external interface DatePickerState : State {
   var fieldError: Boolean
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
 class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePickerState>(props) {
 
   class DateInputValues(var year: String, var month: String, var day: String)
@@ -118,13 +113,11 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
       error = props.config.error || state.fieldError
 
       onChange = { event ->
-        @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-        event as ChangeEvent<HTMLElement>
         event.target.value.emptyToNull()?.let { value ->
           setState {
             dateTimeInputValue = value
           }
-          val inputElement = event.target as HTMLInputElement
+          val inputElement = event.target
           val inputDateTimestamp = inputElement.valueAsNumber
           val date = Date(inputDateTimestamp)
 
@@ -172,8 +165,6 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
         value = state.oldBrowsersInputValues.day
         onChange = { event ->
-          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-          event as ChangeEvent<HTMLElement>
           val value = event.target.value
           setState { oldBrowsersInputValues.day = value }
           tryParsingInputFields(value, state.oldBrowsersInputValues.month, state.oldBrowsersInputValues.year)
@@ -197,8 +188,6 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         }
         value = state.oldBrowsersInputValues.month
         onChange = { event ->
-          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-          event as ChangeEvent<HTMLElement>
           val value = event.target.value
           setState { oldBrowsersInputValues.month = value }
           tryParsingInputFields(state.oldBrowsersInputValues.day, value, state.oldBrowsersInputValues.year)
@@ -218,8 +207,6 @@ class DatePicker(props: DatePickerProps) : RComponent<DatePickerProps, DatePicke
         label = yearString.toReactNode()
         value = state.oldBrowsersInputValues.year
         onChange = { event ->
-          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-          event as ChangeEvent<HTMLElement>
           val value = event.target.value
           setState { oldBrowsersInputValues.year = value }
           tryParsingInputFields(state.oldBrowsersInputValues.day, state.oldBrowsersInputValues.month, value)

@@ -60,7 +60,6 @@ external interface AccessManagementDetailsState : State {
   var toDateTimeSlotErrors: MutableList<TimeSlotError>
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
 class AddLocation(props: AccessManagementDetailsProps) :
   RComponent<AccessManagementDetailsProps, AccessManagementDetailsState>(props) {
 
@@ -217,19 +216,19 @@ class AddLocation(props: AccessManagementDetailsProps) :
   }
 
   private fun ChildrenBuilder.renderLocationSelection() {
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST") // Workaround for https://youtrack.jetbrains.com/issue/KT-60185
-    Autocomplete {
+    Autocomplete<AutocompleteProps<String>> {
       disabled = props.config is AccessManagementDetailsConfig.Details
-      value = state.selectedLocation?.name ?: ""
-      onChange = { _, target: String?, _, _ ->
+      value = state.selectedLocation?.name
+      onChange = { _, value: Any?, _, _ ->
+        value as String?
         setState {
           selectedLocationTextFieldError = ""
-          selectedLocation = target?.let { locationNameToLocationMap[it] }
+          selectedLocation = value?.let { locationNameToLocationMap[it] }
         }
       }
       openOnFocus = true
-      (this as AutocompleteProps<String>).options = state.locationNameToLocationMap.keys.toTypedArray()
-      (this as AutocompleteProps<String>).getOptionLabel = { it }
+      options = state.locationNameToLocationMap.keys.toTypedArray()
+      getOptionLabel = { it }
       renderInput = { params ->
         Fragment.create {
           TextField {

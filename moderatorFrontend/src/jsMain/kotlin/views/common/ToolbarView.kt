@@ -30,7 +30,7 @@ external interface ToolbarViewProps : Props {
   var config: ToolbarViewConfig
 }
 
-interface ToolbarViewState : State
+external interface ToolbarViewState : State
 
 private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
 

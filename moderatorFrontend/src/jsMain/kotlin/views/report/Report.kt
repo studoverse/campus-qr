@@ -40,7 +40,6 @@ external interface ReportState : State {
   var infectionDate: Date
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
 private class Report : RComponent<ReportProps, ReportState>() {
 
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype

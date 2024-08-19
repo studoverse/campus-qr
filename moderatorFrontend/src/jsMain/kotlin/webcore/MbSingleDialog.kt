@@ -147,7 +147,7 @@ class MbSingleDialog(props: MbSingleDialogProps) : RComponent<MbSingleDialogProp
       sx {
         if (props.hidden) display = None.none
         margin = 12.px
-        MuiDialog.paper {
+        dialogClasses.paper {
           padding = 8.px
           config.overflow?.let { overflow ->
             overflowY = overflow.overflowY
@@ -166,9 +166,6 @@ class MbSingleDialog(props: MbSingleDialogProps) : RComponent<MbSingleDialogProp
       }
       config.title?.let { (title, icon) ->
         DialogTitle {
-          // TODO: @mh DialogTitleProps does not extend PropsWithSx. See: https://github.com/JetBrains/kotlin-wrappers/issues/2004
-          @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-          this as PropsWithSx
           sx {
             display = Display.flex
             alignItems = AlignItems.center

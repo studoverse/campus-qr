@@ -16,6 +16,7 @@ import util.AppRoute
 import util.MbUrl
 import util.get
 import util.relativeUrl
+import web.events.addEventListener
 import web.history.PopStateEvent
 import web.history.history
 import web.location.location
@@ -110,7 +111,7 @@ object NavigationHandler {
     handleHistoryChange: (newRoute: AppRoute?) -> Unit,
     getCurrentAppRoute: () -> AppRoute?,
   ) {
-    window.addEventListener(BeforeUnloadEvent.BEFORE_UNLOAD, { event ->
+    window.addEventListener(BeforeUnloadEvent.beforeUnload(), { event ->
       if (navigateAwayListeners.any { !it.shouldNavigateAway() }) {
         // Confirmation dialog is only shown when preventDefault is called
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
@@ -119,7 +120,7 @@ object NavigationHandler {
       }
     })
 
-    window.addEventListener(PopStateEvent.POP_STATE, {
+    window.addEventListener(PopStateEvent.popState(), {
       if (currentHistoryState == (history.state as Double?)) {
         // This popstate event is triggered by history.go() in the "stay on page" button callback.
         // We do not want to do anything in this case. Everything history related is already handled in the shouldNavigate() callbacks.
@@ -159,7 +160,7 @@ object NavigationHandler {
       }
     })
 
-    window.addEventListener(MouseEvent.CLICK, { event ->
+    window.addEventListener(MouseEvent.click(), { event ->
       val target = event.target
       if (target != null && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
         // Only handle click for anchor elements

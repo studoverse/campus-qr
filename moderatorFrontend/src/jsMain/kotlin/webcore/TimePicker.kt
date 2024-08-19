@@ -9,10 +9,8 @@ import mui.material.TextField
 import mui.system.sx
 import web.html.HTMLElement
 import react.*
-import react.dom.events.ChangeEvent
 import react.dom.html.ReactHTML
 import react.dom.html.ReactHTML.option
-import react.dom.onChange
 import util.get
 import web.dom.document
 import web.html.HTML
@@ -41,7 +39,6 @@ external interface TimePickerState : State {
   var oldBrowsersInputValues: TimePicker.TimeInputValues
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
 class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePickerState>(props) {
 
   private val stepListId = "timestep-list${hashCode()}"
@@ -105,8 +102,6 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         error = props.config.error
         type = web.html.InputType.time
         onChange = { event ->
-          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-          event as ChangeEvent<HTMLElement>
           event.target.value.emptyToNull()?.let { value ->
             val hourToMinute = value.split(":").map { it.removePrefix("0").toInt() }
             val hour = hourToMinute[0]
@@ -165,8 +160,6 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         }
         value = state.oldBrowsersInputValues.hour
         this.onChange = { event ->
-          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-          event as ChangeEvent<HTMLElement>
           val value: String = event.target.value
           tryParsingInputFields(value, state.oldBrowsersInputValues.minute)
         }
@@ -189,8 +182,6 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
         }
         value = state.oldBrowsersInputValues.minute
         onChange = { event ->
-          @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-          event as ChangeEvent<HTMLElement>
           val value: String = event.target.value
           tryParsingInputFields(state.oldBrowsersInputValues.hour, value)
         }

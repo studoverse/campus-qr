@@ -107,7 +107,7 @@ private class AppDrawerItems : RComponent<AppDrawerItemsProps, AppDrawerItemsSta
           }
           ListItemText {
             sx {
-              MuiListItemText.primary {
+              listItemTextClasses.primary {
                 fontSize = 14.px
                 hyphens = Auto.auto
               }

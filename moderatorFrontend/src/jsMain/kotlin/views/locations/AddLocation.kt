@@ -43,7 +43,6 @@ external interface AddLocationState : State {
   var locationSeatCount: Int?
 }
 
-@Suppress("UPPER_BOUND_VIOLATED")
 class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLocationState>(props), NavigateAwayObservable {
 
   // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
@@ -157,8 +156,8 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
           +Strings.user_permissions.get()
         }
         variant = FormControlVariant.outlined
-        Select {
-          value = state.locationAccessType.toString()
+        Select<SelectProps<String>> {
+          value = state.locationAccessType.name
           onChange = { event, _ ->
             setState {
               locationAccessType = LocationAccessType.valueOf(event.target.value)
@@ -167,9 +166,9 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
           variant = SelectVariant.outlined
           label = Strings.location_access_type.get().toReactNode()
 
-          LocationAccessType.values().forEach { accessType ->
+          LocationAccessType.entries.forEach { accessType ->
             MenuItem {
-              value = accessType.toString()
+              value = accessType.name
               +accessType.localizedString.get()
             }
           }
