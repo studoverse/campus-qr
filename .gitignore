@@ -53,6 +53,9 @@ Temporary Items
 *.war
 *.ear
 
+# Kotlin cache
+.kotlin/
+
 # Gradle files
 .gradle/
 .gradletasknamecache
