@@ -82,13 +82,13 @@ tasks {
 
   register<Copy>("copyProductionBuildToPreProcessedResources") {
     dependsOn("jsBrowserProductionWebpack") // Build production version
-    from("build/dist/js/productionExecutable")
+    from("build/kotlin-webpack/js/productionExecutable")
     into("../server/src/main/resources/moderatorFrontend/")
   }
 
   register<Copy>("copyProductionBuildToPostProcessedResources") {
     dependsOn("jsBrowserProductionWebpack") // Build production version
-    from("build/dist/js/productionExecutable")
+    from("build/kotlin-webpack/js/productionExecutable")
     into("../server/build/resources/main/moderatorFrontend/")
   }
 
