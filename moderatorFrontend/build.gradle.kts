@@ -1,7 +1,11 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
   kotlin("multiplatform")
+  id("io.github.turansky.seskar") version "3.41.0"
 }
 
 val ktor_version: String = "2.3.2"
@@ -11,12 +15,18 @@ val kotlinx_coroutines_version: String = "1.7.3"
 
 repositories {
   mavenCentral()
+  gradlePluginPortal() // TODO: @mh Might not be needed
 }
 
 kotlin {
   js(IR) {
-    useCommonJs()
+    //useCommonJs() // TODO: @mh Remove if not needed
     browser {
+      commonWebpackConfig(body = Action {
+        outputFileName =
+          "campusqr-admin.js" // TODO: @mh Maybe this is the approach to work with. Check how the sample project works by executing it // campusqr-admin.js
+      })
+
       testTask(Action {
         useKarma {
           useChrome() // Chrome must be installed (otherwise js tests can not be executed), it's also possible to use other browsers (e.g. useFirefox)
@@ -25,6 +35,9 @@ kotlin {
           }
         }
       })
+    }
+    compilerOptions {
+      target = "es2015"
     }
     binaries.executable()
   }
@@ -37,13 +50,13 @@ kotlin {
 
         api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
 
-        api(libs.wrappers.react)
-        api(libs.wrappers.react.dom)
-        api(libs.wrappers.emotion)
-        api(libs.wrappers.extensions)
-        api(libs.wrappers.mui.material)
-        api(libs.wrappers.mui.icons.material)
-        api(libs.wrappers.mui.lab)
+        api(kotlinWrappers.react)
+        api(kotlinWrappers.reactDom)
+        api(kotlinWrappers.emotion)
+        //api(kotlinWrappers.extensions) // TODO: @mh Deprecated and not included in the version catalog?
+        api(kotlinWrappers.mui.material)
+        api(kotlinWrappers.mui.iconsMaterial)
+        api(kotlinWrappers.mui.lab)
 
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
         api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
@@ -76,19 +89,20 @@ kotlin {
 }
 
 tasks {
-  getByName<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("jsBrowserProductionWebpack") {
+  // TODO: @mh Do we still need this?
+  /*getByName<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("jsBrowserProductionWebpack") {
     mainOutputFileName.set("campusqr-admin.js")
-  }
+  }*/
 
   register<Copy>("copyProductionBuildToPreProcessedResources") {
     dependsOn("jsBrowserProductionWebpack") // Build production version
-    from("build/kotlin-webpack/js/productionExecutable")
-    into("../server/src/main/resources/moderatorFrontend/")
+    from("build/compileSync/js/main/productionExecutable/kotlin")
+    into("../server/src/main/resources/moderatorFrontend/") // TODO: @mh Does this also have to work in dev mode??
   }
 
   register<Copy>("copyProductionBuildToPostProcessedResources") {
     dependsOn("jsBrowserProductionWebpack") // Build production version
-    from("build/kotlin-webpack/js/productionExecutable")
+    from("build/compileSync/js/main/productionExecutable/kotlin")
     into("../server/build/resources/main/moderatorFrontend/")
   }
 

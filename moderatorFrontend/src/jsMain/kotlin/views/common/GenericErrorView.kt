@@ -7,6 +7,7 @@ import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.ChildrenBuilder
+import react.FC
 import react.Props
 import react.State
 import react.dom.html.ReactHTML.code
@@ -16,6 +17,7 @@ import util.Strings
 import util.get
 import web.location.location
 import webcore.RComponent
+import js.lazy.Lazy
 
 external interface GenericErrorViewProps : Props {
   var title: String
@@ -88,6 +90,15 @@ fun ChildrenBuilder.pathNotFoundView(title: String = "", subtitle: String = "") 
     this.subtitle = subtitle
   }
 }
+
+// TODO: @mh Use this for testing
+/*@Lazy
+val pathNotFoundViewFc = FC<GenericErrorViewProps>("PathNotFoundView") { props ->
+  PathNotFound::class.react {
+    this.title = props.title
+    this.subtitle = props.subtitle
+  }
+}*/
 
 fun ChildrenBuilder.genericErrorView(title: String, subtitle: String) {
   GenericErrorView::class.react {

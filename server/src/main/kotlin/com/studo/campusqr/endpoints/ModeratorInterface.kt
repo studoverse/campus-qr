@@ -85,6 +85,7 @@ private fun HTML.moderatorIndex(call: ApplicationCall, csrfToken: String) {
     }
     script {
       src = when {
+        // TODO: @mh This file doesn't exist which results in the mime type error. (see network tab in browser)
         localDebug -> "/moderatorFrontend.js"
         else -> "/admin/campusqr-admin.js"
       }

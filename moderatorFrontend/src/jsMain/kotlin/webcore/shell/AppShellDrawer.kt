@@ -14,7 +14,6 @@ import web.events.Event
 import web.events.addEventListener
 import web.events.removeEventListener
 import web.timers.setTimeout
-import web.window.resize
 import webcore.RComponent
 
 class AppShellDrawerConfig(
@@ -60,11 +59,11 @@ class AppShellDrawer(props: AppShellDrawerProps) : RComponent<AppShellDrawerProp
   }
 
   override fun UNSAFE_componentWillMount() {
-    window.addEventListener(Event.resize(), ::onResize)
+    window.addEventListener(Event.RESIZE, ::onResize)
   }
 
   override fun componentWillUnmount() {
-    window.removeEventListener(Event.resize(), ::onResize)
+    window.removeEventListener(Event.RESIZE, ::onResize)
   }
 
   override fun ChildrenBuilder.render() {

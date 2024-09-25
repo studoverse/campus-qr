@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
   kotlin("multiplatform")
   kotlin("plugin.serialization")
@@ -17,8 +21,11 @@ kotlin {
     }
   }
   js(IR) {
-    useCommonJs()
+    //useCommonJs() // TODO: @mh Remove if not needed
     browser()
+    compilerOptions {
+      target = "es2015"
+    }
     binaries.executable()
   }
 

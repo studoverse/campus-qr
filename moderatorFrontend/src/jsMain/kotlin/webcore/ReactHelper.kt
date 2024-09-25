@@ -1,6 +1,6 @@
 package webcore
 
-import kotlinext.js.assign
+//import kotlinext.js.assign
 import js.objects.jso
 import react.*
 
@@ -24,5 +24,5 @@ abstract class RComponent<P : Props, S : State> : Component<P, S> {
 }
 
 fun <S : State> Component<*, S>.setState(buildState: S.() -> Unit) {
-  setState({ assign(it, buildState) })
+  //setState({ assign(it, buildState) }) // TODO: @mh Figure out how to fix this without react-extension?
 }
