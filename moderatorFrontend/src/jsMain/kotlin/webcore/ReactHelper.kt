@@ -6,7 +6,9 @@ import react.*
 
 abstract class RComponent<P : Props, S : State> : Component<P, S> {
   constructor() : super() {
-    // TODO: @mh This is not called anymore. Maybe some stuff with the underlying imported Component class changed?
+    // TODO: @mh This is not called anymore because react uses commonjs to export and the kotlin wrappers use esmodules to import currently.
+    //  Is there a similar fix as for the mui fix with webpack?
+    //  Otherwise we could define the Component class ourselves and annotate it with @JsNonModule.
     console.log("RComponent constructor") // TODO: @mh Remove after testing
     state = jso { init() }
   }

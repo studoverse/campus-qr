@@ -339,10 +339,15 @@ private class App : RComponent<AppProps, AppState>() {
     Box {
       // TODO: @mh Remove after testing
       //  When just showing this box, "everything" works.
+      //state = jso { init() } // TODO: @mh Manually setting it here when it's not called in the constructor seems to work?
       +"Test"
     }
-    // TODO: @mh Comment in again after testing with the base case.
+    // TODO: @mh Comment in/out again for testing
     /*ThemeProvider {
+      // TODO: @mh This being undefined indicates that the component is not initialized correctly
+      //  (also apparent since the constructor of RComponent is not called)
+      console.log("theme:  ", this@App.theme) // TODO: @mh "theme: undefined"
+
       this.theme = this@App.theme
       appContextToInject.Provider(
         AppContext(
