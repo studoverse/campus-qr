@@ -336,7 +336,13 @@ private class App : RComponent<AppProps, AppState>() {
   override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "white"
     console.log("render") // TODO: @mh Remove after testing
-    ThemeProvider {
+    Box {
+      // TODO: @mh Remove after testing
+      //  When just showing this box, "everything" works.
+      +"Test"
+    }
+    // TODO: @mh Comment in again after testing with the base case.
+    /*ThemeProvider {
       this.theme = this@App.theme
       appContextToInject.Provider(
         AppContext(
@@ -399,7 +405,7 @@ private class App : RComponent<AppProps, AppState>() {
           )
         }
       }
-    }
+    }*/
   }
 }
 

@@ -26,5 +26,5 @@ abstract class RComponent<P : Props, S : State> : Component<P, S> {
 }
 
 fun <S : State> Component<*, S>.setState(buildState: S.() -> Unit) {
-  setState({ assign(it, buildState) }) // TODO: @mh Does this cause the error with activeLanguage?
+  setState({ assign(it, buildState) }) // TODO: @mh Test that this still works
 }
