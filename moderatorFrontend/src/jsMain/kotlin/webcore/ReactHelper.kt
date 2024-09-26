@@ -6,7 +6,7 @@ import react.*
 
 abstract class RComponent<P : Props, S : State> : Component<P, S> {
   constructor() : super() {
-    // TODO: @mh this is not called anymore.
+    // TODO: @mh This is not called anymore. Maybe some stuff with the underlying imported Component class changed?
     console.log("RComponent constructor") // TODO: @mh Remove after testing
     state = jso { init() }
   }
