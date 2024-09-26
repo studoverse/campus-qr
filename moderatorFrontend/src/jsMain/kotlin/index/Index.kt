@@ -8,7 +8,7 @@ import web.dom.document
 import web.html.HTML
 
 fun main() {
-  // TODO: @mh Replace this with the ES modules way of doing things (this is commonjs). Or maybe not even needed anymore?
+  // TODO: @mh Replace this with the ES modules way of doing things (this is commonjs) -> import instead of require.
   //requireAll<String>(require.context("../../../../../moderatorFrontend/src/jsMain/kotlin", true, js("/\\.css$/")))
   //requireAll<String>(require.context("normalize.css", true, js("/\\.css$/")))
 

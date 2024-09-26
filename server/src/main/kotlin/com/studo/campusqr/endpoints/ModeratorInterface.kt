@@ -85,8 +85,7 @@ private fun HTML.moderatorIndex(call: ApplicationCall, csrfToken: String) {
     }
     script {
       src = when {
-        // TODO: @mh This file doesn't exist which results in the mime type error. (see network tab in browser)
-        localDebug -> "/moderatorFrontend.js"
+        localDebug -> "/campusqr-admin.js" // TODO: @mh Adjust build.gradle to make it work with /moderatorFrontend.js or not needed?
         else -> "/admin/campusqr-admin.js"
       }
     }

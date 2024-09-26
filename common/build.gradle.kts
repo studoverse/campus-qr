@@ -21,7 +21,6 @@ kotlin {
     }
   }
   js(IR) {
-    //useCommonJs() // TODO: @mh Remove if not needed
     browser()
     compilerOptions {
       target = "es2015"

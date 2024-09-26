@@ -20,11 +20,10 @@ repositories {
 
 kotlin {
   js(IR) {
-    //useCommonJs() // TODO: @mh Remove if not needed
     browser {
       commonWebpackConfig(body = Action {
         outputFileName =
-          "campusqr-admin.js" // TODO: @mh Maybe this is the approach to work with. Check how the sample project works by executing it // campusqr-admin.js
+          "campusqr-admin.js" // TODO: @mh Now this is the name for dev and production. Is this also ok?
       })
 
       testTask(Action {
@@ -53,10 +52,10 @@ kotlin {
         api(kotlinWrappers.react)
         api(kotlinWrappers.reactDom)
         api(kotlinWrappers.emotion)
-        //api(kotlinWrappers.extensions) // TODO: @mh Deprecated and not included in the version catalog?
         api(kotlinWrappers.mui.material)
         api(kotlinWrappers.mui.iconsMaterial)
         api(kotlinWrappers.mui.lab)
+        implementation("org.jetbrains.kotlin-wrappers:kotlin-extensions:1.0.1-pre.806")
 
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
         api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
@@ -89,7 +88,7 @@ kotlin {
 }
 
 tasks {
-  // TODO: @mh Do we still need this?
+  // TODO: @mh Only needed if we decide to not use outputFileName above.
   /*getByName<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("jsBrowserProductionWebpack") {
     mainOutputFileName.set("campusqr-admin.js")
   }*/
@@ -97,7 +96,7 @@ tasks {
   register<Copy>("copyProductionBuildToPreProcessedResources") {
     dependsOn("jsBrowserProductionWebpack") // Build production version
     from("build/compileSync/js/main/productionExecutable/kotlin")
-    into("../server/src/main/resources/moderatorFrontend/") // TODO: @mh Does this also have to work in dev mode??
+    into("../server/src/main/resources/moderatorFrontend/")
   }
 
   register<Copy>("copyProductionBuildToPostProcessedResources") {

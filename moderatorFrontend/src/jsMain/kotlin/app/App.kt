@@ -50,6 +50,9 @@ private class App : RComponent<AppProps, AppState>() {
   private var snackbarRef = createRef<MbSnackbar>()
 
   override fun AppState.init() {
+    // TODO: @mh This is not called because the constructor is not executed anymore which is why in the render function we get:
+    //  App.kt:341 Uncaught TypeError: Cannot read properties of null (reading 'activeLanguage').
+    console.log("init test") // TODO: @mh Remove after testing
     userData = null
     loadingUserData = true
     currentAppRoute = null
@@ -332,6 +335,7 @@ private class App : RComponent<AppProps, AppState>() {
 
   override fun ChildrenBuilder.render() {
     document.body?.style?.backgroundColor = "white"
+    console.log("render") // TODO: @mh Remove after testing
     ThemeProvider {
       this.theme = this@App.theme
       appContextToInject.Provider(

@@ -1,11 +1,13 @@
 package webcore
 
-//import kotlinext.js.assign
 import js.objects.jso
+import kotlinext.js.assign
 import react.*
 
 abstract class RComponent<P : Props, S : State> : Component<P, S> {
   constructor() : super() {
+    // TODO: @mh this is not called anymore.
+    console.log("RComponent constructor") // TODO: @mh Remove after testing
     state = jso { init() }
   }
 
@@ -24,5 +26,5 @@ abstract class RComponent<P : Props, S : State> : Component<P, S> {
 }
 
 fun <S : State> Component<*, S>.setState(buildState: S.() -> Unit) {
-  //setState({ assign(it, buildState) }) // TODO: @mh Figure out how to fix this without react-extension?
+  setState({ assign(it, buildState) }) // TODO: @mh Does this cause the error with activeLanguage?
 }
