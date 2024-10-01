@@ -113,6 +113,7 @@ val MailLoginFc = FcWithCoroutineScope { props: MailLoginProps, componentScope -
         variant = FormControlVariant.standard
         value = email
       }
+      // TODO: @mh Spacer causes exception: "Warning: Encountered two children with the same key, `@rdk/13_44`. Keys should be unique ..."
       spacer()
       TextField {
         autoComplete = "current-password"
@@ -137,7 +138,7 @@ val MailLoginFc = FcWithCoroutineScope { props: MailLoginProps, componentScope -
         }
       }
       spacer(32)
-      renderLoginNavigationButtonsView(
+      LoginNavigationButtonsViewFc {
         config = LoginNavigationButtonsViewConfig(
           networkRequestInProgress = networkRequestInProgress,
           backEnabled = false,
@@ -147,7 +148,7 @@ val MailLoginFc = FcWithCoroutineScope { props: MailLoginProps, componentScope -
             login()
           }
         )
-      )
+      }
     }
   }
   Box {

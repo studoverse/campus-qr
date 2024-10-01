@@ -78,7 +78,7 @@ val LoginViewFc = FcWithCoroutineScope { props: LoginViewProps, componentScope -
       }
     }
     CardContent {
-      div {
+      Box {
         when (props.loginMode) {
           EMAIL -> MailLoginFc {}
         }

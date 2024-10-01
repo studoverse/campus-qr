@@ -138,7 +138,6 @@ val AppFc = FcWithCoroutineScope { props: AppProps, componentScope ->
         loadingUserData = false
       }
       block?.invoke(fetchedUserData)
-      console.log("after block?.invoke(): ", fetchedUserData.isAuthenticated)
     } else {
       loadingUserData = false
     }
