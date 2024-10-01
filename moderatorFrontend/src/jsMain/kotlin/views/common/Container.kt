@@ -11,8 +11,8 @@ fun ChildrenBuilder.container(block: ChildrenBuilder.() -> Unit): Unit =
     block(this)
   }
 
-fun ChildrenBuilder.spacer(size: Int = 8) = Box {
-  key = this.hashCode().toString()
+fun ChildrenBuilder.spacer(size: Int = 8, key: String = "spacer1") = Box {
+  this.key = key // Use static key to prevent component from being created from scratch after every render.
   sx {
     height = size.px
   }

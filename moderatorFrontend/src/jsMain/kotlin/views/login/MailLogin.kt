@@ -113,7 +113,7 @@ val MailLoginFc = FcWithCoroutineScope { props: MailLoginProps, componentScope -
         variant = FormControlVariant.standard
         value = email
       }
-      spacer()
+      spacer(key = "spacer1")
       TextField {
         autoComplete = "current-password"
         fullWidth = true
@@ -136,7 +136,7 @@ val MailLoginFc = FcWithCoroutineScope { props: MailLoginProps, componentScope -
           +errorMessage
         }
       }
-      spacer(32)
+      spacer(size = 32, key = "spacer2")
       LoginNavigationButtonsViewFc {
         config = LoginNavigationButtonsViewConfig(
           networkRequestInProgress = networkRequestInProgress,
