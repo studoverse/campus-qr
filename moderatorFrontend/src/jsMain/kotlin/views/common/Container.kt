@@ -12,6 +12,7 @@ fun ChildrenBuilder.container(block: ChildrenBuilder.() -> Unit): Unit =
   }
 
 fun ChildrenBuilder.spacer(size: Int = 8) = Box {
+  key = this.hashCode().toString()
   sx {
     height = size.px
   }

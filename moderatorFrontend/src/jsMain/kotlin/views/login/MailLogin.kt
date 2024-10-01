@@ -113,7 +113,6 @@ val MailLoginFc = FcWithCoroutineScope { props: MailLoginProps, componentScope -
         variant = FormControlVariant.standard
         value = email
       }
-      // TODO: @mh Spacer causes exception: "Warning: Encountered two children with the same key, `@rdk/13_44`. Keys should be unique ..."
       spacer()
       TextField {
         autoComplete = "current-password"
