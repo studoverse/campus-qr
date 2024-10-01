@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
@@ -22,8 +23,7 @@ kotlin {
   js(IR) {
     browser {
       commonWebpackConfig(body = Action {
-        outputFileName =
-          "campusqr-admin.js" // TODO: @mh Now this is the name for dev and production. Is this also ok?
+        outputFileName = "campusqr-admin.js" // TODO: @mh Now this is the name for dev and production. Is this also ok?
       })
 
       testTask(Action {

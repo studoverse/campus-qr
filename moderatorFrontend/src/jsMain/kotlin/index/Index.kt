@@ -1,7 +1,6 @@
 package index
 
-import app.app
-import react.Fragment
+import app.AppFc
 import react.create
 import react.dom.client.createRoot
 import web.dom.document
@@ -16,9 +15,5 @@ fun main() {
     document.body.appendChild(htmlDivElement)
   }
   val root = createRoot(container)
-  root.render(
-    children = Fragment.create {
-      app()
-    }
-  )
+  root.render(AppFc.create())
 }

@@ -26,12 +26,22 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
 /**
  * Provide coroutine scope within functional components to allow cancellations
  */
-fun <P : Props> functionalComponentWithCoroutineScope(
-  func: ChildrenBuilder.(props: P, componentScope: CoroutineScope) -> Unit,
-): FC<P> = FC { props ->
-  val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-  buildElements {
-    func(props, scope)
+@Suppress("FunctionName") fun <P : Props> FcWithCoroutineScope(
+  block: ChildrenBuilder.(props: P, componentScope: CoroutineScope) -> Unit,
+) = FC<P> { props ->
+  val scope = useMemo(*emptyArray()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
+
+  useEffectOnceWithCleanup {
+    onCleanup {
+      // TODO: @mh Check if this is called when the component is unmounted or if unmounting works differently.
+      console.log("onUnmount") // TODO: @mh Remove after testing
+
+      if (scope.isActive) {
+        scope.cancel("Cancel coroutine because component will unmount")
+      }
+    }
   }
+
+  block(props, scope)
 }
 

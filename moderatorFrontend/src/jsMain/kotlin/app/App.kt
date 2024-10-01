@@ -7,7 +7,7 @@ import com.studo.campusqr.common.payloads.*
 import csstype.*
 import js.objects.jso
 import kotlinx.browser.document
-import mbSnackbar
+import kotlinx.coroutines.launch
 import mui.icons.material.*
 import mui.material.Box
 import mui.material.styles.ThemeProvider
@@ -17,402 +17,15 @@ import react.*
 import react.dom.flushSync
 import util.*
 import util.Url
-import views.common.centeredProgress
-import views.common.networkErrorView
 import web.cssom.*
 import web.location.location
 import webcore.*
 import webcore.NavigationHandler.allUrls
-import webcore.extensions.launch
 import webcore.extensions.toRoute
-import webcore.shell.AppShellConfig
-import webcore.shell.appShell
 
 val baseUrl = location.href.substringBefore("/admin")
 
 external interface AppProps : Props
-
-external interface AppState : State {
-  // Order of initialization:
-  // 1. userData and loadingUserData are set in fetchUserDataAndInit.
-  // 2. currentAppRoute is set in block() of fetchUserDataAndInit. block() is only called after userData is updated.
-  var userData: UserData?
-  var loadingUserData: Boolean
-  var currentAppRoute: AppRoute?
-
-  var mobileNavOpen: Boolean
-  var activeLanguage: MbLocalizedStringConfig.SupportedLanguage
-}
-
-private class App : RComponent<AppProps, AppState>() {
-  // Only used for the NavigationHandler since this dialog must exist globally
-  private var navigationHandlerDialogRef = createRef<MbDialog>()
-  private var snackbarRef = createRef<MbSnackbar>()
-
-  override fun AppState.init() {
-    // TODO: @mh This is not called because the constructor is not executed anymore which is why in the render function we get:
-    //  App.kt:341 Uncaught TypeError: Cannot read properties of null (reading 'activeLanguage').
-    console.log("init test") // TODO: @mh Remove after testing
-    userData = null
-    loadingUserData = true
-    currentAppRoute = null
-    mobileNavOpen = false
-    activeLanguage = MbLocalizedStringConfig.selectedLanguage
-  }
-
-  private val checkInSideDrawerItems: List<SideDrawerItem>
-    get() {
-      return if (state.userData?.clientUser?.canEditAnyLocationAccess == true) {
-        listOf(
-          SideDrawerItem(
-            label = Url.ACCESS_MANAGEMENT_LIST.title,
-            icon = LockOpen,
-            url = Url.ACCESS_MANAGEMENT_LIST
-          ),
-          SideDrawerItem(
-            label = Url.GUEST_CHECK_IN.title,
-            icon = ContactMail,
-            url = Url.GUEST_CHECK_IN
-          )
-        )
-      } else {
-        emptyList()
-      }
-    }
-
-  private val moderatorSideDrawerItems: List<SideDrawerItem>
-    get() {
-      val items = mutableListOf<SideDrawerItem>()
-
-      if (state.userData?.clientUser?.canEditLocations == true || state.userData?.clientUser?.canViewCheckIns == true) {
-        items += SideDrawerItem(
-          label = Url.LOCATIONS_LIST.title,
-          icon = MeetingRoom,
-          url = Url.LOCATIONS_LIST
-        )
-      }
-      if (state.userData?.clientUser?.canViewCheckIns == true) {
-        items += SideDrawerItem(
-          label = Url.REPORT.title,
-          icon = BlurCircular,
-          url = Url.REPORT
-        )
-      }
-
-      return items
-    }
-
-  private val adminSideDrawerItems: List<SideDrawerItem>
-    get() {
-      return if (state.userData?.clientUser?.canEditUsers == true) {
-        listOf(
-          SideDrawerItem(
-            label = Url.USERS.title,
-            icon = People,
-            url = Url.USERS
-          ),
-          SideDrawerItem(
-            label = Url.ADMIN_INFO.title,
-            icon = Info,
-            url = Url.ADMIN_INFO
-          ),
-        )
-      } else {
-        emptyList()
-      }
-    }
-
-  private fun pushAppRoute(route: AppRoute) {
-    if (NavigationHandler.shouldNavigate(route, NavigationHandler.NavigationEvent.PUSH_APP_ROUTE, ::handleHistoryChange)) {
-      NavigationHandler.pushHistory(
-        relativeUrl = route.relativeUrl,
-        title = route.url.title.get(),
-        handleHistoryChange = ::handleHistoryChange,
-      )
-      NavigationHandler.resetScrollPosition()
-    }
-  }
-
-  private fun calculateRedirectQueryParams(): Map<String, String> = location.relativeUrl
-    .removeSuffix("/")
-    .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
-    ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
-    ?.let { mapOf("redirect" to it) }
-    ?: emptyMap()
-
-  private fun handleHistoryChange(newRoute: AppRoute? = location.toRoute()) {
-    if (newRoute == null) {
-      console.log("Omit history change for 404 page")
-    } else if (state.userData == null) {
-      // Do not update `currentAppRoute` when `userData` is not yet initialized.
-      // `isNotAuthenticatedButRequiresAuth` will then be checked again after mounting.
-      // `currentAppRoute` is set after mounting.
-    } else if (isNotAuthenticatedButRequiresAuth(newRoute)) {
-      // The user might end here by clicking back after logging out.
-      // componentDidMount() won't be called as going back is not mounting a new component.
-      // The user is not logged in so push him to login page
-      pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
-    } else {
-      console.info("Change route to ${newRoute.relativeUrl}")
-      setState { currentAppRoute = newRoute }
-    }
-  }
-
-  private fun fetchUserDataAndInit(block: (() -> Unit)? = null) = launch {
-    val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
-
-    if (fetchedUserData != null) {
-      // userData needs to be set when calling `block`, so execute the state update beforehand
-      flushSync {
-        setState {
-          userData = fetchedUserData
-          loadingUserData = false
-        }
-      }
-      block?.invoke()
-    } else {
-      setState {
-        loadingUserData = false
-      }
-    }
-  }
-
-  private fun isNotAuthenticatedButRequiresAuth(currentRoute: AppRoute?): Boolean {
-    return !state.userData!!.isAuthenticated && currentRoute?.url?.requiresAuth != false
-  }
-
-  override fun componentDidMount() {
-    NavigationHandler.initApp(
-      allUrls = Url.values().toList(),
-      dialogRef = navigationHandlerDialogRef,
-      handleHistoryChange = ::handleHistoryChange,
-      getCurrentAppRoute = { state.currentAppRoute },
-    )
-
-    val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
-    if (duplicatePaths.isNotEmpty()) {
-      throw IllegalStateException(
-        "Duplicate path at ${duplicatePaths.first()} is not allowed by design. " +
-            "We need a 1:1 mapping of AppRoutes and paths"
-      )
-    }
-    fetchUserDataAndInit {
-      // Do not use state.currentAppRoute here, because it's not set yet.
-      // currentAppRoute will be set in this function through pushAppRoute/handleHistoryChange.
-      val currentRoute = location.toRoute()
-
-      when {
-        isNotAuthenticatedButRequiresAuth(currentRoute) -> {
-          // The user is not logged in so push him to login page
-          pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
-        }
-
-        location.pathname.removeSuffix("/") == "/admin" -> {
-          val clientUser = state.userData!!.clientUser!!
-          when {
-            UserPermission.EDIT_OWN_ACCESS in clientUser.permissions -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
-            UserPermission.EDIT_LOCATIONS in clientUser.permissions -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
-            UserPermission.VIEW_CHECKINS in clientUser.permissions -> pushAppRoute(Url.REPORT.toRoute()!!)
-            UserPermission.EDIT_USERS in clientUser.permissions -> pushAppRoute(Url.USERS.toRoute()!!)
-          }
-        }
-
-        else -> {
-          // User linked directly to a sub-page
-          handleHistoryChange()
-        }
-      }
-    }
-  }
-
-  private val locale
-    get() = when (state.activeLanguage) {
-      MbLocalizedStringConfig.SupportedLanguage.De -> {
-        deDE
-      }
-
-      MbLocalizedStringConfig.SupportedLanguage.En -> {
-        enUS
-      }
-    }
-
-  private val theme = createTheme(
-    options = jso {
-      typography = jso {
-        useNextVariants = true
-      }
-      palette = jso {
-        primary = jso {
-          main = ColorPalette.primaryColor
-          contrastText = "#fff"
-        }
-
-        secondary = jso {
-          main = ColorPalette.secondaryColor
-        }
-
-        success = jso {
-          main = "#41d856"
-          contrastText = "#fff"
-        }
-
-      }
-
-      components = jso {
-        val autoCompleteOff = "off" // Prevent lastpass from adding the icon for autofill
-        this["MuiTooltip"] = jso {
-          styleOverrides = jso {
-            tooltip = jso {
-              backgroundColor = "#616161" // Default tooltip color but without alpha to improve readability
-              fontSize = "0.875rem" // Default body font size to improve readability
-            }
-          }
-        }
-
-        this["MuiAutocomplete"] = jso {
-          defaultProps = jso {
-            disablePortal = true // Without this, the absolute position of the dropdown element is sometimes ~400px too high
-          }
-        }
-        this["MuiTextField"] = jso {
-          defaultProps = jso {
-            autoComplete = autoCompleteOff
-          }
-        }
-        this["MuiInputBase"] = jso {
-          defaultProps = jso {
-            autoComplete = autoCompleteOff
-          }
-        }
-        this["MuiInput"] = jso {
-          defaultProps = jso {
-            autoComplete = autoCompleteOff
-          }
-        }
-        this["MuiOutlinedInput"] = jso {
-          defaultProps = jso {
-            autoComplete = autoCompleteOff
-          }
-        }
-        this["MuiFilledInput"] = jso {
-          defaultProps = jso {
-            autoComplete = autoCompleteOff
-          }
-        }
-        this["MuiSelect"] = jso {
-          defaultProps = jso {
-            autoComplete = autoCompleteOff
-          }
-        }
-        this["MuiNativeSelect"] = jso {
-          defaultProps = jso {
-            autoComplete = autoCompleteOff
-          }
-        }
-      }
-    },
-    locale,
-  )
-
-  private fun ChildrenBuilder.renderViewContent() {
-    if (state.loadingUserData || (location.toRoute() != null && state.currentAppRoute == null)) {
-      // Wait for the network request in fetchUserDataAndInit() to complete or wait for currentAppRoute to be set if the route exists.
-      // Path not found is handled in renderAppContent()
-      centeredProgress()
-    } else if (state.userData == null) {
-      networkErrorView()
-    } else {
-      renderAppContent()
-    }
-  }
-
-  private fun onLangChange(newLang: MbLocalizedStringConfig.SupportedLanguage) {
-    setState {
-      activeLanguage = newLang
-    }
-    MbLocalizedStringConfig.selectedLanguage = newLang
-  }
-
-  override fun ChildrenBuilder.render() {
-    document.body?.style?.backgroundColor = "white"
-    console.log("render") // TODO: @mh Remove after testing
-    Box {
-      // TODO: @mh Remove after testing
-      //  When just showing this box, "everything" works.
-      //state = jso { init() } // TODO: @mh Manually setting it here when it's not called in the constructor seems to work?
-      +"Test"
-    }
-    // TODO: @mh Comment in/out again for testing
-    /*ThemeProvider {
-      // TODO: @mh This being undefined indicates that the component is not initialized correctly
-      //  (also apparent since the constructor of RComponent is not called)
-      console.log("theme:  ", this@App.theme) // TODO: @mh "theme: undefined"
-
-      this.theme = this@App.theme
-      appContextToInject.Provider(
-        AppContext(
-          languageContext = LanguageContext(state.activeLanguage, ::onLangChange),
-          snackbarRef = snackbarRef,
-          routeContext = RouteContext(state.currentAppRoute, ::pushAppRoute),
-          themeContext = ThemeContext(this@App.theme),
-          userDataContext = UserDataContext(userData = state.userData, state.loadingUserData, ::fetchUserDataAndInit)
-        )
-      ) {
-        // Global components
-        mbSnackbar(ref = snackbarRef)
-        mbDialog(ref = navigationHandlerDialogRef)
-
-        // Render content without side drawer and toolbar, if no shell option is activated via url hash
-        if (location.hash.contains("noShell") ||
-          state.currentAppRoute?.url?.showWithShell != true
-        ) {
-          Box {
-            sx {
-              // Viewport height to take up whole screen because parent has no height set (similar as for appShell).
-              // Especially important when we show only the iFrameView.
-              minHeight = 100.vh
-              width = 100.pct
-              display = Display.flex
-              flexDirection = FlexDirection.column
-            }
-            renderViewContent()
-          }
-        } else {
-          appShell(
-            config = AppShellConfig(
-              appBarElevation = 0,
-              mobileNavOpen = state.mobileNavOpen,
-              mobileNavOpenChange = { mobileNavOpen ->
-                setState { this.mobileNavOpen = mobileNavOpen }
-              },
-              smallToolbar = true,
-              stickyNavigation = true,
-              viewContent = {
-                renderViewContent()
-              },
-              drawerList = {
-                renderAppDrawerItems(
-                  config = AppDrawerItemsConfig(
-                    checkInSideDrawerItems = if (state.loadingUserData) emptyList() else checkInSideDrawerItems,
-                    moderatorSideDrawerItems = if (state.loadingUserData) emptyList() else moderatorSideDrawerItems,
-                    adminSideDrawerItems = if (state.loadingUserData) emptyList() else adminSideDrawerItems,
-                    loading = false,
-                    mobileNavOpenChange = { mobileNavOpen ->
-                      setState { this.mobileNavOpen = mobileNavOpen }
-                    }
-                  )
-                )
-              },
-              toolbarIcon = null,
-              hideDrawer = false,
-              themeColor = this@App.theme.palette.primary.main,
-            )
-          )
-        }
-      }
-    }*/
-  }
-}
 
 object ColorPalette {
   const val default = "#FFFFFF" // White
@@ -434,6 +47,385 @@ object GlobalCss {
   }
 }
 
-fun ChildrenBuilder.app() {
-  App::class.react {}
+val AppFc = FcWithCoroutineScope { props: AppProps, componentScope ->
+  var userData: UserData? by useState(null)
+  var loadingUserData: Boolean by useState(true)
+  var currentAppRoute: AppRoute? by useState(null)
+  var mobileNavOpen: Boolean by useState(false)
+  var activeLanguage: MbLocalizedStringConfig.SupportedLanguage by useState(MbLocalizedStringConfig.selectedLanguage)
+
+  // Only used for the NavigationHandler since this dialog must exist globally
+  var navigationHandlerDialogRef = useRef<MbDialog>() // TODO: @mh Figure out how to use useRef correctly.
+  var snackbarRef = useRef<MbSnackbar>()
+
+  // TODO: @mh Figure out a way to structure FCs better because this is currently a mess.
+  fun launch(block: suspend () -> Unit) = componentScope.launch {
+    try {
+      block.invoke()
+    } catch (e: Exception) {
+      console.error("Coroutine failed", e)  // Log the actual exception
+    }
+  }
+
+  fun isNotAuthenticatedButRequiresAuth(currentRoute: AppRoute?, currentUserData: UserData = userData!!): Boolean {
+    return !currentUserData.isAuthenticated && currentRoute?.url?.requiresAuth != false
+  }
+
+  fun calculateRedirectQueryParams(): Map<String, String> = location.relativeUrl
+    .removeSuffix("/")
+    .takeIf { it != "/admin" && it != "/admin/login" } // Default path, no need to redirect
+    ?.emptyToNull() // Do not redirect to empty url, it's safely handled in the router but the url would look strange
+    ?.let { mapOf("redirect" to it) }
+    ?: emptyMap()
+
+  // TODO: @mh Check that this works
+  lateinit var pushAppRoute: (AppRoute) -> Unit // Workaround for function not being visible for handleHistoryChange.
+
+  fun handleHistoryChange(newRoute: AppRoute? = location.toRoute(), currentUserData: UserData? = userData) {
+    if (newRoute == null) {
+      console.log("Omit history change for 404 page")
+    } else if (currentUserData == null) {
+      // Do not update `currentAppRoute` when `userData` is not yet initialized.
+      // `isNotAuthenticatedButRequiresAuth` will then be checked again after mounting.
+      // `currentAppRoute` is set after mounting.
+    } else if (isNotAuthenticatedButRequiresAuth(currentRoute = newRoute, currentUserData = currentUserData)) {
+      // The user might end here by clicking back after logging out.
+      // componentDidMount() won't be called as going back is not mounting a new component.
+      // The user is not logged in so push him to login page
+      pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
+    } else {
+      console.info("Change route to ${newRoute.relativeUrl}")
+      currentAppRoute = newRoute
+    }
+  }
+
+  pushAppRoute = { route ->
+    if (NavigationHandler.shouldNavigate(route, NavigationHandler.NavigationEvent.PUSH_APP_ROUTE, ::handleHistoryChange)) {
+      NavigationHandler.pushHistory(
+        relativeUrl = route.relativeUrl,
+        title = route.url.title.get(),
+        handleHistoryChange = ::handleHistoryChange,
+      )
+      NavigationHandler.resetScrollPosition()
+    }
+  }
+
+  fun onLangChange(newLang: MbLocalizedStringConfig.SupportedLanguage) {
+    activeLanguage = newLang
+    MbLocalizedStringConfig.selectedLanguage = newLang
+  }
+
+  val locale: () -> Localization = {
+    when (activeLanguage) {
+      MbLocalizedStringConfig.SupportedLanguage.De -> {
+        deDE
+      }
+
+      MbLocalizedStringConfig.SupportedLanguage.En -> {
+        enUS
+      }
+    }
+  }
+
+  fun fetchUserDataAndInit(block: ((UserData) -> Unit)? = null) = launch {
+    val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
+
+    if (fetchedUserData != null) {
+      // userData needs to be set when calling `block`, so execute the state update beforehand
+      // TODO: @mh Make sure to check all flushSync usages to prevent issues like this from happening.
+      flushSync { // TODO: @mh Might not be needed anymore since I have to pass the new value manually anyway. And not related to UI.
+        userData = fetchedUserData
+        loadingUserData = false
+      }
+      block?.invoke(fetchedUserData)
+      console.log("after block?.invoke(): ", fetchedUserData.isAuthenticated)
+    } else {
+      loadingUserData = false
+    }
+  }
+
+  fun ChildrenBuilder.renderViewContent() {
+    if (loadingUserData || (location.toRoute() != null && currentAppRoute == null)) {
+      // Wait for the network request in fetchUserDataAndInit() to complete or wait for currentAppRoute to be set if the route exists.
+      // Path not found is handled in renderAppContent()
+      // centeredProgress() // TODO: @mh Migrate later
+    } else if (userData == null) {
+      //networkErrorView() // TODO: @mh Migrate later
+    } else {
+      AppContentFc {}
+    }
+  }
+
+  useEffectOnceWithCleanup { // TODO: @mh Maybe emptyArray can be replaced with listOf() ?
+    console.log("onMount") // TODO: @mh Remove after testing
+
+    NavigationHandler.initApp(
+      allUrls = Url.values().toList(),
+      dialogRef = navigationHandlerDialogRef,
+      handleHistoryChange = ::handleHistoryChange,
+      getCurrentAppRoute = { currentAppRoute },
+    )
+
+    val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
+    if (duplicatePaths.isNotEmpty()) {
+      throw IllegalStateException(
+        "Duplicate path at ${duplicatePaths.first()} is not allowed by design. " +
+            "We need a 1:1 mapping of AppRoutes and paths"
+      )
+    }
+    fetchUserDataAndInit { updatedUserData ->
+      // Do not use currentAppRoute here, because it's not set yet.
+      // currentAppRoute will be set in this function through pushAppRoute/handleHistoryChange.
+      val currentRoute = location.toRoute()
+
+      when {
+        isNotAuthenticatedButRequiresAuth(currentRoute, currentUserData = updatedUserData) -> {
+          // The user is not logged in so push him to login page
+          pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
+        }
+
+        location.pathname.removeSuffix("/") == "/admin" -> {
+          val clientUser = updatedUserData.clientUser!!
+          when {
+            UserPermission.EDIT_OWN_ACCESS in clientUser.permissions -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
+            UserPermission.EDIT_LOCATIONS in clientUser.permissions -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
+            UserPermission.VIEW_CHECKINS in clientUser.permissions -> pushAppRoute(Url.REPORT.toRoute()!!)
+            UserPermission.EDIT_USERS in clientUser.permissions -> pushAppRoute(Url.USERS.toRoute()!!)
+          }
+        }
+
+        else -> {
+          // User linked directly to a sub-page
+          handleHistoryChange(currentUserData = updatedUserData)
+        }
+      }
+    }
+
+    onCleanup {
+      // TODO: @mh Check if this is called when the component is unmounted or if unmounting works differently.
+      console.log("onUnmount") // TODO: @mh Remove after testing
+    }
+  }
+
+  document.body?.style?.backgroundColor = "white"
+  console.log("render") // TODO: @mh Remove after testing
+
+  val checkInSideDrawerItems: () -> List<SideDrawerItem> = {
+    if (userData?.clientUser?.canEditAnyLocationAccess == true) {
+      listOf(
+        SideDrawerItem(
+          label = Url.ACCESS_MANAGEMENT_LIST.title,
+          icon = LockOpen,
+          url = Url.ACCESS_MANAGEMENT_LIST
+        ),
+        SideDrawerItem(
+          label = Url.GUEST_CHECK_IN.title,
+          icon = ContactMail,
+          url = Url.GUEST_CHECK_IN
+        )
+      )
+    } else {
+      emptyList()
+    }
+  }
+
+  val moderatorSideDrawerItems: () -> List<SideDrawerItem> = {
+    val items = mutableListOf<SideDrawerItem>()
+
+    if (userData?.clientUser?.canEditLocations == true || userData?.clientUser?.canViewCheckIns == true) {
+      items += SideDrawerItem(
+        label = Url.LOCATIONS_LIST.title,
+        icon = MeetingRoom,
+        url = Url.LOCATIONS_LIST
+      )
+    }
+    if (userData?.clientUser?.canViewCheckIns == true) {
+      items += SideDrawerItem(
+        label = Url.REPORT.title,
+        icon = BlurCircular,
+        url = Url.REPORT
+      )
+    }
+
+    items
+  }
+
+  val adminSideDrawerItems: () -> List<SideDrawerItem> = {
+    if (userData?.clientUser?.canEditUsers == true) {
+      listOf(
+        SideDrawerItem(
+          label = Url.USERS.title,
+          icon = People,
+          url = Url.USERS
+        ),
+        SideDrawerItem(
+          label = Url.ADMIN_INFO.title,
+          icon = Info,
+          url = Url.ADMIN_INFO
+        ),
+      )
+    } else {
+      emptyList()
+    }
+  }
+
+  val theme = useMemo(*emptyArray()) { // TODO: @mh Maybe for correctness use locale instead of emptyArray since it can change.
+    // TODO: @mh Check that this is only called once.
+    createTheme(
+      // TODO: @mh Extract this to a separate function.
+      options = jso {
+        typography = jso {
+          useNextVariants = true
+        }
+        palette = jso {
+          primary = jso {
+            main = ColorPalette.primaryColor
+            contrastText = "#fff"
+          }
+
+          secondary = jso {
+            main = ColorPalette.secondaryColor
+          }
+
+          success = jso {
+            main = "#41d856"
+            contrastText = "#fff"
+          }
+
+        }
+
+        components = jso {
+          val autoCompleteOff = "off" // Prevent lastpass from adding the icon for autofill
+          this["MuiTooltip"] = jso {
+            styleOverrides = jso {
+              tooltip = jso {
+                backgroundColor = "#616161" // Default tooltip color but without alpha to improve readability
+                fontSize = "0.875rem" // Default body font size to improve readability
+              }
+            }
+          }
+
+          this["MuiAutocomplete"] = jso {
+            defaultProps = jso {
+              disablePortal = true // Without this, the absolute position of the dropdown element is sometimes ~400px too high
+            }
+          }
+          this["MuiTextField"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiInputBase"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiInput"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiOutlinedInput"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiFilledInput"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiSelect"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiNativeSelect"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+        }
+      },
+      locale(),
+    )
+  }
+
+  // TODO: @mh Migrate this to the new functional component style.
+  ThemeProvider {
+    this.theme = theme
+    appContextToInject.Provider(
+      AppContext(
+        languageContext = LanguageContext(activeLanguage, ::onLangChange),
+        snackbarRef = snackbarRef,
+        routeContext = RouteContext(currentAppRoute, pushAppRoute), // TODO: @mh Check if pushAppRoute works like that without ":".
+        themeContext = ThemeContext(theme),
+        userDataContext = UserDataContext(userData = userData, loadingUserData, ::fetchUserDataAndInit)
+      )
+    ) {
+      // Global components
+      //mbSnackbar(ref = snackbarRef) // TODO: @mh Migrate later
+      //mbDialog(ref = navigationHandlerDialogRef) // TODO: @mh Migrate later
+
+      Box {
+        sx {
+          // Viewport height to take up whole screen because parent has no height set (similar as for appShell).
+          // Especially important when we show only the iFrameView.
+          minHeight = 100.vh
+          width = 100.pct
+          display = Display.flex
+          flexDirection = FlexDirection.column
+        }
+        renderViewContent()
+      }
+
+      // Render content without side drawer and toolbar, if no shell option is activated via url hash
+      /*if (location.hash.contains("noShell") ||
+        currentAppRoute?.url?.showWithShell != true
+      ) {
+        Box {
+          sx {
+            // Viewport height to take up whole screen because parent has no height set (similar as for appShell).
+            // Especially important when we show only the iFrameView.
+            minHeight = 100.vh
+            width = 100.pct
+            display = Display.flex
+            flexDirection = FlexDirection.column
+          }
+          renderViewContent()
+        }
+      } else {
+        appShell(
+          config = AppShellConfig(
+            appBarElevation = 0,
+            mobileNavOpen = mobileNavOpen,
+            mobileNavOpenChange = { newMobileNavOpen ->
+              mobileNavOpen = newMobileNavOpen
+            },
+            smallToolbar = true,
+            stickyNavigation = true,
+            viewContent = {
+              renderViewContent()
+            },
+            drawerList = {
+              renderAppDrawerItems(
+                config = AppDrawerItemsConfig(
+                  checkInSideDrawerItems = if (loadingUserData) emptyList() else checkInSideDrawerItems(),
+                  moderatorSideDrawerItems = if (loadingUserData) emptyList() else moderatorSideDrawerItems(),
+                  adminSideDrawerItems = if (loadingUserData) emptyList() else adminSideDrawerItems(),
+                  loading = false,
+                  mobileNavOpenChange = { newMobileNavOpen ->
+                    mobileNavOpen = newMobileNavOpen
+                  }
+                )
+              )
+            },
+            toolbarIcon = null,
+            hideDrawer = false,
+            themeColor = theme.palette.primary.main,
+          )
+        )
+      }*/
+    }
+  }
 }
