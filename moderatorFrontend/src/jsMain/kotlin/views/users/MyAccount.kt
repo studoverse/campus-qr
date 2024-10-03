@@ -43,12 +43,12 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
         marginRight = marginLeft
         marginBottom = 32.px
       }
-      renderAddUser(
+      AddUserFc {
         config = AddUserConfig.Edit(
           userData.clientUser!!,
           onFinished = {},
-        ),
-      )
+        )
+      }
     }
   }
 }

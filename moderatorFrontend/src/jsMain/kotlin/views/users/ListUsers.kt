@@ -68,7 +68,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     appContext.showSnackbar(snackbarText)
   }
 
-  private fun renderAddUserDialog() = dialogRef.current!!.showDialog(
+  /*private fun renderAddUserDialog() = dialogRef.current!!.showDialog(
     DialogConfig(
       title = DialogConfig.Title(text = Strings.user_add.get()),
       customContent = DialogConfig.CustomContent(AddUser::class) {
@@ -78,7 +78,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
         })
       },
     )
-  )
+  )*/
 
 
   private fun renderSsoInfoButtonDialog() {
@@ -125,7 +125,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
             text = Strings.user_add.get(),
             variant = ButtonVariant.contained,
             onClick = {
-              renderAddUserDialog()
+              //renderAddUserDialog() // TODO: @mh Figure out how to deal with custom dialogs from now on.
             }
           )
         )

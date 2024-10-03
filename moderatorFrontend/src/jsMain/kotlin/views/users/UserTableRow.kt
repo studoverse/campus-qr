@@ -45,7 +45,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  private fun renderEditUserDialog() = props.config.dialogRef.current!!.showDialog(
+  /*private fun renderEditUserDialog() = props.config.dialogRef.current!!.showDialog(
     DialogConfig(
       title = DialogConfig.Title(text = Strings.user_edit.get()),
       customContent = DialogConfig.CustomContent(AddUser::class) {
@@ -58,7 +58,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
         )
       },
     )
-  )
+  )*/
 
   override fun ChildrenBuilder.render() {
     val userData = appContext.userDataContext.userData!!
@@ -91,7 +91,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
           config = MaterialMenuConfig(
             menuItems = listOf(
               MenuItem(text = Strings.user_edit.get(), icon = Edit, onClick = {
-                renderEditUserDialog()
+                //renderEditUserDialog() // TODO: @mh Figure out how to deal with custom dialogs from now on.
               }),
               MenuItem(text = Strings.user_delete.get(), icon = Delete, onClick = {
                 if (confirm(Strings.user_delete_are_you_sure.get())) {

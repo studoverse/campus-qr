@@ -27,9 +27,18 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
  * Provide coroutine scope within functional components to allow cancellations
  */
 @Suppress("FunctionName") fun <P : Props> FcWithCoroutineScope(
-  block: ChildrenBuilder.(props: P, componentScope: CoroutineScope) -> Unit,
+  block: ChildrenBuilder.(props: P, launch: (suspend () -> Unit) -> Job) -> Unit,
 ) = FC<P> { props ->
   val scope = useMemo(*emptyArray()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
+
+  // TODO: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367
+  fun launch(block: suspend () -> Unit) = scope.launch {
+    try {
+      block.invoke()
+    } catch (e: Exception) {
+      console.error("Coroutine failed", e)  // Log the actual exception
+    }
+  }
 
   useEffectOnceWithCleanup {
     onCleanup {
@@ -42,6 +51,6 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
     }
   }
 
-  block(props, scope)
+  block(props, ::launch)
 }
 
