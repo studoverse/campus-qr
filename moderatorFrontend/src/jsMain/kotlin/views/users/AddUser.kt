@@ -35,7 +35,7 @@ external interface AddUserProps : Props {
 }
 
 val AddUserFc = FcWithCoroutineScope { props: AddUserProps, launch ->
-  var userController = useUserController(
+  var userController = UserController.useUserController(
     user = (props.config as? AddUserConfig.Edit)?.user,
     onFinished = props.config.onFinished,
     launch = launch,
@@ -178,8 +178,6 @@ val AddUserFc = FcWithCoroutineScope { props: AddUserProps, launch ->
   }
 }
 
-// TODO: @mh Test if the useUserController hook could be integrated into this data class so
-//  that we don't need the return statement for all the properties
 private data class UserController(
   val createNewUser: () -> Job,
   val editUser: () -> Job,
@@ -201,147 +199,149 @@ private data class UserController(
   val setUserNameTextFieldError: StateSetter<String>,
   val userPermissions: Set<UserPermission>,
   val setUserPermissions: StateSetter<Set<UserPermission>>,
-)
+) {
+  companion object {
+    fun useUserController(
+      user: ClientUser?,
+      onFinished: (response: String?) -> Unit,
+      launch: (suspend () -> Unit) -> Job
+    ): UserController {
+      var userCreationInProgress by useState(false)
+      var (userEmailTextFieldValue, setUserEmailTextFieldValue) = useState(user?.email ?: "")
+      var (userEmailTextFieldError, setUserEmailTextFieldError) = useState("")
+      var (userPasswordTextFieldValue, setUserPasswordTextFieldValue) = useState("")
+      var (userPasswordTextFieldError, setUserPasswordTextFieldError) = useState("")
+      var (userNameTextFieldValue, setUserNameTextFieldValue) = useState(user?.name ?: "")
+      var (userNameTextFieldError, setUserNameTextFieldError) = useState("")
+      var (userPermissions, setUserPermissions) = useState(user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS))
 
-private fun useUserController(
-  user: ClientUser?,
-  onFinished: (response: String?) -> Unit,
-  launch: (suspend () -> Unit) -> Job
-): UserController {
-  var userCreationInProgress by useState(false)
-  var (userEmailTextFieldValue, setUserEmailTextFieldValue) = useState(user?.email ?: "")
-  var (userEmailTextFieldError, setUserEmailTextFieldError) = useState("")
-  var (userPasswordTextFieldValue, setUserPasswordTextFieldValue) = useState("")
-  var (userPasswordTextFieldError, setUserPasswordTextFieldError) = useState("")
-  var (userNameTextFieldValue, setUserNameTextFieldValue) = useState(user?.name ?: "")
-  var (userNameTextFieldError, setUserNameTextFieldError) = useState("")
-  var (userPermissions, setUserPermissions) = useState(user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS))
+      fun createNewUser() = launch {
+        val appContext = useContext(appContextToInject)!!
 
-  fun createNewUser() = launch {
-    val appContext = useContext(appContextToInject)!!
+        userCreationInProgress = true
+        val response = NetworkManager.post<String>(
+          url = "$apiBase/user/create",
+          body = NewUserData(
+            email = userEmailTextFieldValue,
+            password = userPasswordTextFieldValue,
+            name = userNameTextFieldValue,
+            permissions = userPermissions.map { it.name }
+          )
+        )
+        userCreationInProgress = false
 
-    userCreationInProgress = true
-    val response = NetworkManager.post<String>(
-      url = "$apiBase/user/create",
-      body = NewUserData(
-        email = userEmailTextFieldValue,
-        password = userPasswordTextFieldValue,
-        name = userNameTextFieldValue,
-        permissions = userPermissions.map { it.name }
+        onFinished(response)
+        val snackbarText = if (response == "ok") {
+          Strings.user_created_account_details.get()
+        } else {
+          Strings.network_error.get()
+        }
+        appContext.showSnackbar(snackbarText)
+      }
+
+      fun editUser() = launch {
+        val appContext = useContext(appContextToInject)!!
+
+        userCreationInProgress = true
+        val response = NetworkManager.post<String>(
+          url = "$apiBase/user/edit",
+          body = EditUserData(
+            userId = user!!.id,
+            name = userNameTextFieldValue.emptyToNull(),
+            password = userPasswordTextFieldValue.emptyToNull(),
+            permissions = userPermissions
+              .takeIf { user.permissions != it }
+              ?.map { it.name }
+          )
+        )
+        val userData = appContext.userDataContext.userData!!
+        if (response != null && user.id == userData.clientUser?.id) {
+          // Only update currently logged-in user
+          appContext.userDataContext.fetchNewUserData()
+        }
+        userCreationInProgress = false
+
+        onFinished(response)
+        val snackbarText = if (response == "ok") {
+          Strings.user_updated_account_details.get()
+        } else {
+          Strings.network_error.get()
+        }
+        appContext.showSnackbar(snackbarText)
+      }
+
+      fun validateEmailInput(): Boolean {
+        when {
+          userEmailTextFieldValue.isEmpty() -> {
+            userEmailTextFieldError = Strings.parameter_cannot_be_empty_format.get().format(Strings.email_address.get())
+
+            return false
+          }
+
+          userEmailTextFieldValue.count() < 6 -> {
+            userEmailTextFieldError = Strings.parameter_too_short_format.get().format(Strings.email_address.get())
+
+            return false
+          }
+
+          !userEmailTextFieldValue.matches(emailRegex) -> {
+            userEmailTextFieldError = Strings.login_register_email_not_valid.get()
+            return false
+          }
+
+          else -> return true
+        }
+      }
+
+      fun validatePasswordInput(): Boolean {
+        when {
+          userPasswordTextFieldValue.count() < 6 -> {
+            userPasswordTextFieldError = Strings.parameter_too_short_format.get().format(Strings.login_email_form_pw_label.get())
+
+            return false
+          }
+
+          userPasswordTextFieldValue.isEmpty() -> {
+            userPasswordTextFieldError = Strings.parameter_cannot_be_empty_format.get().format(Strings.login_email_form_pw_label.get())
+
+            return false
+          }
+
+          else -> return true
+        }
+      }
+
+      fun validateNameInput(): Boolean {
+        if (userNameTextFieldValue.isEmpty()) {
+          userNameTextFieldError = Strings.parameter_cannot_be_empty_format.get().format(Strings.name.get())
+
+          return false
+        }
+        return true
+      }
+
+      return UserController(
+        createNewUser = ::createNewUser,
+        editUser = ::editUser,
+        validateNameInput = ::validateNameInput,
+        validatePasswordInput = ::validatePasswordInput,
+        validateEmailInput = ::validateEmailInput,
+        userCreationInProgress = userCreationInProgress,
+        userEmailTextFieldValue = userEmailTextFieldValue,
+        setUserEmailTextFieldValue = setUserEmailTextFieldValue,
+        userEmailTextFieldError = userEmailTextFieldError,
+        setUserEmailTextFieldError = setUserEmailTextFieldError,
+        userPasswordTextFieldValue = userPasswordTextFieldValue,
+        setUserPasswordTextFieldValue = setUserPasswordTextFieldValue,
+        userPasswordTextFieldError = userPasswordTextFieldError,
+        setUserPasswordTextFieldError = setUserPasswordTextFieldError,
+        userNameTextFieldValue = userNameTextFieldValue,
+        setUserNameTextFieldValue = setUserNameTextFieldValue,
+        userNameTextFieldError = userNameTextFieldError,
+        setUserNameTextFieldError = setUserNameTextFieldError,
+        userPermissions = userPermissions,
+        setUserPermissions = setUserPermissions,
       )
-    )
-    userCreationInProgress = false
-
-    onFinished(response)
-    val snackbarText = if (response == "ok") {
-      Strings.user_created_account_details.get()
-    } else {
-      Strings.network_error.get()
-    }
-    appContext.showSnackbar(snackbarText)
-  }
-
-  fun editUser() = launch {
-    val appContext = useContext(appContextToInject)!!
-
-    userCreationInProgress = true
-    val response = NetworkManager.post<String>(
-      url = "$apiBase/user/edit",
-      body = EditUserData(
-        userId = user!!.id,
-        name = userNameTextFieldValue.emptyToNull(),
-        password = userPasswordTextFieldValue.emptyToNull(),
-        permissions = userPermissions
-          .takeIf { user.permissions != it }
-          ?.map { it.name }
-      )
-    )
-    val userData = appContext.userDataContext.userData!!
-    if (response != null && user.id == userData.clientUser?.id) {
-      // Only update currently logged-in user
-      appContext.userDataContext.fetchNewUserData()
-    }
-    userCreationInProgress = false
-
-    onFinished(response)
-    val snackbarText = if (response == "ok") {
-      Strings.user_updated_account_details.get()
-    } else {
-      Strings.network_error.get()
-    }
-    appContext.showSnackbar(snackbarText)
-  }
-
-  fun validateEmailInput(): Boolean {
-    when {
-      userEmailTextFieldValue.isEmpty() -> {
-        userEmailTextFieldError = Strings.parameter_cannot_be_empty_format.get().format(Strings.email_address.get())
-
-        return false
-      }
-
-      userEmailTextFieldValue.count() < 6 -> {
-        userEmailTextFieldError = Strings.parameter_too_short_format.get().format(Strings.email_address.get())
-
-        return false
-      }
-
-      !userEmailTextFieldValue.matches(emailRegex) -> {
-        userEmailTextFieldError = Strings.login_register_email_not_valid.get()
-        return false
-      }
-
-      else -> return true
     }
   }
-
-  fun validatePasswordInput(): Boolean {
-    when {
-      userPasswordTextFieldValue.count() < 6 -> {
-        userPasswordTextFieldError = Strings.parameter_too_short_format.get().format(Strings.login_email_form_pw_label.get())
-
-        return false
-      }
-
-      userPasswordTextFieldValue.isEmpty() -> {
-        userPasswordTextFieldError = Strings.parameter_cannot_be_empty_format.get().format(Strings.login_email_form_pw_label.get())
-
-        return false
-      }
-
-      else -> return true
-    }
-  }
-
-  fun validateNameInput(): Boolean {
-    if (userNameTextFieldValue.isEmpty()) {
-      userNameTextFieldError = Strings.parameter_cannot_be_empty_format.get().format(Strings.name.get())
-
-      return false
-    }
-    return true
-  }
-
-  return UserController(
-    createNewUser = ::createNewUser,
-    editUser = ::editUser,
-    validateNameInput = ::validateNameInput,
-    validatePasswordInput = ::validatePasswordInput,
-    validateEmailInput = ::validateEmailInput,
-    userCreationInProgress = userCreationInProgress,
-    userEmailTextFieldValue = userEmailTextFieldValue,
-    setUserEmailTextFieldValue = setUserEmailTextFieldValue,
-    userEmailTextFieldError = userEmailTextFieldError,
-    setUserEmailTextFieldError = setUserEmailTextFieldError,
-    userPasswordTextFieldValue = userPasswordTextFieldValue,
-    setUserPasswordTextFieldValue = setUserPasswordTextFieldValue,
-    userPasswordTextFieldError = userPasswordTextFieldError,
-    setUserPasswordTextFieldError = setUserPasswordTextFieldError,
-    userNameTextFieldValue = userNameTextFieldValue,
-    setUserNameTextFieldValue = setUserNameTextFieldValue,
-    userNameTextFieldError = userNameTextFieldError,
-    setUserNameTextFieldError = setUserNameTextFieldError,
-    userPermissions = userPermissions,
-    setUserPermissions = setUserPermissions,
-  )
 }
