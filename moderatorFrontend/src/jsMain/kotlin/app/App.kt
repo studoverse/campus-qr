@@ -1,5 +1,6 @@
 package app
 
+import MbSnackbarFc
 import csstype.*
 import kotlinx.browser.document
 import mui.material.Box
@@ -10,7 +11,7 @@ import web.cssom.*
 import web.location.location
 import webcore.*
 import webcore.shell.AppShellConfig
-import webcore.shell.appShell
+import webcore.shell.AppShellFc
 
 val baseUrl = location.href.substringBefore("/admin")
 
@@ -36,11 +37,10 @@ object GlobalCss {
   }
 }
 
-val AppFc = FcWithCoroutineScope { props: AppProps, launch ->
+val AppFc = FcWithCoroutineScope<AppProps> { props, launch ->
   val appController = AppController.useAppController(launch = launch)
 
   document.body?.style?.backgroundColor = "white"
-  console.log("render") // TODO: @mh Remove after testing
 
   val fetchNewUserData = {
     appController.fetchUserDataAndInit(null)
@@ -60,20 +60,8 @@ val AppFc = FcWithCoroutineScope { props: AppProps, launch ->
       )
     ) {
       // Global components
-      //mbSnackbar(ref = snackbarRef) // TODO: @mh Migrate later
-      //mbDialog(ref = navigationHandlerDialogRef) // TODO: @mh Migrate later
-
-      Box {
-        sx {
-          // Viewport height to take up whole screen because parent has no height set (similar as for appShell).
-          // Especially important when we show only the iFrameView.
-          minHeight = 100.vh
-          width = 100.pct
-          display = Display.flex
-          flexDirection = FlexDirection.column
-        }
-        appController.renderViewContent(this)
-      }
+      MbSnackbarFc { ref = appController.snackbarRef }
+      MbDialogFc { ref = appController.navigationHandlerDialogRef }
 
       // Render content without side drawer and toolbar, if no shell option is activated via url hash
       if (location.hash.contains("noShell") ||
@@ -91,7 +79,7 @@ val AppFc = FcWithCoroutineScope { props: AppProps, launch ->
           appController.renderViewContent(this)
         }
       } else {
-        appShell(
+        AppShellFc {
           config = AppShellConfig(
             appBarElevation = 0,
             mobileNavOpen = appController.mobileNavOpen,
@@ -102,7 +90,7 @@ val AppFc = FcWithCoroutineScope { props: AppProps, launch ->
               appController.renderViewContent(this)
             },
             drawerList = {
-              renderAppDrawerItems(
+              AppDrawerItemsFc {
                 config = AppDrawerItemsConfig(
                   checkInSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.checkInSideDrawerItems(),
                   moderatorSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.moderatorSideDrawerItems(),
@@ -110,13 +98,13 @@ val AppFc = FcWithCoroutineScope { props: AppProps, launch ->
                   loading = false,
                   mobileNavOpenChange = appController.mobileNavOpenChange,
                 )
-              )
+              }
             },
             toolbarIcon = null,
             hideDrawer = false,
             themeColor = appController.theme.palette.primary.main,
           )
-        )
+        }
       }
     }
   }

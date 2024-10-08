@@ -36,7 +36,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  private val dialogRef = createRef<MbDialog>()
+  private val dialogRef: MutableRefObject<MbDialogRef> = createRef<MbDialogRef>() as MutableRefObject<MbDialogRef>
 
   override fun ListLocationsState.init() {
     locationList = null
@@ -64,20 +64,21 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
       }
       else -> Strings.error_try_again.get()
     }
-    appContext.showSnackbar(snackbarText)
+    appContext.showSnackbarText(snackbarText)
   }
 
   private fun renderAddLocationDialog() = dialogRef.current!!.showDialog(
     DialogConfig(
       title = DialogConfig.Title(text = Strings.location_add.get()),
-      customContent = DialogConfig.CustomContent(AddLocation::class) {
+      // TODO: @mh
+      /*customContent = DialogConfig.CustomContent(AddLocation::class) {
         config = AddLocationConfig.Create(
           dialogRef = dialogRef,
           onFinished = { response ->
             handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
           }
         )
-      },
+      },*/
     )
   )
 
@@ -97,9 +98,9 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
   }
 
   override fun ChildrenBuilder.render() {
-    mbDialog(ref = dialogRef)
+    MbDialogFc { ref = dialogRef }
     val userData = appContext.userDataContext.userData!!
-    renderToolbarView(
+    ToolbarViewFc {
       config = ToolbarViewConfig(
         title = Strings.locations.get(),
         buttons = listOfNotNull(
@@ -137,7 +138,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
           } else null,
         )
       )
-    )
+    }
 
     renderMbLinearProgress(show = state.loadingLocationList)
 

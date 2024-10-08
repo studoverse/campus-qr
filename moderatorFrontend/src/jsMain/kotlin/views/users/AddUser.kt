@@ -28,7 +28,7 @@ external interface AddUserProps : Props {
   var config: AddUserConfig
 }
 
-val AddUserFc = FcWithCoroutineScope { props: AddUserProps, launch ->
+val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
   var addUserController = AddUserController.useUserController(
     user = (props.config as? AddUserConfig.Edit)?.user,
     onFinished = props.config.onFinished,

@@ -1,5 +1,3 @@
-import app.AppContext
-import app.appContextToInject
 import csstype.*
 import js.objects.jso
 import mui.icons.material.*
@@ -27,48 +25,75 @@ class MbSnackbarConfig(
   }
 }
 
-external interface MbSnackbarProps : PropsWithRef<MbSnackbar>
-
-external interface MbSnackbarState : State {
-  var config: MbSnackbarConfig?
+external interface MbSnackbarRef {
+  fun showSnackbarText(text: String)
+  fun showSnackbar(newConfig: MbSnackbarConfig)
+  fun closeSnackbar()
 }
+
+external interface MbSnackbarProps<T : MbSnackbarRef> : PropsWithRef<T>
 
 /**
  * Snackbar component for handling all snackbars of the application.
  *
+ * You only need to define one snackbar in your page.
+ * Control the message, type, positions through state variables.
+ *
  * The snackbar always closes automatically after [SnackbarProps.autoHideDuration].
- * [MbSnackbar.closeSnackbar] is only needed if you use [MbSnackbarConfig.action] or [MbSnackbarConfig.complexMessage] and
+ * [MbSnackbarFc.closeSnackbar] is only needed if you use [MbSnackbarConfig.action] or [MbSnackbarConfig.complexMessage] and
  * have a custom close action where the snackbar should be closed immediately.
  */
-class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
-  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
-  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(MbSnackbar::class) {
-    init {
-      this.contextType = appContextToInject
+val MbSnackbarFc = FcRefWithCoroutineScope<MbSnackbarProps<MbSnackbarRef>> { props, launch ->
+  var config: MbSnackbarConfig? by useState { null }
+
+  fun showSnackbar(text: String) {
+    config = MbSnackbarConfig(message = text)
+  }
+
+  fun showSnackbar(newConfig: MbSnackbarConfig) {
+    config = newConfig
+  }
+
+  fun closeSnackbar() {
+    config = null
+  }
+
+  // Use the useImperativeHandle hook to expose the methods via the ref.
+  useImperativeHandle(ref = props.ref, dependencies = *arrayOf(config)) {
+    object : MbSnackbarRef {
+      override fun showSnackbarText(text: String) {
+        showSnackbar(text)
+      }
+
+      override fun showSnackbar(newConfig: MbSnackbarConfig) {
+        showSnackbar(newConfig)
+      }
+
+      override fun closeSnackbar() {
+        closeSnackbar()
+      }
     }
   }
 
-  private val mbAppContext get() = this.asDynamic().context as AppContext
-
-  override fun ChildrenBuilder.render() {
-    val config = state.config ?: return
-
+  val currentConfig = config
+  if (currentConfig != null) {
     Snackbar {
       anchorOrigin = jso {
-        vertical = config.position.vertical
-        horizontal = config.position.horizontal
+        vertical = currentConfig.position.vertical
+        horizontal = currentConfig.position.horizontal
       }
       sx {
         marginBottom = 20.px
       }
       open = true
-      autoHideDuration = 3000 + config.message.count() * 50 + (if (action == null) 0 else 1000) // By experimentation this value feels good.
+      autoHideDuration =
+        3000 + currentConfig.message.count() * 50 + (if (action == null) 0 else 1000) // By experimentation this value feels good.
       onClose = { _, _ ->
-        setState { this.config = null }
+        //config = null
       }
       SnackbarContent {
         sx {
-          when (config.snackbarType) {
+          when (currentConfig.snackbarType) {
             MbSnackbarConfig.Type.SUCCESS -> backgroundColor = Color(greenColor[500] as String)
             MbSnackbarConfig.Type.ERROR -> backgroundColor = Color(redColor[500] as String)
             MbSnackbarConfig.Type.INFO -> backgroundColor = Color(blueColor[500] as String)
@@ -87,7 +112,7 @@ class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
             alignItems = AlignItems.center
             whiteSpace = WhiteSpace.preLine
           }
-          config.snackbarType?.icon?.let {
+          currentConfig.snackbarType?.icon?.let {
             it {
               sx {
                 fontSize = 20.px
@@ -96,35 +121,13 @@ class MbSnackbar : RComponent<MbSnackbarProps, MbSnackbarState>() {
               }
             }
           }
-          +config.message
+          +currentConfig.message
         }
-        config.action?.let { action ->
+        currentConfig.action?.let { action ->
           this.action = action
         }
-        config.complexMessage?.let { message = it() }
+        currentConfig.complexMessage?.let { message = it() }
       }
-    }
-  }
-
-  fun showSnackbar(text: String) {
-    setState { this.config = MbSnackbarConfig(message = text) }
-  }
-
-  fun showSnackbar(config: MbSnackbarConfig) {
-    setState { this.config = config }
-  }
-
-  fun closeSnackbar() {
-    setState { this.config = null }
-  }
-}
-
-// You only need to define one snackbar in your page
-// control the message, type, positions through state variables.
-fun ChildrenBuilder.mbSnackbar(ref: Ref<MbSnackbar>? = null) {
-  MbSnackbar::class.react {
-    if (ref != null) {
-      this.ref = ref
     }
   }
 }

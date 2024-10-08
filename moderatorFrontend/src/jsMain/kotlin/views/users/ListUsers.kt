@@ -36,7 +36,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  private val dialogRef = createRef<MbDialog>()
+  private val dialogRef: MutableRefObject<MbDialogRef> = createRef<MbDialogRef>() as MutableRefObject<MbDialogRef>
 
   override fun ListUsersState.init() {
     userList = null
@@ -65,7 +65,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       }
       else -> Strings.error_try_again.get()
     }
-    appContext.showSnackbar(snackbarText)
+    appContext.showSnackbarText(snackbarText)
   }
 
   /*private fun renderAddUserDialog() = dialogRef.current!!.showDialog(
@@ -85,7 +85,8 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     dialogRef.current!!.showDialog(
       DialogConfig(
         title = DialogConfig.Title(text = Strings.user_sso_info.get()),
-        customContent = basicCustomContent {
+        // TODO: @mh
+        /*customContent = basicCustomContent {
           Typography {
             sx {
               color = rgb(0, 0, 0, 0.54)
@@ -96,7 +97,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
             spacer(16)
             +Strings.user_sso_info_details2.get()
           }
-        },
+        },*/
         buttons = listOf(
           DialogButton(Strings.more_about_studo.get(), onClick = {
             window.open("https://studo.com", WindowTarget._blank)
@@ -108,9 +109,9 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
   }
 
   override fun ChildrenBuilder.render() {
-    mbDialog(ref = dialogRef)
+    MbDialogFc { ref = dialogRef }
     val userData = appContext.userDataContext.userData!!
-    renderToolbarView(
+    ToolbarViewFc {
       config = ToolbarViewConfig(
         title = Strings.user_management.get(),
         buttons = listOfNotNull(
@@ -130,7 +131,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
           )
         )
       )
-    )
+    }
 
     if (userData.externalAuthProvider) {
       Box {

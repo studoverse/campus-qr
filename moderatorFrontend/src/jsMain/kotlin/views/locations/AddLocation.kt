@@ -23,11 +23,11 @@ import web.html.InputType
 import webcore.*
 import webcore.extensions.launch
 
-sealed class AddLocationConfig(val dialogRef: RefObject<MbDialog>, val onFinished: (response: String?) -> Unit) {
-  class Create(dialogRef: RefObject<MbDialog>, onFinished: (response: String?) -> Unit) :
+sealed class AddLocationConfig(val dialogRef: MutableRefObject<MbDialogRef>, val onFinished: (response: String?) -> Unit) {
+  class Create(dialogRef: MutableRefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
     AddLocationConfig(dialogRef = dialogRef, onFinished = onFinished)
 
-  class Edit(val location: ClientLocation, dialogRef: RefObject<MbDialog>, onFinished: (response: String?) -> Unit) :
+  class Edit(val location: ClientLocation, dialogRef: MutableRefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
     AddLocationConfig(dialogRef = dialogRef, onFinished = onFinished)
 }
 

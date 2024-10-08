@@ -22,7 +22,7 @@ external interface LoginNavigationButtonsViewProps : Props {
   var config: LoginNavigationButtonsViewConfig
 }
 
-val LoginNavigationButtonsViewFc = FcWithCoroutineScope { props: LoginNavigationButtonsViewProps, componentScope ->
+val LoginNavigationButtonsViewFc = FcWithCoroutineScope<LoginNavigationButtonsViewProps> { props, componentScope ->
   Box {
     className = ClassName(GlobalCss.flex)
     if (props.config.backEnabled) {

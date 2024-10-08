@@ -27,9 +27,9 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
  * Provide coroutine scope within functional components to allow cancellations
  */
 @Suppress("FunctionName") fun <P : Props> FcWithCoroutineScope(
-  block: ChildrenBuilder.(props: P, launch: (suspend () -> Unit) -> Job) -> Unit,
+  block: ChildrenBuilder.(props: P, launch: Launch) -> Unit,
 ) = FC<P> { props ->
-  val scope = useMemo(*emptyArray()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
+  val scope = useMemo(*emptyArray<Any>()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
   // TODO: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367
   fun launch(block: suspend () -> Unit) = scope.launch {
@@ -42,9 +42,31 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
 
   useEffectOnceWithCleanup {
     onCleanup {
-      // TODO: @mh Check if this is called when the component is unmounted or if unmounting works differently.
-      console.log("onUnmount") // TODO: @mh Remove after testing
+      if (scope.isActive) {
+        scope.cancel("Cancel coroutine because component will unmount")
+      }
+    }
+  }
 
+  block(props, ::launch)
+}
+
+@Suppress("FunctionName") fun <P : PropsWithRef<*>> FcRefWithCoroutineScope(
+  block: ChildrenBuilder.(props: P, launch: Launch) -> Unit,
+) = ForwardRef<P> { props ->
+  val scope = useMemo(*emptyArray<Any>()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
+
+  // TODO: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367
+  fun launch(block: suspend () -> Unit) = scope.launch {
+    try {
+      block.invoke()
+    } catch (e: Exception) {
+      console.error("Coroutine failed", e)  // Log the actual exception
+    }
+  }
+
+  useEffectOnceWithCleanup {
+    onCleanup {
       if (scope.isActive) {
         scope.cancel("Cancel coroutine because component will unmount")
       }

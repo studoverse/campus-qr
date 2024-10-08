@@ -21,7 +21,7 @@ import webcore.*
 import webcore.extensions.launch
 
 class AddGuestCheckInConfig(
-  val dialogRef: RefObject<MbDialog>,
+  val dialogRef: MutableRefObject<MbDialogRef>,
   val onGuestCheckedIn: () -> Unit,
 )
 
@@ -98,8 +98,8 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
         props.config.onGuestCheckedIn()
         props.config.dialogRef.current!!.closeDialog()
       }
-      "forbidden_email" -> appContext.showSnackbar(Strings.invalid_email.get())
-      else -> appContext.showSnackbar(Strings.error_try_again.get())
+      "forbidden_email" -> appContext.showSnackbarText(Strings.invalid_email.get())
+      else -> appContext.showSnackbarText(Strings.error_try_again.get())
     }
   }
 

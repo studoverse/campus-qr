@@ -51,7 +51,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  private val dialogRef = createRef<MbDialog>()
+  private val dialogRef: MutableRefObject<MbDialogRef> = createRef<MbDialogRef>() as MutableRefObject<MbDialogRef>
 
   override fun ReportState.init() {
     emailTextFieldValue = ""
@@ -89,7 +89,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
           // re-trace contacts
           traceContacts()
         } else {
-          appContext.showSnackbar(Strings.error_try_again.get())
+          appContext.showSnackbarText(Strings.error_try_again.get())
           showProgress = false
         }
       }
@@ -107,7 +107,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
         // re-trace contacts
         traceContacts()
       } else {
-        appContext.showSnackbar(Strings.error_try_again.get())
+        appContext.showSnackbarText(Strings.error_try_again.get())
         showProgress = false
       }
     }
@@ -125,7 +125,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
     setState {
       showProgress = false
       reportData = if (response == null) {
-        appContext.showSnackbar(Strings.error_try_again.get())
+        appContext.showSnackbarText(Strings.error_try_again.get())
         null
       } else {
         response
@@ -134,7 +134,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
   }
 
   override fun ChildrenBuilder.render() {
-    mbDialog(ref = dialogRef)
+    MbDialogFc { ref = dialogRef }
     val now = Date()
     val showEmailAddress = state.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
@@ -152,7 +152,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
       }
       gridContainer(GridDirection.row) {
         gridItem(GridSize(xs = 12, sm = 3)) {
-          datePicker(
+          DatePickerFc {
             config = DatePickerConfig(
               date = state.infectionDate,
               label = Strings.report_infection_date.get(),
@@ -166,7 +166,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
                 }
               },
             )
-          )
+          }
         }
         gridItem(GridSize(xs = 12, sm = 6)) {
           form {

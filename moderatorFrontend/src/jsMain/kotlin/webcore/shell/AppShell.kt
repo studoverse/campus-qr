@@ -1,13 +1,12 @@
 package webcore.shell
 
-import app.AppContext
 import app.appContextToInject
 import web.cssom.*
 import mui.material.Box
 import mui.system.Breakpoint
 import mui.system.sx
 import react.*
-import webcore.RComponent
+import webcore.FcWithCoroutineScope
 
 class AppShellConfig(
   var drawerList: ChildrenBuilder.() -> Unit,
@@ -26,68 +25,50 @@ external interface AppShellProps : Props {
   var config: AppShellConfig
 }
 
-external interface AppShellState : State
+val AppShellFc = FcWithCoroutineScope<AppShellProps> { props, launch ->
+  val appContext = useContext(appContextToInject)!!
 
-class AppShell(props: AppShellProps) : RComponent<AppShellProps, AppShellState>(props) {
-
-  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
-  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(AppShell::class) {
-    init {
-      this.contextType = appContextToInject
-    }
+  val theme = appContext.theme
+  AppShellDrawerFc {
+    config = AppShellDrawerConfig(
+      props.config.mobileNavOpen,
+      props.config.mobileNavOpenChange,
+      props.config.hideDrawer,
+      props.config.drawerList,
+      props.config.toolbarIcon,
+      props.config.themeColor,
+      props.config.smallToolbar,
+      props.config.stickyNavigation,
+      props.config.appBarElevation
+    )
   }
 
-  private val appContext get() = this.asDynamic().context as AppContext
+  Box {
+    sx {
+      (theme.breakpoints.only(Breakpoint.sm)) {
+        minHeight = 100.vh - 64.px
+      }
+      (theme.breakpoints.only(Breakpoint.xs)) {
+        minHeight = 100.vh - 56.px
+      }
+      margin = Margin(vertical = 0.px, horizontal = Auto.auto)
+      display = Display.flex
+      flexDirection = FlexDirection.column
 
-  override fun ChildrenBuilder.render() {
-    val theme = appContext.theme
-    renderAppShellDrawer(
-      config = AppShellDrawerConfig(
-        props.config.mobileNavOpen,
-        props.config.mobileNavOpenChange,
-        props.config.hideDrawer,
-        props.config.drawerList,
-        props.config.toolbarIcon,
-        props.config.themeColor,
-        props.config.smallToolbar,
-        props.config.stickyNavigation,
-        props.config.appBarElevation
-      )
-    )
+      (theme.breakpoints.up(Breakpoint.md)) {
+        if (!props.config.hideDrawer) {
+          marginLeft = AppShellDrawerStyles.drawerWidth.px
+        }
 
-    Box {
-      sx {
-        (theme.breakpoints.only(Breakpoint.sm)) {
+        if (props.config.smallToolbar) {
+          minHeight = 100.vh - 12.px
+          marginLeft = AppShellDrawerStyles.drawerWidth.px
+        } else {
           minHeight = 100.vh - 64.px
-        }
-        (theme.breakpoints.only(Breakpoint.xs)) {
-          minHeight = 100.vh - 56.px
-        }
-        margin = Margin(vertical = 0.px, horizontal = Auto.auto)
-        display = Display.flex
-        flexDirection = FlexDirection.column
-
-        (theme.breakpoints.up(Breakpoint.md)) {
-          if (!props.config.hideDrawer) {
-            marginLeft = drawerWidth.px
-          }
-
-          if (props.config.smallToolbar) {
-            minHeight = 100.vh - 12.px
-            marginLeft = drawerWidth.px
-          } else {
-            minHeight = 100.vh - 64.px
-            marginLeft = drawerWidth.px
-          }
+          marginLeft = AppShellDrawerStyles.drawerWidth.px
         }
       }
-      props.config.viewContent(this)
     }
-  }
-}
-
-fun ChildrenBuilder.appShell(config: AppShellConfig) {
-  AppShell::class.react {
-    this.config = config
+    props.config.viewContent(this)
   }
 }

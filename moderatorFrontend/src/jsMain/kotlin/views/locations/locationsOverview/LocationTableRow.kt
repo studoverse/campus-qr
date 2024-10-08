@@ -23,7 +23,7 @@ class LocationTableRowConfig(
   val onEditFinished: (response: String?) -> Unit,
   val onDeleteFinished: (response: String?) -> Unit,
   val userData: UserData,
-  val dialogRef: RefObject<MbDialog>,
+  val dialogRef: MutableRefObject<MbDialogRef>,
 ) {
   val clientUser: ClientUser get() = userData.clientUser!!
 }
@@ -54,7 +54,8 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
   private fun renderEditLocationDialog() = props.config.dialogRef.current!!.showDialog(
     DialogConfig(
       title = DialogConfig.Title(text = Strings.location_edit.get()),
-      customContent = DialogConfig.CustomContent(views.locations.AddLocation::class) {
+      // TODO: @mh
+      /*customContent = DialogConfig.CustomContent(views.locations.AddLocation::class) {
         config = AddLocationConfig.Edit(
           location = props.config.location,
           dialogRef = props.config.dialogRef,
@@ -62,7 +63,7 @@ private class LocationTableRow : RComponent<LocationTableRowProps, LocationTable
             props.config.onEditFinished(response)
           },
         )
-      },
+      },*/
     )
   )
 

@@ -21,7 +21,7 @@ import mui.material.styles.createTheme
 import react.ChildrenBuilder
 import react.MutableRefObject
 import react.dom.flushSync
-import react.useEffectOnceWithCleanup
+import react.useEffectOnce
 import react.useMemo
 import react.useRef
 import react.useState
@@ -32,8 +32,9 @@ import util.apiBase
 import util.get
 import util.relativeUrl
 import web.location.location
+import webcore.Launch
 import webcore.Localization
-import webcore.MbDialog
+import webcore.MbDialogRef
 import webcore.NavigationHandler
 import webcore.NavigationHandler.allUrls
 import webcore.NetworkManager
@@ -50,8 +51,8 @@ data class AppController(
   val activeLanguage: MbLocalizedStringConfig.SupportedLanguage,
   val onLangChange: (newLang: MbLocalizedStringConfig.SupportedLanguage) -> Unit,
   val theme: Theme,
-  val snackbarRef: MutableRefObject<MbSnackbar>,
-  val navigationHandlerDialogRef: MutableRefObject<MbDialog>,
+  val snackbarRef: MutableRefObject<MbSnackbarRef>,
+  val navigationHandlerDialogRef: MutableRefObject<MbDialogRef>,
   val checkInSideDrawerItems: () -> List<SideDrawerItem>,
   val moderatorSideDrawerItems: () -> List<SideDrawerItem>,
   val adminSideDrawerItems: () -> List<SideDrawerItem>,
@@ -60,7 +61,7 @@ data class AppController(
   val renderViewContent: ChildrenBuilder.() -> Unit,
 ) {
   companion object {
-    fun useAppController(launch: (suspend () -> Unit) -> Job): AppController {
+    fun useAppController(launch: Launch): AppController {
       var userData: UserData? by useState(null)
       var loadingUserData: Boolean by useState(true)
       var currentAppRoute: AppRoute? by useState(null)
@@ -68,8 +69,8 @@ data class AppController(
       var activeLanguage: MbLocalizedStringConfig.SupportedLanguage by useState(MbLocalizedStringConfig.selectedLanguage)
 
       // Only used for the NavigationHandler since this dialog must exist globally
-      var navigationHandlerDialogRef = useRef<MbDialog>() // TODO: @mh Figure out how to use useRef correctly.
-      var snackbarRef = useRef<MbSnackbar>()
+      var navigationHandlerDialogRef = useRef<MbDialogRef>() // TODO: @mh Test
+      var snackbarRef = useRef<MbSnackbarRef>()
 
       // TODO: @mh Check that this works
       lateinit var pushAppRoute: (AppRoute) -> Unit // Workaround for function not being visible for handleHistoryChange.
@@ -141,9 +142,7 @@ data class AppController(
         mobileNavOpen = newMobileNavOpen
       }
 
-      useEffectOnceWithCleanup { // TODO: @mh Maybe emptyArray can be replaced with listOf() ?
-        console.log("onMount") // TODO: @mh Remove after testing
-
+      useEffectOnce {
         NavigationHandler.initApp(
           allUrls = Url.entries,
           dialogRef = navigationHandlerDialogRef,
@@ -185,14 +184,10 @@ data class AppController(
             }
           }
         }
-
-        onCleanup {
-          // TODO: @mh Check if this is called when the component is unmounted or if unmounting works differently.
-          console.log("onUnmount") // TODO: @mh Remove after testing
-        }
       }
 
-      val locale: () -> Localization = {
+      // TODO: @mh Refactor all getters to useMemo.
+      val locale: Localization = useMemo(*arrayOf(activeLanguage)) {
         when (activeLanguage) {
           MbLocalizedStringConfig.SupportedLanguage.De -> {
             deDE
@@ -204,86 +199,7 @@ data class AppController(
         }
       }
 
-      val theme = useMemo(*emptyArray()) { // TODO: @mh Maybe for correctness use locale instead of emptyArray since it can change.
-        // TODO: @mh Check that this is only called once.
-        createTheme(
-          options = jso {
-            typography = jso {
-              useNextVariants = true
-            }
-            palette = jso {
-              primary = jso {
-                main = ColorPalette.primaryColor
-                contrastText = "#fff"
-              }
-
-              secondary = jso {
-                main = ColorPalette.secondaryColor
-              }
-
-              success = jso {
-                main = "#41d856"
-                contrastText = "#fff"
-              }
-
-            }
-
-            components = jso {
-              val autoCompleteOff = "off" // Prevent lastpass from adding the icon for autofill
-              this["MuiTooltip"] = jso {
-                styleOverrides = jso {
-                  tooltip = jso {
-                    backgroundColor = "#616161" // Default tooltip color but without alpha to improve readability
-                    fontSize = "0.875rem" // Default body font size to improve readability
-                  }
-                }
-              }
-
-              this["MuiAutocomplete"] = jso {
-                defaultProps = jso {
-                  disablePortal = true // Without this, the absolute position of the dropdown element is sometimes ~400px too high
-                }
-              }
-              this["MuiTextField"] = jso {
-                defaultProps = jso {
-                  autoComplete = autoCompleteOff
-                }
-              }
-              this["MuiInputBase"] = jso {
-                defaultProps = jso {
-                  autoComplete = autoCompleteOff
-                }
-              }
-              this["MuiInput"] = jso {
-                defaultProps = jso {
-                  autoComplete = autoCompleteOff
-                }
-              }
-              this["MuiOutlinedInput"] = jso {
-                defaultProps = jso {
-                  autoComplete = autoCompleteOff
-                }
-              }
-              this["MuiFilledInput"] = jso {
-                defaultProps = jso {
-                  autoComplete = autoCompleteOff
-                }
-              }
-              this["MuiSelect"] = jso {
-                defaultProps = jso {
-                  autoComplete = autoCompleteOff
-                }
-              }
-              this["MuiNativeSelect"] = jso {
-                defaultProps = jso {
-                  autoComplete = autoCompleteOff
-                }
-              }
-            }
-          },
-          locale(),
-        )
-      }
+      val theme = useGetTheme(locale)
 
       val checkInSideDrawerItems: () -> List<SideDrawerItem> = {
         if (userData?.clientUser?.canEditAnyLocationAccess == true) {
@@ -363,6 +279,89 @@ data class AppController(
         renderViewContent = ChildrenBuilder::renderViewContent,
       )
     }
+  }
+}
+
+private fun useGetTheme(locale: Localization): Theme {
+  return useMemo(*arrayOf(locale)) {
+    // TODO: @mh Check that this is only called once.
+    createTheme(
+      options = jso {
+        typography = jso {
+          useNextVariants = true
+        }
+        palette = jso {
+          primary = jso {
+            main = ColorPalette.primaryColor
+            contrastText = "#fff"
+          }
+
+          secondary = jso {
+            main = ColorPalette.secondaryColor
+          }
+
+          success = jso {
+            main = "#41d856"
+            contrastText = "#fff"
+          }
+
+        }
+
+        components = jso {
+          val autoCompleteOff = "off" // Prevent lastpass from adding the icon for autofill
+          this["MuiTooltip"] = jso {
+            styleOverrides = jso {
+              tooltip = jso {
+                backgroundColor = "#616161" // Default tooltip color but without alpha to improve readability
+                fontSize = "0.875rem" // Default body font size to improve readability
+              }
+            }
+          }
+
+          this["MuiAutocomplete"] = jso {
+            defaultProps = jso {
+              disablePortal = true // Without this, the absolute position of the dropdown element is sometimes ~400px too high
+            }
+          }
+          this["MuiTextField"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiInputBase"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiInput"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiOutlinedInput"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiFilledInput"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiSelect"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+          this["MuiNativeSelect"] = jso {
+            defaultProps = jso {
+              autoComplete = autoCompleteOff
+            }
+          }
+        }
+      },
+      locale,
+    )
   }
 }
 

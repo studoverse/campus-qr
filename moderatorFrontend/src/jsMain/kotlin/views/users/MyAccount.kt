@@ -9,7 +9,7 @@ import react.*
 import util.Strings
 import util.get
 import views.common.ToolbarViewConfig
-import views.common.renderToolbarView
+import views.common.ToolbarViewFc
 import webcore.RComponent
 
 external interface MyAccountProps : Props {
@@ -30,12 +30,12 @@ private class MyAccount : RComponent<MyAccountProps, MyAccountState>() {
 
   override fun ChildrenBuilder.render() {
     val userData = appContext.userDataContext.userData!!
-    renderToolbarView(
+    ToolbarViewFc {
       config = ToolbarViewConfig(
         title = Strings.account_settings.get(),
         buttons = emptyList()
       )
-    )
+    }
     Box {
       sx {
         marginTop = 32.px

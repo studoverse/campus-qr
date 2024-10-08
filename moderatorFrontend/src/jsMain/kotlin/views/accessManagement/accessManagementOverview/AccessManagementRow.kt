@@ -16,7 +16,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.accessManagement.AccessManagementDetailsConfig
-import views.accessManagement.AddLocation
+import views.accessManagement.AccessManagementDetailsFc
 import web.html.HTMLTableCellElement
 import web.prompts.confirm
 import webcore.*
@@ -26,7 +26,7 @@ import kotlin.js.Date
 
 class AccessManagementTableRowConfig(
   val accessManagement: ClientAccessManagement,
-  val dialogRef: RefObject<MbDialog>,
+  val dialogRef: MutableRefObject<MbDialogRef>,
   val onOperationFinished: (operation: AccessManagementTableRowOperation, success: Boolean) -> Unit
 )
 
@@ -55,7 +55,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
     props.config.dialogRef.current!!.showDialog(
       DialogConfig(
         title = DialogConfig.Title(text = Strings.location_edit.get()),
-        customContent = DialogConfig.CustomContent(AddLocation::class) {
+        customContent = DialogConfig.CustomContent(AccessManagementDetailsFc) {
           config = AccessManagementDetailsConfig.Edit(
             accessManagement = props.config.accessManagement,
             dialogRef = props.config.dialogRef,
@@ -71,7 +71,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
   private fun renderDetailsAccessManagementDialog() = props.config.dialogRef.current!!.showDialog(
     DialogConfig(
       title = DialogConfig.Title(text = Strings.access_control.get()),
-      customContent = DialogConfig.CustomContent(AddLocation::class) {
+      customContent = DialogConfig.CustomContent(AccessManagementDetailsFc) {
         config = AccessManagementDetailsConfig.Details(
           accessManagement = props.config.accessManagement,
           dialogRef = props.config.dialogRef,

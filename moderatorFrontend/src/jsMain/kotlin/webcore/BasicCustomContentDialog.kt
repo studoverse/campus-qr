@@ -9,12 +9,13 @@ import react.State
  * Can only be used for trivial cases where no extra props, state handling or callbacks are required other than a basic ChildrenBuilder block
  * WILL NOT WORK FOR STATE UPDATES IN THE CALL SITE!
  */
-fun basicCustomContent(block: ChildrenBuilder.() -> Unit) =
+// TODO: @mh
+/*fun basicCustomContent(block: ChildrenBuilder.() -> Unit) =
   DialogConfig.CustomContent(component = BasicCustomContentDialog::class, setProps = {
     config = BasicCustomContentDialogConfig(block = {
       block()
     })
-  })
+  })*/
 
 class BasicCustomContentDialogConfig(
   val block: ChildrenBuilder.() -> Unit

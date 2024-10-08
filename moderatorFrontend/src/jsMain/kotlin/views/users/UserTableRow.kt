@@ -24,7 +24,7 @@ import webcore.extensions.launch
 
 class UserTableRowConfig(
   val user: ClientUser,
-  val dialogRef: RefObject<MbDialog>,
+  val dialogRef: MutableRefObject<MbDialogRef>,
   val onEditFinished: (response: String?) -> Unit
 )
 

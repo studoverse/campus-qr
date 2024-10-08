@@ -1,5 +1,6 @@
 package views.login
 
+import app.appContextToInject
 import com.studo.campusqr.common.LoginResult
 import com.studo.campusqr.common.payloads.MailLoginData
 import csstype.PropertiesBuilder
@@ -34,7 +35,7 @@ private fun PropertiesBuilder.description() {
   padding = 16.px
 }
 
-val MailLoginFc = FcWithCoroutineScope { props: MailLoginProps, componentScope ->
+val MailLoginFc = FcWithCoroutineScope<MailLoginProps> { props, componentScope ->
   var email: String by useState("")
   var password: String by useState("")
   var networkRequestInProgress: Boolean by useState(false)

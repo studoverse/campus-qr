@@ -7,73 +7,66 @@ import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.ChildrenBuilder
-import react.FC
 import react.Props
-import react.State
 import react.dom.html.ReactHTML.code
 import react.dom.html.ReactHTML.span
-import react.react
 import util.Strings
 import util.get
 import web.location.location
-import webcore.RComponent
 import js.lazy.Lazy
+import webcore.FcWithCoroutineScope
 
 external interface GenericErrorViewProps : Props {
   var title: String
   var subtitle: String
 }
 
-private class PathNotFound : RComponent<GenericErrorViewProps, State>() {
-  override fun ChildrenBuilder.render() {
-    Box {
+val PathNotFoundFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
+  Box {
+    sx {
+      margin = Auto.auto
+    }
+    Typography {
       sx {
-        margin = Auto.auto
+        centeredText()
       }
-      Typography {
-        sx {
-          centeredText()
-        }
-        variant = TypographyVariant.h1
-        +"404"
+      variant = TypographyVariant.h1
+      +"404"
+    }
+    Typography {
+      sx {
+        centeredText()
       }
-      Typography {
-        sx {
-          centeredText()
+      variant = TypographyVariant.body1
+      +"Path \""
+      span {
+        code {
+          +location.pathname
         }
-        variant = TypographyVariant.body1
-        +"Path \""
-        span {
-          code {
-            +location.pathname
-          }
-        }
-        +"\" doesn't seem to exist. Try something else."
       }
+      +"\" doesn't seem to exist. Try something else."
     }
   }
 }
 
-private class GenericErrorView : RComponent<GenericErrorViewProps, State>() {
-  override fun ChildrenBuilder.render() {
-    Box {
+val GenericErrorViewFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
+  Box {
+    sx {
+      margin = Auto.auto
+    }
+    Typography {
       sx {
-        margin = Auto.auto
+        centeredText()
       }
-      Typography {
-        sx {
-          centeredText()
-        }
-        variant = TypographyVariant.h5
-        +props.title
+      variant = TypographyVariant.h5
+      +props.title
+    }
+    Typography {
+      sx {
+        centeredText()
       }
-      Typography {
-        sx {
-          centeredText()
-        }
-        variant = TypographyVariant.body1
-        +props.subtitle
-      }
+      variant = TypographyVariant.body1
+      +props.subtitle
     }
   }
 }
@@ -85,23 +78,15 @@ private fun PropertiesBuilder.centeredText() {
 }
 
 fun ChildrenBuilder.pathNotFoundView(title: String = "", subtitle: String = "") {
-  PathNotFound::class.react {
+  //@Lazy // TODO: @mh Use this for testing
+  PathNotFoundFc {
     this.title = title
     this.subtitle = subtitle
   }
 }
 
-// TODO: @mh Use this for testing
-/*@Lazy
-val pathNotFoundViewFc = FC<GenericErrorViewProps>("PathNotFoundView") { props ->
-  PathNotFound::class.react {
-    this.title = props.title
-    this.subtitle = props.subtitle
-  }
-}*/
-
 fun ChildrenBuilder.genericErrorView(title: String, subtitle: String) {
-  GenericErrorView::class.react {
+  GenericErrorViewFc {
     this.title = title
     this.subtitle = subtitle
   }

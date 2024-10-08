@@ -10,16 +10,17 @@ import mui.system.Breakpoint
 import mui.system.PropsWithSx
 import mui.system.sx
 import react.*
+import react.invoke
 import util.get
 import kotlin.reflect.KClass
 
-external interface MbSingleDialogProps : PropsWithRef<MbSingleDialog> {
+external interface MbSingleDialogProps<T : MbSingleDialogRef> : PropsWithRef<T> {
   var config: DialogConfig?
   var hidden: Boolean
 }
 
-external interface MbSingleDialogState : State {
-  var open: Boolean // If true, the dialog is shown (Dialog is not displayed but still mounted)
+external interface MbSingleDialogRef {
+  fun closeDialog()
 }
 
 /**
@@ -70,9 +71,9 @@ data class DialogConfig(
    *  component that rerenders after state updates.
    *  For a custom close action in [customContent], call ref.closeDialog.
    */
-  class CustomContent<P : Props>(private val component: KClass<out Component<P, *>>, private val setProps: (P.() -> Unit)? = null) {
+  class CustomContent<P : Props>(private val component: FC<P>, private val setProps: (P.() -> Unit)? = null) {
     fun ChildrenBuilder.renderCustomContent() {
-      component.react {
+      component {
         setProps?.let { this.it() }
       }
     }
@@ -105,28 +106,17 @@ fun okayButton(
   onClick: (() -> Unit)? = null
 ) = DialogButton(text = text, disabled = disabled, onClick = onClick)
 
-class MbSingleDialog(props: MbSingleDialogProps) : RComponent<MbSingleDialogProps, MbSingleDialogState>(props) {
+@Deprecated("Use MbDialogFc to handle multiple dialogs on top", ReplaceWith("MbDialogFc"))
+val MbSingleDialogFc = FcRefWithCoroutineScope<MbSingleDialogProps<MbSingleDialogRef>> { props, launch ->
+  var open: Boolean by useState(props.config != null) // If true, the dialog is shown (Dialog is not displayed but still mounted)
 
-  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
-  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(MbSingleDialog::class) {
-    init {
-      this.contextType = appContextToInject
-    }
-  }
-
-  private val mbAppContext get() = this.asDynamic().context as AppContext
-
-  override fun MbSingleDialogState.init(props: MbSingleDialogProps) {
-    open = props.config != null
-  }
-
-  private fun ChildrenBuilder.splitText(content: String) {
+  fun ChildrenBuilder.splitText(content: String) {
     content.split("\n").map {
       DialogContentText { +it }
     } // Split into paragraphs
   }
 
-  private fun ChildrenBuilder.renderContent(config: DialogConfig) {
+  fun ChildrenBuilder.renderContent(config: DialogConfig) {
     config.text?.let { content ->
       splitText(content)
     }
@@ -137,9 +127,28 @@ class MbSingleDialog(props: MbSingleDialogProps) : RComponent<MbSingleDialogProp
     }
   }
 
-  override fun ChildrenBuilder.render() {
-    val config = props.config ?: return
+  /**
+   * Only used to close the dialog in [DialogConfig.customContent]
+   */
+  fun closeDialog() {
+    when (val config = props.config) {
+      null -> console.error("closeDialog was called although no dialog is open.")
+      else -> config.onClose?.invoke()
+    }
+    open = false
+  }
 
+  // Use the useImperativeHandle hook to expose the methods via the ref.
+  useImperativeHandle(ref = props.ref, dependencies = *arrayOf(props.config)) { // TODO: @mh Should this be an array or just the values?
+    object : MbSingleDialogRef {
+      override fun closeDialog() {
+        closeDialog()
+      }
+    }
+  }
+
+  val config = props.config
+  if (config != null) {
     Dialog {
       config.scroll?.let { scroll = it }
       fullWidth = config.widthConfig.fullWidth
@@ -155,13 +164,11 @@ class MbSingleDialog(props: MbSingleDialogProps) : RComponent<MbSingleDialogProp
           }
         }
       }
-      open = state.open
+      this.open = open
       onClose = { _, _ ->
         if (config.isCancelable) {
           config.onClose?.invoke()
-          setState {
-            open = false
-          }
+          open = false
         }
       }
       config.title?.let { (title, icon) ->
@@ -208,39 +215,13 @@ class MbSingleDialog(props: MbSingleDialogProps) : RComponent<MbSingleDialogProp
                 config.onClose?.invoke()
                 // onClick can possibly open another dialog, so it must be called after onClose removed this dialog.
                 button.onClick?.invoke()
-                setState {
-                  open = false
-                }
+                open = false
               }
             }
           }
         }
       }
       config.customDialogConfig?.invoke(this)
-    }
-  }
-
-  /**
-   * Only used to close the dialog in [DialogConfig.customContent]
-   */
-  fun closeDialog() {
-    when (val config = props.config) {
-      null -> console.error("closeDialog was called although no dialog is open.")
-      else -> config.onClose?.invoke()
-    }
-    setState {
-      open = false
-    }
-  }
-}
-
-@Deprecated("Use mbDialog to handle multiple dialogs on top", ReplaceWith("mbDialog"))
-fun ChildrenBuilder.mbSingleDialog(config: DialogConfig? = null, ref: Ref<MbSingleDialog>? = null, hidden: Boolean = false) {
-  MbSingleDialog::class.react {
-    this.config = config
-    this.hidden = hidden
-    if (ref != null) {
-      this.ref = ref
     }
   }
 }

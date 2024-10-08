@@ -32,7 +32,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
 
   private val appContext get() = this.asDynamic().context as AppContext
 
-  private val dialogRef = createRef<MbDialog>()
+  private val dialogRef: MutableRefObject<MbDialogRef> = createRef<MbDialogRef>() as MutableRefObject<MbDialogRef>
 
   override fun GuestCheckInOverviewState.init() {
     activeGuestCheckIns = emptyList()
@@ -46,7 +46,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
       if (response != null) {
         activeGuestCheckIns = response.toList()
       } else {
-        appContext.showSnackbar(Strings.error_try_again.get())
+        appContext.showSnackbarText(Strings.error_try_again.get())
       }
       loadingCheckInList = false
     }
@@ -59,20 +59,21 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
   private fun renderAddGuestCheckInDialog() = dialogRef.current!!.showDialog(
     DialogConfig(
       title = DialogConfig.Title(Strings.guest_checkin_add_guest.get()),
-      customContent = DialogConfig.CustomContent(AddGuestCheckIn::class) {
+      // TODO: @mh
+      /*customContent = DialogConfig.CustomContent(AddGuestCheckIn::class) {
         config = AddGuestCheckInConfig(
           dialogRef = dialogRef,
           onGuestCheckedIn = {
             fetchActiveGuestCheckIns()
           },
         )
-      },
+      },*/
     )
   )
 
   override fun ChildrenBuilder.render() {
-    mbDialog(ref = dialogRef)
-    renderToolbarView(
+    MbDialogFc { ref = dialogRef }
+    ToolbarViewFc {
       config = ToolbarViewConfig(
         title = Strings.guest_checkin.get(),
         buttons = listOf(
@@ -85,7 +86,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
           )
         )
       )
-    )
+    }
     renderMbLinearProgress(show = state.loadingCheckInList)
 
     when {

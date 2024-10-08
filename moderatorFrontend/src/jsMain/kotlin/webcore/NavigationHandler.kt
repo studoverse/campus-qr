@@ -7,6 +7,7 @@ import web.window.window
 import mui.icons.material.Edit
 import mui.material.ButtonColor
 import mui.material.ButtonVariant
+import react.MutableRefObject
 import web.html.HTMLAnchorElement
 import web.dom.Node
 import web.uievents.MouseEvent
@@ -45,7 +46,7 @@ object NavigationHandler {
 
   // Global NavigationHandler dialog. Use only in this object.
   // This dialog can pop up above all other dialogs.
-  lateinit var dialogRef: RefObject<MbDialog>
+  lateinit var dialogRef: MutableRefObject<MbDialogRef>
     private set
 
   // Necessary to handle the different causing events in `shouldNavigate()`
@@ -77,7 +78,7 @@ object NavigationHandler {
    */
   fun initApp(
     allUrls: List<MbUrl>,
-    dialogRef: RefObject<MbDialog>,
+    dialogRef: MutableRefObject<MbDialogRef>,
     handleHistoryChange: (newRoute: AppRoute?) -> Unit,
     getCurrentAppRoute: () -> AppRoute?,
   ) {

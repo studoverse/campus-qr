@@ -3,7 +3,7 @@ package app
 import react.*
 import util.Url
 import views.accessManagement.accessManagementExport.renderAccessManagementExportList
-import views.accessManagement.accessManagementOverview.renderAccessManagementList
+import views.accessManagement.accessManagementOverview.AccessManagementListFc
 import views.adminInfo.renderAdminInfo
 import views.common.pathNotFoundView
 import views.guestCheckIn.guestCheckInOverview.renderGuestCheckInOverview
@@ -17,22 +17,13 @@ import webcore.FcWithCoroutineScope
 
 external interface AppContentProps : Props
 
-val AppContentFc = FcWithCoroutineScope { props: AppContentProps, componentScope ->
+val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope ->
   val appContext = useContext(appContextToInject)
-  useEffectOnceWithCleanup { // TODO: @mh Maybe emptyArray can be replaced with listOf() ?
-    console.log("onMount") // TODO: @mh Remove after testing
-
-    onCleanup {
-      // TODO: @mh Check if this is called when the component is unmounted or if unmounting works differently.
-      console.log("onUnmount") // TODO: @mh Remove after testing
-    }
-  }
-
   val currentAppRoute = appContext!!.routeContext.currentAppRoute
 
   when (currentAppRoute?.url) {
-    Url.ACCESS_MANAGEMENT_LIST -> renderAccessManagementList(locationId = null)
-    Url.ACCESS_MANAGEMENT_LOCATION_LIST -> renderAccessManagementList(locationId = currentAppRoute.pathParams["id"])
+    Url.ACCESS_MANAGEMENT_LIST -> AccessManagementListFc { locationId = null }
+    Url.ACCESS_MANAGEMENT_LOCATION_LIST -> AccessManagementListFc { locationId = currentAppRoute.pathParams["id"] }
     Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
     Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
     Url.GUEST_CHECK_IN -> renderGuestCheckInOverview()

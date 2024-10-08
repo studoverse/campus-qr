@@ -11,7 +11,7 @@ import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.*
 import util.Url
-import webcore.RComponent
+import webcore.FcWithCoroutineScope
 import webcore.extensions.toRoute
 
 class ToolbarButton(
@@ -30,72 +30,55 @@ external interface ToolbarViewProps : Props {
   var config: ToolbarViewConfig
 }
 
-external interface ToolbarViewState : State
+val ToolbarViewFc = FcWithCoroutineScope<ToolbarViewProps> { props, launch ->
+  val appContext = useContext(appContextToInject)!!
 
-private class ToolbarView : RComponent<ToolbarViewProps, ToolbarViewState>() {
-
-  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
-  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ToolbarView::class) {
-    init {
-      this.contextType = appContextToInject
-    }
-  }
-
-  private val appContext get() = this.asDynamic().context as AppContext
-
-  override fun ChildrenBuilder.render() {
-    val routeContext = appContext.routeContext
-    Box {
-      className = ClassName(GlobalCss.flex)
-      props.config.backButtonUrl?.let { backButtonUrl ->
-        IconButton.create {
-          sx {
-            width = 60.px
-            height = 60.px
-          }
-          ArrowBack()
-          onClick = {
-            routeContext.pushRoute(backButtonUrl.toRoute()!!)
-          }
-        }
-      }
-      Typography {
+  val routeContext = appContext.routeContext
+  Box {
+    className = ClassName(GlobalCss.flex)
+    props.config.backButtonUrl?.let { backButtonUrl ->
+      IconButton.create {
         sx {
-          margin = 16.px
+          width = 60.px
+          height = 60.px
         }
-        variant = TypographyVariant.h5
-        +props.config.title
+        ArrowBack()
+        onClick = {
+          routeContext.pushRoute(backButtonUrl.toRoute()!!)
+        }
       }
+    }
+    Typography {
+      sx {
+        margin = 16.px
+      }
+      variant = TypographyVariant.h5
+      +props.config.title
+    }
+    Box {
+      className = ClassName(GlobalCss.flexEnd)
       Box {
-        className = ClassName(GlobalCss.flexEnd)
-        Box {
-          sx {
-            marginLeft = 16.px
-          }
-          props.config.buttons.forEach { toolbarButton ->
-            Button {
-              sx {
-                marginRight = 16.px
-                marginTop = 16.px
-                marginBottom = 16.px
-                marginLeft = 0.px
-              }
-              variant = toolbarButton.variant
-              color = ButtonColor.primary
-              onClick = {
-                toolbarButton.onClick(routeContext)
-              }
-              +toolbarButton.text
+        sx {
+          marginLeft = 16.px
+        }
+        props.config.buttons.forEach { toolbarButton ->
+          Button {
+            key = toolbarButton.text // Avoid duplicate key issue
+            sx {
+              marginRight = 16.px
+              marginTop = 16.px
+              marginBottom = 16.px
+              marginLeft = 0.px
             }
+            variant = toolbarButton.variant
+            color = ButtonColor.primary
+            onClick = {
+              toolbarButton.onClick(routeContext)
+            }
+            +toolbarButton.text
           }
         }
       }
     }
-  }
-}
-
-fun ChildrenBuilder.renderToolbarView(config: ToolbarViewConfig) {
-  ToolbarView::class.react {
-    this.config = config
   }
 }

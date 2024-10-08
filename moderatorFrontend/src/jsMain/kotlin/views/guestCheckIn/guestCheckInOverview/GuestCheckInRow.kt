@@ -65,9 +65,9 @@ private class GuestCheckInRow : RComponent<GuestCheckInRowProps, GuestCheckInRow
                 )
                 if (response == "ok") {
                   props.config.onCheckedOut()
-                  appContext.showSnackbar(Strings.guest_checkin_checkout_successful.get())
+                  appContext.showSnackbarText(Strings.guest_checkin_checkout_successful.get())
                 } else {
-                  appContext.showSnackbar(Strings.error_try_again.get())
+                  appContext.showSnackbarText(Strings.error_try_again.get())
                 }
               }
             }

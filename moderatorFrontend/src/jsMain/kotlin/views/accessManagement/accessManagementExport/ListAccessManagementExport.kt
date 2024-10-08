@@ -12,9 +12,9 @@ import util.Url
 import util.apiBase
 import util.get
 import views.common.ToolbarViewConfig
+import views.common.ToolbarViewFc
 import views.common.networkErrorView
 import views.common.renderMbLinearProgress
-import views.common.renderToolbarView
 import webcore.NetworkManager
 import webcore.RComponent
 import webcore.extensions.launch
@@ -66,7 +66,7 @@ private class ListAccessManagementExport : RComponent<ListAccessManagementExport
   }
 
   override fun ChildrenBuilder.render() {
-    renderToolbarView(
+    ToolbarViewFc {
       config = ToolbarViewConfig(
         title = StringBuilder().apply {
           append(Strings.access_control_export.get())
@@ -80,7 +80,7 @@ private class ListAccessManagementExport : RComponent<ListAccessManagementExport
         backButtonUrl = Url.ACCESS_MANAGEMENT_LIST,
         buttons = emptyList()
       )
-    )
+    }
 
     renderMbLinearProgress(show = state.loadingPermitList)
 

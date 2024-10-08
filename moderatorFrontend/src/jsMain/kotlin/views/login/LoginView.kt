@@ -4,6 +4,7 @@ import web.cssom.*
 import app.ColorPalette
 import app.appContextToInject
 import app.baseUrl
+import com.studo.campusqr.common.payloads.isAuthenticated
 import kotlinx.browser.document
 import mui.material.*
 import mui.material.styles.TypographyVariant
@@ -17,6 +18,7 @@ import react.dom.html.ReactHTML.img
 import util.Strings
 import util.get
 import views.login.LoginMode.EMAIL
+import web.location.location
 import webcore.FcWithCoroutineScope
 
 external interface LoginViewProps : Props {
@@ -27,20 +29,12 @@ enum class LoginMode {
   EMAIL
 }
 
-val LoginViewFc = FcWithCoroutineScope { props: LoginViewProps, componentScope ->
-  //val appContext = useContext(appContextToInject)
-  useEffectOnceWithCleanup { // TODO: @mh Maybe emptyArray can be replaced with listOf() ?
-    console.log("onMount")
-
-    // TODO: @mh How to access appContext?
-    /*if (appContext!!.userDataContext.userData!!.isAuthenticated) {
+val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, componentScope ->
+  val appContext = useContext(appContextToInject)
+  useEffectOnce {
+    if (appContext!!.userDataContext.userData!!.isAuthenticated) {
       // User is authenticated so redirect to main page
       location.href = "/admin"
-    }*/
-
-    onCleanup {
-      // TODO: @mh Check if this is called when the component is unmounted or if unmounting works differently.
-      console.log("onUnmount")
     }
   }
 

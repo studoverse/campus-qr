@@ -16,6 +16,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import web.html.HTMLInputElement
+import webcore.Launch
 import webcore.NetworkManager
 
 data class AddUserController(
@@ -42,7 +43,7 @@ data class AddUserController(
     fun useUserController(
       user: ClientUser?,
       onFinished: (response: String?) -> Unit,
-      launch: (suspend () -> Unit) -> Job
+      launch: Launch
     ): AddUserController {
       var userCreationInProgress by useState(false)
       var userEmailTextFieldValue by useState(user?.email ?: "")
@@ -74,7 +75,7 @@ data class AddUserController(
         } else {
           Strings.network_error.get()
         }
-        appContext.showSnackbar(snackbarText)
+        appContext.showSnackbarText(snackbarText)
       }
 
       fun editUser() = launch {
@@ -105,7 +106,7 @@ data class AddUserController(
         } else {
           Strings.network_error.get()
         }
-        appContext.showSnackbar(snackbarText)
+        appContext.showSnackbarText(snackbarText)
       }
 
       fun validateEmailInput(): Boolean {

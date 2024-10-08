@@ -12,7 +12,7 @@ import webcore.*
 class ReportTableRowConfig(
   val userLocation: ReportData.UserLocation,
   val showEmailAddress: Boolean,
-  val dialogRef: RefObject<MbDialog>,
+  val dialogRef: MutableRefObject<MbDialogRef>,
   val onApplyFilterChange: (userLocation: ReportData.UserLocation, filteredSeats: List<Int>) -> Unit,
   val onDeleteFilter: (userLocation: ReportData.UserLocation) -> Unit
 )
@@ -38,13 +38,14 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
     props.config.dialogRef.current!!.showDialog(
       DialogConfig(
         title = DialogConfig.Title(text = Strings.report_checkin_add_filter_title.get()),
-        customContent = DialogConfig.CustomContent(AddFilterDialog::class) {
+        // TODO: @mh
+        /*customContent = DialogConfig.CustomContent(AddFilterDialog::class) {
           config = AddFilterDialogConfig(
             userLocation = props.config.userLocation,
             dialogRef = props.config.dialogRef,
             onApplyFilterChange = props.config.onApplyFilterChange,
           )
-        },
+        },*/
       )
     )
   }
