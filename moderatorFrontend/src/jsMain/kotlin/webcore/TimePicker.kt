@@ -7,7 +7,6 @@ import mui.material.Box
 import mui.material.FormControlVariant
 import mui.material.TextField
 import mui.system.sx
-import web.html.HTMLElement
 import react.*
 import react.dom.html.ReactHTML
 import react.dom.html.ReactHTML.option
@@ -35,28 +34,18 @@ external interface TimePickerProps : Props {
   var config: TimePickerConfig
 }
 
-external interface TimePickerState : State {
-  var oldBrowsersInputValues: TimePicker.TimeInputValues
-}
+private class TimeInputValues(var hour: String, var minute: String)
 
-class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePickerState>(props) {
+val TimePickerFc = FcWithCoroutineScope<TimePickerProps> { props, launch ->
+  val timeValue = props.config.time.toInputTypeTimeValueString()
+  var oldBrowsersInputValues: TimeInputValues by useState(TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1]))
+  val stepListId = useMemo(*emptyArray<Any>()) { "timestep-list${hashCode()}" }
 
-  private val stepListId = "timestep-list${hashCode()}"
-
-  class TimeInputValues(var hour: String, var minute: String)
-
-  override fun TimePickerState.init(props: TimePickerProps) {
-    val timeValue = props.config.time.toInputTypeTimeValueString()
+  useEffect(props.config.time) {
     oldBrowsersInputValues = TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1])
   }
 
-  override fun componentDidUpdate(prevProps: TimePickerProps, prevState: TimePickerState, snapshot: Any) {
-    if (prevProps.config.time != props.config.time) {
-      setState { init(props) }
-    }
-  }
-
-  private fun detectInputTimeSupport(): Boolean {
+  fun detectInputTimeSupport(): Boolean {
     val input = document.createElement(HTML.input)
     input.setAttribute("type", "time")
     val invalidDateValue = "not-a-time"
@@ -64,7 +53,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
     return input.value != invalidDateValue
   }
 
-  private fun tryParsingInputFields(hourInputValue: String, minuteInputValue: String) {
+  fun tryParsingInputFields(hourInputValue: String, minuteInputValue: String) {
     try {
       val hour = hourInputValue.toInt()
       val minute = minuteInputValue.toInt()
@@ -78,7 +67,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
     }
   }
 
-  private fun ChildrenBuilder.renderWithInputTypeTimeSupport() {
+  fun ChildrenBuilder.renderWithInputTypeTimeSupport() {
     Box {
       sx {
         width = 100.pct
@@ -129,7 +118,7 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
     }
   }
 
-  private fun ChildrenBuilder.renderWithoutInputTypeTimeSupport() {
+  fun ChildrenBuilder.renderWithoutInputTypeTimeSupport() {
     val hourString = LocalizedString(
       "Hour",
       "Stunde"
@@ -158,10 +147,10 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
           min = 0
           max = 23
         }
-        value = state.oldBrowsersInputValues.hour
+        value = oldBrowsersInputValues.hour
         this.onChange = { event ->
           val value: String = event.target.value
-          tryParsingInputFields(value, state.oldBrowsersInputValues.minute)
+          tryParsingInputFields(value, oldBrowsersInputValues.minute)
         }
       }
       TextField {
@@ -180,26 +169,18 @@ class TimePicker(props: TimePickerProps) : RComponent<TimePickerProps, TimePicke
           min = 0
           max = 59
         }
-        value = state.oldBrowsersInputValues.minute
+        value = oldBrowsersInputValues.minute
         onChange = { event ->
           val value: String = event.target.value
-          tryParsingInputFields(state.oldBrowsersInputValues.hour, value)
+          tryParsingInputFields(oldBrowsersInputValues.hour, value)
         }
       }
     }
   }
 
-  override fun ChildrenBuilder.render() {
-    if (detectInputTimeSupport()) {
-      renderWithInputTypeTimeSupport()
-    } else {
-      renderWithoutInputTypeTimeSupport()
-    }
-  }
-}
-
-fun ChildrenBuilder.timePicker(config: TimePickerConfig) {
-  TimePicker::class.react {
-    this.config = config
+  if (detectInputTimeSupport()) {
+    renderWithInputTypeTimeSupport()
+  } else {
+    renderWithoutInputTypeTimeSupport()
   }
 }

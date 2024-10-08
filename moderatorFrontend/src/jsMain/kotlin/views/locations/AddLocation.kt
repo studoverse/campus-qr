@@ -8,7 +8,6 @@ import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
-import csstype.*
 import js.objects.jso
 import mui.material.*
 import mui.system.sx
@@ -17,7 +16,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
-import views.common.renderMbLinearProgress
+import views.common.MbLinearProgressFc
 import views.common.spacer
 import web.html.InputType
 import webcore.*
@@ -120,7 +119,7 @@ class AddLocation(props: AddLocationProps) : RComponent<AddLocationProps, AddLoc
   }
 
   override fun ChildrenBuilder.render() {
-    renderMbLinearProgress(show = state.locationCreationInProgress)
+    MbLinearProgressFc { show = state.locationCreationInProgress }
 
     TextField {
       error = state.locationTextFieldError.isNotEmpty()

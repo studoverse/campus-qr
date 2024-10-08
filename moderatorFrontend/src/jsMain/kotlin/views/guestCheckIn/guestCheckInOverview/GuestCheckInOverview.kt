@@ -9,8 +9,6 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.common.*
-import views.guestCheckIn.AddGuestCheckIn
-import views.guestCheckIn.AddGuestCheckInConfig
 import webcore.*
 import webcore.extensions.launch
 
@@ -87,7 +85,7 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
         )
       )
     }
-    renderMbLinearProgress(show = state.loadingCheckInList)
+    MbLinearProgressFc { show = state.loadingCheckInList }
 
     when {
       state.activeGuestCheckIns?.isNotEmpty() == true -> Table {

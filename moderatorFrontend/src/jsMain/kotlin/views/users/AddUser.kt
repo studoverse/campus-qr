@@ -13,7 +13,7 @@ import react.dom.html.ReactHTML.div
 import util.Strings
 import util.get
 import util.localizedString
-import views.common.renderMbLinearProgress
+import views.common.MbLinearProgressFc
 import views.common.spacer
 import web.html.InputType
 import webcore.*
@@ -35,7 +35,7 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
     launch = launch,
   )
 
-  renderMbLinearProgress(show = addUserController.userCreationInProgress)
+  MbLinearProgressFc { show = addUserController.userCreationInProgress }
 
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!

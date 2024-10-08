@@ -147,7 +147,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
       }
     }
 
-    renderMbLinearProgress(show = state.loadingUserList)
+    MbLinearProgressFc { show = state.loadingUserList }
 
     if (state.userList?.isNotEmpty() == true) {
       Table {

@@ -13,9 +13,9 @@ import react.*
 import util.Strings
 import util.apiBase
 import util.get
+import views.common.MbLinearProgressFc
 import views.common.centeredProgress
 import views.common.networkErrorView
-import views.common.renderMbLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.launch
@@ -156,7 +156,7 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
   }
 
   override fun ChildrenBuilder.render() {
-    renderMbLinearProgress(show = state.showProgress)
+    MbLinearProgressFc { show = state.showProgress }
 
     if (!state.locationFetchInProgress && state.locationNameToLocationMap.isEmpty()) {
       networkErrorView()

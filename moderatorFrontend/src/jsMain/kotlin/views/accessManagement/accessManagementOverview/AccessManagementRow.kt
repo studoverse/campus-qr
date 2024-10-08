@@ -17,6 +17,7 @@ import util.apiBase
 import util.get
 import views.accessManagement.AccessManagementDetailsConfig
 import views.accessManagement.AccessManagementDetailsFc
+import views.accessManagement.AccessManagementDetailsProps
 import web.html.HTMLTableCellElement
 import web.prompts.confirm
 import webcore.*
@@ -55,14 +56,16 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
     props.config.dialogRef.current!!.showDialog(
       DialogConfig(
         title = DialogConfig.Title(text = Strings.location_edit.get()),
-        customContent = DialogConfig.CustomContent(AccessManagementDetailsFc) {
-          config = AccessManagementDetailsConfig.Edit(
-            accessManagement = props.config.accessManagement,
-            dialogRef = props.config.dialogRef,
-            onEdited = { success ->
-              props.config.onOperationFinished(AccessManagementTableRowOperation.Edit, success)
-            }
-          )
+        customContent = {
+          AccessManagementDetailsFc<AccessManagementDetailsProps> {
+            config = AccessManagementDetailsConfig.Edit(
+              accessManagement = props.config.accessManagement,
+              dialogRef = props.config.dialogRef,
+              onEdited = { success ->
+                props.config.onOperationFinished(AccessManagementTableRowOperation.Edit, success)
+              }
+            )
+          }
         },
       )
     )
@@ -71,11 +74,13 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
   private fun renderDetailsAccessManagementDialog() = props.config.dialogRef.current!!.showDialog(
     DialogConfig(
       title = DialogConfig.Title(text = Strings.access_control.get()),
-      customContent = DialogConfig.CustomContent(AccessManagementDetailsFc) {
-        config = AccessManagementDetailsConfig.Details(
+      customContent = {
+        AccessManagementDetailsFc {
+          config = AccessManagementDetailsConfig.Details(
           accessManagement = props.config.accessManagement,
           dialogRef = props.config.dialogRef,
-        )
+          )
+        }
       },
     )
   )

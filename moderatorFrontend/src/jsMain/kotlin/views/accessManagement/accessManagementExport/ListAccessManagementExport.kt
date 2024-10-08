@@ -11,10 +11,10 @@ import util.Strings
 import util.Url
 import util.apiBase
 import util.get
+import views.common.MbLinearProgressFc
 import views.common.ToolbarViewConfig
 import views.common.ToolbarViewFc
 import views.common.networkErrorView
-import views.common.renderMbLinearProgress
 import webcore.NetworkManager
 import webcore.RComponent
 import webcore.extensions.launch
@@ -82,7 +82,7 @@ private class ListAccessManagementExport : RComponent<ListAccessManagementExport
       )
     }
 
-    renderMbLinearProgress(show = state.loadingPermitList)
+    MbLinearProgressFc { show = state.loadingPermitList }
 
     if (state.permitList != null) {
       Table {

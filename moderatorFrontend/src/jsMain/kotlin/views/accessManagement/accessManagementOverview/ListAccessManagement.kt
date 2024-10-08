@@ -25,15 +25,16 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
   fun renderAddAccessManagementDialog() = dialogRef.current!!.showDialog(
     dialogConfig = DialogConfig(
       title = DialogConfig.Title(text = Strings.access_control_create.get()),
-      // TODO: @mh Get the custom content to work.
-      customContent = DialogConfig.CustomContent(AccessManagementDetailsFc) {
-        config = AccessManagementDetailsConfig.Create(
-          locationId = props.locationId,
-          dialogRef = dialogRef,
-          onCreated = {
-            accessManagementController.fetchAccessManagementList()
-          }
-        )
+      customContent = {
+        AccessManagementDetailsFc {
+          config = AccessManagementDetailsConfig.Create(
+            locationId = props.locationId,
+            dialogRef = dialogRef,
+            onCreated = {
+              accessManagementController.fetchAccessManagementList()
+            }
+          )
+        }
       },
     )
   )
@@ -73,7 +74,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
     )
   }
 
-  renderMbLinearProgress(show = accessManagementController.loadingAccessManagementList)
+  MbLinearProgressFc { show = accessManagementController.loadingAccessManagementList }
 
   when {
     accessManagementController.accessManagementList?.isNotEmpty() == true -> Table {

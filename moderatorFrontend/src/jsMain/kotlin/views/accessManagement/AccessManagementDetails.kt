@@ -269,10 +269,10 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
         }
       }
     }
-    spacer(12)
-    timeSlots.forEach { clientDateRange ->
-      gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1) {
-        gridItem(GridSize(xs = 12, sm = true)) {
+    spacer(12, key = "timeSlotsSpacer1")
+    timeSlots.forEachIndexed { index, clientDateRange ->
+      gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1, key = "gridContainer$index") {
+        gridItem(GridSize(xs = 12, sm = true), key = "gridItem$index") {
           Box {
             sx {
               timeSlotRow()
@@ -315,12 +315,12 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                 )
               }
             }
-            horizontalSpacer(12)
+            horizontalSpacer(12, key = "timeSlotColumnFromSpacer1")
             Box {
               sx {
                 timeSlotColumn()
               }
-              timePicker(
+              TimePickerFc {
                 config = TimePickerConfig(
                   disabled = props.config is AccessManagementDetailsConfig.Details,
                   time = Date(clientDateRange.from),
@@ -348,10 +348,10 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                     }
                   },
                 )
-              )
+              }
             }
           }
-          spacer(16)
+          spacer(16, key = "timeSlotRowSpacer1")
           Box {
             sx {
               timeSlotRow()
@@ -388,12 +388,12 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                 )
               }
             }
-            horizontalSpacer(12)
+            horizontalSpacer(12, key = "timeSlotColumnToSpacer1")
             Box {
               sx {
                 timeSlotColumn()
               }
-              timePicker(
+              TimePickerFc {
                 config = TimePickerConfig(
                   disabled = props.config is AccessManagementDetailsConfig.Details,
                   time = Date(clientDateRange.to),
@@ -416,12 +416,12 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                     }
                   },
                 )
-              )
+              }
             }
           }
         }
         if (props.config !is AccessManagementDetailsConfig.Details) {
-          gridItem(GridSize(xs = 1)) {
+          gridItem(GridSize(xs = 1), key = "gridItemRemoveTimeslot${index}") {
             Tooltip {
               title = Strings.access_control_time_slot_remove.get().toReactNode()
               Box {
@@ -443,7 +443,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
           }
         }
       }
-      gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1) {
+      gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1, key = "gridContainerError$index") {
         gridItem(GridSize(xs = 12, sm = true)) {
           val fromDateTimeSlotError = fromDateTimeSlotErrors.singleOrNull { it.timeSlot == clientDateRange }
           if (fromDateTimeSlotError != null) {
@@ -455,7 +455,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
             }
           }
         }
-        gridItem(GridSize(xs = 12, sm = true)) {
+        gridItem(GridSize(xs = 12, sm = true), key = "gridItemErrorText$index") {
           val toDateTimeSlotError = toDateTimeSlotErrors.singleOrNull { it.timeSlot == clientDateRange }
           if (toDateTimeSlotError != null) {
             Typography {
@@ -467,10 +467,10 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
           }
         }
         if (props.config !is AccessManagementDetailsConfig.Details) {
-          gridItem(GridSize(xs = 1)) {}
+          gridItem(GridSize(xs = 1), key = "gridItemNoDetails$index") {}
         }
       }
-      spacer(24)
+      spacer(24, key = "dateTimeSpacer1")
     }
   }
 
@@ -478,7 +478,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
     Typography {
       +Strings.access_control_permitted_people.get()
     }
-    spacer(12)
+    spacer(12, key = "permittedPeopleSpacer1")
     Box {
       component = form
       sx {
@@ -509,7 +509,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
 
           Box {
             className = ClassName(GlobalCss.flexEnd)
-            spacer()
+            spacer(key = "addPersonSpacer1")
             Button {
               size = Size.small
               color = ButtonColor.primary
@@ -606,28 +606,28 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
 
   fun ChildrenBuilder.renderDetailsContent() {
     renderLocationSelection()
-    spacer(16)
+    spacer(16, key = "renderDetailsContentSpacer1")
     renderNoteTextField()
-    spacer(16)
+    spacer(16, key = "renderDetailsContentSpacer2")
     renderReasonTextField()
-    spacer(24)
+    spacer(24, key = "renderDetailsContentSpacer3")
     renderTimeSlotPickers()
     renderPermittedPeople()
-    spacer(32)
+    spacer(32, key = "renderDetailsContentSpacer4")
     renderActionButtons()
   }
 
   useEffectOnce {
+    when (val config = props.config) {
+      is AccessManagementDetailsConfig.Details -> initFields(config.accessManagement)
+      is AccessManagementDetailsConfig.Edit -> initFields(config.accessManagement)
+      is AccessManagementDetailsConfig.Create -> initFields(null)
+    }
+
     fetchLocations()
   }
 
-  when (val config = props.config) {
-    is AccessManagementDetailsConfig.Details -> initFields(config.accessManagement)
-    is AccessManagementDetailsConfig.Edit -> initFields(config.accessManagement)
-    is AccessManagementDetailsConfig.Create -> initFields(null)
-  }
-
-  renderMbLinearProgress(show = showProgress)
+  MbLinearProgressFc { show = showProgress }
 
   if (!locationFetchInProgress && locationNameToLocationMap.isEmpty()) {
     networkErrorView()

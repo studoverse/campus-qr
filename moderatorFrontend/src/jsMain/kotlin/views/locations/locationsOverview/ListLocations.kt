@@ -140,7 +140,7 @@ private class ListLocations : RComponent<ListLocationsProps, ListLocationsState>
       )
     }
 
-    renderMbLinearProgress(show = state.loadingLocationList)
+    MbLinearProgressFc { show = state.loadingLocationList }
 
     if (state.locationList?.isNotEmpty() == true) {
       Table {

@@ -24,7 +24,7 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
 }
 
 /**
- * Provide coroutine scope within functional components to allow cancellations
+ * Provide coroutine scope within functional components to allow cancellations.
  */
 @Suppress("FunctionName") fun <P : Props> FcWithCoroutineScope(
   block: ChildrenBuilder.(props: P, launch: Launch) -> Unit,

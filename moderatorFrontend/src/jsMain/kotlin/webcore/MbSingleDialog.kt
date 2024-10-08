@@ -42,7 +42,14 @@ data class WidthConfig(
 data class DialogConfig(
   val title: Title? = null,
   val text: String? = null,
-  val customContent: CustomContent<*>? = null, // For a custom close action in customContent call ref.closeDialog
+  /**
+   *  For stateful dialog content define an own component and pass it to [customContent].
+   *  Reason: State updates only work when the code is exposed to a render function so that a state update can change the dialog.
+   *  Since dialogs are normally triggered by onClick callbacks the customContent will only be updated if it is wrapped in a separate
+   *  component that rerenders after state updates.
+   *  For a custom close action in [customContent], call ref.closeDialog.
+   */
+  val customContent: (ChildrenBuilder.() -> Unit)? = null, // For a custom close action in customContent call ref.closeDialog
   // Buttons can also be defined in customContent for more complex behaviour or styling
   // DialogConfig.buttons close the dialog automatically onClick.
   val buttons: List<DialogButton>? = null,
@@ -63,21 +70,6 @@ data class DialogConfig(
     val text: String,
     val icon: SvgIconComponent? = null, // No icon if null
   )
-
-  /**
-   *  For custom dialog content define an own component and pass it to [customContent]
-   *  Reason: State updates only work when the code is exposed to a render function so that a state update can change the dialog
-   *  Since dialogs are normally triggered by onClick callbacks the customContent will only be updated if it is wrapped in a separate
-   *  component that rerenders after state updates.
-   *  For a custom close action in [customContent], call ref.closeDialog.
-   */
-  class CustomContent<P : Props>(private val component: FC<P>, private val setProps: (P.() -> Unit)? = null) {
-    fun ChildrenBuilder.renderCustomContent() {
-      component {
-        setProps?.let { this.it() }
-      }
-    }
-  }
 }
 
 open class DialogButton(
@@ -121,8 +113,8 @@ val MbSingleDialogFc = FcRefWithCoroutineScope<MbSingleDialogProps<MbSingleDialo
       splitText(content)
     }
     config.customContent?.let { customContent ->
-      with(customContent) {
-        renderCustomContent()
+      FC<Props> {
+        customContent()
       }
     }
   }

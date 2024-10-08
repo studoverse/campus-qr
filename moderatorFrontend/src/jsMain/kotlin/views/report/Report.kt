@@ -21,8 +21,8 @@ import util.Strings
 import util.apiBase
 import util.fileDownload
 import util.get
+import views.common.MbLinearProgressFc
 import views.common.centeredProgress
-import views.common.renderMbLinearProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.addDays
@@ -213,7 +213,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
     }
     when {
       state.reportData != null -> {
-        renderMbLinearProgress(show = state.showProgress)
+        MbLinearProgressFc { show = state.showProgress }
         val reportData = state.reportData!!
         Box {
           sx {
