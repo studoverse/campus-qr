@@ -85,8 +85,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
     dialogRef.current!!.showDialog(
       DialogConfig(
         title = DialogConfig.Title(text = Strings.user_sso_info.get()),
-        // TODO: @mh
-        /*customContent = basicCustomContent {
+        customContent = {
           Typography {
             sx {
               color = rgb(0, 0, 0, 0.54)
@@ -97,7 +96,7 @@ private class ListUsers : RComponent<ListUsersProps, ListUsersState>() {
             spacer(16)
             +Strings.user_sso_info_details2.get()
           }
-        },*/
+        },
         buttons = listOf(
           DialogButton(Strings.more_about_studo.get(), onClick = {
             window.open("https://studo.com", WindowTarget._blank)

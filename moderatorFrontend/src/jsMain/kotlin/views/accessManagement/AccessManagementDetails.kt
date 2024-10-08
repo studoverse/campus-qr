@@ -315,7 +315,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                 )
               }
             }
-            horizontalSpacer(12, key = "timeSlotColumnFromSpacer1")
+            horizontalSpacer(12, key = "timeSlotColumnFromSpacer${index}")
             Box {
               sx {
                 timeSlotColumn()
@@ -351,7 +351,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
               }
             }
           }
-          spacer(16, key = "timeSlotRowSpacer1")
+          spacer(16, key = "timeSlotRowSpacer${index}")
           Box {
             sx {
               timeSlotRow()
@@ -388,7 +388,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                 )
               }
             }
-            horizontalSpacer(12, key = "timeSlotColumnToSpacer1")
+            horizontalSpacer(12, key = "timeSlotColumnToSpacer${index}")
             Box {
               sx {
                 timeSlotColumn()
@@ -470,7 +470,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
           gridItem(GridSize(xs = 1), key = "gridItemNoDetails$index") {}
         }
       }
-      spacer(24, key = "dateTimeSpacer1")
+      spacer(24, key = "dateTimeSpacer${index}") // TODO: @mh Duplicate key
     }
   }
 
@@ -578,7 +578,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
             +Strings.cancel.get()
             variant = ButtonVariant.text
             onClick = {
-              props.config.dialogRef.current!!.closeDialog()
+              props.config.dialogRef.current!!.closeDialog() // TODO: @mh Fix closeDialog not working
             }
           }
           Button {

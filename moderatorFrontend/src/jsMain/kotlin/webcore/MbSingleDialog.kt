@@ -113,9 +113,7 @@ val MbSingleDialogFc = FcRefWithCoroutineScope<MbSingleDialogProps<MbSingleDialo
       splitText(content)
     }
     config.customContent?.let { customContent ->
-      FC<Props> {
-        customContent()
-      }
+      customContent()
     }
   }
 
