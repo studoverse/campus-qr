@@ -45,29 +45,13 @@ external interface MbDialogProps<T : MbDialogRef> : PropsWithRef<T>
 val MbDialogFc = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, launch ->
   var (configs, setConfigs) = useState(mutableListOf<DialogConfig>())
 
-  /*fun onClose() {
-    setConfigs { previousConfigs ->
-      console.log("size: ", previousConfigs.size)
-
-      if (previousConfigs.isNotEmpty()) {
-        (previousConfigs - previousConfigs.last()).toMutableList()
-      } else {
-        console.error("closeDialog was called although no dialog is open.")
-        previousConfigs
-      }
-    }
-  }*/
-
   fun showDialog(dialogConfig: DialogConfig) {
     setConfigs { oldConfigs ->
       (oldConfigs + dialogConfig.copy(
         onClose = {
           dialogConfig.onClose?.invoke() // Invoke user defined onClose function
-          //onClose() // Due to function closures, we need to call a function of the component to get the current state.
-
+          // Due to function closures, we need to use the setter function to get the current state.
           setConfigs { previousConfigs ->
-            console.log("size: ", previousConfigs.size)
-
             if (previousConfigs.isNotEmpty()) {
               (previousConfigs - previousConfigs.last()).toMutableList()
             } else {
