@@ -470,7 +470,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
           gridItem(GridSize(xs = 1), key = "gridItemNoDetails$index") {}
         }
       }
-      spacer(24, key = "dateTimeSpacer${index}") // TODO: @mh Duplicate key
+      spacer(24, key = "dateTimeSpacer${index}")
     }
   }
 

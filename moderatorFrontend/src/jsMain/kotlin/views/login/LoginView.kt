@@ -29,10 +29,10 @@ enum class LoginMode {
   EMAIL
 }
 
-val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, componentScope ->
-  val appContext = useContext(appContextToInject)
+val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, launch ->
+  val appContext = useContext(appContextToInject)!!
   useEffectOnce {
-    if (appContext!!.userDataContext.userData!!.isAuthenticated) {
+    if (appContext.userDataContext.userData!!.isAuthenticated) {
       // User is authenticated so redirect to main page
       location.href = "/admin"
     }

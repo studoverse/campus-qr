@@ -21,7 +21,7 @@ data class ListAccessManagementController(
 ) {
   companion object {
     fun useListAccessManagementController(locationId: String?, launch: Launch): ListAccessManagementController {
-      var accessManagementList: List<ClientAccessManagement>? by useState(null)
+      var accessManagementList: List<ClientAccessManagement>? by useState<List<ClientAccessManagement>?>(null)
       var clientLocation: ClientLocation? by useState(null)
       var showAccessManagementImportDialog: Boolean by useState(false)
       var loadingAccessManagementList: Boolean by useState(false)

@@ -43,15 +43,41 @@ external interface MbDialogProps<T : MbDialogRef> : PropsWithRef<T>
  * UX: Ideally, only 1 dialog is present at the users context. Stacking multiple dialogs on top of each other creates easily confusing experiences.
  */
 val MbDialogFc = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, launch ->
-  var configs: MutableList<DialogConfig> by useState { mutableListOf() }
+  var (configs, setConfigs) = useState(mutableListOf<DialogConfig>())
+
+  /*fun onClose() {
+    setConfigs { previousConfigs ->
+      console.log("size: ", previousConfigs.size)
+
+      if (previousConfigs.isNotEmpty()) {
+        (previousConfigs - previousConfigs.last()).toMutableList()
+      } else {
+        console.error("closeDialog was called although no dialog is open.")
+        previousConfigs
+      }
+    }
+  }*/
 
   fun showDialog(dialogConfig: DialogConfig) {
-    configs = (configs + dialogConfig.copy(
-      onClose = {
-        dialogConfig.onClose?.invoke()
-        configs.removeLastOrNull() ?: console.error("closeDialog was called although no dialog is open.")
-      },
-    )).toMutableList()
+    setConfigs { oldConfigs ->
+      (oldConfigs + dialogConfig.copy(
+        onClose = {
+          dialogConfig.onClose?.invoke() // Invoke user defined onClose function
+          //onClose() // Due to function closures, we need to call a function of the component to get the current state.
+
+          setConfigs { previousConfigs ->
+            console.log("size: ", previousConfigs.size)
+
+            if (previousConfigs.isNotEmpty()) {
+              (previousConfigs - previousConfigs.last()).toMutableList()
+            } else {
+              console.error("closeDialog was called although no dialog is open.")
+              previousConfigs
+            }
+          }
+        },
+      )).toMutableList()
+    }
   }
 
   // Closes the latest dialog

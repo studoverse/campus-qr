@@ -1,18 +1,14 @@
 package webcore
 
 import web.cssom.*
-import app.AppContext
-import app.appContextToInject
 import com.studo.campusqr.common.utils.LocalizedString
 import mui.icons.material.SvgIconComponent
 import mui.material.*
 import mui.system.Breakpoint
-import mui.system.PropsWithSx
 import mui.system.sx
 import react.*
 import react.invoke
 import util.get
-import kotlin.reflect.KClass
 
 external interface MbSingleDialogProps<T : MbSingleDialogRef> : PropsWithRef<T> {
   var config: DialogConfig?

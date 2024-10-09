@@ -69,7 +69,7 @@ data class AppController(
       var activeLanguage: MbLocalizedStringConfig.SupportedLanguage by useState(MbLocalizedStringConfig.selectedLanguage)
 
       // Only used for the NavigationHandler since this dialog must exist globally
-      var navigationHandlerDialogRef = useRef<MbDialogRef>() // TODO: @mh Test
+      var navigationHandlerDialogRef = useRef<MbDialogRef>()
       var snackbarRef = useRef<MbSnackbarRef>()
 
       // TODO: @mh Check that this works
