@@ -4,7 +4,7 @@ import react.*
 import util.Url
 import views.accessManagement.accessManagementExport.renderAccessManagementExportList
 import views.accessManagement.accessManagementOverview.AccessManagementListFc
-import views.adminInfo.renderAdminInfo
+import views.adminInfo.AdminInfoFc
 import views.common.pathNotFoundView
 import views.guestCheckIn.guestCheckInOverview.renderGuestCheckInOverview
 import views.locations.locationsOverview.renderListLocations
@@ -31,7 +31,7 @@ val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope
     Url.REPORT -> renderReport()
     Url.USERS -> renderUsers()
     Url.ACCOUNT_SETTINGS -> renderMyAccount()
-    Url.ADMIN_INFO -> renderAdminInfo()
+    Url.ADMIN_INFO -> AdminInfoFc {}
     Url.LOGIN_EMAIL -> LoginViewFc { loginMode = LoginMode.EMAIL }
     Url.BLANK -> +"." // Just show something here, so we don't have a blank page which would be hard for debugging
     null -> pathNotFoundView()
