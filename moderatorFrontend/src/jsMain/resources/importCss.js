@@ -2,9 +2,9 @@
 require('normalize.css');
 
 export default function importAllCss() {
-  // Dynamically require all CSS files from our styles directory inside the resources folder.
+  // Dynamically require all our CSS files.
   const context = require.context(
-      '../../../../../moderatorFrontend/src/jsMain/kotlin', // Get all our CSS files.
+      '../../../../../moderatorFrontend/src/jsMain/kotlin',
       true,
       /\.css$/
   );

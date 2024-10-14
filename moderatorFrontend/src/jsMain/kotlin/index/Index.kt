@@ -7,7 +7,6 @@ import web.dom.document
 import web.html.HTML
 
 @JsModule("../../importCss.js")
-@JsNonModule // Hint that importCss.js uses CommonJS
 external fun importAllCss() // Import the JS module
 
 fun main() {

@@ -15,7 +15,6 @@ const cssConf = {
       loader: 'css-loader', // Convert CSS to JS module by resolving import/require (es-modules/commonjs)
       options: {
         importLoaders: 1,
-        esModule: true,
         modules: {
           auto: (resourcePath) => resourcePath.endsWith('.module.css'),
         },
