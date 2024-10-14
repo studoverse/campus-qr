@@ -21,7 +21,6 @@ kotlin {
   js(IR) {
     browser {
       commonWebpackConfig(body = Action {
-        outputFileName = "campusqr-admin.js" // TODO: @mh Now this is the name for dev and production. Is this also ok?
         cssSupport {
           enabled.set(true)
         }
@@ -89,10 +88,9 @@ kotlin {
 }
 
 tasks {
-  // TODO: @mh Only needed if we decide to not use outputFileName above.
-  /*getByName<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("jsBrowserProductionWebpack") {
+  getByName<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("jsBrowserProductionWebpack") {
     mainOutputFileName.set("campusqr-admin.js")
-  }*/
+  }
 
   register<Copy>("copyProductionBuildToPreProcessedResources") {
     dependsOn("jsBrowserProductionWebpack") // Build production version

@@ -85,7 +85,7 @@ private fun HTML.moderatorIndex(call: ApplicationCall, csrfToken: String) {
     }
     script {
       src = when {
-        localDebug -> "/campusqr-admin.js" // TODO: @mh Adjust build.gradle to make it work with /moderatorFrontend.js or not needed?
+        localDebug -> "/moderatorFrontend.js"
         else -> "/admin/campusqr-admin.js"
       }
     }
