@@ -1,9 +1,7 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
-import kotlin.text.set
 
 plugins {
   kotlin("multiplatform")
