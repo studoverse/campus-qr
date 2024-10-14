@@ -5,10 +5,7 @@ config.devServer.port = 8072;
 // Add url paths here which needs to be proxied to the backend
 config.devServer.proxy = [
   {
-    // TODO: @mh Not sure if it should be this or like before "context: ['!/moderatorFrontend.js'],"
-    //  Generally speaking we need to exclude all .js files that are required from the frontend.
-    //  And now with esmodules it will be more than one.
-    context: ['!/*.js'],
+    context: ['!/*.js'], // Proxy all but the JS files that are needed in the frontend.
     target: 'http://127.0.0.1:8070',
   }
 ];
