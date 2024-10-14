@@ -1,14 +1,3 @@
-// css-rules
-/*;(function (config) {
-  config.module.rules.push({
-    test: /\.css$/,
-    loader: 'css-loader',
-    options: {
-      esModule: false,
-    },
-  })
-})(config)*/
-
 // default-settings
 ;(function (config) {
   if (!!config.output) {

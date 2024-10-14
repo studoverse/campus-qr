@@ -75,7 +75,6 @@ kotlin {
         api(devNpm("css-loader", "6.8.1"))
         api(devNpm("postcss", "8.4.47"))
         api(devNpm("postcss-loader", "8.1.1"))
-        api(devNpm("copy-webpack-plugin", "12.0.2"))
 
         // Use versions that are specified in the kotlin-wrappers: https://github.com/JetBrains/kotlin-wrappers/blob/master/gradle.properties
         api(npm("react", "18.3.1"))

@@ -7,13 +7,10 @@ import web.dom.document
 import web.html.HTML
 
 @JsModule("../../importCss.js")
+@JsNonModule // Hint that importCss.js uses CommonJS
 external fun importAllCss() // Import the JS module
 
-@JsModule("../../index.css")
-external val testCss: dynamic
-
 fun main() {
-  testCss // TODO: @mh Remove
   // Call the JavaScript function to import the CSS
   importAllCss()
 
