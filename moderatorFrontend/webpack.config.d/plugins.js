@@ -22,16 +22,11 @@ const cssConf = {
     }
   ],
   include: [
-    path.resolve(__dirname, 'src'), // Include your source directory
+    path.resolve(__dirname, 'src'), // Include the source directory
     path.resolve(__dirname, 'build/js/node_modules/normalize.css'), // Adjust to include normalize.css in the build path
   ]
 };
 
 config.module.rules.push(cssConf);
-
-config.resolve = {
-  // Add extensions for .js, .kt, .mjs, or any other types you use
-  extensions: ['.js', '.kt', '.mjs', '.json', '.jsx', '.ts', '.tsx'],
-}
 
 config.stats = "verbose"

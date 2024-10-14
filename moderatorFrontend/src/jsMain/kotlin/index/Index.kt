@@ -10,7 +10,7 @@ import web.html.HTML
 external fun importAllCss() // Import the JS module
 
 fun main() {
-  // Call the JavaScript function to import the CSS
+  // Load all CSS files into the head as style tags.
   importAllCss()
 
   val container = document.createElement(HTML.div).also { htmlDivElement ->
