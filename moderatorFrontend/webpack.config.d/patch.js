@@ -1,5 +1,5 @@
 // css-rules
-;(function (config) {
+/*;(function (config) {
   config.module.rules.push({
     test: /\.css$/,
     loader: 'css-loader',
@@ -7,7 +7,7 @@
       esModule: false,
     },
   })
-})(config)
+})(config)*/
 
 // default-settings
 ;(function (config) {

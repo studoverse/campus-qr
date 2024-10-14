@@ -6,10 +6,16 @@ import react.dom.client.createRoot
 import web.dom.document
 import web.html.HTML
 
+@JsModule("../../importCss.js")
+external fun importAllCss() // Import the JS module
+
+@JsModule("../../index.css")
+external val testCss: dynamic
+
 fun main() {
-  // TODO: @mh Replace this with the ES modules way of doing things (this is commonjs) -> import instead of require.
-  //requireAll<String>(require.context("../../../../../moderatorFrontend/src/jsMain/kotlin", true, js("/\\.css$/")))
-  //requireAll<String>(require.context("normalize.css", true, js("/\\.css$/")))
+  testCss // TODO: @mh Remove
+  // Call the JavaScript function to import the CSS
+  importAllCss()
 
   val container = document.createElement(HTML.div).also { htmlDivElement ->
     document.body.appendChild(htmlDivElement)

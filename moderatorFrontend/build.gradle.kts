@@ -3,6 +3,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
+import kotlin.text.set
 
 plugins {
   kotlin("multiplatform")
@@ -24,6 +25,9 @@ kotlin {
     browser {
       commonWebpackConfig(body = Action {
         outputFileName = "campusqr-admin.js" // TODO: @mh Now this is the name for dev and production. Is this also ok?
+        cssSupport {
+          enabled.set(true)
+        }
       })
 
       testTask(Action {
@@ -69,6 +73,9 @@ kotlin {
         implementation(npm("normalize.css", "8.0.1"))
         api(devNpm("style-loader", "3.3.3"))
         api(devNpm("css-loader", "6.8.1"))
+        api(devNpm("postcss", "8.4.47"))
+        api(devNpm("postcss-loader", "8.1.1"))
+        api(devNpm("copy-webpack-plugin", "12.0.2"))
 
         // Use versions that are specified in the kotlin-wrappers: https://github.com/JetBrains/kotlin-wrappers/blob/master/gradle.properties
         api(npm("react", "18.3.1"))
