@@ -15,7 +15,6 @@ val kotlinx_coroutines_version: String = "1.7.3"
 
 repositories {
   mavenCentral()
-  gradlePluginPortal() // TODO: @mh Might not be needed
 }
 
 kotlin {
