@@ -41,7 +41,6 @@ val AppFc = FcWithCoroutineScope<AppProps> { props, launch ->
   val appController = AppController.useAppController(launch = launch)
 
   document.body?.style?.backgroundColor = "white"
-  document.body?.classList?.add("testCss") // TODO: @mh Remove after testing
 
   val fetchNewUserData = {
     appController.fetchUserDataAndInit(null)

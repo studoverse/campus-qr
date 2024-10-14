@@ -1,9 +1,5 @@
 /* Bootstrap container css */
 
-.testCss {
-  background-color: green !important; /* Remove this class after testing */
-}
-
 body {
   margin: 0;
   font-family: Verdana, Arial, Helvetica, sans-serif;
