@@ -73,8 +73,6 @@ kotlin {
         implementation(npm("normalize.css", "8.0.1"))
         api(devNpm("style-loader", "3.3.3"))
         api(devNpm("css-loader", "6.8.1"))
-        api(devNpm("postcss", "8.4.47"))
-        api(devNpm("postcss-loader", "8.1.1"))
 
         // Use versions that are specified in the kotlin-wrappers: https://github.com/JetBrains/kotlin-wrappers/blob/master/gradle.properties
         api(npm("react", "18.3.1"))

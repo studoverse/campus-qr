@@ -20,8 +20,7 @@ const cssConf = {
           auto: (resourcePath) => resourcePath.endsWith('.module.css'),
         },
       },
-    },
-    'postcss-loader'
+    }
   ],
   include: [
     path.resolve(__dirname, 'src'), // Include your source directory
