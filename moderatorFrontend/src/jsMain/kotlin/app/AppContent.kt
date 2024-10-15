@@ -20,7 +20,6 @@ external interface AppContentProps : Props
 val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope ->
   val appContext = useContext(appContextToInject)
   val currentAppRoute = appContext!!.routeContext.currentAppRoute
-  console.log(currentAppRoute?.url?.title) // TODO: @mh AppContent is not rerendered on route change
 
   when (currentAppRoute?.url) {
     Url.ACCESS_MANAGEMENT_LIST -> AccessManagementListFc { locationId = null }

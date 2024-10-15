@@ -46,8 +46,6 @@ val AppFc = FcWithCoroutineScope<AppProps> { props, launch ->
     appController.fetchUserDataAndInit(null)
   }
 
-  // TODO: @mh Remove after debugging
-  console.log("currentAppRoute: ", appController.currentAppRoute?.url?.title?.en)
   ThemeProvider {
     this.theme = appController.theme
     appContextToInject.Provider(

@@ -9,7 +9,6 @@ import com.studo.campusqr.common.payloads.canEditUsers
 import com.studo.campusqr.common.payloads.canViewCheckIns
 import com.studo.campusqr.common.payloads.isAuthenticated
 import js.objects.jso
-import kotlinx.coroutines.Job
 import mui.icons.material.BlurCircular
 import mui.icons.material.ContactMail
 import mui.icons.material.Info
@@ -21,6 +20,7 @@ import mui.material.styles.createTheme
 import react.ChildrenBuilder
 import react.MutableRefObject
 import react.dom.flushSync
+import react.useEffect
 import react.useEffectOnce
 import react.useMemo
 import react.useRef
@@ -65,6 +65,7 @@ data class AppController(
   companion object {
     fun useAppController(launch: Launch): AppController {
       var userData: UserData? by useState(null)
+      var userDataRef = useRef(userData) // Needed to avoid function closure issues in handleHistoryChange
       var loadingUserData: Boolean by useState(true)
       var currentAppRoute: AppRoute? by useState(null)
       var mobileNavOpen: Boolean by useState(false)
@@ -74,12 +75,9 @@ data class AppController(
       var navigationHandlerDialogRef = useRef<MbDialogRef>()
       var snackbarRef = useRef<MbSnackbarRef>()
 
-      console.log("currentAppRoute controller: ", currentAppRoute?.url?.title?.en)
-
       lateinit var pushAppRoute: (AppRoute) -> Unit // Workaround for function not being visible for handleHistoryChange.
 
-      fun handleHistoryChange(newRoute: AppRoute? = location.toRoute(), currentUserData: UserData? = userData) {
-        // TODO: @mh CurrentUserData is null when called from NavigationHandler. Probably some issue with function closures again
+      fun handleHistoryChange(newRoute: AppRoute? = location.toRoute(), currentUserData: UserData? = userDataRef.current) {
         if (newRoute == null) {
           console.log("Omit history change for 404 page")
         } else if (currentUserData == null) {
@@ -98,7 +96,6 @@ data class AppController(
       }
 
       pushAppRoute = { route ->
-        console.log("pushAppRoute works") // TODO: @mh Remove after debugging
         if (NavigationHandler.shouldNavigate(route, NavigationHandler.NavigationEvent.PUSH_APP_ROUTE, ::handleHistoryChange)) {
           NavigationHandler.pushHistory(
             relativeUrl = route.relativeUrl,
@@ -135,7 +132,7 @@ data class AppController(
           // Wait for the network request in fetchUserDataAndInit() to complete or wait for currentAppRoute to be set if the route exists.
           // Path not found is handled in renderAppContent()
           CenteredProgressFc {}
-        } else if (userData == null) {
+        } else if (userData == null) { // TODO: @mh Check if we should use userDataRef.current here as well?
           networkErrorView()
         } else {
           AppContentFc {}
@@ -151,7 +148,7 @@ data class AppController(
           allUrls = Url.entries,
           dialogRef = navigationHandlerDialogRef,
           handleHistoryChange = ::handleHistoryChange,
-          getCurrentAppRoute = { currentAppRoute },
+          getCurrentAppRoute = { currentAppRoute }, // TODO: @mh This might also not work due to function closures
         )
 
         val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
@@ -190,6 +187,11 @@ data class AppController(
         }
       }
 
+      useEffect(userData) {
+        // Always keep ref up to date.
+        userDataRef.current = userData
+      }
+
       // TODO: @mh Refactor all getters to useMemo.
       val locale: Localization = useMemo(*arrayOf(activeLanguage)) {
         when (activeLanguage) {
@@ -206,7 +208,7 @@ data class AppController(
       val theme = useGetTheme(locale)
 
       val checkInSideDrawerItems: () -> List<SideDrawerItem> = {
-        if (userData?.clientUser?.canEditAnyLocationAccess == true) {
+        if (userData?.clientUser?.canEditAnyLocationAccess == true) { // TODO: @mh Check if we should use userDataRef.current here as well?
           listOf(
             SideDrawerItem(
               label = Url.ACCESS_MANAGEMENT_LIST.title,
@@ -227,6 +229,7 @@ data class AppController(
       val moderatorSideDrawerItems: () -> List<SideDrawerItem> = {
         val items = mutableListOf<SideDrawerItem>()
 
+        // TODO: @mh Check if we should use userDataRef.current here as well?
         if (userData?.clientUser?.canEditLocations == true || userData?.clientUser?.canViewCheckIns == true) {
           items += SideDrawerItem(
             label = Url.LOCATIONS_LIST.title,
@@ -234,6 +237,7 @@ data class AppController(
             url = Url.LOCATIONS_LIST
           )
         }
+        // TODO: @mh Check if we should use userDataRef.current here as well?
         if (userData?.clientUser?.canViewCheckIns == true) {
           items += SideDrawerItem(
             label = Url.REPORT.title,
@@ -245,6 +249,7 @@ data class AppController(
         items
       }
 
+      // TODO: @mh Check if we should use userDataRef.current here as well?
       val adminSideDrawerItems: () -> List<SideDrawerItem> = {
         if (userData?.clientUser?.canEditUsers == true) {
           listOf(
