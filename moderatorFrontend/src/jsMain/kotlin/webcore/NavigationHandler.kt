@@ -12,7 +12,6 @@ import web.html.HTMLAnchorElement
 import web.dom.Node
 import web.uievents.MouseEvent
 import web.url.URL
-import react.RefObject
 import util.AppRoute
 import util.MbUrl
 import util.get

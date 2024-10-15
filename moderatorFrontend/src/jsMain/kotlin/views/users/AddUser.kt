@@ -23,7 +23,6 @@ sealed class AddUserConfig(val onFinished: (response: String?) -> Unit) {
   class Edit(val user: ClientUser, onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
 }
 
-// TODO: @mh Check if inheritance of Props is no longer required
 external interface AddUserProps : Props {
   var config: AddUserConfig
 }
@@ -40,6 +39,7 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
   TextField {
+    key = "userEmailTextField"
     error = addUserController.userEmailTextFieldError.isNotEmpty()
     helperText = addUserController.userEmailTextFieldError.toReactNode()
     fullWidth = true
@@ -54,10 +54,11 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
     onChange = addUserController.userEmailTextFieldOnChange
   }
 
-  spacer(16)
+  spacer(16, key = "userEmailSpacer")
 
   if (!userData.externalAuthProvider) {
     TextField {
+      key = "userPasswordTextField"
       error = addUserController.userPasswordTextFieldError.isNotEmpty()
       helperText = addUserController.userPasswordTextFieldError.toReactNode()
       fullWidth = true
@@ -72,10 +73,11 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
       value = addUserController.userPasswordTextFieldValue
       onChange = addUserController.userPasswordTextFieldOnChange
     }
-    spacer(16)
+    spacer(16, key = "userPasswordSpacer")
   }
 
   TextField {
+    key = "userNameTextField"
     error = addUserController.userNameTextFieldError.isNotEmpty()
     helperText = addUserController.userNameTextFieldError.toReactNode()
     fullWidth = true
@@ -86,9 +88,9 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
     onChange = addUserController.userNameTextFieldOnChange
   }
 
-  spacer(16)
+  spacer(16, key = "userNameSpacer")
 
-  // This view is is either used for user management, or to change own user properties
+  // This view is either used for user management, or to change own user properties
   if (userData.clientUser!!.canEditUsers) {
     Typography {
       +Strings.user_permissions.get()
@@ -106,6 +108,7 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
 
         UserPermission.entries.forEach { userPermission ->
           FormControlLabel {
+            key = userPermission.name
             control = Checkbox.create {
               checked = userPermission in addUserController.userPermissions
               onChange = { event, checked -> addUserController.userPermissionsOnChange(userPermission, event, checked) }
@@ -117,7 +120,7 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
     }
   }
 
-  spacer(32)
+  spacer(32, key = "userPermissionsSpacer")
 
   div {
     className = ClassName(GlobalCss.flex)

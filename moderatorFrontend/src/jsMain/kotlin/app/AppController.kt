@@ -31,6 +31,8 @@ import util.Url
 import util.apiBase
 import util.get
 import util.relativeUrl
+import views.common.CenteredProgressFc
+import views.common.networkErrorView
 import web.location.location
 import webcore.Launch
 import webcore.Localization
@@ -72,10 +74,12 @@ data class AppController(
       var navigationHandlerDialogRef = useRef<MbDialogRef>()
       var snackbarRef = useRef<MbSnackbarRef>()
 
-      // TODO: @mh Check that this works
+      console.log("currentAppRoute controller: ", currentAppRoute?.url?.title?.en)
+
       lateinit var pushAppRoute: (AppRoute) -> Unit // Workaround for function not being visible for handleHistoryChange.
 
       fun handleHistoryChange(newRoute: AppRoute? = location.toRoute(), currentUserData: UserData? = userData) {
+        // TODO: @mh CurrentUserData is null when called from NavigationHandler. Probably some issue with function closures again
         if (newRoute == null) {
           console.log("Omit history change for 404 page")
         } else if (currentUserData == null) {
@@ -94,7 +98,7 @@ data class AppController(
       }
 
       pushAppRoute = { route ->
-        console.log("pushAppRoute works")
+        console.log("pushAppRoute works") // TODO: @mh Remove after debugging
         if (NavigationHandler.shouldNavigate(route, NavigationHandler.NavigationEvent.PUSH_APP_ROUTE, ::handleHistoryChange)) {
           NavigationHandler.pushHistory(
             relativeUrl = route.relativeUrl,
@@ -130,9 +134,9 @@ data class AppController(
         if (loadingUserData || (location.toRoute() != null && currentAppRoute == null)) {
           // Wait for the network request in fetchUserDataAndInit() to complete or wait for currentAppRoute to be set if the route exists.
           // Path not found is handled in renderAppContent()
-          // centeredProgress() // TODO: @mh Migrate later
+          CenteredProgressFc {}
         } else if (userData == null) {
-          //networkErrorView() // TODO: @mh Migrate later
+          networkErrorView()
         } else {
           AppContentFc {}
         }

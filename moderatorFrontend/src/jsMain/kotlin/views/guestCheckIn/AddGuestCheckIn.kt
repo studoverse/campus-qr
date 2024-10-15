@@ -13,8 +13,8 @@ import react.*
 import util.Strings
 import util.apiBase
 import util.get
+import views.common.CenteredProgressFc
 import views.common.MbLinearProgressFc
-import views.common.centeredProgress
 import views.common.networkErrorView
 import views.common.spacer
 import webcore.*
@@ -162,7 +162,7 @@ class AddGuestCheckIn : RComponent<AddGuestCheckInProps, AddGuestCheckInState>()
       networkErrorView()
       spacer(36)
     } else if (state.locationFetchInProgress) {
-      centeredProgress()
+      CenteredProgressFc {}
       spacer(36)
     } else {
       Autocomplete<AutocompleteProps<String>> {

@@ -578,7 +578,8 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
             +Strings.cancel.get()
             variant = ButtonVariant.text
             onClick = {
-              props.config.dialogRef.current!!.closeDialog() // TODO: @mh Fix closeDialog not working
+
+              props.config.dialogRef.current!!.closeDialog()
             }
           }
           Button {
@@ -633,7 +634,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
     networkErrorView()
     spacer(36)
   } else if (locationFetchInProgress) {
-    centeredProgress()
+    CenteredProgressFc {}
     spacer(36)
   } else {
     renderDetailsContent()

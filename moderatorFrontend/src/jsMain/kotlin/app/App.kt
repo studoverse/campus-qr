@@ -46,7 +46,8 @@ val AppFc = FcWithCoroutineScope<AppProps> { props, launch ->
     appController.fetchUserDataAndInit(null)
   }
 
-  // TODO: @mh Migrate this to the new functional component style.
+  // TODO: @mh Remove after debugging
+  console.log("currentAppRoute: ", appController.currentAppRoute?.url?.title?.en)
   ThemeProvider {
     this.theme = appController.theme
     appContextToInject.Provider(

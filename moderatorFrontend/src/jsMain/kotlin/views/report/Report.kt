@@ -21,8 +21,8 @@ import util.Strings
 import util.apiBase
 import util.fileDownload
 import util.get
+import views.common.CenteredProgressFc
 import views.common.MbLinearProgressFc
-import views.common.centeredProgress
 import views.common.spacer
 import webcore.*
 import webcore.extensions.addDays
@@ -283,7 +283,7 @@ private class Report : RComponent<ReportProps, ReportState>() {
           }
         }
       }
-      state.showProgress -> centeredProgress()
+      state.showProgress -> CenteredProgressFc {}
     }
   }
 
