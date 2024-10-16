@@ -52,7 +52,6 @@ val AppFc = FcWithCoroutineScope<AppProps> { props, launch ->
       AppContext(
         languageContext = LanguageContext(appController.activeLanguage, appController.onLangChange),
         snackbarRef = appController.snackbarRef,
-        // TODO: @mh Check if pushAppRoute works like that without ":".
         routeContext = RouteContext(appController.currentAppRoute, appController.pushAppRoute),
         themeContext = ThemeContext(theme),
         userDataContext = UserDataContext(userData = appController.userData, appController.loadingUserData, fetchNewUserData)
@@ -91,9 +90,9 @@ val AppFc = FcWithCoroutineScope<AppProps> { props, launch ->
             drawerList = {
               AppDrawerItemsFc {
                 config = AppDrawerItemsConfig(
-                  checkInSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.checkInSideDrawerItems(),
-                  moderatorSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.moderatorSideDrawerItems(),
-                  adminSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.adminSideDrawerItems(),
+                  checkInSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.checkInSideDrawerItems,
+                  moderatorSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.moderatorSideDrawerItems,
+                  adminSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.adminSideDrawerItems,
                   loading = false,
                   mobileNavOpenChange = appController.mobileNavOpenChange,
                 )

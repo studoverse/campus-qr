@@ -55,9 +55,9 @@ data class AppController(
   val theme: Theme,
   val snackbarRef: MutableRefObject<MbSnackbarRef>,
   val navigationHandlerDialogRef: MutableRefObject<MbDialogRef>,
-  val checkInSideDrawerItems: () -> List<SideDrawerItem>,
-  val moderatorSideDrawerItems: () -> List<SideDrawerItem>,
-  val adminSideDrawerItems: () -> List<SideDrawerItem>,
+  val checkInSideDrawerItems: List<SideDrawerItem>,
+  val moderatorSideDrawerItems: List<SideDrawerItem>,
+  val adminSideDrawerItems: List<SideDrawerItem>,
   val pushAppRoute: (AppRoute) -> Unit,
   val fetchUserDataAndInit: (block: ((UserData) -> Unit)?) -> Unit,
   val renderViewContent: ChildrenBuilder.() -> Unit,
@@ -116,7 +116,6 @@ data class AppController(
         val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
 
         if (fetchedUserData != null) {
-          // userData needs to be set when calling `block`, so execute the state update beforehand
           // TODO: @mh Make sure to check all flushSync usages to prevent function closure issues like it happened here from happening.
           userData = fetchedUserData
           loadingUserData = false
@@ -197,8 +196,7 @@ data class AppController(
         currentAppRouteRef.current = currentAppRoute
       }
 
-      // TODO: @mh Refactor all getters to useMemo.
-      val locale: Localization = useMemo(*arrayOf(activeLanguage)) {
+      val locale: Localization = useMemo(activeLanguage) {
         when (activeLanguage) {
           MbLocalizedStringConfig.SupportedLanguage.De -> {
             deDE
@@ -212,7 +210,7 @@ data class AppController(
 
       val theme = useGetTheme(locale)
 
-      val checkInSideDrawerItems: () -> List<SideDrawerItem> = {
+      val checkInSideDrawerItems: List<SideDrawerItem> = useMemo(userData) {
         if (userData?.clientUser?.canEditAnyLocationAccess == true) {
           listOf(
             SideDrawerItem(
@@ -231,7 +229,7 @@ data class AppController(
         }
       }
 
-      val moderatorSideDrawerItems: () -> List<SideDrawerItem> = {
+      val moderatorSideDrawerItems: List<SideDrawerItem> = useMemo(userData) {
         val items = mutableListOf<SideDrawerItem>()
 
         if (userData?.clientUser?.canEditLocations == true || userData?.clientUser?.canViewCheckIns == true) {
@@ -252,7 +250,7 @@ data class AppController(
         items
       }
 
-      val adminSideDrawerItems: () -> List<SideDrawerItem> = {
+      val adminSideDrawerItems: List<SideDrawerItem> = useMemo(userData) {
         if (userData?.clientUser?.canEditUsers == true) {
           listOf(
             SideDrawerItem(
