@@ -68,6 +68,7 @@ data class AppController(
       var userDataRef = useRef(userData) // Needed to avoid function closure issues in handleHistoryChange
       var loadingUserData: Boolean by useState(true)
       var currentAppRoute: AppRoute? by useState(null)
+      var currentAppRouteRef = useRef(currentAppRoute) // Needed to avoid function closure issues in getCurrentAppRoute
       var mobileNavOpen: Boolean by useState(false)
       var activeLanguage: MbLocalizedStringConfig.SupportedLanguage by useState(MbLocalizedStringConfig.selectedLanguage)
 
@@ -116,11 +117,10 @@ data class AppController(
 
         if (fetchedUserData != null) {
           // userData needs to be set when calling `block`, so execute the state update beforehand
-          // TODO: @mh Make sure to check all flushSync usages to prevent issues like this from happening.
-          flushSync { // TODO: @mh Might not be needed anymore since I have to pass the new value manually anyway. And not related to UI.
-            userData = fetchedUserData
-            loadingUserData = false
-          }
+          // TODO: @mh Make sure to check all flushSync usages to prevent function closure issues like it happened here from happening.
+          userData = fetchedUserData
+          loadingUserData = false
+
           block?.invoke(fetchedUserData)
         } else {
           loadingUserData = false
@@ -132,7 +132,7 @@ data class AppController(
           // Wait for the network request in fetchUserDataAndInit() to complete or wait for currentAppRoute to be set if the route exists.
           // Path not found is handled in renderAppContent()
           CenteredProgressFc {}
-        } else if (userData == null) { // TODO: @mh Check if we should use userDataRef.current here as well?
+        } else if (userData == null) {
           networkErrorView()
         } else {
           AppContentFc {}
@@ -148,7 +148,7 @@ data class AppController(
           allUrls = Url.entries,
           dialogRef = navigationHandlerDialogRef,
           handleHistoryChange = ::handleHistoryChange,
-          getCurrentAppRoute = { currentAppRoute }, // TODO: @mh This might also not work due to function closures
+          getCurrentAppRoute = { currentAppRouteRef.current },
         )
 
         val duplicatePaths = allUrls.groupBy { it.path }.filter { it.value.count() > 1 }.keys
@@ -192,6 +192,11 @@ data class AppController(
         userDataRef.current = userData
       }
 
+      useEffect(currentAppRoute) {
+        // Always keep ref up to date.
+        currentAppRouteRef.current = currentAppRoute
+      }
+
       // TODO: @mh Refactor all getters to useMemo.
       val locale: Localization = useMemo(*arrayOf(activeLanguage)) {
         when (activeLanguage) {
@@ -208,7 +213,7 @@ data class AppController(
       val theme = useGetTheme(locale)
 
       val checkInSideDrawerItems: () -> List<SideDrawerItem> = {
-        if (userData?.clientUser?.canEditAnyLocationAccess == true) { // TODO: @mh Check if we should use userDataRef.current here as well?
+        if (userData?.clientUser?.canEditAnyLocationAccess == true) {
           listOf(
             SideDrawerItem(
               label = Url.ACCESS_MANAGEMENT_LIST.title,
@@ -229,7 +234,6 @@ data class AppController(
       val moderatorSideDrawerItems: () -> List<SideDrawerItem> = {
         val items = mutableListOf<SideDrawerItem>()
 
-        // TODO: @mh Check if we should use userDataRef.current here as well?
         if (userData?.clientUser?.canEditLocations == true || userData?.clientUser?.canViewCheckIns == true) {
           items += SideDrawerItem(
             label = Url.LOCATIONS_LIST.title,
@@ -237,7 +241,6 @@ data class AppController(
             url = Url.LOCATIONS_LIST
           )
         }
-        // TODO: @mh Check if we should use userDataRef.current here as well?
         if (userData?.clientUser?.canViewCheckIns == true) {
           items += SideDrawerItem(
             label = Url.REPORT.title,
@@ -249,7 +252,6 @@ data class AppController(
         items
       }
 
-      // TODO: @mh Check if we should use userDataRef.current here as well?
       val adminSideDrawerItems: () -> List<SideDrawerItem> = {
         if (userData?.clientUser?.canEditUsers == true) {
           listOf(
@@ -293,7 +295,6 @@ data class AppController(
 
 private fun useGetTheme(locale: Localization): Theme {
   return useMemo(*arrayOf(locale)) {
-    // TODO: @mh Check that this is only called once.
     createTheme(
       options = jso {
         typography = jso {
