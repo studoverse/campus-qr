@@ -2,23 +2,19 @@ package views.accessManagement
 
 import app.GlobalCss
 import app.appContextToInject
-import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.payloads.*
 import csstype.*
-import js.objects.Object
+import mui.icons.material.Add
 import mui.icons.material.Close
 import mui.material.*
 import mui.material.Size
 import mui.system.sx
 import react.*
-import react.dom.events.ChangeEvent
 import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.span
 import util.Strings
-import util.apiBase
 import util.get
 import views.common.*
-import web.html.HTMLElement
 import web.cssom.*
 import webcore.*
 import webcore.extensions.*
@@ -41,50 +37,9 @@ external interface AccessManagementDetailsProps : Props {
   var config: AccessManagementDetailsConfig
 }
 
-// TODO: @mh Extract logic to AccessManagementDetailsController
 val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProps> { props, launch ->
-  var locationFetchInProgress: Boolean by useState(false)
-  var showProgress: Boolean by useState(false)
-  var locationNameToLocationMap: Map<String, ClientLocation> by useState(emptyMap())
-
-  var selectedLocation: ClientLocation? by useState(null)
-  var selectedLocationTextFieldError: String by useState("")
-
-  var accessControlNoteTextFieldValue: String by useState("")
-  var accessControlReasonTextFieldValue: String by useState("")
-  var personEmailTextFieldValue: String by useState("")
-  var permittedPeopleList: List<String> by useState(emptyList())
-  var timeSlots: List<ClientDateRange> by useState(emptyList())
-
-  var fromDateTimeSlotErrors: MutableList<TimeSlotError> by useState(mutableListOf())
-  var toDateTimeSlotErrors: MutableList<TimeSlotError> by useState(mutableListOf())
-
+  val controller = AccessManagementDetailsController.useAccessManagementDetailsController(config = props.config, launch = launch)
   val appContext = useContext(appContextToInject)!!
-
-  fun initFields(accessManagement: ClientAccessManagement?) {
-    locationFetchInProgress = false
-    showProgress = false
-    locationNameToLocationMap = emptyMap()
-
-    selectedLocation = null
-    selectedLocationTextFieldError = ""
-
-    accessControlNoteTextFieldValue = accessManagement?.note ?: ""
-    accessControlReasonTextFieldValue = accessManagement?.reason ?: ""
-    personEmailTextFieldValue = ""
-    permittedPeopleList = accessManagement?.allowedEmails?.toList() ?: emptyList()
-
-    fromDateTimeSlotErrors = mutableListOf()
-    toDateTimeSlotErrors = mutableListOf()
-
-    val fromDate = Date().addHours(1).with(minute = 0)
-    timeSlots = accessManagement?.dateRanges?.toList() ?: listOf(
-      ClientDateRange(
-        from = fromDate.getTime(),
-        to = fromDate.addHours(2).getTime()
-      )
-    )
-  }
 
   fun PropertiesBuilder.timeSlotRow() {
     display = Display.flex
@@ -95,138 +50,15 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
     flex = Flex(number(0.0), number(1.0), 50.pct)
   }
 
-  fun getPermittedEmailsFromTextField() =
-    personEmailTextFieldValue.lowercase().split(*emailSeparators).filter { it.isNotEmpty() }.map { it.trim() }
-
-  fun fetchLocations() = launch {
-    locationFetchInProgress = true
-    val response = NetworkManager.get<Array<ClientLocation>>("$apiBase/location/list")
-    if (response != null) {
-      locationNameToLocationMap = response.associateBy { it.name }
-      // Auto select current location
-      val selectedLocationId = when (val config = props.config) {
-        is AccessManagementDetailsConfig.Details -> config.accessManagement.locationId
-        is AccessManagementDetailsConfig.Edit -> config.accessManagement.locationId
-        is AccessManagementDetailsConfig.Create -> config.locationId
-      }
-      if (selectedLocationId != null) {
-        selectedLocation = locationNameToLocationMap.values.firstOrNull { it.id == selectedLocationId }
-      }
-    }
-    locationFetchInProgress = false
-  }
-
-  fun createAccessControl() = launch {
-    showProgress = true
-    val response = NetworkManager.post<String>(
-      url = "$apiBase/access/create",
-      body = NewAccess(
-        locationId = selectedLocation!!.id,
-        // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
-        allowedEmails = permittedPeopleList + getPermittedEmailsFromTextField(),
-        dateRanges = timeSlots,
-        note = accessControlNoteTextFieldValue,
-        reason = accessControlReasonTextFieldValue
-      )
-    )
-    showProgress = false
-    (props.config as AccessManagementDetailsConfig.Create).onCreated()
-    props.config.dialogRef.current!!.closeDialog()
-    val snackbarText = if (response == "ok") {
-      Strings.access_control_created_successfully.get()
-    } else {
-      Strings.error_try_again.get()
-    }
-    appContext.showSnackbarText(snackbarText)
-  }
-
-  fun editAccessControl() = launch {
-    showProgress = true
-    val accessManagementId = (props.config as AccessManagementDetailsConfig.Edit).accessManagement.id
-    val response = NetworkManager.post<String>(
-      url = "$apiBase/access/$accessManagementId/edit",
-      body = EditAccess(
-        locationId = selectedLocation?.id,
-        // Add state.getPermittedEmailsFromTextField(), to make sure that any un-submitted emails get added
-        allowedEmails = permittedPeopleList + getPermittedEmailsFromTextField(),
-        dateRanges = timeSlots,
-        note = accessControlNoteTextFieldValue,
-        reason = accessControlReasonTextFieldValue
-      )
-    )
-    showProgress = false
-    (props.config as AccessManagementDetailsConfig.Edit).onEdited(response == "ok")
-    props.config.dialogRef.current!!.closeDialog()
-  }
-
-  fun validateInput(): Boolean {
-    // Location has to be selected for creation
-    if (props.config is AccessManagementDetailsConfig.Create && selectedLocation == null) {
-      selectedLocationTextFieldError = Strings.access_control_please_select_location.get()
-      return false
-    }
-
-    // At least one time slot has to be there in creation mode
-    if (props.config is AccessManagementDetailsConfig.Create && timeSlots.isEmpty()) {
-      // This shouldn't happen
-      error("timeSlots empty: ${timeSlots}")
-    }
-
-    // Validate every timeslot
-    timeSlots.forEach { timeSlot ->
-      // End time cannot be before start time
-      if (timeSlot.to < timeSlot.from) {
-        toDateTimeSlotErrors.add(TimeSlotError(text = Strings.access_control_end_date_before_start_date.get(), timeSlot = timeSlot))
-        return false
-      }
-    }
-
-    return true
-  }
-
-  fun submitPermittedPeopleToState() {
-    permittedPeopleList += getPermittedEmailsFromTextField()
-    personEmailTextFieldValue = ""
-  }
-
-  fun ChildrenBuilder.renderLocationSelection() {
-    Autocomplete<AutocompleteProps<String>> {
-      disabled = props.config is AccessManagementDetailsConfig.Details
-      value = selectedLocation?.name
-      onChange = { _, value: Any?, _, _ ->
-        value as String?
-        selectedLocationTextFieldError = ""
-        selectedLocation = value?.let { locationNameToLocationMap[it] }
-      }
-      openOnFocus = true
-      options = locationNameToLocationMap.keys.toTypedArray()
-      getOptionLabel = { it }
-      renderInput = { params ->
-        Fragment.create {
-          TextField {
-            Object.assign(this, params)
-            error = selectedLocationTextFieldError.isNotEmpty()
-            helperText = selectedLocationTextFieldError.toReactNode()
-            fullWidth = true
-            variant = FormControlVariant.outlined
-            label = Strings.location_name.get().toReactNode()
-          }
-        }
-      }
-    }
-  }
-
+  // TODO: @mh All the functions need to be own components, so they don't clutter the component here.
   fun ChildrenBuilder.renderNoteTextField() {
     TextField {
       disabled = props.config is AccessManagementDetailsConfig.Details
       fullWidth = true
       variant = FormControlVariant.outlined
       label = Strings.access_control_note.get().toReactNode()
-      value = accessControlNoteTextFieldValue
-      onChange = { event ->
-        val value = event.target.value
-        accessControlNoteTextFieldValue = value
-      }
+      value = controller.accessControlNoteTextFieldValue
+      onChange = controller.noteTextFieldOnChange
     }
   }
 
@@ -236,11 +68,8 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
       fullWidth = true
       variant = FormControlVariant.outlined
       label = Strings.access_control_reason.get().toReactNode()
-      value = accessControlReasonTextFieldValue
-      onChange = { event ->
-        val value = event.target.value
-        accessControlReasonTextFieldValue = value
-      }
+      value = controller.accessControlReasonTextFieldValue
+      onChange = controller.reasonTextFieldOnChange
     }
   }
 
@@ -261,16 +90,14 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
               padding = 0.px
               marginLeft = 8.px
             }
-            mui.icons.material.Add()
-            onClick = {
-              timeSlots = (timeSlots + ClientDateRange(timeSlots.last().from, timeSlots.last().to))
-            }
+            Add()
+            onClick = controller.addTimeSlotOnClick
           }
         }
       }
     }
     spacer(12, key = "timeSlotsSpacer1")
-    timeSlots.forEachIndexed { index, clientDateRange ->
+    controller.timeSlots.forEachIndexed { index, clientDateRange ->
       gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1, key = "gridContainer$index") {
         gridItem(GridSize(xs = 12, sm = true), key = "gridItem$index") {
           Box {
@@ -291,26 +118,12 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                   min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
                   max = inThreeYears,
                   onChange = { selectedDate, _ ->
-                    timeSlots = timeSlots.map { timeSlot ->
-                      if (timeSlot == clientDateRange) {
-                        val startDateBefore = Date(clientDateRange.from)
-                        val from = selectedDate.with(
-                          hour = startDateBefore.getHours(),
-                          minute = startDateBefore.getMinutes(),
-                          second = startDateBefore.getSeconds(),
-                          millisecond = startDateBefore.getMilliseconds()
-                        ).coerceAtMost(inThreeYears).getTime()
-
-                        // Default end date is start date + 2h
-                        val to = if (from >= clientDateRange.to) {
-                          selectedDate.coerceAtMost(inThreeYears).addHours(2).getTime()
-                        } else clientDateRange.to
-                        ClientDateRange(
-                          from = from,
-                          to = to
-                        )
-                      } else timeSlot
-                    }
+                    controller.timeSlotDateFromOnChange(
+                      selectedDate,
+                      clientDateRange,
+                      now,
+                      inThreeYears,
+                    )
                   },
                 )
               }
@@ -328,24 +141,10 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                   variant = FormControlVariant.outlined,
                   min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
                   onChange = { selectedTime ->
-                    timeSlots = timeSlots.map { timeSlot ->
-                      if (timeSlot == clientDateRange) {
-                        val startDateBefore = Date(clientDateRange.from)
-                        val from = selectedTime.with(
-                          year = startDateBefore.getFullYear(),
-                          month = startDateBefore.getMonth(),
-                          day = startDateBefore.getDate()
-                        ).getTime()
-                        // Default end date is start date + 2h
-                        val to = if (from >= clientDateRange.to) {
-                          selectedTime.addHours(2).getTime()
-                        } else clientDateRange.to
-                        ClientDateRange(
-                          from = from,
-                          to = to
-                        )
-                      } else timeSlot
-                    }
+                    controller.timeSlotTimeFromOnChange(
+                      selectedTime,
+                      clientDateRange,
+                    )
                   },
                 )
               }
@@ -370,20 +169,12 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                   min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
                   max = inThreeYears,
                   onChange = { selectedDate, _ ->
-                    timeSlots = timeSlots.map { timeSlot ->
-                      if (timeSlot == clientDateRange) {
-                        val endDateBefore = Date(clientDateRange.to)
-                        ClientDateRange(
-                          from = clientDateRange.from,
-                          to = selectedDate.with(
-                            hour = endDateBefore.getHours(),
-                            minute = endDateBefore.getMinutes(),
-                            second = endDateBefore.getSeconds(),
-                            millisecond = endDateBefore.getMilliseconds()
-                          ).coerceAtMost(inThreeYears).getTime()
-                        )
-                      } else timeSlot
-                    }
+                    controller.timeSlotDateToOnChange(
+                      selectedDate,
+                      clientDateRange,
+                      now,
+                      inThreeYears,
+                    )
                   },
                 )
               }
@@ -401,19 +192,10 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                   variant = FormControlVariant.outlined,
                   min = if (props.config is AccessManagementDetailsConfig.Create) now else null,
                   onChange = { selectedTime ->
-                    timeSlots = timeSlots.map { timeSlot ->
-                      if (timeSlot == clientDateRange) {
-                        val endDateBefore = Date(clientDateRange.to)
-                        ClientDateRange(
-                          from = clientDateRange.from,
-                          to = selectedTime.with(
-                            year = endDateBefore.getFullYear(),
-                            month = endDateBefore.getMonth(),
-                            day = endDateBefore.getDate()
-                          ).getTime()
-                        )
-                      } else timeSlot
-                    }
+                    controller.timeSlotTimeToOnChange(
+                      selectedTime,
+                      clientDateRange,
+                    )
                   },
                 )
               }
@@ -432,10 +214,12 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                     marginRight = 8.px
                   }
                   // At least one time slot must be set
-                  disabled = timeSlots.count() == 1
+                  disabled = controller.timeSlots.count() == 1
                   Close()
                   onClick = {
-                    timeSlots = timeSlots.filter { it != clientDateRange }
+                    controller.removeTimeSlotOnClick(
+                      clientDateRange,
+                    )
                   }
                 }
               }
@@ -445,7 +229,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
       }
       gridContainer(GridDirection.row, alignItems = AlignItems.center, spacing = 1, key = "gridContainerError$index") {
         gridItem(GridSize(xs = 12, sm = true)) {
-          val fromDateTimeSlotError = fromDateTimeSlotErrors.singleOrNull { it.timeSlot == clientDateRange }
+          val fromDateTimeSlotError = controller.fromDateTimeSlotErrors.singleOrNull { it.timeSlot == clientDateRange }
           if (fromDateTimeSlotError != null) {
             Typography {
               sx {
@@ -456,7 +240,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
           }
         }
         gridItem(GridSize(xs = 12, sm = true), key = "gridItemErrorText$index") {
-          val toDateTimeSlotError = toDateTimeSlotErrors.singleOrNull { it.timeSlot == clientDateRange }
+          val toDateTimeSlotError = controller.toDateTimeSlotErrors.singleOrNull { it.timeSlot == clientDateRange }
           if (toDateTimeSlotError != null) {
             Typography {
               sx {
@@ -486,7 +270,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
       }
       onSubmit = { event ->
         if (props.config !is AccessManagementDetailsConfig.Details) {
-          submitPermittedPeopleToState()
+          controller.submitPermittedPeopleToState()
         }
         event.preventDefault()
         event.stopPropagation()
@@ -500,11 +284,8 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
             fullWidth = true
             variant = FormControlVariant.outlined
             label = Strings.email_address.get().toReactNode()
-            value = personEmailTextFieldValue
-            onChange = { event: ChangeEvent<HTMLElement> ->
-              val value: String = event.target.value
-              personEmailTextFieldValue = value
-            }
+            value = controller.personEmailTextFieldValue
+            onChange = controller.addPermittedPeopleOnChange
           }
 
           Box {
@@ -515,7 +296,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
               color = ButtonColor.primary
               variant = ButtonVariant.outlined
               onClick = {
-                submitPermittedPeopleToState()
+                controller.submitPermittedPeopleToState()
               }
               +Strings.access_control_add_permitted_people.get()
             }
@@ -524,7 +305,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
       }
     }
 
-    if (permittedPeopleList.isNotEmpty()) {
+    if (controller.permittedPeopleList.isNotEmpty()) {
       Table {
         TableHead {
           TableRow {
@@ -533,7 +314,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
           }
         }
         TableBody {
-          permittedPeopleList.forEach { personIdentification ->
+          controller.permittedPeopleList.forEach { personIdentification ->
             TableRow {
               TableCell {
                 +personIdentification
@@ -545,7 +326,9 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
                   IconButton {
                     Close()
                     onClick = {
-                      permittedPeopleList = permittedPeopleList.filter { it != personIdentification }
+                      controller.removePermittedPeopleOnClick(
+                        personIdentification
+                      )
                     }
                   }
                 }
@@ -586,17 +369,9 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
             variant = ButtonVariant.contained
             color = ButtonColor.primary
             onClick = {
-              // Reset errors from previous submit attempt
-              fromDateTimeSlotErrors.clear()
-              toDateTimeSlotErrors.clear()
-
-              if (validateInput()) {
-                when (props.config) {
-                  is AccessManagementDetailsConfig.Create -> createAccessControl()
-                  is AccessManagementDetailsConfig.Edit -> editAccessControl()
-                  else -> Unit
-                }
-              }
+              controller.createAccessControlOnClick(
+                props.config,
+              )
             }
             +createButtonText
           }
@@ -606,7 +381,15 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
   }
 
   fun ChildrenBuilder.renderDetailsContent() {
-    renderLocationSelection()
+    AccessManagementLocationSelectionFc {
+      this.config = AccessManagementLocationSelectionConfig(
+        isAutocompleteDisabled = props.config is AccessManagementDetailsConfig.Details,
+        selectedLocation = controller.selectedLocation,
+        selectedLocationTextFieldError = controller.selectedLocationTextFieldError,
+        locationNameToLocationMap = controller.locationNameToLocationMap,
+        locationSelectionOnChange = controller.locationSelectionOnChange,
+      )
+    }
     spacer(16, key = "renderDetailsContentSpacer1")
     renderNoteTextField()
     spacer(16, key = "renderDetailsContentSpacer2")
@@ -618,22 +401,12 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
     renderActionButtons()
   }
 
-  useEffectOnce {
-    when (val config = props.config) {
-      is AccessManagementDetailsConfig.Details -> initFields(config.accessManagement)
-      is AccessManagementDetailsConfig.Edit -> initFields(config.accessManagement)
-      is AccessManagementDetailsConfig.Create -> initFields(null)
-    }
+  MbLinearProgressFc { show = controller.showProgress }
 
-    fetchLocations()
-  }
-
-  MbLinearProgressFc { show = showProgress }
-
-  if (!locationFetchInProgress && locationNameToLocationMap.isEmpty()) {
+  if (!controller.locationFetchInProgress && controller.locationNameToLocationMap.isEmpty()) {
     networkErrorView()
     spacer(36)
-  } else if (locationFetchInProgress) {
+  } else if (controller.locationFetchInProgress) {
     CenteredProgressFc {}
     spacer(36)
   } else {

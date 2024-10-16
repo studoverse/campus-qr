@@ -125,7 +125,7 @@ val MbSingleDialogFc = FcRefWithCoroutineScope<MbSingleDialogProps<MbSingleDialo
   }
 
   // Use the useImperativeHandle hook to expose the methods via the ref.
-  useImperativeHandle(ref = props.ref, dependencies = *arrayOf(props.config)) { // TODO: @mh Should this be an array or just the values?
+  useImperativeHandle(ref = props.ref, props.config) {
     object : MbSingleDialogRef {
       override fun closeDialog() {
         closeDialog()

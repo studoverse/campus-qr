@@ -31,7 +31,7 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
 ) = FC<P> { props ->
   val scope = useMemo(*emptyArray<Any>()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
-  // TODO: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367
+  // TODO for future: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367
   fun launch(block: suspend () -> Unit) = scope.launch {
     try {
       block.invoke()
@@ -56,7 +56,7 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
 ) = ForwardRef<P> { props ->
   val scope = useMemo(*emptyArray<Any>()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
-  // TODO: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367
+  // TODO for future: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367
   fun launch(block: suspend () -> Unit) = scope.launch {
     try {
       block.invoke()
