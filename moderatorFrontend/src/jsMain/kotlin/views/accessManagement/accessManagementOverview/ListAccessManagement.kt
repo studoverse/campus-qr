@@ -4,8 +4,8 @@ import app.appContextToInject
 import mui.material.*
 import react.*
 import util.*
-import views.accessManagement.AccessManagementDetailsConfig
-import views.accessManagement.AccessManagementDetailsFc
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsFc
 import views.common.*
 import webcore.*
 import webcore.extensions.toRoute

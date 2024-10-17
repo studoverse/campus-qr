@@ -1,4 +1,4 @@
-package views.accessManagement
+package views.accessManagement.accessManagementDetails
 
 import app.appContextToInject
 import com.studo.campusqr.common.emailSeparators

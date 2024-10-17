@@ -15,9 +15,9 @@ import react.dom.html.ReactHTML.strong
 import util.Strings
 import util.apiBase
 import util.get
-import views.accessManagement.AccessManagementDetailsConfig
-import views.accessManagement.AccessManagementDetailsFc
-import views.accessManagement.AccessManagementDetailsProps
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsFc
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsProps
 import web.html.HTMLTableCellElement
 import web.prompts.confirm
 import webcore.*

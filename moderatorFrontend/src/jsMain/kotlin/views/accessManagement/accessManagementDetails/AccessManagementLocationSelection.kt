@@ -1,4 +1,4 @@
-package views.accessManagement
+package views.accessManagement.accessManagementDetails
 
 import com.studo.campusqr.common.payloads.ClientLocation
 import js.objects.Object
@@ -11,6 +11,7 @@ import mui.material.TextField
 import react.Fragment
 import react.Props
 import react.create
+import react.dom.events.SyntheticEvent
 import util.Strings
 import util.get
 import webcore.FcWithCoroutineScope
@@ -22,7 +23,7 @@ data class AccessManagementLocationSelectionConfig(
   val selectedLocationTextFieldError: String,
   val locationNameToLocationMap: Map<String, ClientLocation>,
   val locationSelectionOnChange: (
-    event: react.dom.events.SyntheticEvent<*, *>,
+    event: SyntheticEvent<*, *>,
     value: Any?,
     reason: AutocompleteChangeReason,
     details: AutocompleteChangeDetails<String>?,
