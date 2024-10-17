@@ -65,7 +65,6 @@ data class AddGuestCheckInController(
       }
 
       fun checkInGuest() = launch {
-        console.log("debug")
         val appContext = useContext(appContextToInject)!!
         showProgress = true
         val locationId = locationIdWithSeat(selectedLocation!!.id, seatInputValue)
