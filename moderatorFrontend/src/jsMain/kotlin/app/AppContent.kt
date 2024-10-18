@@ -7,7 +7,7 @@ import views.accessManagement.accessManagementOverview.AccessManagementListFc
 import views.adminInfo.AdminInfoFc
 import views.common.pathNotFoundView
 import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverviewFc
-import views.locations.locationsOverview.renderListLocations
+import views.locations.locationsOverview.ListLocations
 import views.login.LoginMode
 import views.login.LoginViewFc
 import views.report.renderReport
@@ -27,7 +27,7 @@ val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope
     Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
     Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
     Url.GUEST_CHECK_IN -> GuestCheckInOverviewFc {}
-    Url.LOCATIONS_LIST -> renderListLocations()
+    Url.LOCATIONS_LIST -> ListLocations {}
     Url.REPORT -> renderReport()
     Url.USERS -> renderUsers()
     Url.ACCOUNT_SETTINGS -> MyAccountFc {}
