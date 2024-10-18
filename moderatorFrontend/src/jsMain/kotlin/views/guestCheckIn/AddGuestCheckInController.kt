@@ -42,6 +42,7 @@ data class AddGuestCheckInController(
 ) {
   companion object {
     fun useAddGuestCheckInController(launch: Launch, props: AddGuestCheckInProps): AddGuestCheckInController {
+      val appContext = useContext(appContextToInject)!!
       var locationFetchInProgress: Boolean by useState(false)
       var showProgress: Boolean by useState(false)
       var locationNameToLocationMap: Map<String, ClientLocation> by useState<Map<String, ClientLocation>>(emptyMap())
@@ -65,7 +66,6 @@ data class AddGuestCheckInController(
       }
 
       fun checkInGuest() = launch {
-        val appContext = useContext(appContextToInject)!!
         showProgress = true
         val locationId = locationIdWithSeat(selectedLocation!!.id, seatInputValue)
         val response = NetworkManager.post<String>(

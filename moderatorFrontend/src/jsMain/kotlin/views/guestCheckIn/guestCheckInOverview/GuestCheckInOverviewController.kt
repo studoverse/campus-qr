@@ -21,11 +21,12 @@ data class GuestCheckInOverviewController(
 ) {
   companion object {
     fun useGuestCheckInOverviewController(launch: Launch): GuestCheckInOverviewController {
+      val appContext = useContext(appContextToInject)!!
+
       var activeGuestCheckIns: List<ActiveCheckIn>? by useState<List<ActiveCheckIn>?>(null)
       var loadingCheckInList: Boolean by useState(false)
 
       fun fetchActiveGuestCheckIns() = launch {
-        val appContext = useContext(appContextToInject)!!
 
         loadingCheckInList = true
         val response = NetworkManager.get<Array<ActiveCheckIn>>("$apiBase/report/listActiveGuestCheckIns")
