@@ -1,7 +1,6 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
-import js.objects.jso
 import webcore.extensions.toRoute
 import web.window.window
 import mui.icons.material.Edit
@@ -21,6 +20,7 @@ import web.history.PopStateEvent
 import web.history.history
 import web.location.location
 import web.scroll.ScrollBehavior
+import web.scroll.ScrollToOptions
 import web.url.URLSearchParams
 import web.window.BeforeUnloadEvent
 import web.window.WindowTarget
@@ -194,11 +194,11 @@ object NavigationHandler {
     // Otherwise, scroll position from previous route is kept sometimes.
     // We're not 100% sure when it is / isn't reset.
     window.scrollTo(
-      options = jso {
-        top = 0.0
-        left = 0.0
-        behavior = ScrollBehavior.instant
-      }
+      options = ScrollToOptions(
+        top = 0.0,
+        left = 0.0,
+        behavior = ScrollBehavior.instant,
+      )
     )
   }
 

@@ -18,9 +18,7 @@ dependencyResolutionManagement {
 
   versionCatalogs {
     create("kotlinWrappers") {
-      // TODO: @mh Doesn't render with v807 and above. Possible ktor issue?
-      //  https://slack-chats.kotlinlang.org/t/18904299/hi-i-m-getting-irlinkageerror-can-not-read-value-from-variab
-      val wrappersVersion = "0.0.1-pre.806"
+      val wrappersVersion = "0.0.1-pre.819"
       from("org.jetbrains.kotlin-wrappers:kotlin-wrappers-catalog:$wrappersVersion")
     }
   }

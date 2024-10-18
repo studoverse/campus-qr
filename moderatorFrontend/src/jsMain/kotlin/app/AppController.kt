@@ -19,7 +19,6 @@ import mui.material.styles.Theme
 import mui.material.styles.createTheme
 import react.ChildrenBuilder
 import react.MutableRefObject
-import react.dom.flushSync
 import react.useEffect
 import react.useEffectOnce
 import react.useMemo
@@ -116,7 +115,6 @@ data class AppController(
         val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
 
         if (fetchedUserData != null) {
-          // TODO: @mh Make sure to check all flushSync usages to prevent function closure issues like it happened here from happening.
           userData = fetchedUserData
           loadingUserData = false
 

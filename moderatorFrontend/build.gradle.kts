@@ -8,10 +8,10 @@ plugins {
   id("io.github.turansky.seskar") version "3.41.0"
 }
 
-val ktor_version: String = "2.3.2"
-val kotlinx_html_version: String = "0.11.0"
-val kotlinx_serialization_version: String = "1.6.2"
-val kotlinx_coroutines_version: String = "1.7.3"
+val ktor_version: String = "2.3.12" // https://github.com/ktorio/ktor/releases
+val kotlinx_html_version: String = "0.11.0" // https://github.com/Kotlin/kotlinx.html/releases
+val kotlinx_serialization_version: String = "1.7.3" // https://github.com/Kotlin/kotlinx.serialization/releases
+val kotlinx_coroutines_version: String = "1.9.0" // https://github.com/Kotlin/kotlinx.coroutines/releases
 
 repositories {
   mavenCentral()
@@ -55,7 +55,7 @@ kotlin {
         api(kotlinWrappers.mui.material)
         api(kotlinWrappers.mui.iconsMaterial)
         api(kotlinWrappers.mui.lab)
-        implementation("org.jetbrains.kotlin-wrappers:kotlin-extensions:1.0.1-pre.806")
+        api(kotlinWrappers.jsExtensions)
 
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
         api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
