@@ -38,14 +38,15 @@ private class ReportTableRow(props: ReportTableRowProps) : RComponent<ReportTabl
     props.config.dialogRef.current!!.showDialog(
       DialogConfig(
         title = DialogConfig.Title(text = Strings.report_checkin_add_filter_title.get()),
-        // TODO: @mh
-        /*customContent = DialogConfig.CustomContent(AddFilterDialog::class) {
-          config = AddFilterDialogConfig(
-            userLocation = props.config.userLocation,
-            dialogRef = props.config.dialogRef,
-            onApplyFilterChange = props.config.onApplyFilterChange,
-          )
-        },*/
+        customContent = {
+          AddFilter {
+            config = AddFilterConfig(
+              userLocation = props.config.userLocation,
+              dialogRef = props.config.dialogRef,
+              onApplyFilterChange = props.config.onApplyFilterChange,
+            )
+          }
+        },
       )
     )
   }
