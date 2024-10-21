@@ -42,21 +42,23 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
   )
   var locationSeatCount: Int? by useState((props.config as? AddLocationConfig.Edit)?.location?.seatCount)
 
-  useShouldNavigateAway(shouldNavigateAway = useCallback(locationTextFieldValue, locationAccessType, locationSeatCount) {
-    when (val config = props.config) {
-      is AddLocationConfig.Create -> {
-        locationTextFieldValue.isEmpty() &&
-            locationAccessType == LocationAccessType.FREE &&
-            locationSeatCount == null
-      }
+  useShouldNavigateAway(
+    useCallback(locationTextFieldValue, locationAccessType, locationSeatCount) {
+      when (val config = props.config) {
+        is AddLocationConfig.Create -> {
+          locationTextFieldValue.isEmpty() &&
+              locationAccessType == LocationAccessType.FREE &&
+              locationSeatCount == null
+        }
 
-      is AddLocationConfig.Edit -> {
-        locationTextFieldValue == config.location.name &&
-            locationAccessType == config.location.accessType &&
-            locationSeatCount == config.location.seatCount
+        is AddLocationConfig.Edit -> {
+          locationTextFieldValue == config.location.name &&
+              locationAccessType == config.location.accessType &&
+              locationSeatCount == config.location.seatCount
+        }
       }
-    }
-  })
+    },
+  )
 
   // TODO: @mh Move to controller.
   fun createOrUpdateLocation() = launch {
