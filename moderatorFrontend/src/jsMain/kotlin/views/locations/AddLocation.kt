@@ -18,6 +18,7 @@ import views.common.MbLinearProgressFc
 import views.common.spacer
 import web.html.InputType
 import webcore.*
+import webcore.NavigationHandler.useShouldNavigateAway
 import kotlin.Any
 
 sealed class AddLocationConfig(val dialogRef: MutableRefObject<MbDialogRef>, val onFinished: (response: String?) -> Unit) {
@@ -30,28 +31,6 @@ sealed class AddLocationConfig(val dialogRef: MutableRefObject<MbDialogRef>, val
 
 external interface AddLocationProps : Props {
   var config: AddLocationConfig
-}
-
-// TODO: @mh Move to react helper file or NavigationHandler.
-fun useShouldNavigateAway(shouldNavigateAway: () -> Boolean) {
-  val navigable = useMemo(*emptyArray<Any>()) {
-    object : NavigateAwayObservable {
-      override var shouldNavigateAway: () -> Boolean = shouldNavigateAway
-    }
-  }
-
-  useEffect {
-    // Update shouldNavigateAway with new state variables.
-    navigable.shouldNavigateAway = shouldNavigateAway
-  }
-
-  useEffectWithCleanup(navigable) {
-    NavigationHandler.navigateAwayListeners.add(navigable)
-
-    onCleanup {
-      NavigationHandler.navigateAwayListeners.remove(navigable)
-    }
-  }
 }
 
 val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->

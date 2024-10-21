@@ -7,6 +7,9 @@ import mui.icons.material.Edit
 import mui.material.ButtonColor
 import mui.material.ButtonVariant
 import react.MutableRefObject
+import react.useEffect
+import react.useEffectWithCleanup
+import react.useMemo
 import web.html.HTMLAnchorElement
 import web.dom.Node
 import web.uievents.MouseEvent
@@ -27,7 +30,6 @@ import web.window.WindowTarget
 import webcore.extensions.findParent
 import kotlin.js.Date
 
-// TODO: @mh Adjust comment
 // The `shouldNavigateAway()` lambda cannot be put in the `navigateAwayListeners` directly
 // because the lambda's hashCode changes between add/remove.
 // By implementing this interface the component's instance can be used for adding/removing
@@ -315,5 +317,26 @@ object NavigationHandler {
     "Leave page",
     "Seite verlassen"
   )
+
+  fun useShouldNavigateAway(shouldNavigateAway: () -> Boolean) {
+    val navigable = useMemo(*emptyArray<Any>()) {
+      object : NavigateAwayObservable {
+        override var shouldNavigateAway: () -> Boolean = shouldNavigateAway
+      }
+    }
+
+    useEffect {
+      // Update shouldNavigateAway with new state variables.
+      navigable.shouldNavigateAway = shouldNavigateAway
+    }
+
+    useEffectWithCleanup(navigable) {
+      NavigationHandler.navigateAwayListeners.add(navigable)
+
+      onCleanup {
+        NavigationHandler.navigateAwayListeners.remove(navigable)
+      }
+    }
+  }
 
 }
