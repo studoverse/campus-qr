@@ -18,6 +18,7 @@ import views.common.MbLinearProgressFc
 import views.common.spacer
 import web.html.InputType
 import webcore.*
+import kotlin.Any
 
 sealed class AddLocationConfig(val dialogRef: MutableRefObject<MbDialogRef>, val onFinished: (response: String?) -> Unit) {
   class Create(dialogRef: MutableRefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
@@ -32,23 +33,16 @@ external interface AddLocationProps : Props {
 }
 
 // TODO: @mh Move to react helper file or NavigationHandler.
-fun useShouldNavigateAway(vararg relevantStates: Any?, shouldNavigateAway: () -> Boolean) {
-  val shouldNavigateAwayWrapper = useMemo(relevantStates) {
-    console.log("shouldNavigateAway is created!") // TODO: @mh Remove after testing
-    shouldNavigateAway
-  }
-
+fun useShouldNavigateAway(shouldNavigateAway: () -> Boolean) {
   val navigable = useMemo(*emptyArray<Any>()) {
-    console.log("navigable is created!") // TODO: @mh Remove after testing
     object : NavigateAwayObservable {
-      override var shouldNavigateAway: () -> Boolean = shouldNavigateAwayWrapper
+      override var shouldNavigateAway: () -> Boolean = shouldNavigateAway
     }
   }
 
-  useEffect(relevantStates) {
-    console.log("shouldNavigateAway is updated!") // TODO: @mh Remove after testing
+  useEffect {
     // Update shouldNavigateAway with new state variables.
-    navigable.shouldNavigateAway = shouldNavigateAwayWrapper
+    navigable.shouldNavigateAway = shouldNavigateAway
   }
 
   useEffectWithCleanup(navigable) {
@@ -69,9 +63,7 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
   )
   var locationSeatCount: Int? by useState((props.config as? AddLocationConfig.Edit)?.location?.seatCount)
 
-  // TODO: @mh Figure out if this works to migrate the unsaved changes dialog structure.
-  useShouldNavigateAway(locationTextFieldValue, locationAccessType, locationSeatCount, shouldNavigateAway = {
-    console.log("locationTextFieldValue: ", locationTextFieldValue) // TODO: @mh Remove after testing
+  useShouldNavigateAway(shouldNavigateAway = useCallback(locationTextFieldValue, locationAccessType, locationSeatCount) {
     when (val config = props.config) {
       is AddLocationConfig.Create -> {
         locationTextFieldValue.isEmpty() &&
