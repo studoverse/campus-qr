@@ -10,7 +10,7 @@ import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverviewFc
 import views.locations.locationsOverview.ListLocations
 import views.login.LoginMode
 import views.login.LoginViewFc
-import views.report.renderReport
+import views.report.ReportFc
 import views.users.MyAccountFc
 import views.users.renderUsers
 import webcore.FcWithCoroutineScope
@@ -28,7 +28,7 @@ val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope
     Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
     Url.GUEST_CHECK_IN -> GuestCheckInOverviewFc {}
     Url.LOCATIONS_LIST -> ListLocations {}
-    Url.REPORT -> renderReport()
+    Url.REPORT -> ReportFc {}
     Url.USERS -> renderUsers()
     Url.ACCOUNT_SETTINGS -> MyAccountFc {}
     Url.ADMIN_INFO -> AdminInfoFc {}
