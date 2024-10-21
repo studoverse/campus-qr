@@ -326,7 +326,8 @@ object NavigationHandler {
     }
 
     useEffect {
-      // Update shouldNavigateAway with new state variables.
+      // Update shouldNavigateAway with up-to-date state variables.
+      // This is run on every render for DX simplicity.
       navigable.shouldNavigateAway = shouldNavigateAway
     }
 
