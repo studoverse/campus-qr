@@ -33,7 +33,8 @@ import kotlin.js.Date
 // By implementing this interface the component's instance can be used for adding/removing
 // from the `navigateAwayListeners` list since this hash stays the same.
 interface NavigateAwayObservable {
-  fun shouldNavigateAway(): Boolean
+  // Use a var to store the lambda that can be updated
+  var shouldNavigateAway: () -> Boolean
 }
 
 /**

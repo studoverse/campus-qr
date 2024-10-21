@@ -31,6 +31,35 @@ external interface AddLocationProps : Props {
   var config: AddLocationConfig
 }
 
+// TODO: @mh Move to react helper file or NavigationHandler.
+fun useShouldNavigateAway(vararg relevantStates: Any?, shouldNavigateAway: () -> Boolean) {
+  val shouldNavigateAwayWrapper = useMemo(relevantStates) {
+    console.log("shouldNavigateAway is created!") // TODO: @mh Remove after testing
+    shouldNavigateAway
+  }
+
+  val navigable = useMemo(*emptyArray<Any>()) {
+    console.log("navigable is created!") // TODO: @mh Remove after testing
+    object : NavigateAwayObservable {
+      override var shouldNavigateAway: () -> Boolean = shouldNavigateAwayWrapper
+    }
+  }
+
+  useEffect(relevantStates) {
+    console.log("shouldNavigateAway is updated!") // TODO: @mh Remove after testing
+    // Update shouldNavigateAway with new state variables.
+    navigable.shouldNavigateAway = shouldNavigateAwayWrapper
+  }
+
+  useEffectWithCleanup(navigable) {
+    NavigationHandler.navigateAwayListeners.add(navigable)
+
+    onCleanup {
+      NavigationHandler.navigateAwayListeners.remove(navigable)
+    }
+  }
+}
+
 val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
   var locationCreationInProgress: Boolean by useState(false)
   var locationTextFieldValue: String by useState((props.config as? AddLocationConfig.Edit)?.location?.name ?: "")
@@ -40,30 +69,23 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
   )
   var locationSeatCount: Int? by useState((props.config as? AddLocationConfig.Edit)?.location?.seatCount)
 
-  // TODO: @mh Figure out if this works to migrate the unsaved changes dialog.
-  val navigable = useMemo(locationTextFieldValue, locationAccessType, locationSeatCount) {
-    console.log("navigable is created!") // TODO: @mh Remove after testing
-    fun shouldNavigateAway(): Boolean {
-      console.log("locationTextFieldValue: ", locationTextFieldValue) // TODO: @mh Remove after testing
-      return when (val config = props.config) {
-        is AddLocationConfig.Create -> {
-          locationTextFieldValue.isEmpty() &&
-              locationAccessType == LocationAccessType.FREE &&
-              locationSeatCount == null
-        }
+  // TODO: @mh Figure out if this works to migrate the unsaved changes dialog structure.
+  useShouldNavigateAway(locationTextFieldValue, locationAccessType, locationSeatCount, shouldNavigateAway = {
+    console.log("locationTextFieldValue: ", locationTextFieldValue) // TODO: @mh Remove after testing
+    when (val config = props.config) {
+      is AddLocationConfig.Create -> {
+        locationTextFieldValue.isEmpty() &&
+            locationAccessType == LocationAccessType.FREE &&
+            locationSeatCount == null
+      }
 
-        is AddLocationConfig.Edit -> {
-          locationTextFieldValue == config.location.name &&
-              locationAccessType == config.location.accessType &&
-              locationSeatCount == config.location.seatCount
-        }
+      is AddLocationConfig.Edit -> {
+        locationTextFieldValue == config.location.name &&
+            locationAccessType == config.location.accessType &&
+            locationSeatCount == config.location.seatCount
       }
     }
-
-    object : NavigateAwayObservable {
-      override fun shouldNavigateAway(): Boolean = shouldNavigateAway()
-    }
-  }
+  })
 
   // TODO: @mh Move to controller.
   fun createOrUpdateLocation() = launch {
@@ -94,14 +116,6 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
       return false
     }
     return true
-  }
-
-  useEffectWithCleanup(navigable) {
-    NavigationHandler.navigateAwayListeners.add(navigable)
-
-    onCleanup {
-      NavigationHandler.navigateAwayListeners.remove(navigable)
-    }
   }
 
   MbLinearProgressFc { show = locationCreationInProgress }

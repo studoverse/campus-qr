@@ -13,8 +13,6 @@ import util.get
 import views.common.spacer
 import webcore.FcWithCoroutineScope
 import webcore.MbDialogRef
-import webcore.RComponentWithCoroutineScope
-import webcore.setState
 import webcore.toReactNode
 
 class AddFilterConfig(
