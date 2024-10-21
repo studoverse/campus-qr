@@ -190,6 +190,7 @@ val MbSingleDialogFc = FcRefWithCoroutineScope<MbSingleDialogProps<MbSingleDialo
         DialogActions {
           config.buttons.forEach { button ->
             Button {
+              key = button.text
               button.color?.let { color ->
                 this.color = color
               }

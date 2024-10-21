@@ -13,6 +13,7 @@ import util.get
 import views.common.*
 import views.locations.AddLocation
 import views.locations.AddLocationConfig
+import views.locations.AddLocationProps
 import web.window.WindowTarget
 import webcore.*
 
@@ -49,7 +50,7 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
     DialogConfig(
       title = DialogConfig.Title(text = Strings.location_add.get()),
       customContent = {
-        AddLocation {
+        AddLocation<AddLocationProps> {
           config = AddLocationConfig.Create(
             dialogRef = dialogRef,
             onFinished = { response ->
