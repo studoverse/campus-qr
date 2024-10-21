@@ -32,28 +32,38 @@ external interface AddLocationProps : Props {
 }
 
 val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
-  var locationCreationInProgress: Boolean = false
-  var locationTextFieldValue: String = (props.config as? AddLocationConfig.Edit)?.location?.name ?: ""
-  var locationTextFieldError: String = ""
-  var locationAccessType: LocationAccessType = (props.config as? AddLocationConfig.Edit)?.location?.accessType ?: LocationAccessType.FREE
-  var locationSeatCount: Int? = (props.config as? AddLocationConfig.Edit)?.location?.seatCount
+  var locationCreationInProgress: Boolean by useState(false)
+  var locationTextFieldValue: String by useState((props.config as? AddLocationConfig.Edit)?.location?.name ?: "")
+  var locationTextFieldError: String by useState("")
+  var locationAccessType: LocationAccessType by useState(
+    (props.config as? AddLocationConfig.Edit)?.location?.accessType ?: LocationAccessType.FREE
+  )
+  var locationSeatCount: Int? by useState((props.config as? AddLocationConfig.Edit)?.location?.seatCount)
 
-  // TODO: @mh Figure out how to migrate the unsaved changes dialog.
-  /*override fun shouldNavigateAway(): Boolean {
-    return when (val config = props.config) {
-      is AddLocationConfig.Create -> {
-        locationTextFieldValue.isEmpty() &&
-            locationAccessType == LocationAccessType.FREE &&
-            locationSeatCount == null
-      }
+  // TODO: @mh Figure out if this works to migrate the unsaved changes dialog.
+  val navigable = useMemo(locationTextFieldValue, locationAccessType, locationSeatCount) {
+    console.log("navigable is created!") // TODO: @mh Remove after testing
+    fun shouldNavigateAway(): Boolean {
+      console.log("locationTextFieldValue: ", locationTextFieldValue) // TODO: @mh Remove after testing
+      return when (val config = props.config) {
+        is AddLocationConfig.Create -> {
+          locationTextFieldValue.isEmpty() &&
+              locationAccessType == LocationAccessType.FREE &&
+              locationSeatCount == null
+        }
 
-      is AddLocationConfig.Edit -> {
-        locationTextFieldValue == config.location.name &&
-            locationAccessType == config.location.accessType &&
-            locationSeatCount == config.location.seatCount
+        is AddLocationConfig.Edit -> {
+          locationTextFieldValue == config.location.name &&
+              locationAccessType == config.location.accessType &&
+              locationSeatCount == config.location.seatCount
+        }
       }
     }
-  }*/
+
+    object : NavigateAwayObservable {
+      override fun shouldNavigateAway(): Boolean = shouldNavigateAway()
+    }
+  }
 
   // TODO: @mh Move to controller.
   fun createOrUpdateLocation() = launch {
@@ -86,12 +96,11 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
     return true
   }
 
-  useEffectOnceWithCleanup {
-    // TODO: @mh
-    //NavigationHandler.navigateAwayListeners.add(this)
+  useEffectWithCleanup(navigable) {
+    NavigationHandler.navigateAwayListeners.add(navigable)
 
     onCleanup {
-      //NavigationHandler.navigateAwayListeners.remove(this)
+      NavigationHandler.navigateAwayListeners.remove(navigable)
     }
   }
 
@@ -139,6 +148,7 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
 
         LocationAccessType.entries.forEach { accessType ->
           MenuItem {
+            key = accessType.name
             value = accessType.name
             +accessType.localizedString.get()
           }

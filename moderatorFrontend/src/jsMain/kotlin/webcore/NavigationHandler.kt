@@ -27,6 +27,7 @@ import web.window.WindowTarget
 import webcore.extensions.findParent
 import kotlin.js.Date
 
+// TODO: @mh Adjust comment
 // The `shouldNavigateAway()` lambda cannot be put in the `navigateAwayListeners` directly
 // because the lambda's hashCode changes between add/remove.
 // By implementing this interface the component's instance can be used for adding/removing
