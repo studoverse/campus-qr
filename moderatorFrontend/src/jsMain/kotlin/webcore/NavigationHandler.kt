@@ -331,10 +331,10 @@ object NavigationHandler {
     }
 
     useEffectWithCleanup(navigable) {
-      NavigationHandler.navigateAwayListeners.add(navigable)
+      navigateAwayListeners.add(navigable)
 
       onCleanup {
-        NavigationHandler.navigateAwayListeners.remove(navigable)
+        navigateAwayListeners.remove(navigable)
       }
     }
   }
