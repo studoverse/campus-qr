@@ -9,6 +9,8 @@
 !.idea/codeStyles/*
 !.idea/fileTemplates/
 !.idea/fileTemplates/*
+!.idea/liveTemplates/
+!.idea/liveTemplates/*
 !.idea/codeStyleSettings.xml
 !.idea/icon.png
 out
