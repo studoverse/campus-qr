@@ -2,12 +2,18 @@ package webcore
 
 import csstype.PropertiesBuilder
 import js.objects.jso
+import mui.base.AutocompleteChangeDetails
+import mui.base.AutocompleteChangeReason
 import mui.material.GridProps
 import mui.material.InputBaseComponentProps
 import mui.material.InputProps
 import mui.material.TextFieldProps
 import react.*
+import react.dom.events.ChangeEvent
+import react.dom.events.MouseEvent
+import react.dom.events.SyntheticEvent
 import web.cssom.*
+import web.html.HTMLButtonElement
 import web.html.HTMLElement
 import web.html.HTMLInputElement
 import web.html.HTMLTextAreaElement
@@ -133,3 +139,9 @@ fun overflowForDialog(overflowX: Overflow = Overflow.visible): OverflowForDialog
   overflowY = Overflow.visible,
   overflowX = overflowX,
 )
+
+/** Helper types to make it easier when defining members of a controller data class for functional components. */
+typealias TextFieldOnChange = (ChangeEvent<HTMLInputElement>) -> Unit
+typealias AutocompleteOnChange<T> = (SyntheticEvent<*, *>, Any, AutocompleteChangeReason, AutocompleteChangeDetails<T>?) -> Unit
+typealias ButtonOnClick = (MouseEvent<HTMLButtonElement, *>) -> Unit
+typealias SelectOnChange = (ChangeEvent<HTMLInputElement>, ReactNode) -> Unit

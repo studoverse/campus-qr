@@ -3,23 +3,18 @@ package views.locations
 import web.cssom.*
 import app.GlobalCss
 import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ClientLocation
-import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData
 import js.objects.jso
 import mui.material.*
 import mui.system.sx
 import react.*
 import util.Strings
-import util.apiBase
 import util.get
 import util.localizedString
 import views.common.MbLinearProgressFc
 import views.common.spacer
 import web.html.InputType
 import webcore.*
-import webcore.NavigationHandler.useShouldNavigateAway
-import kotlin.Any
 
 sealed class AddLocationConfig(val dialogRef: MutableRefObject<MbDialogRef>, val onFinished: (response: String?) -> Unit) {
   class Create(dialogRef: MutableRefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
@@ -34,80 +29,21 @@ external interface AddLocationProps : Props {
 }
 
 val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
-  var locationCreationInProgress: Boolean by useState(false)
-  var locationTextFieldValue: String by useState((props.config as? AddLocationConfig.Edit)?.location?.name ?: "")
-  var locationTextFieldError: String by useState("")
-  var locationAccessType: LocationAccessType by useState(
-    (props.config as? AddLocationConfig.Edit)?.location?.accessType ?: LocationAccessType.FREE
-  )
-  var locationSeatCount: Int? by useState((props.config as? AddLocationConfig.Edit)?.location?.seatCount)
+  val controller = AddLocationController.useAddLocationController(config = props.config, launch = launch)
 
-  useShouldNavigateAway(
-    useCallback(locationTextFieldValue, locationAccessType, locationSeatCount) {
-      when (val config = props.config) {
-        is AddLocationConfig.Create -> {
-          locationTextFieldValue.isEmpty() &&
-              locationAccessType == LocationAccessType.FREE &&
-              locationSeatCount == null
-        }
-
-        is AddLocationConfig.Edit -> {
-          locationTextFieldValue == config.location.name &&
-              locationAccessType == config.location.accessType &&
-              locationSeatCount == config.location.seatCount
-        }
-      }
-    },
-  )
-
-  // TODO: @mh Move to controller.
-  fun createOrUpdateLocation() = launch {
-    locationCreationInProgress = true
-    val url = when (val config = props.config) {
-      is AddLocationConfig.Create -> "$apiBase/location/create"
-      is AddLocationConfig.Edit -> "$apiBase/location/${config.location.id}/edit"
-    }
-    val response = NetworkManager.post<String>(
-      url = url,
-      body = CreateOrUpdateLocationData(
-        name = locationTextFieldValue,
-        accessType = locationAccessType,
-        seatCount = locationSeatCount
-      )
-    )
-    locationCreationInProgress = false
-    props.config.onFinished(response)
-    if (response == "ok") {
-      props.config.dialogRef.current!!.closeDialog()
-    }
-  }
-
-  fun validateInput(): Boolean {
-    if (locationTextFieldValue.isEmpty()) {
-      locationTextFieldError = Strings.parameter_cannot_be_empty_format.get().format(Strings.name.get())
-
-      return false
-    }
-    return true
-  }
-
-  MbLinearProgressFc { show = locationCreationInProgress }
+  MbLinearProgressFc { show = controller.locationCreationInProgress }
 
   TextField {
-    error = locationTextFieldError.isNotEmpty()
-    helperText = locationTextFieldError.toReactNode()
+    error = controller.locationTextFieldError.isNotEmpty()
+    helperText = controller.locationTextFieldError.toReactNode()
     fullWidth = true
     variant = FormControlVariant.outlined
     label = Strings.location_name.get().toReactNode()
-    value = locationTextFieldValue
+    value = controller.locationTextFieldValue
     inputProps = jso {
       maxLength = 40 // Make sure names stay printable
     }
-    onChange = { event ->
-      val value = event.target.value
-      locationTextFieldValue = value
-      locationTextFieldError = ""
-    }
+    onChange = controller.locationNameOnChange
   }
 
   spacer(16, key = "locationName")
@@ -126,10 +62,8 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
       }
       variant = FormControlVariant.outlined
       Select<SelectProps<String>> {
-        value = locationAccessType.name
-        onChange = { event, _ ->
-          locationAccessType = LocationAccessType.valueOf(event.target.value)
-        }
+        value = controller.locationAccessType.name
+        onChange = controller.locationAccessTypeOnChange
         variant = SelectVariant.outlined
         label = Strings.location_access_type.get().toReactNode()
 
@@ -152,11 +86,8 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
     variant = FormControlVariant.outlined
     type = InputType.number
     label = Strings.location_number_of_seats_hint.get().toReactNode()
-    value = locationSeatCount?.toString() ?: ""
-    onChange = { event ->
-      val value = event.target.value
-      locationSeatCount = value.toIntOrNull()?.coerceIn(1, 10_000)
-    }
+    value = controller.locationSeatCount?.toString() ?: ""
+    onChange = controller.locationSeatCountOnChange
   }
 
   spacer(32, key = "seatCountSpacer")
@@ -171,11 +102,7 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
         }
         variant = ButtonVariant.contained
         color = ButtonColor.primary
-        onClick = {
-          if (validateInput()) {
-            createOrUpdateLocation()
-          }
-        }
+        onClick = controller.createOrEditLocationIfInputValid
         +if (props.config is AddLocationConfig.Create) {
           Strings.location_add.get()
         } else {

@@ -20,6 +20,7 @@ import util.get
 import util.localizedString
 import web.prompts.confirm
 import webcore.*
+import webcore.MaterialMenu
 import webcore.extensions.launch
 
 class UserTableRowConfig(
@@ -89,7 +90,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
         +props.config.user.firstLoginDate
       }
       TableCell {
-        materialMenu(
+        MaterialMenu {
           config = MaterialMenuConfig(
             menuItems = listOf(
               MenuItem(text = Strings.user_edit.get(), icon = Edit, onClick = {
@@ -108,7 +109,7 @@ private class UserTableRow : RComponent<UserTableRowProps, UserTableRowState>() 
               }, enabled = props.config.user.id != userData.clientUser!!.id), // Don't delete own user for better UX
             )
           )
-        )
+        }
       }
     }
   }

@@ -74,7 +74,7 @@ val LocationTableRow = FcWithCoroutineScope<LocationTableRowProps> { props, laun
       if (showProgress) {
         CircularProgress()
       } else {
-        materialMenu(
+        MaterialMenu {
           config = MaterialMenuConfig(
             menuItems = listOfNotNull(
               if (props.config.clientUser.canEditLocations) {
@@ -127,7 +127,7 @@ val LocationTableRow = FcWithCoroutineScope<LocationTableRowProps> { props, laun
               } else null,
             )
           )
-        )
+        }
       }
     }
   }

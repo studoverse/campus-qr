@@ -21,6 +21,7 @@ import views.accessManagement.accessManagementDetails.AccessManagementDetailsPro
 import web.html.HTMLTableCellElement
 import web.prompts.confirm
 import webcore.*
+import webcore.MaterialMenu
 import webcore.extensions.launch
 import webcore.extensions.twoDigitString
 import kotlin.js.Date
@@ -124,7 +125,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
         +props.config.accessManagement.note
       }
       TableCell {
-        materialMenu(
+        MaterialMenu {
           config = MaterialMenuConfig(
             menuItems = listOf(
               MenuItem(text = Strings.edit.get(), icon = Edit, onClick = {
@@ -146,8 +147,7 @@ private class AccessManagementTableRow : RComponent<AccessManagementTableRowProp
               }),
             )
           )
-        )
-
+        }
       }
     }
   }

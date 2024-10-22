@@ -12,9 +12,9 @@ import react.useState
 import util.Strings
 import util.apiBase
 import util.get
-import web.html.HTMLInputElement
 import webcore.Launch
 import webcore.NetworkManager
+import webcore.TextFieldOnChange
 import webcore.extensions.addDays
 import webcore.extensions.coerceAtMost
 import webcore.extensions.format
@@ -31,7 +31,7 @@ data class ReportController(
   val validateInput: () -> Boolean,
   val traceContacts: () -> Job,
   val traceStartDatePickerOnChange: (Date, Boolean) -> Unit,
-  val emailTextFieldOnChange: (ChangeEvent<HTMLInputElement>) -> Unit,
+  val emailTextFieldOnChange: TextFieldOnChange,
 ) {
   companion object {
     fun useReportController(launch: Launch): ReportController {
@@ -47,7 +47,7 @@ data class ReportController(
         infectionDate = selectedDate.coerceAtMost(selectedDate)
       }
 
-      fun emailTextFieldOnChange(event: ChangeEvent<HTMLInputElement>) {
+      val emailTextFieldOnChange: TextFieldOnChange = { event ->
         val value = event.target.value
         emailTextFieldValue = value
         emailTextFieldError = ""
@@ -128,7 +128,7 @@ data class ReportController(
         validateInput = ::validateInput,
         traceContacts = ::traceContacts,
         traceStartDatePickerOnChange = ::traceStartDatePickerOnChange,
-        emailTextFieldOnChange = ::emailTextFieldOnChange,
+        emailTextFieldOnChange = emailTextFieldOnChange,
       )
     }
   }

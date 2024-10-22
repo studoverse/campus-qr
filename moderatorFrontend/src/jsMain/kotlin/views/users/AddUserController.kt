@@ -18,6 +18,7 @@ import util.get
 import web.html.HTMLInputElement
 import webcore.Launch
 import webcore.NetworkManager
+import webcore.TextFieldOnChange
 
 data class AddUserController(
   val userCreationInProgress: Boolean,
@@ -34,9 +35,9 @@ data class AddUserController(
   val validateNameInput: () -> Boolean,
   val validatePasswordInput: () -> Boolean,
   val validateEmailInput: () -> Boolean,
-  val userNameTextFieldOnChange: (event: ChangeEvent<HTMLInputElement>) -> Unit,
-  val userEmailTextFieldOnChange: (event: ChangeEvent<HTMLInputElement>) -> Unit,
-  val userPasswordTextFieldOnChange: (event: ChangeEvent<HTMLInputElement>) -> Unit,
+  val userNameTextFieldOnChange: TextFieldOnChange,
+  val userEmailTextFieldOnChange: TextFieldOnChange,
+  val userPasswordTextFieldOnChange: TextFieldOnChange,
   val userPermissionsOnChange: (userPermission: UserPermission, event: ChangeEvent<HTMLInputElement>, checked: Boolean) -> Unit,
 ) {
   companion object {
@@ -159,19 +160,19 @@ data class AddUserController(
         return true
       }
 
-      fun userNameTextFieldOnChange(event: ChangeEvent<HTMLInputElement>) {
+      val userNameTextFieldOnChange: TextFieldOnChange = { event ->
         val value = event.target.value
         userNameTextFieldValue = value
         userNameTextFieldError = ""
       }
 
-      fun userEmailTextFieldOnChange(event: ChangeEvent<HTMLInputElement>) {
+      val userEmailTextFieldOnChange: TextFieldOnChange = { event ->
         val value = event.target.value
         userEmailTextFieldValue = value
         userEmailTextFieldError = ""
       }
 
-      fun userPasswordTextFieldOnChange(event: ChangeEvent<HTMLInputElement>) {
+      val userPasswordTextFieldOnChange: TextFieldOnChange = { event ->
         val value = event.target.value
         userPasswordTextFieldValue = value
         userPasswordTextFieldError = ""
@@ -200,9 +201,9 @@ data class AddUserController(
         validateNameInput = ::validateNameInput,
         validatePasswordInput = ::validatePasswordInput,
         validateEmailInput = ::validateEmailInput,
-        userNameTextFieldOnChange = ::userNameTextFieldOnChange,
-        userEmailTextFieldOnChange = ::userEmailTextFieldOnChange,
-        userPasswordTextFieldOnChange = ::userPasswordTextFieldOnChange,
+        userNameTextFieldOnChange = userNameTextFieldOnChange,
+        userEmailTextFieldOnChange = userEmailTextFieldOnChange,
+        userPasswordTextFieldOnChange = userPasswordTextFieldOnChange,
         userPermissionsOnChange = ::userPermissionsOnChange,
       )
     }

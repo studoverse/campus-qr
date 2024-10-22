@@ -9,8 +9,6 @@ import com.studo.campusqr.common.payloads.EditAccess
 import com.studo.campusqr.common.payloads.NewAccess
 import mui.base.AutocompleteChangeDetails
 import mui.base.AutocompleteChangeReason
-import react.dom.events.ChangeEvent
-import react.dom.events.MouseEvent
 import react.dom.events.SyntheticEvent
 import react.useContext
 import react.useEffectOnce
@@ -18,10 +16,11 @@ import react.useState
 import util.Strings
 import util.get
 import util.apiBase
-import web.html.HTMLButtonElement
-import web.html.HTMLInputElement
+import webcore.AutocompleteOnChange
+import webcore.ButtonOnClick
 import webcore.Launch
 import webcore.NetworkManager
+import webcore.TextFieldOnChange
 import webcore.extensions.addHours
 import webcore.extensions.with
 import webcore.extensions.*
@@ -41,21 +40,16 @@ data class AccessManagementDetailsController(
   val showProgress: Boolean,
   val locationFetchInProgress: Boolean,
   val submitPermittedPeopleToState: () -> Unit,
-  val locationSelectionOnChange: (
-    event: SyntheticEvent<*, *>,
-    value: Any?,
-    reason: AutocompleteChangeReason,
-    details: AutocompleteChangeDetails<String>?,
-  ) -> Unit,
-  val noteTextFieldOnChange: (event: ChangeEvent<HTMLInputElement>) -> Unit,
-  val reasonTextFieldOnChange: (event: ChangeEvent<HTMLInputElement>) -> Unit,
-  val addTimeSlotOnClick: (MouseEvent<HTMLButtonElement, *>) -> Unit,
+  val locationSelectionOnChange: AutocompleteOnChange<String>, // TODO: @mh Do the same for all other autocomplete onChange usages
+  val noteTextFieldOnChange: TextFieldOnChange,
+  val reasonTextFieldOnChange: TextFieldOnChange,
+  val addTimeSlotOnClick: ButtonOnClick,
   val removeTimeSlotOnClick: (clientDateRange: ClientDateRange) -> Unit,
   val timeSlotDateFromOnChange: (date: Date, clientDateRange: ClientDateRange, now: Date, inThreeYears: Date) -> Unit,
   val timeSlotTimeFromOnChange: (date: Date, clientDateRange: ClientDateRange) -> Unit,
   val timeSlotDateToOnChange: (date: Date, clientDateRange: ClientDateRange, now: Date, inThreeYears: Date) -> Unit,
   val timeSlotTimeToOnChange: (date: Date, clientDateRange: ClientDateRange) -> Unit,
-  val addPermittedPeopleOnChange: (ChangeEvent<HTMLInputElement>) -> Unit,
+  val addPermittedPeopleOnChange: TextFieldOnChange,
   val removePermittedPeopleOnClick: (personIdentification: String) -> Unit,
   val createAccessControlOnClick: (config: AccessManagementDetailsConfig) -> Unit,
 ) {
@@ -209,17 +203,17 @@ data class AccessManagementDetailsController(
         selectedLocation = value?.let { locationNameToLocationMap[it] }
       }
 
-      fun noteTextFieldOnChange(event: ChangeEvent<HTMLInputElement>) {
+      val noteTextFieldOnChange: TextFieldOnChange = { event ->
         val value = event.target.value
         accessControlNoteTextFieldValue = value
       }
 
-      fun reasonTextFieldOnChange(event: ChangeEvent<HTMLInputElement>) {
+      val reasonTextFieldOnChange: TextFieldOnChange = { event ->
         val value = event.target.value
         accessControlReasonTextFieldValue = value
       }
 
-      fun addTimeSlotOnClick(event: MouseEvent<HTMLButtonElement, *>) {
+      val addTimeSlotOnClick: ButtonOnClick = { event ->
         timeSlots = (timeSlots + ClientDateRange(timeSlots.last().from, timeSlots.last().to))
       }
 
@@ -304,7 +298,7 @@ data class AccessManagementDetailsController(
         }
       }
 
-      fun addPermittedPeopleOnChange(event: ChangeEvent<HTMLInputElement>) {
+      val addPermittedPeopleOnChange: TextFieldOnChange = { event ->
         val value: String = event.target.value
         personEmailTextFieldValue = value
       }
@@ -352,15 +346,15 @@ data class AccessManagementDetailsController(
         locationFetchInProgress = locationFetchInProgress,
         submitPermittedPeopleToState = ::submitPermittedPeopleToState,
         locationSelectionOnChange = ::locationSelectionOnChange,
-        noteTextFieldOnChange = ::noteTextFieldOnChange,
-        reasonTextFieldOnChange = ::reasonTextFieldOnChange,
-        addTimeSlotOnClick = ::addTimeSlotOnClick,
+        noteTextFieldOnChange = noteTextFieldOnChange,
+        reasonTextFieldOnChange = reasonTextFieldOnChange,
+        addTimeSlotOnClick = addTimeSlotOnClick,
         removeTimeSlotOnClick = ::removeTimeSlotOnClick,
         timeSlotDateFromOnChange = ::timeSlotDateFromOnChange,
         timeSlotTimeFromOnChange = ::timeSlotTimeFromOnChange,
         timeSlotDateToOnChange = ::timeSlotDateToOnChange,
         timeSlotTimeToOnChange = ::timeSlotTimeToOnChange,
-        addPermittedPeopleOnChange = ::addPermittedPeopleOnChange,
+        addPermittedPeopleOnChange = addPermittedPeopleOnChange,
         removePermittedPeopleOnClick = ::removePermittedPeopleOnClick,
         createAccessControlOnClick = ::createAccessControlOnClick,
       )

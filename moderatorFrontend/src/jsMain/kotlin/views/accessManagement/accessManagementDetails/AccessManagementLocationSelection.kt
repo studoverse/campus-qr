@@ -11,9 +11,9 @@ import mui.material.TextField
 import react.Fragment
 import react.Props
 import react.create
-import react.dom.events.SyntheticEvent
 import util.Strings
 import util.get
+import webcore.AutocompleteOnChange
 import webcore.FcWithCoroutineScope
 import webcore.toReactNode
 
@@ -22,12 +22,7 @@ data class AccessManagementLocationSelectionConfig(
   val selectedLocation: ClientLocation?,
   val selectedLocationTextFieldError: String,
   val locationNameToLocationMap: Map<String, ClientLocation>,
-  val locationSelectionOnChange: (
-    event: SyntheticEvent<*, *>,
-    value: Any?,
-    reason: AutocompleteChangeReason,
-    details: AutocompleteChangeDetails<String>?,
-  ) -> Unit,
+  val locationSelectionOnChange: AutocompleteOnChange<String>,
 )
 
 external interface AccessManagementLocationSelectionProps : Props {

@@ -13,9 +13,9 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.guestCheckIn.guestCheckInOverview.locationIdWithSeat
-import web.html.HTMLInputElement
 import webcore.Launch
 import webcore.NetworkManager
+import webcore.TextFieldOnChange
 import kotlin.collections.associateBy
 import kotlin.collections.get
 
@@ -37,7 +37,7 @@ data class AddGuestCheckInController(
   val validateInput: () -> Boolean,
   val checkInGuest: () -> Job,
   val locationAutoCompleteOnChange: (String?) -> Unit,
-  val personEmailTextFieldOnChange: (ChangeEvent<HTMLInputElement>) -> Unit,
+  val personEmailTextFieldOnChange: TextFieldOnChange,
   val seatInputAutoCompleteOnChange: (Int?) -> Unit,
 ) {
   companion object {
@@ -116,7 +116,7 @@ data class AddGuestCheckInController(
         fetchLocations()
       }
 
-      fun personEmailTextFieldOnChange(event: ChangeEvent<HTMLInputElement>) {
+      val personEmailTextFieldOnChange: TextFieldOnChange = { event ->
         val value = event.target.value
         personEmailTextFieldError = ""
         personEmailTextFieldValue = value
@@ -141,7 +141,7 @@ data class AddGuestCheckInController(
         validateInput = ::validateInput,
         checkInGuest = ::checkInGuest,
         locationAutoCompleteOnChange = ::locationAutoCompleteOnChange,
-        personEmailTextFieldOnChange = ::personEmailTextFieldOnChange,
+        personEmailTextFieldOnChange = personEmailTextFieldOnChange,
         seatInputAutoCompleteOnChange = ::seatInputAutoCompleteOnChange,
       )
     }

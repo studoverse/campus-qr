@@ -1,87 +1,24 @@
 package views.locations.locationsOverview
 
 import app.appContextToInject
-import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.canEditLocations
 import com.studo.campusqr.common.payloads.canViewCheckIns
 import web.window.window
 import mui.material.*
 import react.*
 import util.Strings
-import util.apiBase
 import util.get
 import views.common.*
-import views.locations.AddLocation
-import views.locations.AddLocationConfig
-import views.locations.AddLocationProps
 import web.window.WindowTarget
 import webcore.*
 
 external interface ListLocationsProps : Props
 
 val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
+  val controller = ListLocationsController.useListLocationsController(launch = launch)
   val appContext = useContext(appContextToInject)!!
-  val dialogRef = useRef<MbDialogRef>()
 
-  var locationList: List<ClientLocation>? = null
-  var loadingLocationList: Boolean = false
-
-  // TODO: @mh Move to controller.
-  fun fetchLocationList() = launch {
-    loadingLocationList = true
-    val response = NetworkManager.get<Array<ClientLocation>>("$apiBase/location/list")
-    locationList = response?.toList()
-    loadingLocationList = false
-  }
-
-  // TODO: @mh Move to controller.
-  fun handleCreateOrEditLocationResponse(response: String?, successText: String) {
-    val snackbarText = when (response) {
-      "ok" -> {
-        fetchLocationList()
-        successText
-      }
-      else -> Strings.error_try_again.get()
-    }
-    appContext.showSnackbarText(snackbarText)
-  }
-
-  fun renderAddLocationDialog() = dialogRef.current!!.showDialog(
-    DialogConfig(
-      title = DialogConfig.Title(text = Strings.location_add.get()),
-      customContent = {
-        AddLocation<AddLocationProps> {
-          config = AddLocationConfig.Create(
-            dialogRef = dialogRef,
-            onFinished = { response ->
-              handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
-            }
-          )
-        }
-      },
-    )
-  )
-
-  fun renderImportButtonDialog() {
-    dialogRef.current!!.showDialog(
-      DialogConfig(
-        title = DialogConfig.Title(text = Strings.location_import.get()),
-        text = Strings.location_import_details.get(),
-        buttons = listOf(
-          DialogButton(Strings.more_about_studo.get(), onClick = {
-            window.open("https://studo.com", WindowTarget._blank)
-          }),
-          DialogButton("OK")
-        ),
-      )
-    )
-  }
-
-  useEffectOnce {
-    fetchLocationList()
-  }
-
-  MbDialogFc { ref = dialogRef }
+  MbDialogFc { ref = controller.dialogRef }
   val userData = appContext.userDataContext.userData!!
   ToolbarViewFc {
     config = ToolbarViewConfig(
@@ -105,27 +42,23 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
           ToolbarButton(
             text = Strings.location_import.get(),
             variant = ButtonVariant.outlined,
-            onClick = {
-              renderImportButtonDialog()
-            }
+            onClick = controller.locationImportOnClick
           )
         } else null,
         if (userData.clientUser!!.canEditLocations) {
           ToolbarButton(
             text = Strings.location_create.get(),
             variant = ButtonVariant.contained,
-            onClick = {
-              renderAddLocationDialog()
-            }
+            onClick = controller.locationCreateOnClick
           )
         } else null,
       )
     )
   }
 
-  MbLinearProgressFc { show = loadingLocationList }
+  MbLinearProgressFc { show = controller.loadingLocationList }
 
-  if (locationList?.isNotEmpty() == true) {
+  if (controller.locationList?.isNotEmpty() == true) {
     Table {
       TableHead {
         TableRow {
@@ -139,26 +72,23 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
         }
       }
       TableBody {
-        locationList!!.forEach { location ->
+        controller.locationList.forEach { location ->
           LocationTableRow {
+            key = location.id
             config = LocationTableRowConfig(
               location = location,
-              dialogRef = dialogRef,
-              onEditFinished = { response ->
-                handleCreateOrEditLocationResponse(response, Strings.location_edited.get())
-              },
-              onDeleteFinished = { response ->
-                handleCreateOrEditLocationResponse(response, Strings.location_deleted.get())
-              },
+              dialogRef = controller.dialogRef,
+              onEditFinished = controller.locationTableRowOnEditFinished,
+              onDeleteFinished = controller.locationTableRowOnDeleteFinished,
               userData = userData,
             )
           }
         }
       }
     }
-  } else if (locationList == null && !loadingLocationList) {
+  } else if (controller.locationList == null && !controller.loadingLocationList) {
     networkErrorView()
-  } else if (!loadingLocationList) {
+  } else if (!controller.loadingLocationList) {
     genericErrorView(
       title = Strings.location_no_locations_title.get(),
       subtitle = Strings.location_no_locations_subtitle.get()
