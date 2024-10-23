@@ -11,6 +11,7 @@
 !.idea/fileTemplates/*
 !.idea/liveTemplates/
 !.idea/liveTemplates/*
+!.idea/InstallTemplates.kts
 !.idea/codeStyleSettings.xml
 !.idea/icon.png
 out
