@@ -44,6 +44,7 @@ val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
       width = 100.pct - 70.px
     }
     Autocomplete<AutocompleteProps<String>> {
+      // TODO: @mb
       onChange = { _, target: Any, _, _ ->
         @Suppress("UNCHECKED_CAST")
         target as Array<String>

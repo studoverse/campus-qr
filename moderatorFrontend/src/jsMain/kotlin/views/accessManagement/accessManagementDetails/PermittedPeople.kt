@@ -82,8 +82,7 @@ val PermittedPeopleFc = FcWithCoroutineScope<PermittedPeopleProps> { props, laun
             color = ButtonColor.primary
             variant = ButtonVariant.outlined
             onClick = {
-              // TODO: @mh Refactor so that onClick function is fully defined in controller
-              // TODO: @mh Also check scenarios like this in the rest of the refactored code
+              // TODO: @mb Refactor so that onClick function is fully defined in controller
               props.config.submitPermittedPeopleToState()
             }
             +Strings.access_control_add_permitted_people.get()
@@ -114,7 +113,7 @@ val PermittedPeopleFc = FcWithCoroutineScope<PermittedPeopleProps> { props, laun
                 IconButton {
                   Close()
                   onClick = {
-                    // TODO: @mh Refactor so that onClick function is fully defined in controller
+                    // TODO: @mb Refactor so that onClick function is fully defined in controller
                     props.config.removePermittedPeopleOnClick(
                       personIdentification
                     )

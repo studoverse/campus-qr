@@ -62,6 +62,7 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
     Autocomplete<AutocompleteProps<String>> {
       value = addGuestCheckInController.selectedLocation?.name
       onChange = { _, target: Any?, _, _ ->
+        // TODO: @mb
         target as String?
         addGuestCheckInController.locationAutoCompleteOnChange(target)
       }
@@ -94,6 +95,7 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
       val options = (1..addGuestCheckInController.selectedLocation?.seatCount!!).map { it }.toTypedArray()
       spacer(16)
       Autocomplete<AutocompleteProps<Int>> {
+        // TODO: @mb
         onChange = { _, target: Any?, _, _ ->
           target as Int?
           addGuestCheckInController.seatInputAutoCompleteOnChange(target)

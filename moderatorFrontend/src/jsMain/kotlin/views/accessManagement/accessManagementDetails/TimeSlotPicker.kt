@@ -29,7 +29,7 @@ import web.cssom.FlexDirection
 import web.cssom.number
 import web.cssom.pct
 import web.cssom.px
-import web.html.HTMLButtonElement
+import webcore.ButtonOnClick
 import webcore.DatePickerConfig
 import webcore.DatePickerFc
 import webcore.FcWithCoroutineScope
@@ -47,7 +47,7 @@ data class TimeSlotPickerConfig(
   val fromDateTimeSlotErrors: MutableList<TimeSlotError>,
   val toDateTimeSlotErrors: MutableList<TimeSlotError>,
   val accessManagementDetailsType: AccessManagementDetailsConfig,
-  val addTimeSlotOnClick: (MouseEvent<HTMLButtonElement, *>) -> Unit,
+  val addTimeSlotOnClick: ButtonOnClick,
   val removeTimeSlotOnClick: (clientDateRange: ClientDateRange) -> Unit,
   val timeSlotDateFromOnChange: (date: Date, clientDateRange: ClientDateRange, now: Date, inThreeYears: Date) -> Unit,
   val timeSlotTimeFromOnChange: (date: Date, clientDateRange: ClientDateRange) -> Unit,
