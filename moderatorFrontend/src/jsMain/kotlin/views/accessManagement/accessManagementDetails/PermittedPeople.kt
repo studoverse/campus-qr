@@ -44,6 +44,10 @@ external interface PermittedPeopleProps : Props {
 }
 
 val PermittedPeopleFc = FcWithCoroutineScope<PermittedPeopleProps> { props, launch ->
+  val controller = PermittedPeopleController.usePermittedPeopleController(
+    config = props.config,
+    launch = launch,
+  )
 
   Typography {
     +Strings.access_control_permitted_people.get()
@@ -81,10 +85,7 @@ val PermittedPeopleFc = FcWithCoroutineScope<PermittedPeopleProps> { props, laun
             size = Size.small
             color = ButtonColor.primary
             variant = ButtonVariant.outlined
-            onClick = {
-              // TODO: @mb Refactor so that onClick function is fully defined in controller
-              props.config.submitPermittedPeopleToState()
-            }
+            onClick = controller.addPersonButtonOnClick
             +Strings.access_control_add_permitted_people.get()
           }
         }
@@ -113,10 +114,7 @@ val PermittedPeopleFc = FcWithCoroutineScope<PermittedPeopleProps> { props, laun
                 IconButton {
                   Close()
                   onClick = {
-                    // TODO: @mb Refactor so that onClick function is fully defined in controller
-                    props.config.removePermittedPeopleOnClick(
-                      personIdentification
-                    )
+                    controller.removePermittedPeopleButtonOnClick(personIdentification)
                   }
                 }
               }

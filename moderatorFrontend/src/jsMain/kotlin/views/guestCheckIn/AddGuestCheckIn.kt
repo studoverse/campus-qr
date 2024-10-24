@@ -91,11 +91,7 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
       val options = (1..addGuestCheckInController.selectedLocation?.seatCount!!).map { it }.toTypedArray()
       spacer(16)
       Autocomplete<AutocompleteProps<Int>> {
-        // TODO: @mb
-        onChange = { _, target: Any?, _, _ ->
-          target as Int?
-          addGuestCheckInController.seatInputAutoCompleteOnChange(target)
-        }
+        onChange = addGuestCheckInController.seatInputAutocompleteOnChange
         fullWidth = true
         multiple = false
         openOnFocus = true
