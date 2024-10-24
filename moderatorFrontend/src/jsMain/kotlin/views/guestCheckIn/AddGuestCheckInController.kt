@@ -12,10 +12,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.guestCheckIn.guestCheckInOverview.locationIdWithSeat
-import webcore.AutocompleteOnChange
-import webcore.Launch
-import webcore.NetworkManager
-import webcore.TextFieldOnChange
+import webcore.*
 import kotlin.collections.associateBy
 import kotlin.collections.get
 
@@ -38,7 +35,7 @@ data class AddGuestCheckInController(
   val checkInGuest: () -> Job,
   val locationAutoCompleteOnChange: AutocompleteOnChange<String>,
   val personEmailTextFieldOnChange: TextFieldOnChange,
-  val seatInputAutoCompleteOnChange: (Int?) -> Unit,
+  val seatInputAutocompleteOnChange: AutocompleteOnChange<Int>,
 ) {
   companion object {
     fun useAddGuestCheckInController(launch: Launch, props: AddGuestCheckInProps): AddGuestCheckInController {
@@ -122,9 +119,10 @@ data class AddGuestCheckInController(
         personEmailTextFieldValue = value
       }
 
-      fun seatInputAutoCompleteOnChange(target: Int?) {
+      val seatInputAutocompleteOnChange: AutocompleteOnChange<Int> = { _, value, _, _ ->
+        value as Int?
         seatInputError = ""
-        seatInputValue = target
+        seatInputValue = value
       }
 
       return AddGuestCheckInController(
@@ -142,7 +140,7 @@ data class AddGuestCheckInController(
         checkInGuest = ::checkInGuest,
         locationAutoCompleteOnChange = locationAutoCompleteOnChange,
         personEmailTextFieldOnChange = personEmailTextFieldOnChange,
-        seatInputAutoCompleteOnChange = ::seatInputAutoCompleteOnChange,
+        seatInputAutocompleteOnChange = seatInputAutocompleteOnChange,
       )
     }
   }

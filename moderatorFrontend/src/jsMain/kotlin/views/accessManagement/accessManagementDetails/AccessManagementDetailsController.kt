@@ -37,7 +37,7 @@ data class AccessManagementDetailsController(
   val showProgress: Boolean,
   val locationFetchInProgress: Boolean,
   val submitPermittedPeopleToState: () -> Unit,
-  val locationSelectionOnChange: AutocompleteOnChange<String>, // TODO: @mb Do the same for all other autocomplete onChange usages
+  val locationSelectionOnChange: AutocompleteOnChange<String>,
   val noteTextFieldOnChange: TextFieldOnChange,
   val reasonTextFieldOnChange: TextFieldOnChange,
   val addTimeSlotOnClick: ButtonOnClick,
