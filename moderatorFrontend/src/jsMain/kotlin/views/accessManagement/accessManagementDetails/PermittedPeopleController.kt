@@ -9,7 +9,6 @@ data class PermittedPeopleController(
 ) {
   companion object {
     fun usePermittedPeopleController(config: PermittedPeopleConfig, launch: Launch): PermittedPeopleController {
-
       val addPersonButtonOnClick: ButtonOnClick = {
         config.submitPermittedPeopleToState()
       }

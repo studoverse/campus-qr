@@ -3,13 +3,10 @@ package views.accessManagement.accessManagementExport
 import com.studo.campusqr.common.payloads.AccessManagementExportData
 import mui.material.TableCell
 import mui.material.TableRow
-import react.ChildrenBuilder
 import react.Props
-import react.State
 import react.dom.html.ReactHTML.strong
-import react.react
 import views.accessManagement.accessManagementOverview.format
-import webcore.RComponent
+import webcore.FcWithCoroutineScope
 import kotlin.js.Date
 
 class AccessManagementExportTableRowConfig(
@@ -20,37 +17,25 @@ external interface AccessManagementExportTableRowProps : Props {
   var config: AccessManagementExportTableRowConfig
 }
 
-external interface AccessManagementExportTableRowState : State
+val AccessManagementExportTableRow = FcWithCoroutineScope<AccessManagementExportTableRowProps> { props, launch ->
+  TableRow {
+    hover = true
 
-private class AccessManagementExportTableRow :
-  RComponent<AccessManagementExportTableRowProps, AccessManagementExportTableRowState>() {
-
-  override fun ChildrenBuilder.render() {
-    TableRow {
-      hover = true
-
-      TableCell {
-        val dateRange = props.config.permit.dateRange
-        val now = Date().getTime()
-        if (dateRange.from < now && dateRange.to > now) {
-          // Current date range
-          strong {
-            +dateRange.format()
-          }
-        } else {
-          // Date range in past
+    TableCell {
+      val dateRange = props.config.permit.dateRange
+      val now = Date().getTime()
+      if (dateRange.from < now && dateRange.to > now) {
+        // Current date range
+        strong {
           +dateRange.format()
         }
-      }
-      TableCell {
-        +props.config.permit.email
+      } else {
+        // Date range in past
+        +dateRange.format()
       }
     }
-  }
-}
-
-fun ChildrenBuilder.renderAccessManagementExportRow(config: AccessManagementExportTableRowConfig) {
-  AccessManagementExportTableRow::class.react {
-    this.config = config
+    TableCell {
+      +props.config.permit.email
+    }
   }
 }

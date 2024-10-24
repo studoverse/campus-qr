@@ -2,7 +2,7 @@ package app
 
 import react.*
 import util.Url
-import views.accessManagement.accessManagementExport.renderAccessManagementExportList
+import views.accessManagement.accessManagementExport.ListAccessManagementExport
 import views.accessManagement.accessManagementOverview.AccessManagementListFc
 import views.adminInfo.AdminInfoFc
 import views.common.pathNotFoundView
@@ -24,8 +24,8 @@ val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope
   when (currentAppRoute?.url) {
     Url.ACCESS_MANAGEMENT_LIST -> AccessManagementListFc { locationId = null }
     Url.ACCESS_MANAGEMENT_LOCATION_LIST -> AccessManagementListFc { locationId = currentAppRoute.pathParams["id"] }
-    Url.ACCESS_MANAGEMENT_LIST_EXPORT -> renderAccessManagementExportList(locationId = null)
-    Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> renderAccessManagementExportList(locationId = currentAppRoute.pathParams["id"])
+    Url.ACCESS_MANAGEMENT_LIST_EXPORT -> ListAccessManagementExport { locationId = null }
+    Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> ListAccessManagementExport { locationId = currentAppRoute.pathParams["id"] }
     Url.GUEST_CHECK_IN -> GuestCheckInOverviewFc {}
     Url.LOCATIONS_LIST -> ListLocations {}
     Url.REPORT -> ReportFc {}

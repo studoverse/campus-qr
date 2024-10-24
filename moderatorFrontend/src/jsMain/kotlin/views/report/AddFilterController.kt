@@ -1,5 +1,6 @@
 package views.report
 
+import react.useState
 import webcore.AutocompleteOnChange
 import webcore.AutocompleteOnInputChange
 import webcore.ButtonOnClick
@@ -14,10 +15,13 @@ data class AddFilterController(
 ) {
   companion object {
     fun useAddFilterController(launch: Launch, config: AddFilterConfig): AddFilterController {
-      var filterOptions: List<Int> = config.userLocation.locationSeatCount?.let { seatCount ->
-        (1..seatCount).map { it }.filter { it != config.userLocation.seat }
-      } ?: emptyList()
-      var filteredSeats: List<Int> = config.userLocation.filteredSeats?.toList() ?: emptyList()
+      var filterOptions: List<Int> by useState(
+        config.userLocation.locationSeatCount?.let { seatCount ->
+          (1..seatCount).map { it }.filter { it != config.userLocation.seat }
+        } ?: emptyList())
+      var filteredSeats: List<Int> by useState(
+        config.userLocation.filteredSeats?.toList() ?: emptyList()
+      )
 
       val autocompleteOnChange: AutocompleteOnChange<String> = { _, value, _, _ ->
         @Suppress("UNCHECKED_CAST")

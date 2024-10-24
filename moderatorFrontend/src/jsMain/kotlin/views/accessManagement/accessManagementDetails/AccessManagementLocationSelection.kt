@@ -2,8 +2,6 @@ package views.accessManagement.accessManagementDetails
 
 import com.studo.campusqr.common.payloads.ClientLocation
 import js.objects.Object
-import mui.base.AutocompleteChangeDetails
-import mui.base.AutocompleteChangeReason
 import mui.material.Autocomplete
 import mui.material.AutocompleteProps
 import mui.material.FormControlVariant
