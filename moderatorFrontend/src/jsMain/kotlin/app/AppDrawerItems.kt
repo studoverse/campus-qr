@@ -16,8 +16,8 @@ import views.settings.SettingsFc
 import web.cssom.*
 import web.window.WindowTarget
 import webcore.FcWithCoroutineScope
+import webcore.LogoBadge
 import webcore.LogoBadgeConfig
-import webcore.logoBadge
 
 class SideDrawerItem(
   val label: LocalizedString,
@@ -41,14 +41,14 @@ val AppDrawerItemsFc = FcWithCoroutineScope<AppDrawerItemsProps> { props, launch
   val appContext = useContext(appContextToInject)!!
 
   val userData = appContext.userDataContext.userData
-  logoBadge(
+  LogoBadge {
     config = LogoBadgeConfig(
       logoUrl = "$baseUrl/static/images/logo_campusqr.png",
       logoAlt = "Campus QR",
       badgeTitle = userData?.appName ?: "",
       badgeSubtitle = userData?.clientUser?.name ?: ""
     )
-  )
+  }
 
   if (props.config.loading) {
     LinearProgress {}
