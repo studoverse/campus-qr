@@ -1,22 +1,23 @@
 package views.report
 
-import mui.base.AutocompleteInputChangeReason
-import react.dom.events.SyntheticEvent
 import webcore.AutocompleteOnChange
+import webcore.AutocompleteOnInputChange
+import webcore.ButtonOnClick
 import webcore.Launch
 
 data class AddFilterController(
   val filterOptions: List<Int>,
   val filteredSeats: List<Int>,
   val autocompleteOnChange: AutocompleteOnChange<String>,
-  val autocompleteOnInputChange: (event: SyntheticEvent<*, *>, value: String, reason: AutocompleteInputChangeReason) -> Unit,
+  val autocompleteOnInputChange: AutocompleteOnInputChange,
+  val applyButtonOnClick: ButtonOnClick,
 ) {
   companion object {
-    fun useAddFilterController(launch: Launch, props: AddFilterProps): AddFilterController {
-      var filterOptions: List<Int> = props.config.userLocation.locationSeatCount?.let { seatCount ->
-        (1..seatCount).map { it }.filter { it != props.config.userLocation.seat }
+    fun useAddFilterController(launch: Launch, config: AddFilterConfig): AddFilterController {
+      var filterOptions: List<Int> = config.userLocation.locationSeatCount?.let { seatCount ->
+        (1..seatCount).map { it }.filter { it != config.userLocation.seat }
       } ?: emptyList()
-      var filteredSeats: List<Int> = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
+      var filteredSeats: List<Int> = config.userLocation.filteredSeats?.toList() ?: emptyList()
 
       val autocompleteOnChange: AutocompleteOnChange<String> = { _, value, _, _ ->
         @Suppress("UNCHECKED_CAST")
@@ -24,11 +25,7 @@ data class AddFilterController(
         filteredSeats = value.map { it.toInt() }
       }
 
-      fun autocompleteOnInputChange(
-        event: SyntheticEvent<*, *>,
-        value: String,
-        reason: AutocompleteInputChangeReason,
-      ) {
+      val autocompleteOnInputChange: AutocompleteOnInputChange = { _, value, _ ->
         // Add values after user pressed a " " or "," for fast input
         if (value.endsWith(" ") || value.endsWith(",")) {
           val seatNumber = value.trim().removeSuffix(",").toIntOrNull()
@@ -38,11 +35,19 @@ data class AddFilterController(
         }
       }
 
+      val applyButtonOnClick: ButtonOnClick = {
+        with(config) {
+          onApplyFilterChange(userLocation, filteredSeats)
+        }
+        config.dialogRef.current!!.closeDialog()
+      }
+
       return AddFilterController(
         filterOptions = filterOptions,
         filteredSeats = filteredSeats,
         autocompleteOnChange = autocompleteOnChange,
-        autocompleteOnInputChange = ::autocompleteOnInputChange,
+        autocompleteOnInputChange = autocompleteOnInputChange,
+        applyButtonOnClick = applyButtonOnClick,
       )
     }
   }

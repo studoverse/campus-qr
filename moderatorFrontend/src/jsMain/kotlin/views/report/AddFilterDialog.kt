@@ -26,7 +26,7 @@ external interface AddFilterProps : Props {
 val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
   val addFilterController = AddFilterController.useAddFilterController(
     launch = launch,
-    props = props,
+    config = props.config,
   )
 
   Typography {
@@ -68,12 +68,7 @@ val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
         marginLeft = Auto.auto
       }
       +Strings.apply.get()
-      onClick = {
-        with(props.config) {
-          onApplyFilterChange(userLocation, addFilterController.filteredSeats)
-        }
-        props.config.dialogRef.current!!.closeDialog()
-      }
+      onClick = addFilterController.applyButtonOnClick
     }
   }
 }

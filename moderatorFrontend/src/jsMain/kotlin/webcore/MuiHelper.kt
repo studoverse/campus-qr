@@ -4,6 +4,7 @@ import csstype.PropertiesBuilder
 import js.objects.jso
 import mui.base.AutocompleteChangeDetails
 import mui.base.AutocompleteChangeReason
+import mui.base.AutocompleteInputChangeReason
 import mui.material.GridProps
 import mui.material.InputBaseComponentProps
 import mui.material.InputProps
@@ -143,5 +144,6 @@ fun overflowForDialog(overflowX: Overflow = Overflow.visible): OverflowForDialog
 /** Helper types to make it easier when defining members of a controller data class for functional components. */
 typealias TextFieldOnChange = (ChangeEvent<HTMLInputElement>) -> Unit
 typealias AutocompleteOnChange<T> = (SyntheticEvent<*, *>, Any, AutocompleteChangeReason, AutocompleteChangeDetails<T>?) -> Unit
+typealias AutocompleteOnInputChange = (event: SyntheticEvent<*, *>, value: String, reason: AutocompleteInputChangeReason) -> Unit
 typealias ButtonOnClick = (MouseEvent<HTMLButtonElement, *>) -> Unit
 typealias SelectOnChange = (ChangeEvent<HTMLInputElement>, ReactNode) -> Unit
