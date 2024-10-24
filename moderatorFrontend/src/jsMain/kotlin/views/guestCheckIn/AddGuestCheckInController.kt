@@ -5,7 +5,6 @@ import app.baseUrl
 import com.studo.campusqr.common.payloads.CheckInData
 import com.studo.campusqr.common.payloads.ClientLocation
 import kotlinx.coroutines.Job
-import react.dom.events.ChangeEvent
 import react.useContext
 import react.useEffectOnce
 import react.useState
@@ -13,6 +12,7 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.guestCheckIn.guestCheckInOverview.locationIdWithSeat
+import webcore.AutocompleteOnChange
 import webcore.Launch
 import webcore.NetworkManager
 import webcore.TextFieldOnChange
@@ -36,7 +36,7 @@ data class AddGuestCheckInController(
   val fetchLocations: () -> Job,
   val validateInput: () -> Boolean,
   val checkInGuest: () -> Job,
-  val locationAutoCompleteOnChange: (String?) -> Unit,
+  val locationAutoCompleteOnChange: AutocompleteOnChange<String>,
   val personEmailTextFieldOnChange: TextFieldOnChange,
   val seatInputAutoCompleteOnChange: (Int?) -> Unit,
 ) {
@@ -104,9 +104,9 @@ data class AddGuestCheckInController(
         return true
       }
 
-      fun locationAutoCompleteOnChange(target: String?) {
+      val locationAutoCompleteOnChange: AutocompleteOnChange<String> = { _, value, _, _ ->
         selectedLocationTextFieldError = ""
-        selectedLocation = target.let { locationNameToLocationMap[it] }
+        selectedLocation = value.let { locationNameToLocationMap[it] }
 
         // User should re-select seat if needed
         seatInputValue = null
@@ -140,7 +140,7 @@ data class AddGuestCheckInController(
         fetchLocations = ::fetchLocations,
         validateInput = ::validateInput,
         checkInGuest = ::checkInGuest,
-        locationAutoCompleteOnChange = ::locationAutoCompleteOnChange,
+        locationAutoCompleteOnChange = locationAutoCompleteOnChange,
         personEmailTextFieldOnChange = personEmailTextFieldOnChange,
         seatInputAutoCompleteOnChange = ::seatInputAutoCompleteOnChange,
       )

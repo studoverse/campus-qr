@@ -26,7 +26,7 @@ external interface AccessManagementDetailsProps : Props {
 }
 
 val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProps> { props, launch ->
-  val controller = AccessManagementDetailsController.Companion.useAccessManagementDetailsController(config = props.config, launch = launch)
+  val controller = AccessManagementDetailsController.useAccessManagementDetailsController(config = props.config, launch = launch)
 
   fun ChildrenBuilder.renderNoteTextField() {
     TextField {

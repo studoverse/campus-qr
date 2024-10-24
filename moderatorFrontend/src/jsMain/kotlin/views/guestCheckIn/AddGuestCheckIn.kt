@@ -61,11 +61,7 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
   } else {
     Autocomplete<AutocompleteProps<String>> {
       value = addGuestCheckInController.selectedLocation?.name
-      onChange = { _, target: Any?, _, _ ->
-        // TODO: @mb
-        target as String?
-        addGuestCheckInController.locationAutoCompleteOnChange(target)
-      }
+      onChange = addGuestCheckInController.locationAutoCompleteOnChange
       openOnFocus = true
       options = addGuestCheckInController.locationNameToLocationMap.keys.toTypedArray()
       getOptionLabel = { it }

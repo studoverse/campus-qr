@@ -7,9 +7,6 @@ import com.studo.campusqr.common.payloads.ClientDateRange
 import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.EditAccess
 import com.studo.campusqr.common.payloads.NewAccess
-import mui.base.AutocompleteChangeDetails
-import mui.base.AutocompleteChangeReason
-import react.dom.events.SyntheticEvent
 import react.useContext
 import react.useEffectOnce
 import react.useState
@@ -192,12 +189,7 @@ data class AccessManagementDetailsController(
         personEmailTextFieldValue = ""
       }
 
-      fun locationSelectionOnChange(
-        event: SyntheticEvent<*, *>,
-        value: Any?,
-        reason: AutocompleteChangeReason,
-        details: AutocompleteChangeDetails<String>?,
-      ) {
+      val locationSelectionOnChange: AutocompleteOnChange<String> = { _, value, _, _ ->
         value as String?
         selectedLocationTextFieldError = ""
         selectedLocation = value?.let { locationNameToLocationMap[it] }
@@ -345,7 +337,7 @@ data class AccessManagementDetailsController(
         showProgress = showProgress,
         locationFetchInProgress = locationFetchInProgress,
         submitPermittedPeopleToState = ::submitPermittedPeopleToState,
-        locationSelectionOnChange = ::locationSelectionOnChange,
+        locationSelectionOnChange = locationSelectionOnChange,
         noteTextFieldOnChange = noteTextFieldOnChange,
         reasonTextFieldOnChange = reasonTextFieldOnChange,
         addTimeSlotOnClick = addTimeSlotOnClick,

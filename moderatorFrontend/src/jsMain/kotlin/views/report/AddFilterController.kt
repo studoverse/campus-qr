@@ -1,7 +1,5 @@
 package views.report
 
-import mui.base.AutocompleteChangeDetails
-import mui.base.AutocompleteChangeReason
 import mui.base.AutocompleteInputChangeReason
 import react.dom.events.SyntheticEvent
 import webcore.AutocompleteOnChange
@@ -20,12 +18,7 @@ data class AddFilterController(
       } ?: emptyList()
       var filteredSeats: List<Int> = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
 
-      fun autocompleteOnChange(
-        event: SyntheticEvent<*, *>,
-        value: Any?,
-        reason: AutocompleteChangeReason,
-        details: AutocompleteChangeDetails<String>?,
-      ) {
+      val autocompleteOnChange: AutocompleteOnChange<String> = { _, value, _, _ ->
         @Suppress("UNCHECKED_CAST")
         value as Array<String>
         filteredSeats = value.map { it.toInt() }
@@ -48,7 +41,7 @@ data class AddFilterController(
       return AddFilterController(
         filterOptions = filterOptions,
         filteredSeats = filteredSeats,
-        autocompleteOnChange = ::autocompleteOnChange,
+        autocompleteOnChange = autocompleteOnChange,
         autocompleteOnInputChange = ::autocompleteOnInputChange,
       )
     }
