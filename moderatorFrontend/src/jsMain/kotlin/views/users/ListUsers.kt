@@ -25,67 +25,11 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
 
-  fun renderAddUserDialog() = dialogRef.current!!.showDialog(
-    DialogConfig(
-      title = DialogConfig.Title(text = Strings.user_add.get()),
-      customContent = {
-        AddUserFc {
-          config = AddUserConfig.Create(onFinished = { response ->
-            listUsersController.handleCreateOrAddUserResponse(response)
-            dialogRef.current!!.closeDialog()
-          })
-        }
-      },
-    )
-  )
-
-
-  fun renderSsoInfoButtonDialog() {
-    dialogRef.current!!.showDialog(
-      DialogConfig(
-        title = DialogConfig.Title(text = Strings.user_sso_info.get()),
-        customContent = {
-          Typography {
-            sx {
-              color = rgb(0, 0, 0, 0.54)
-            }
-            variant = TypographyVariant.body1
-            component = ReactHTML.span
-            +Strings.user_sso_info_details1.get()
-            spacer(16)
-            +Strings.user_sso_info_details2.get()
-          }
-        },
-        buttons = listOf(
-          DialogButton(Strings.more_about_studo.get(), onClick = {
-            window.open("https://studo.com", WindowTarget._blank)
-          }),
-          DialogButton("OK")
-        ),
-      )
-    )
-  }
-
   MbDialogFc { ref = dialogRef }
-  ToolbarViewFc {
+  ToolbarView {
     config = ToolbarViewConfig(
-      title = Strings.user_management.get(),
-      buttons = listOfNotNull(
-        ToolbarButton(
-          text = Strings.user_sso_info.get(),
-          variant = ButtonVariant.outlined,
-          onClick = {
-            renderSsoInfoButtonDialog()
-          }
-        ),
-        if (userData.externalAuthProvider) null else ToolbarButton(
-          text = Strings.user_add.get(),
-          variant = ButtonVariant.contained,
-          onClick = {
-            renderAddUserDialog()
-          }
-        )
-      )
+      dialogRef = dialogRef,
+      handleCreateOrAddUserResponse = listUsersController.handleCreateOrAddUserResponse,
     )
   }
 
@@ -117,7 +61,7 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
         }
       }
       TableBody {
-        listUsersController.userList!!.forEach { user ->
+        listUsersController.userList.forEach { user ->
           renderUserTableRow(
             config = UserTableRowConfig(
               user = user,
@@ -132,5 +76,81 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
     networkErrorView()
   } else if (!listUsersController.loadingUserList) {
     throw Exception("At least one user must exist")
+  }
+}
+
+private class ToolbarViewConfig(
+  val dialogRef: MutableRefObject<MbDialogRef>,
+  val handleCreateOrAddUserResponse: (String?) -> Unit,
+)
+
+private external interface ToolbarViewProps : Props {
+  var config: ToolbarViewConfig
+}
+
+private val ToolbarView = FcWithCoroutineScope<ToolbarViewProps> { props, launch ->
+  val appContext = useContext(appContextToInject)!!
+  val userData = appContext.userDataContext.userData!!
+
+  fun renderSsoInfoButtonDialog() {
+    props.config.dialogRef.current!!.showDialog(
+      DialogConfig(
+        title = DialogConfig.Title(text = Strings.user_sso_info.get()),
+        customContent = {
+          Typography {
+            sx {
+              color = rgb(0, 0, 0, 0.54)
+            }
+            variant = TypographyVariant.body1
+            component = ReactHTML.span
+            +Strings.user_sso_info_details1.get()
+            spacer(16)
+            +Strings.user_sso_info_details2.get()
+          }
+        },
+        buttons = listOf(
+          DialogButton(Strings.more_about_studo.get(), onClick = {
+            window.open("https://studo.com", WindowTarget._blank)
+          }),
+          DialogButton("OK")
+        ),
+      )
+    )
+  }
+
+  fun renderAddUserDialog() = props.config.dialogRef.current!!.showDialog(
+    DialogConfig(
+      title = DialogConfig.Title(text = Strings.user_add.get()),
+      customContent = {
+        AddUserFc {
+          config = AddUserConfig.Create(onFinished = { response ->
+            props.config.handleCreateOrAddUserResponse(response)
+            props.config.dialogRef.current!!.closeDialog()
+          })
+        }
+      },
+    )
+  )
+
+  ToolbarViewFc {
+    config = ToolbarViewConfig(
+      title = Strings.user_management.get(),
+      buttons = listOfNotNull(
+        ToolbarButton(
+          text = Strings.user_sso_info.get(),
+          variant = ButtonVariant.outlined,
+          onClick = {
+            renderSsoInfoButtonDialog()
+          }
+        ),
+        if (userData.externalAuthProvider) null else ToolbarButton(
+          text = Strings.user_add.get(),
+          variant = ButtonVariant.contained,
+          onClick = {
+            renderAddUserDialog()
+          }
+        )
+      )
+    )
   }
 }
