@@ -1,8 +1,6 @@
 package views.report
 
-import app.AppContext
 import app.GlobalCss.flex
-import app.appContextToInject
 import com.studo.campusqr.common.payloads.ReportData
 import web.cssom.*
 import mui.material.*
@@ -26,10 +24,10 @@ external interface AddFilterProps : Props {
 }
 
 val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
-  var filterOptions: List<Int> = props.config.userLocation.locationSeatCount?.let { seatCount ->
-    (1..seatCount).map { it }.filter { it != props.config.userLocation.seat }
-  } ?: emptyList()
-  var filteredSeats: List<Int> = props.config.userLocation.filteredSeats?.toList() ?: emptyList()
+  val addFilterController = AddFilterController.useAddFilterController(
+    launch = launch,
+    props = props,
+  )
 
   Typography {
     +Strings.report_checkin_add_filter_content.get()
@@ -37,34 +35,20 @@ val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
 
   spacer(16)
 
-
   Box {
     sx {
       // Make sure that dialog's apply button doesn't get overlaid by autocomplete's dropdown
       width = 100.pct - 70.px
     }
     Autocomplete<AutocompleteProps<String>> {
-      // TODO: @mb
-      onChange = { _, target: Any, _, _ ->
-        @Suppress("UNCHECKED_CAST")
-        target as Array<String>
-        filteredSeats = target.map { it.toInt() }
-      }
-      onInputChange = { _, value, _ ->
-        // Add values after user pressed a " " or "," for fast input
-        if (value.endsWith(" ") || value.endsWith(",")) {
-          val seatNumber = value.trim().removeSuffix(",").toIntOrNull()
-          if (seatNumber != null && seatNumber in filterOptions && seatNumber !in filteredSeats) {
-            filteredSeats = filteredSeats + seatNumber
-          }
-        }
-      }
+      onChange = addFilterController.autocompleteOnChange
+      onInputChange = addFilterController.autocompleteOnInputChange
       disableCloseOnSelect = true
       fullWidth = true
       multiple = true
       openOnFocus = true
-      options = filterOptions.map { it.toString() }.toTypedArray()
-      value = filteredSeats.map { it.toString() }.toTypedArray()
+      options = addFilterController.filterOptions.map { it.toString() }.toTypedArray()
+      value = addFilterController.filteredSeats.map { it.toString() }.toTypedArray()
       getOptionLabel = { it }
       renderInput = { params ->
         TextField.create {
@@ -86,7 +70,7 @@ val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
       +Strings.apply.get()
       onClick = {
         with(props.config) {
-          onApplyFilterChange(userLocation, filteredSeats)
+          onApplyFilterChange(userLocation, addFilterController.filteredSeats)
         }
         props.config.dialogRef.current!!.closeDialog()
       }
