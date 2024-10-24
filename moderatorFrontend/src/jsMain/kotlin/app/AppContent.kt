@@ -11,7 +11,7 @@ import views.locations.locationsOverview.ListLocations
 import views.login.LoginMode
 import views.login.LoginViewFc
 import views.report.ReportFc
-import views.users.ListUsers
+import views.users.listUsers.ListUsers
 import views.users.MyAccountFc
 import webcore.FcWithCoroutineScope
 
