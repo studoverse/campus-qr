@@ -8,8 +8,8 @@ import react.*
 import util.Strings
 import util.get
 import views.common.*
+import views.users.UserTableRow
 import views.users.UserTableRowConfig
-import views.users.renderUserTableRow
 import webcore.*
 
 external interface ListUsersProps : Props
@@ -60,13 +60,13 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
       }
       TableBody {
         listUsersController.userList.forEach { user ->
-          renderUserTableRow(
+          UserTableRow {
             config = UserTableRowConfig(
               user = user,
               dialogRef = dialogRef,
               onEditFinished = listUsersController.handleCreateOrAddUserResponse,
-            ),
-          )
+            )
+          }
         }
       }
     }
