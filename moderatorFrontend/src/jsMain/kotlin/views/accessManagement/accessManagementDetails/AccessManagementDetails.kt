@@ -7,6 +7,7 @@ import util.Strings
 import util.get
 import views.common.*
 import webcore.*
+import js.lazy.Lazy
 
 sealed class AccessManagementDetailsConfig(val dialogRef: RefObject<MbDialogRef>) {
   class Create(val locationId: String?, dialogRef: MutableRefObject<MbDialogRef>, val onCreated: () -> Unit) :
@@ -25,6 +26,7 @@ external interface AccessManagementDetailsProps : Props {
   var config: AccessManagementDetailsConfig
 }
 
+//@Lazy
 val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProps> { props, launch ->
   val controller = AccessManagementDetailsController.useAccessManagementDetailsController(config = props.config, launch = launch)
 
@@ -51,55 +53,63 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
   }
 
   fun ChildrenBuilder.renderDetailsContent() {
-    AccessManagementLocationSelectionFc {
-      this.config = AccessManagementLocationSelectionConfig(
-        isAutocompleteDisabled = props.config is AccessManagementDetailsConfig.Details,
-        selectedLocation = controller.selectedLocation,
-        selectedLocationTextFieldError = controller.selectedLocationTextFieldError,
-        locationNameToLocationMap = controller.locationNameToLocationMap,
-        locationSelectionOnChange = controller.locationSelectionOnChange,
-      )
+    Suspense {
+      AccessManagementLocationSelectionFc {
+        this.config = AccessManagementLocationSelectionConfig(
+          isAutocompleteDisabled = props.config is AccessManagementDetailsConfig.Details,
+          selectedLocation = controller.selectedLocation,
+          selectedLocationTextFieldError = controller.selectedLocationTextFieldError,
+          locationNameToLocationMap = controller.locationNameToLocationMap,
+          locationSelectionOnChange = controller.locationSelectionOnChange,
+        )
+      }
     }
     spacer(16, key = "renderDetailsContentSpacer1")
     renderNoteTextField()
     spacer(16, key = "renderDetailsContentSpacer2")
     renderReasonTextField()
     spacer(24, key = "renderDetailsContentSpacer3")
-    TimeSlotPickerFc {
-      this.config = TimeSlotPickerConfig(
-        timeSlots = controller.timeSlots,
-        fromDateTimeSlotErrors = controller.fromDateTimeSlotErrors,
-        toDateTimeSlotErrors = controller.toDateTimeSlotErrors,
-        accessManagementDetailsType = props.config,
-        addTimeSlotOnClick = controller.addTimeSlotOnClick,
-        removeTimeSlotOnClick = controller.removeTimeSlotOnClick,
-        timeSlotDateFromOnChange = controller.timeSlotDateFromOnChange,
-        timeSlotTimeFromOnChange = controller.timeSlotTimeFromOnChange,
-        timeSlotDateToOnChange = controller.timeSlotDateToOnChange,
-        timeSlotTimeToOnChange = controller.timeSlotTimeToOnChange,
-      )
+    Suspense {
+      TimeSlotPickerFc {
+        this.config = TimeSlotPickerConfig(
+          timeSlots = controller.timeSlots,
+          fromDateTimeSlotErrors = controller.fromDateTimeSlotErrors,
+          toDateTimeSlotErrors = controller.toDateTimeSlotErrors,
+          accessManagementDetailsType = props.config,
+          addTimeSlotOnClick = controller.addTimeSlotOnClick,
+          removeTimeSlotOnClick = controller.removeTimeSlotOnClick,
+          timeSlotDateFromOnChange = controller.timeSlotDateFromOnChange,
+          timeSlotTimeFromOnChange = controller.timeSlotTimeFromOnChange,
+          timeSlotDateToOnChange = controller.timeSlotDateToOnChange,
+          timeSlotTimeToOnChange = controller.timeSlotTimeToOnChange,
+        )
+      }
     }
-    PermittedPeopleFc {
-      this.config = PermittedPeopleConfig(
-        permittedPeopleList = controller.permittedPeopleList,
-        personEmailTextFieldValue = controller.personEmailTextFieldValue,
-        accessManagementDetailsType = props.config,
-        submitPermittedPeopleToState = controller.submitPermittedPeopleToState,
-        addPermittedPeopleOnChange = controller.addPermittedPeopleOnChange,
-        removePermittedPeopleOnClick = controller.removePermittedPeopleOnClick,
-      )
+    Suspense {
+      PermittedPeopleFc {
+        this.config = PermittedPeopleConfig(
+          permittedPeopleList = controller.permittedPeopleList,
+          personEmailTextFieldValue = controller.personEmailTextFieldValue,
+          accessManagementDetailsType = props.config,
+          submitPermittedPeopleToState = controller.submitPermittedPeopleToState,
+          addPermittedPeopleOnChange = controller.addPermittedPeopleOnChange,
+          removePermittedPeopleOnClick = controller.removePermittedPeopleOnClick,
+        )
+      }
     }
     spacer(32, key = "renderDetailsContentSpacer4")
-    AccessManagementDetailsActionButtonsFc {
-      this.config = AccessManagementDetailsActionButtonsConfig(
-        accessManagementDetailsType = props.config,
-        dialogRef = props.config.dialogRef,
-        createAccessControlOnClick = {
-          controller.createAccessControlOnClick(
-            props.config,
-          )
-        },
-      )
+    Suspense {
+      AccessManagementDetailsActionButtonsFc {
+        this.config = AccessManagementDetailsActionButtonsConfig(
+          accessManagementDetailsType = props.config,
+          dialogRef = props.config.dialogRef,
+          createAccessControlOnClick = {
+            controller.createAccessControlOnClick(
+              props.config,
+            )
+          },
+        )
+      }
     }
   }
 

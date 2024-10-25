@@ -1,6 +1,7 @@
 package views.adminInfo
 
 import csstype.PropertiesBuilder
+import js.lazy.Lazy
 import web.cssom.*
 import web.window.window
 import mui.material.Box
@@ -19,6 +20,7 @@ import webcore.verticalMargin
 
 external interface AdminInfoProps : Props
 
+@Lazy
 val AdminInfoFc = FcWithCoroutineScope<AdminInfoProps> { props, launch ->
 
   fun PropertiesBuilder.subheader() {

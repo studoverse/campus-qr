@@ -6,6 +6,7 @@ import app.appContextToInject
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.canEditUsers
+import js.lazy.Lazy
 import mui.material.*
 import mui.system.sx
 import react.*
@@ -27,6 +28,7 @@ external interface AddUserProps : Props {
   var config: AddUserConfig
 }
 
+//@Lazy
 val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
   var addUserController = AddUserController.useUserController(
     user = (props.config as? AddUserConfig.Edit)?.user,

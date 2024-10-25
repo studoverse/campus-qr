@@ -1,6 +1,7 @@
 package views.report
 
 import com.studo.campusqr.common.payloads.ReportData
+import js.lazy.Lazy
 import mui.material.*
 import react.*
 import util.Strings
@@ -19,18 +20,21 @@ external interface ReportTableRowProps : Props {
   var config: ReportTableRowConfig
 }
 
+//@Lazy
 val ReportTableRowFc = FcWithCoroutineScope<ReportTableRowProps> { props, launch ->
   fun renderApplyFilterDialog() {
     props.config.dialogRef.current!!.showDialog(
       DialogConfig(
         title = DialogConfig.Title(text = Strings.report_checkin_add_filter_title.get()),
         customContent = {
-          AddFilter {
-            config = AddFilterConfig(
-              userLocation = props.config.userLocation,
-              dialogRef = props.config.dialogRef,
-              onApplyFilterChange = props.config.onApplyFilterChange,
-            )
+          Suspense {
+            AddFilter {
+              config = AddFilterConfig(
+                userLocation = props.config.userLocation,
+                dialogRef = props.config.dialogRef,
+                onApplyFilterChange = props.config.onApplyFilterChange,
+              )
+            }
           }
         },
       )

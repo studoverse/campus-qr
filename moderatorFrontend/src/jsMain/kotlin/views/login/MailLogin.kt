@@ -1,9 +1,9 @@
 package views.login
 
-import app.appContextToInject
 import com.studo.campusqr.common.LoginResult
 import com.studo.campusqr.common.payloads.MailLoginData
 import csstype.PropertiesBuilder
+import js.lazy.Lazy
 import web.cssom.*
 import kotlinx.browser.document
 import mui.material.Box
@@ -13,6 +13,7 @@ import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.Props
+import react.Suspense
 import react.dom.events.ChangeEvent
 import react.dom.html.ReactHTML.form
 import react.useState
@@ -35,6 +36,7 @@ private fun PropertiesBuilder.description() {
   padding = 16.px
 }
 
+@Lazy
 val MailLoginFc = FcWithCoroutineScope<MailLoginProps> { props, componentScope ->
   var email: String by useState("")
   var password: String by useState("")
@@ -138,16 +140,18 @@ val MailLoginFc = FcWithCoroutineScope<MailLoginProps> { props, componentScope -
         }
       }
       spacer(size = 32, key = "spacer2")
-      LoginNavigationButtonsViewFc {
-        config = LoginNavigationButtonsViewConfig(
-          networkRequestInProgress = networkRequestInProgress,
-          backEnabled = false,
-          nextButtonText = Strings.login_login_button.get(),
-          nextButtonDisabled = email.isEmpty() || password.isEmpty(),
-          onNextAction = {
-            login()
-          }
-        )
+      Suspense {
+        LoginNavigationButtonsViewFc {
+          config = LoginNavigationButtonsViewConfig(
+            networkRequestInProgress = networkRequestInProgress,
+            backEnabled = false,
+            nextButtonText = Strings.login_login_button.get(),
+            nextButtonDisabled = email.isEmpty() || password.isEmpty(),
+            onNextAction = {
+              login()
+            }
+          )
+        }
       }
     }
   }

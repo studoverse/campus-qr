@@ -2,6 +2,7 @@ package views.accessManagement.accessManagementOverview.accessManagementRow
 
 import com.studo.campusqr.common.payloads.ClientAccessManagement
 import com.studo.campusqr.common.payloads.ClientDateRange
+import js.lazy.Lazy
 import mui.icons.material.Delete
 import mui.icons.material.Edit
 import mui.icons.material.FileCopyOutlined
@@ -34,6 +35,7 @@ external interface AccessManagementTableRowProps : Props {
   var config: AccessManagementTableRowConfig
 }
 
+//@Lazy
 val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowProps> { props, launch ->
   val controller = AccessManagementTableRowController.useAccessManagementRowController(
     launch = launch,
@@ -45,11 +47,13 @@ val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowPr
       DialogConfig(
         title = DialogConfig.Title(text = Strings.access_control.get()),
         customContent = {
-          AccessManagementDetailsFc {
-            config = AccessManagementDetailsConfig.Details(
-              accessManagement = props.config.accessManagement,
-              dialogRef = props.config.dialogRef,
-            )
+          Suspense {
+            AccessManagementDetailsFc {
+              config = AccessManagementDetailsConfig.Details(
+                accessManagement = props.config.accessManagement,
+                dialogRef = props.config.dialogRef,
+              )
+            }
           }
         },
       )
@@ -61,14 +65,16 @@ val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowPr
       DialogConfig(
         title = DialogConfig.Title(text = Strings.location_edit.get()),
         customContent = {
-          AccessManagementDetailsFc {
-            config = AccessManagementDetailsConfig.Edit(
-              accessManagement = props.config.accessManagement,
-              dialogRef = props.config.dialogRef,
-              onEdited = { success ->
-                props.config.onOperationFinished(AccessManagementTableRowOperation.Edit, success)
-              }
-            )
+          Suspense {
+            AccessManagementDetailsFc {
+              config = AccessManagementDetailsConfig.Edit(
+                accessManagement = props.config.accessManagement,
+                dialogRef = props.config.dialogRef,
+                onEdited = { success ->
+                  props.config.onOperationFinished(AccessManagementTableRowOperation.Edit, success)
+                }
+              )
+            }
           }
         },
       )
@@ -114,14 +120,16 @@ val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowPr
       +props.config.accessManagement.note
     }
     TableCell {
-      MaterialMenu {
-        config = MaterialMenuConfig(
-          menuItems = listOf(
-            MenuItem(text = Strings.edit.get(), icon = Edit, onClick = { renderEditAccessManagementDialog() }),
-            MenuItem(text = Strings.duplicate.get(), icon = FileCopyOutlined, onClick = controller.duplicateMenuItemOnClick),
-            MenuItem(text = Strings.delete.get(), icon = Delete, onClick = controller.deleteMenuItemOnClick),
+      Suspense {
+        MaterialMenu {
+          config = MaterialMenuConfig(
+            menuItems = listOf(
+              MenuItem(text = Strings.edit.get(), icon = Edit, onClick = { renderEditAccessManagementDialog() }),
+              MenuItem(text = Strings.duplicate.get(), icon = FileCopyOutlined, onClick = controller.duplicateMenuItemOnClick),
+              MenuItem(text = Strings.delete.get(), icon = Delete, onClick = controller.deleteMenuItemOnClick),
+            )
           )
-        )
+        }
       }
     }
   }

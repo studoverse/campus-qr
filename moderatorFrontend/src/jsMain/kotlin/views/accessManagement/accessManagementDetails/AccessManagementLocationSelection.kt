@@ -1,6 +1,7 @@
 package views.accessManagement.accessManagementDetails
 
 import com.studo.campusqr.common.payloads.ClientLocation
+import js.lazy.Lazy
 import js.objects.Object
 import mui.material.Autocomplete
 import mui.material.AutocompleteProps
@@ -27,6 +28,7 @@ external interface AccessManagementLocationSelectionProps : Props {
   var config: AccessManagementLocationSelectionConfig
 }
 
+//@Lazy
 val AccessManagementLocationSelectionFc = FcWithCoroutineScope<AccessManagementLocationSelectionProps> { props, launch ->
 
   Autocomplete<AutocompleteProps<String>> {

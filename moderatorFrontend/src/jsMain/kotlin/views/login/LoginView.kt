@@ -5,6 +5,7 @@ import app.ColorPalette
 import app.appContextToInject
 import app.baseUrl
 import com.studo.campusqr.common.payloads.isAuthenticated
+import js.lazy.Lazy
 import kotlinx.browser.document
 import mui.material.*
 import mui.material.styles.TypographyVariant
@@ -29,6 +30,7 @@ enum class LoginMode {
   EMAIL
 }
 
+//@Lazy
 val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   useEffectOnce {
@@ -74,7 +76,7 @@ val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, launch ->
     CardContent {
       Box {
         when (props.loginMode) {
-          EMAIL -> MailLoginFc {}
+          EMAIL -> Suspense { MailLoginFc {} }
         }
       }
     }

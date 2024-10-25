@@ -1,7 +1,9 @@
 package views.accessManagement.accessManagementExport
 
+import js.lazy.Lazy
 import mui.material.*
 import react.Props
+import react.Suspense
 import util.Strings
 import util.Url
 import util.get
@@ -15,23 +17,26 @@ external interface ListAccessManagementExportProps : Props {
   var locationId: String?
 }
 
+@Lazy
 val ListAccessManagementExport = FcWithCoroutineScope<ListAccessManagementExportProps> { props, launch ->
   val controller = ListAccessManagementExportController.useListAccessManagementExportController(props = props, launch = launch)
 
-  ToolbarViewFc {
-    config = ToolbarViewConfig(
-      title = StringBuilder().apply {
-        append(Strings.access_control_export.get())
-        append(" - ")
-        if (controller.clientLocation == null) {
-          append(Strings.access_control_my.get())
-        } else {
-          append(controller.clientLocation!!.name)
-        }
-      }.toString(),
-      backButtonUrl = Url.ACCESS_MANAGEMENT_LIST,
-      buttons = emptyList()
-    )
+  Suspense {
+    ToolbarViewFc {
+      config = ToolbarViewConfig(
+        title = StringBuilder().apply {
+          append(Strings.access_control_export.get())
+          append(" - ")
+          if (controller.clientLocation == null) {
+            append(Strings.access_control_my.get())
+          } else {
+            append(controller.clientLocation!!.name)
+          }
+        }.toString(),
+        backButtonUrl = Url.ACCESS_MANAGEMENT_LIST,
+        buttons = emptyList()
+      )
+    }
   }
 
   MbLinearProgressFc { show = controller.loadingPermitList }
@@ -45,8 +50,10 @@ val ListAccessManagementExport = FcWithCoroutineScope<ListAccessManagementExport
         }
       }
       TableBody {
-        controller.permitList!!.forEach { accessManagement ->
-          AccessManagementExportTableRow { config = AccessManagementExportTableRowConfig(accessManagement) }
+        Suspense {
+          controller.permitList!!.forEach { accessManagement ->
+            AccessManagementExportTableRow { config = AccessManagementExportTableRowConfig(accessManagement) }
+          }
         }
       }
     }

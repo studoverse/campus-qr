@@ -1,6 +1,7 @@
 package views.accessManagement.accessManagementDetails
 
 import app.GlobalCss
+import js.lazy.Lazy
 import mui.icons.material.Close
 import mui.material.Box
 import mui.material.Button
@@ -43,6 +44,7 @@ external interface PermittedPeopleProps : Props {
   var config: PermittedPeopleConfig
 }
 
+//@Lazy
 val PermittedPeopleFc = FcWithCoroutineScope<PermittedPeopleProps> { props, launch ->
   val controller = PermittedPeopleController.usePermittedPeopleController(
     config = props.config,

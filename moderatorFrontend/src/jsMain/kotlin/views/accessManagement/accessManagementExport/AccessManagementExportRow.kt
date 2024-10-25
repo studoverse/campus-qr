@@ -1,6 +1,7 @@
 package views.accessManagement.accessManagementExport
 
 import com.studo.campusqr.common.payloads.AccessManagementExportData
+import js.lazy.Lazy
 import mui.material.TableCell
 import mui.material.TableRow
 import react.Props
@@ -17,6 +18,7 @@ external interface AccessManagementExportTableRowProps : Props {
   var config: AccessManagementExportTableRowConfig
 }
 
+//@Lazy
 val AccessManagementExportTableRow = FcWithCoroutineScope<AccessManagementExportTableRowProps> { props, launch ->
   TableRow {
     hover = true

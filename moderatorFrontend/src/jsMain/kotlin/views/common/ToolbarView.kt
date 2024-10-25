@@ -4,6 +4,7 @@ import app.AppContext
 import app.GlobalCss
 import app.RouteContext
 import app.appContextToInject
+import js.lazy.Lazy
 import web.cssom.*
 import mui.icons.material.ArrowBack
 import mui.material.*
@@ -30,6 +31,7 @@ external interface ToolbarViewProps : Props {
   var config: ToolbarViewConfig
 }
 
+//@Lazy
 val ToolbarViewFc = FcWithCoroutineScope<ToolbarViewProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 

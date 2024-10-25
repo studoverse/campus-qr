@@ -14,6 +14,7 @@ import util.Strings
 import util.get
 import web.location.location
 import js.lazy.Lazy
+import react.Suspense
 import webcore.FcWithCoroutineScope
 
 external interface GenericErrorViewProps : Props {
@@ -21,6 +22,7 @@ external interface GenericErrorViewProps : Props {
   var subtitle: String
 }
 
+//@Lazy
 val PathNotFoundFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
   Box {
     sx {
@@ -49,6 +51,7 @@ val PathNotFoundFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch
   }
 }
 
+//@Lazy
 val GenericErrorViewFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
   Box {
     sx {
@@ -78,17 +81,20 @@ private fun PropertiesBuilder.centeredText() {
 }
 
 fun ChildrenBuilder.pathNotFoundView(title: String = "", subtitle: String = "") {
-  //@Lazy // TODO: @mh Use this for testing
-  PathNotFoundFc {
-    this.title = title
-    this.subtitle = subtitle
+  Suspense {
+    PathNotFoundFc {
+      this.title = title
+      this.subtitle = subtitle
+    }
   }
 }
 
 fun ChildrenBuilder.genericErrorView(title: String, subtitle: String) {
-  GenericErrorViewFc {
-    this.title = title
-    this.subtitle = subtitle
+  Suspense {
+    GenericErrorViewFc {
+      this.title = title
+      this.subtitle = subtitle
+    }
   }
 }
 

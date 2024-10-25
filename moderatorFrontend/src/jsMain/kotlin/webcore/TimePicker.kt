@@ -1,6 +1,7 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
+import js.lazy.Lazy
 import web.cssom.*
 import js.objects.jso
 import mui.material.Box
@@ -36,6 +37,7 @@ external interface TimePickerProps : Props {
 
 private class TimeInputValues(var hour: String, var minute: String)
 
+//@Lazy
 val TimePickerFc = FcWithCoroutineScope<TimePickerProps> { props, launch ->
   val timeValue = props.config.time.toInputTypeTimeValueString()
   var oldBrowsersInputValues: TimeInputValues by useState(TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1]))

@@ -2,6 +2,7 @@ package views.report
 
 import app.GlobalCss.flex
 import com.studo.campusqr.common.payloads.ReportData
+import js.lazy.Lazy
 import web.cssom.*
 import mui.material.*
 import mui.system.sx
@@ -23,6 +24,7 @@ external interface AddFilterProps : Props {
   var config: AddFilterConfig
 }
 
+//@Lazy
 val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
   val addFilterController = AddFilterController.useAddFilterController(
     launch = launch,

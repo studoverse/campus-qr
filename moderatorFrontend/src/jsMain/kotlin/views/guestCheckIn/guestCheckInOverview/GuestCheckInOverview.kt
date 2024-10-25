@@ -1,5 +1,6 @@
 package views.guestCheckIn.guestCheckInOverview
 
+import js.lazy.Lazy
 import mui.material.*
 import react.*
 import util.Strings
@@ -11,6 +12,7 @@ import webcore.*
 
 external interface GuestCheckinOverviewProps : Props
 
+//@Lazy
 val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { props, launch ->
   val guestCheckInOverviewController = GuestCheckInOverviewController.useGuestCheckInOverviewController(
     launch = launch
@@ -22,32 +24,36 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
     dialogConfig = DialogConfig(
       title = DialogConfig.Title(Strings.guest_checkin_add_guest.get()),
       customContent = {
-        AddGuestCheckInFc {
-          config = AddGuestCheckInConfig(
-            dialogRef = dialogRef,
-            onGuestCheckedIn = {
-              guestCheckInOverviewController.fetchActiveGuestCheckIns
-            }
-          )
+        Suspense {
+          AddGuestCheckInFc {
+            config = AddGuestCheckInConfig(
+              dialogRef = dialogRef,
+              onGuestCheckedIn = {
+                guestCheckInOverviewController.fetchActiveGuestCheckIns
+              }
+            )
+          }
         }
       },
     )
   )
 
   MbDialogFc { ref = dialogRef }
-  ToolbarViewFc {
-    config = ToolbarViewConfig(
-      title = Strings.guest_checkin.get(),
-      buttons = listOf(
-        ToolbarButton(
-          text = Strings.guest_checkin_add_guest.get(),
-          variant = ButtonVariant.contained,
-          onClick = {
-            renderAddGuestCheckInDialog()
-          }
+  Suspense {
+    ToolbarViewFc {
+      config = ToolbarViewConfig(
+        title = Strings.guest_checkin.get(),
+        buttons = listOf(
+          ToolbarButton(
+            text = Strings.guest_checkin_add_guest.get(),
+            variant = ButtonVariant.contained,
+            onClick = {
+              renderAddGuestCheckInDialog()
+            }
+          )
         )
       )
-    )
+    }
   }
   MbLinearProgressFc { show = guestCheckInOverviewController.loadingCheckInList }
 
@@ -62,14 +68,16 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
         }
       }
       TableBody {
-        guestCheckInOverviewController.activeGuestCheckIns!!.forEach { activeCheckIn ->
-          GuestCheckInRowFc {
-            config = GuestCheckInRowConfig(
-              activeCheckIn = activeCheckIn,
-              onCheckedOut = {
-                guestCheckInOverviewController.fetchActiveGuestCheckIns()
-              }
-            )
+        guestCheckInOverviewController.activeGuestCheckIns.forEach { activeCheckIn ->
+          Suspense {
+            GuestCheckInRowFc {
+              config = GuestCheckInRowConfig(
+                activeCheckIn = activeCheckIn,
+                onCheckedOut = {
+                  guestCheckInOverviewController.fetchActiveGuestCheckIns()
+                }
+              )
+            }
           }
         }
       }

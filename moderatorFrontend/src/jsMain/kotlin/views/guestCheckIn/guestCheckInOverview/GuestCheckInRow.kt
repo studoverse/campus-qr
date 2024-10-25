@@ -4,6 +4,7 @@ import app.appContextToInject
 import com.studo.campusqr.common.extensions.format
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import com.studo.campusqr.common.payloads.CheckOutData
+import js.lazy.Lazy
 import mui.material.*
 import react.*
 import util.Strings
@@ -22,6 +23,7 @@ external interface GuestCheckInRowProps : Props {
   var config: GuestCheckInRowConfig
 }
 
+//@Lazy
 val GuestCheckInRowFc = FcWithCoroutineScope<GuestCheckInRowProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 

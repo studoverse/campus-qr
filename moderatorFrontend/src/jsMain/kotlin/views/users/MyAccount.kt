@@ -1,6 +1,7 @@
 package views.users
 
 import app.appContextToInject
+import js.lazy.Lazy
 import web.cssom.*
 import mui.material.Box
 import mui.system.sx
@@ -13,14 +14,17 @@ import webcore.FcWithCoroutineScope
 
 external interface MyAccountProps : Props {}
 
+@Lazy
 val MyAccountFc = FcWithCoroutineScope<MyAccountProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
-  ToolbarViewFc {
-    config = ToolbarViewConfig(
-      title = Strings.account_settings.get(),
-      buttons = emptyList()
-    )
+  Suspense {
+    ToolbarViewFc {
+      config = ToolbarViewConfig(
+        title = Strings.account_settings.get(),
+        buttons = emptyList()
+      )
+    }
   }
   Box {
     sx {
@@ -29,11 +33,13 @@ val MyAccountFc = FcWithCoroutineScope<MyAccountProps> { props, launch ->
       marginRight = marginLeft
       marginBottom = 32.px
     }
-    AddUserFc {
-      config = AddUserConfig.Edit(
-        userData.clientUser!!,
-        onFinished = {},
-      )
+    Suspense {
+      AddUserFc {
+        config = AddUserConfig.Edit(
+          userData.clientUser!!,
+          onFinished = {},
+        )
+      }
     }
   }
 }

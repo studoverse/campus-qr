@@ -1,12 +1,14 @@
 package views.users.listUsers
 
 import app.appContextToInject
+import js.lazy.Lazy
 import mui.material.ButtonVariant
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.MutableRefObject
 import react.Props
+import react.Suspense
 import react.dom.html.ReactHTML
 import react.useContext
 import util.Strings
@@ -34,6 +36,7 @@ external interface ListUsersToolbarViewProps : Props {
   var config: ListUsersToolbarViewConfig
 }
 
+//@Lazy
 val ListUsersToolbarView = FcWithCoroutineScope<ListUsersToolbarViewProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
@@ -68,35 +71,39 @@ val ListUsersToolbarView = FcWithCoroutineScope<ListUsersToolbarViewProps> { pro
     DialogConfig(
       title = DialogConfig.Title(text = Strings.user_add.get()),
       customContent = {
-        AddUserFc {
-          config = AddUserConfig.Create(onFinished = { response ->
-            props.config.handleCreateOrAddUserResponse(response)
-            props.config.dialogRef.current!!.closeDialog()
-          })
+        Suspense {
+          AddUserFc {
+            config = AddUserConfig.Create(onFinished = { response ->
+              props.config.handleCreateOrAddUserResponse(response)
+              props.config.dialogRef.current!!.closeDialog()
+            })
+          }
         }
       },
     )
   )
 
-  ToolbarViewFc {
-    config = ToolbarViewConfig(
-      title = Strings.user_management.get(),
-      buttons = listOfNotNull(
-        ToolbarButton(
-          text = Strings.user_sso_info.get(),
-          variant = ButtonVariant.outlined,
-          onClick = {
-            renderSsoInfoButtonDialog()
-          }
-        ),
-        if (userData.externalAuthProvider) null else ToolbarButton(
-          text = Strings.user_add.get(),
-          variant = ButtonVariant.contained,
-          onClick = {
-            renderAddUserDialog()
-          }
+  Suspense {
+    ToolbarViewFc {
+      config = ToolbarViewConfig(
+        title = Strings.user_management.get(),
+        buttons = listOfNotNull(
+          ToolbarButton(
+            text = Strings.user_sso_info.get(),
+            variant = ButtonVariant.outlined,
+            onClick = {
+              renderSsoInfoButtonDialog()
+            }
+          ),
+          if (userData.externalAuthProvider) null else ToolbarButton(
+            text = Strings.user_add.get(),
+            variant = ButtonVariant.contained,
+            onClick = {
+              renderAddUserDialog()
+            }
+          )
         )
       )
-    )
+    }
   }
 }

@@ -4,6 +4,7 @@ import com.studo.campusqr.common.emailSeparators
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.extensions.format
 import csstype.PropertiesBuilder
+import js.lazy.Lazy
 import web.cssom.*
 import mui.material.*
 import mui.material.Size
@@ -23,6 +24,7 @@ import kotlin.js.Date
 
 external interface ReportProps : Props
 
+@Lazy
 val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
   val reportController = ReportController.useReportController(
     launch = launch,
@@ -50,16 +52,18 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
     }
     gridContainer(GridDirection.row) {
       gridItem(GridSize(xs = 12, sm = 3)) {
-        DatePickerFc {
-          config = DatePickerConfig(
-            date = reportController.infectionDate,
-            label = Strings.report_infection_date.get(),
-            helperText = Strings.report_infection_date_tip.get(),
-            fullWidth = true,
-            variant = FormControlVariant.outlined,
-            max = now,
-            onChange = reportController.traceStartDatePickerOnChange,
-          )
+        Suspense {
+          DatePickerFc {
+            config = DatePickerConfig(
+              date = reportController.infectionDate,
+              label = Strings.report_infection_date.get(),
+              helperText = Strings.report_infection_date_tip.get(),
+              fullWidth = true,
+              variant = FormControlVariant.outlined,
+              max = now,
+              onChange = reportController.traceStartDatePickerOnChange,
+            )
+          }
         }
       }
       gridItem(GridSize(xs = 12, sm = 6)) {
@@ -132,19 +136,21 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
             }
           }
           TableBody {
-            reportData.reportedUserLocations.forEach { userLocation ->
-              ReportTableRowFc {
-                config = ReportTableRowConfig(
-                  userLocation = userLocation,
-                  showEmailAddress = showEmailAddress,
-                  dialogRef = dialogRef,
-                  onApplyFilterChange = { userLocation, filteredSeats ->
-                    reportController.applyFilter(userLocation, filteredSeats)
-                  },
-                  onDeleteFilter = { userLocation ->
-                    reportController.deleteFilter(userLocation)
-                  },
-                )
+            Suspense {
+              reportData.reportedUserLocations.forEach { userLocation ->
+                ReportTableRowFc {
+                  config = ReportTableRowConfig(
+                    userLocation = userLocation,
+                    showEmailAddress = showEmailAddress,
+                    dialogRef = dialogRef,
+                    onApplyFilterChange = { userLocation, filteredSeats ->
+                      reportController.applyFilter(userLocation, filteredSeats)
+                    },
+                    onDeleteFilter = { userLocation ->
+                      reportController.deleteFilter(userLocation)
+                    },
+                  )
+                }
               }
             }
           }

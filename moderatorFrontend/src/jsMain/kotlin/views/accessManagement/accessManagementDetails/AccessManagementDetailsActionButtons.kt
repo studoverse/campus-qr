@@ -1,6 +1,7 @@
 package views.accessManagement.accessManagementDetails
 
 import app.GlobalCss
+import js.lazy.Lazy
 import mui.material.Box
 import mui.material.Button
 import mui.material.ButtonColor
@@ -25,6 +26,7 @@ external interface AccessManagementDetailsActionButtonsProps : Props {
   var config: AccessManagementDetailsActionButtonsConfig
 }
 
+//@Lazy
 val AccessManagementDetailsActionButtonsFc =
   FcWithCoroutineScope<AccessManagementDetailsActionButtonsProps> { props, launch ->
 

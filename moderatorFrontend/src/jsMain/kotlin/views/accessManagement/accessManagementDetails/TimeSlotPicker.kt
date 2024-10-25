@@ -4,6 +4,7 @@ import app.GlobalCss
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientDateRange
 import csstype.PropertiesBuilder
+import js.lazy.Lazy
 import mui.icons.material.Add
 import mui.icons.material.Close
 import mui.material.Box
@@ -14,6 +15,7 @@ import mui.material.Tooltip
 import mui.material.Typography
 import mui.system.sx
 import react.Props
+import react.Suspense
 import react.dom.events.MouseEvent
 import react.dom.html.ReactHTML.span
 import react.useContext
@@ -59,6 +61,7 @@ external interface TimeSlotPickerProps : Props {
   var config: TimeSlotPickerConfig
 }
 
+//@Lazy
 val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 
@@ -105,24 +108,26 @@ val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch
             sx {
               timeSlotColumn()
             }
-            DatePickerFc {
-              config = DatePickerConfig(
-                disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
-                date = Date(clientDateRange.from),
-                label = Strings.access_control_from.get(),
-                fullWidth = true,
-                variant = FormControlVariant.outlined,
-                min = if (props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Create) now else null,
-                max = inThreeYears,
-                onChange = { selectedDate, _ ->
-                  props.config.timeSlotDateFromOnChange(
-                    selectedDate,
-                    clientDateRange,
-                    now,
-                    inThreeYears,
-                  )
-                },
-              )
+            Suspense {
+              DatePickerFc {
+                config = DatePickerConfig(
+                  disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
+                  date = Date(clientDateRange.from),
+                  label = Strings.access_control_from.get(),
+                  fullWidth = true,
+                  variant = FormControlVariant.outlined,
+                  min = if (props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Create) now else null,
+                  max = inThreeYears,
+                  onChange = { selectedDate, _ ->
+                    props.config.timeSlotDateFromOnChange(
+                      selectedDate,
+                      clientDateRange,
+                      now,
+                      inThreeYears,
+                    )
+                  },
+                )
+              }
             }
           }
           horizontalSpacer(12, key = "timeSlotColumnFromSpacer${index}")
@@ -130,20 +135,22 @@ val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch
             sx {
               timeSlotColumn()
             }
-            TimePickerFc {
-              config = TimePickerConfig(
-                disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
-                time = Date(clientDateRange.from),
-                fullWidth = true,
-                variant = FormControlVariant.outlined,
-                min = if (props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Create) now else null,
-                onChange = { selectedTime ->
-                  props.config.timeSlotTimeFromOnChange(
-                    selectedTime,
-                    clientDateRange,
-                  )
-                },
-              )
+            Suspense {
+              TimePickerFc {
+                config = TimePickerConfig(
+                  disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
+                  time = Date(clientDateRange.from),
+                  fullWidth = true,
+                  variant = FormControlVariant.outlined,
+                  min = if (props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Create) now else null,
+                  onChange = { selectedTime ->
+                    props.config.timeSlotTimeFromOnChange(
+                      selectedTime,
+                      clientDateRange,
+                    )
+                  },
+                )
+              }
             }
           }
         }
@@ -156,24 +163,26 @@ val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch
             sx {
               timeSlotColumn()
             }
-            DatePickerFc {
-              config = DatePickerConfig(
-                disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
-                date = Date(clientDateRange.to),
-                label = Strings.access_control_to.get(),
-                fullWidth = true,
-                variant = FormControlVariant.outlined,
-                min = if (props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Create) now else null,
-                max = inThreeYears,
-                onChange = { selectedDate, _ ->
-                  props.config.timeSlotDateToOnChange(
-                    selectedDate,
-                    clientDateRange,
-                    now,
-                    inThreeYears,
-                  )
-                },
-              )
+            Suspense {
+              DatePickerFc {
+                config = DatePickerConfig(
+                  disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
+                  date = Date(clientDateRange.to),
+                  label = Strings.access_control_to.get(),
+                  fullWidth = true,
+                  variant = FormControlVariant.outlined,
+                  min = if (props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Create) now else null,
+                  max = inThreeYears,
+                  onChange = { selectedDate, _ ->
+                    props.config.timeSlotDateToOnChange(
+                      selectedDate,
+                      clientDateRange,
+                      now,
+                      inThreeYears,
+                    )
+                  },
+                )
+              }
             }
           }
           horizontalSpacer(12, key = "timeSlotColumnToSpacer${index}")
@@ -181,20 +190,22 @@ val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch
             sx {
               timeSlotColumn()
             }
-            TimePickerFc {
-              config = TimePickerConfig(
-                disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
-                time = Date(clientDateRange.to),
-                fullWidth = true,
-                variant = FormControlVariant.outlined,
-                min = if (props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Create) now else null,
-                onChange = { selectedTime ->
-                  props.config.timeSlotTimeToOnChange(
-                    selectedTime,
-                    clientDateRange,
-                  )
-                },
-              )
+            Suspense {
+              TimePickerFc {
+                config = TimePickerConfig(
+                  disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
+                  time = Date(clientDateRange.to),
+                  fullWidth = true,
+                  variant = FormControlVariant.outlined,
+                  min = if (props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Create) now else null,
+                  onChange = { selectedTime ->
+                    props.config.timeSlotTimeToOnChange(
+                      selectedTime,
+                      clientDateRange,
+                    )
+                  },
+                )
+              }
             }
           }
         }

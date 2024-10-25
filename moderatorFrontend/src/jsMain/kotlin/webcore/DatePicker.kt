@@ -1,6 +1,7 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
+import js.lazy.Lazy
 import web.cssom.*
 import js.objects.jso
 import mui.material.Box
@@ -35,6 +36,7 @@ external interface DatePickerProps : Props {
 
 private class DateInputValues(var year: String, var month: String, var day: String)
 
+//@Lazy
 val DatePickerFc = FcWithCoroutineScope<DatePickerProps> { props, launch ->
   val year = props.config.date.getFullYear()
   val month = props.config.date.getMonth() + 1

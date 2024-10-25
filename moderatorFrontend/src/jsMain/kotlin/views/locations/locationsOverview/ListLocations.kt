@@ -3,6 +3,7 @@ package views.locations.locationsOverview
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.canEditLocations
 import com.studo.campusqr.common.payloads.canViewCheckIns
+import js.lazy.Lazy
 import web.window.window
 import mui.material.*
 import react.*
@@ -14,46 +15,49 @@ import webcore.*
 
 external interface ListLocationsProps : Props
 
+@Lazy
 val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
   val controller = ListLocationsController.useListLocationsController(launch = launch)
   val appContext = useContext(appContextToInject)!!
 
   MbDialogFc { ref = controller.dialogRef }
   val userData = appContext.userDataContext.userData!!
-  ToolbarViewFc {
-    config = ToolbarViewConfig(
-      title = Strings.locations.get(),
-      buttons = listOfNotNull(
-        ToolbarButton(
-          text = Strings.print_checkout_code.get(),
-          variant = ButtonVariant.outlined,
-          onClick = {
-            window.open("/location/qr-codes/checkout", WindowTarget._blank)
-          }
-        ),
-        ToolbarButton(
-          text = Strings.print_all_qrcodes.get(),
-          variant = ButtonVariant.outlined,
-          onClick = {
-            window.open("/location/qr-codes", WindowTarget._blank)
-          }
-        ),
-        if (userData.clientUser!!.canEditLocations) {
+  Suspense {
+    ToolbarViewFc {
+      config = ToolbarViewConfig(
+        title = Strings.locations.get(),
+        buttons = listOfNotNull(
           ToolbarButton(
-            text = Strings.location_import.get(),
+            text = Strings.print_checkout_code.get(),
             variant = ButtonVariant.outlined,
-            onClick = controller.locationImportOnClick
-          )
-        } else null,
-        if (userData.clientUser!!.canEditLocations) {
+            onClick = {
+              window.open("/location/qr-codes/checkout", WindowTarget._blank)
+            }
+          ),
           ToolbarButton(
-            text = Strings.location_create.get(),
-            variant = ButtonVariant.contained,
-            onClick = controller.locationCreateOnClick
-          )
-        } else null,
+            text = Strings.print_all_qrcodes.get(),
+            variant = ButtonVariant.outlined,
+            onClick = {
+              window.open("/location/qr-codes", WindowTarget._blank)
+            }
+          ),
+          if (userData.clientUser!!.canEditLocations) {
+            ToolbarButton(
+              text = Strings.location_import.get(),
+              variant = ButtonVariant.outlined,
+              onClick = controller.locationImportOnClick
+            )
+          } else null,
+          if (userData.clientUser!!.canEditLocations) {
+            ToolbarButton(
+              text = Strings.location_create.get(),
+              variant = ButtonVariant.contained,
+              onClick = controller.locationCreateOnClick
+            )
+          } else null,
+        )
       )
-    )
+    }
   }
 
   MbLinearProgressFc { show = controller.loadingLocationList }
@@ -72,16 +76,18 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
         }
       }
       TableBody {
-        controller.locationList.forEach { location ->
-          LocationTableRow {
-            key = location.id
-            config = LocationTableRowConfig(
-              location = location,
-              dialogRef = controller.dialogRef,
-              onEditFinished = controller.locationTableRowOnEditFinished,
-              onDeleteFinished = controller.locationTableRowOnDeleteFinished,
-              userData = userData,
-            )
+        Suspense {
+          controller.locationList.forEach { location ->
+            LocationTableRow {
+              key = location.id
+              config = LocationTableRowConfig(
+                location = location,
+                dialogRef = controller.dialogRef,
+                onEditFinished = controller.locationTableRowOnEditFinished,
+                onDeleteFinished = controller.locationTableRowOnDeleteFinished,
+                userData = userData,
+              )
+            }
           }
         }
       }

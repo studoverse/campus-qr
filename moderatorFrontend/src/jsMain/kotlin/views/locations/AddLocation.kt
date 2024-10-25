@@ -4,6 +4,7 @@ import web.cssom.*
 import app.GlobalCss
 import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.payloads.ClientLocation
+import js.lazy.Lazy
 import js.objects.jso
 import mui.material.*
 import mui.system.sx
@@ -28,6 +29,7 @@ external interface AddLocationProps : Props {
   var config: AddLocationConfig
 }
 
+//@Lazy
 val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
   val controller = AddLocationController.useAddLocationController(config = props.config, launch = launch)
 

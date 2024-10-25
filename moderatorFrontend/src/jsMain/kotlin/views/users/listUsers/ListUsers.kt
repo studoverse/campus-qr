@@ -1,6 +1,7 @@
 package views.users.listUsers
 
 import app.appContextToInject
+import js.lazy.Lazy
 import web.cssom.*
 import mui.material.*
 import mui.system.sx
@@ -14,6 +15,7 @@ import webcore.*
 
 external interface ListUsersProps : Props
 
+@Lazy
 val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
   val listUsersController = ListUsersController.Companion.useListUsersController(
     launch = launch,
@@ -24,11 +26,13 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
   val userData = appContext.userDataContext.userData!!
 
   MbDialogFc { ref = dialogRef }
-  ListUsersToolbarView {
-    config = ListUsersToolbarViewConfig(
-      dialogRef = dialogRef,
-      handleCreateOrAddUserResponse = listUsersController.handleCreateOrAddUserResponse,
-    )
+  Suspense {
+    ListUsersToolbarView {
+      config = ListUsersToolbarViewConfig(
+        dialogRef = dialogRef,
+        handleCreateOrAddUserResponse = listUsersController.handleCreateOrAddUserResponse,
+      )
+    }
   }
 
   if (userData.externalAuthProvider) {
@@ -59,13 +63,15 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
         }
       }
       TableBody {
-        listUsersController.userList.forEach { user ->
-          UserTableRow {
-            config = UserTableRowConfig(
-              user = user,
-              dialogRef = dialogRef,
-              onEditFinished = listUsersController.handleCreateOrAddUserResponse,
-            )
+        Suspense {
+          listUsersController.userList.forEach { user ->
+            UserTableRow {
+              config = UserTableRowConfig(
+                user = user,
+                dialogRef = dialogRef,
+                onEditFinished = listUsersController.handleCreateOrAddUserResponse,
+              )
+            }
           }
         }
       }

@@ -1,6 +1,7 @@
 package views.login
 
 import app.GlobalCss
+import js.lazy.Lazy
 import web.cssom.*
 import mui.material.*
 import react.Props
@@ -22,6 +23,7 @@ external interface LoginNavigationButtonsViewProps : Props {
   var config: LoginNavigationButtonsViewConfig
 }
 
+//@Lazy
 val LoginNavigationButtonsViewFc = FcWithCoroutineScope<LoginNavigationButtonsViewProps> { props, componentScope ->
   Box {
     className = ClassName(GlobalCss.flex)

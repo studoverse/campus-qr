@@ -1,6 +1,7 @@
 package views.guestCheckIn
 
 import app.GlobalCss
+import js.lazy.Lazy
 import web.cssom.*
 import mui.material.*
 import mui.system.sx
@@ -22,6 +23,7 @@ external interface AddGuestCheckInProps : Props {
   var config: AddGuestCheckInConfig
 }
 
+//@Lazy
 val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, launch ->
   val addGuestCheckInController = AddGuestCheckInController.useAddGuestCheckInController(
     launch = launch,

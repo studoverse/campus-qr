@@ -1,5 +1,6 @@
 package webcore
 
+import js.lazy.Lazy
 import web.cssom.*
 import mui.icons.material.MoreVert
 import mui.icons.material.SvgIconComponent
@@ -33,6 +34,7 @@ external interface MaterialMenuProps : Props {
   var config: MaterialMenuConfig
 }
 
+//@Lazy
 val MaterialMenu = FcWithCoroutineScope<MaterialMenuProps> { props, launch ->
   var open: Boolean by useState(false)
   var anchorEl: Element? by useState(null)

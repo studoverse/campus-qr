@@ -12,11 +12,13 @@ import views.accessManagement.accessManagementOverview.accessManagementRow.Acces
 import views.common.*
 import webcore.*
 import webcore.extensions.toRoute
+import js.lazy.Lazy
 
 external interface ListAccessManagementProps : Props {
   var locationId: String?
 }
 
+@Lazy
 val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { props, launch ->
   val accessManagementController = ListAccessManagementController.useListAccessManagementController(
     locationId = props.locationId,
@@ -29,52 +31,56 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
     dialogConfig = DialogConfig(
       title = DialogConfig.Title(text = Strings.access_control_create.get()),
       customContent = {
-        AccessManagementDetailsFc {
-          config = AccessManagementDetailsConfig.Create(
-            locationId = props.locationId,
-            dialogRef = dialogRef,
-            onCreated = {
-              accessManagementController.fetchAccessManagementList()
-            }
-          )
+        Suspense {
+          AccessManagementDetailsFc {
+            config = AccessManagementDetailsConfig.Create(
+              locationId = props.locationId,
+              dialogRef = dialogRef,
+              onCreated = {
+                accessManagementController.fetchAccessManagementList()
+              }
+            )
+          }
         }
       },
     )
   )
 
   MbDialogFc { ref = dialogRef }
-  ToolbarViewFc {
-    config = ToolbarViewConfig(
-      title = StringBuilder().apply {
-        append(Strings.access_control.get())
-        append(" - ")
-        if (accessManagementController.clientLocation == null) {
-          append(Strings.access_control_my.get())
-        } else {
-          append(accessManagementController.clientLocation.name)
-        }
-      }.toString(),
-      buttons = listOf(
-        ToolbarButton(
-          text = Strings.access_control_export.get(),
-          variant = ButtonVariant.outlined,
-          onClick = { routeContext ->
-            if (props.locationId == null) {
-              routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LIST_EXPORT.toRoute()!!)
-            } else {
-              routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(pathParams = mapOf("id" to props.locationId!!))!!)
+  Suspense {
+    ToolbarViewFc {
+      config = ToolbarViewConfig(
+        title = StringBuilder().apply {
+          append(Strings.access_control.get())
+          append(" - ")
+          if (accessManagementController.clientLocation == null) {
+            append(Strings.access_control_my.get())
+          } else {
+            append(accessManagementController.clientLocation.name)
+          }
+        }.toString(),
+        buttons = listOf(
+          ToolbarButton(
+            text = Strings.access_control_export.get(),
+            variant = ButtonVariant.outlined,
+            onClick = { routeContext ->
+              if (props.locationId == null) {
+                routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LIST_EXPORT.toRoute()!!)
+              } else {
+                routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(pathParams = mapOf("id" to props.locationId!!))!!)
+              }
             }
-          }
-        ),
-        ToolbarButton(
-          text = Strings.access_control_create.get(),
-          variant = ButtonVariant.contained,
-          onClick = {
-            renderAddAccessManagementDialog()
-          }
+          ),
+          ToolbarButton(
+            text = Strings.access_control_create.get(),
+            variant = ButtonVariant.contained,
+            onClick = {
+              renderAddAccessManagementDialog()
+            }
+          )
         )
       )
-    )
+    }
   }
 
   MbLinearProgressFc { show = accessManagementController.loadingAccessManagementList }
@@ -91,25 +97,27 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
         }
       }
       TableBody {
-        accessManagementController.accessManagementList.forEach { accessManagement ->
-          AccessManagementTableRowFc {
-            config = AccessManagementTableRowConfig(
-              accessManagement = accessManagement,
-              dialogRef = dialogRef,
-              onOperationFinished = { operation, success ->
-                val snackbarText = if (success) {
-                  accessManagementController.fetchAccessManagementList()
-                  when (operation) {
-                    AccessManagementTableRowOperation.Edit -> Strings.access_control_edited_successfully.get()
-                    AccessManagementTableRowOperation.Duplicate -> Strings.access_control_duplicated_successfully.get()
-                    AccessManagementTableRowOperation.Delete -> Strings.access_control_deleted_successfully.get()
+        Suspense {
+          accessManagementController.accessManagementList.forEach { accessManagement ->
+            AccessManagementTableRowFc {
+              config = AccessManagementTableRowConfig(
+                accessManagement = accessManagement,
+                dialogRef = dialogRef,
+                onOperationFinished = { operation, success ->
+                  val snackbarText = if (success) {
+                    accessManagementController.fetchAccessManagementList()
+                    when (operation) {
+                      AccessManagementTableRowOperation.Edit -> Strings.access_control_edited_successfully.get()
+                      AccessManagementTableRowOperation.Duplicate -> Strings.access_control_duplicated_successfully.get()
+                      AccessManagementTableRowOperation.Delete -> Strings.access_control_deleted_successfully.get()
+                    }
+                  } else {
+                    Strings.error_try_again.get()
                   }
-                } else {
-                  Strings.error_try_again.get()
+                  appContext.showSnackbarText(snackbarText)
                 }
-                appContext.showSnackbarText(snackbarText)
-              }
-            )
+              )
+            }
           }
         }
       }

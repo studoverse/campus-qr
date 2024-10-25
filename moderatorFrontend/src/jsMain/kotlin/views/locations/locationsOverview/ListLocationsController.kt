@@ -4,6 +4,7 @@ import app.RouteContext
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientLocation
 import react.MutableRefObject
+import react.Suspense
 import react.useContext
 import react.useEffectOnce
 import react.useRef
@@ -62,13 +63,15 @@ data class ListLocationsController(
         DialogConfig(
           title = DialogConfig.Title(text = Strings.location_add.get()),
           customContent = {
-            AddLocation<AddLocationProps> {
-              config = AddLocationConfig.Create(
-                dialogRef = dialogRef,
-                onFinished = { response ->
-                  handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
-                }
-              )
+            Suspense {
+              AddLocation<AddLocationProps> {
+                config = AddLocationConfig.Create(
+                  dialogRef = dialogRef,
+                  onFinished = { response ->
+                    handleCreateOrEditLocationResponse(response, successText = Strings.location_created.get())
+                  }
+                )
+              }
             }
           },
         )
