@@ -6,6 +6,9 @@ import react.*
 import util.*
 import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
 import views.accessManagement.accessManagementDetails.AccessManagementDetailsFc
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowConfig
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowFc
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowOperation
 import views.common.*
 import webcore.*
 import webcore.extensions.toRoute
@@ -89,7 +92,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
       }
       TableBody {
         accessManagementController.accessManagementList.forEach { accessManagement ->
-          renderAccessManagementRow(
+          AccessManagementTableRowFc {
             config = AccessManagementTableRowConfig(
               accessManagement = accessManagement,
               dialogRef = dialogRef,
@@ -107,7 +110,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
                 appContext.showSnackbarText(snackbarText)
               }
             )
-          )
+          }
         }
       }
     }

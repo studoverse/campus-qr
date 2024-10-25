@@ -5,7 +5,7 @@ import mui.material.TableCell
 import mui.material.TableRow
 import react.Props
 import react.dom.html.ReactHTML.strong
-import views.accessManagement.accessManagementOverview.format
+import views.accessManagement.accessManagementOverview.accessManagementRow.format
 import webcore.FcWithCoroutineScope
 import kotlin.js.Date
 
