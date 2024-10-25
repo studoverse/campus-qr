@@ -12,7 +12,7 @@ import webcore.*
 
 external interface GuestCheckinOverviewProps : Props
 
-//@Lazy
+@Lazy
 val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { props, launch ->
   val guestCheckInOverviewController = GuestCheckInOverviewController.useGuestCheckInOverviewController(
     launch = launch
@@ -90,6 +90,3 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
     )
   }
 }
-
-// If seat is not null, id gets appended with '-' to locationId
-fun locationIdWithSeat(locationId: String, seat: Int?) = "$locationId${seat?.let { "-$it" } ?: ""}"

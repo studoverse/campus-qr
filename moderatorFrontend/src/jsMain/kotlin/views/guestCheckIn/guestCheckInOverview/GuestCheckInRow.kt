@@ -10,6 +10,7 @@ import react.*
 import util.Strings
 import util.apiBase
 import util.get
+import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverviewController.Companion.locationIdWithSeat
 import web.prompts.confirm
 import webcore.FcWithCoroutineScope
 import webcore.NetworkManager

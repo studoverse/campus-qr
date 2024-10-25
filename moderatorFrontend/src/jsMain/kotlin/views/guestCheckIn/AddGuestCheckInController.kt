@@ -11,7 +11,7 @@ import react.useState
 import util.Strings
 import util.apiBase
 import util.get
-import views.guestCheckIn.guestCheckInOverview.locationIdWithSeat
+import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverviewController.Companion.locationIdWithSeat
 import webcore.*
 import kotlin.collections.associateBy
 import kotlin.collections.get
