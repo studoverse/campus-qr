@@ -84,9 +84,15 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
     }
 
     guestCheckInOverviewController.activeGuestCheckIns == null && !guestCheckInOverviewController.loadingCheckInList -> networkErrorView()
-    !guestCheckInOverviewController.loadingCheckInList -> genericErrorView(
-      title = Strings.guest_checkin_not_yet_added_title.get(),
-      subtitle = Strings.guest_checkin_not_yet_added_subtitle.get()
-    )
+    !guestCheckInOverviewController.loadingCheckInList -> {
+      Suspense {
+        GenericErrorViewFc {
+          config = GenericErrorViewConfig(
+            title = Strings.guest_checkin_not_yet_added_title.get(),
+            subtitle = Strings.guest_checkin_not_yet_added_subtitle.get(),
+          )
+        }
+      }
+    }
   }
 }

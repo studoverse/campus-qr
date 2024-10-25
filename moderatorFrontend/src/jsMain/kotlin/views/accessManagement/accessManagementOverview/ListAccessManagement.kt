@@ -124,9 +124,15 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
     }
 
     accessManagementController.accessManagementList == null && !accessManagementController.loadingAccessManagementList -> networkErrorView()
-    !accessManagementController.loadingAccessManagementList -> genericErrorView(
-      title = Strings.access_control_not_configured_yet.get(),
-      subtitle = Strings.access_control_not_configured_yet_subtitle.get()
-    )
+    !accessManagementController.loadingAccessManagementList -> {
+      Suspense {
+        GenericErrorViewFc {
+          config = GenericErrorViewConfig(
+            title = Strings.access_control_not_configured_yet.get(),
+            subtitle = Strings.access_control_not_configured_yet_subtitle.get(),
+          )
+        }
+      }
+    }
   }
 }
