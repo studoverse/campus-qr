@@ -6,7 +6,7 @@ import util.Url
 import views.accessManagement.accessManagementExport.ListAccessManagementExport
 import views.accessManagement.accessManagementOverview.AccessManagementListFc
 import views.adminInfo.AdminInfoFc
-import views.common.pathNotFoundView
+import views.common.PathNotFound.pathNotFoundView
 import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverviewFc
 import views.locations.locationsOverview.ListLocations
 import views.login.LoginMode

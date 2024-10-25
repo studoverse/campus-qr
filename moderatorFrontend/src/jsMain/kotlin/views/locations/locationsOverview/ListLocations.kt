@@ -96,8 +96,8 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
     networkErrorView()
   } else if (!controller.loadingLocationList) {
     Suspense {
-      GenericErrorViewFc {
-        config = GenericErrorViewConfig(
+      GenericErrorView.GenericErrorViewFc {
+        config = GenericErrorView.GenericErrorViewConfig(
           title = Strings.location_no_locations_title.get(),
           subtitle = Strings.location_no_locations_subtitle.get(),
         )

@@ -1,5 +1,6 @@
 package views.common
 
+import js.lazy.Lazy
 import mui.material.Box
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
@@ -14,35 +15,37 @@ import webcore.FcWithCoroutineScope
 
 external interface PathNotFoundProps : Props {}
 
-//@Lazy
-val PathNotFoundFc = FcWithCoroutineScope<PathNotFoundProps> { props, launch ->
-  Box {
-    sx {
-      margin = Auto.auto
-    }
-    Typography {
+object PathNotFound {
+  @Lazy
+  val PathNotFoundFc = FcWithCoroutineScope<PathNotFoundProps> { props, launch ->
+    Box {
       sx {
-        centeredText()
+        margin = Auto.auto
       }
-      variant = TypographyVariant.h1
-      +"404"
-    }
-    Typography {
-      sx {
-        centeredText()
-      }
-      variant = TypographyVariant.body1
-      +"Path \""
-      span {
-        code {
-          +location.pathname
+      Typography {
+        sx {
+          centeredText()
         }
+        variant = TypographyVariant.h1
+        +"404"
       }
-      +"\" doesn't seem to exist. Try something else."
+      Typography {
+        sx {
+          centeredText()
+        }
+        variant = TypographyVariant.body1
+        +"Path \""
+        span {
+          code {
+            +location.pathname
+          }
+        }
+        +"\" doesn't seem to exist. Try something else."
+      }
     }
   }
-}
 
-fun ChildrenBuilder.pathNotFoundView() {
-  PathNotFoundFc {}
+  fun ChildrenBuilder.pathNotFoundView() {
+    PathNotFoundFc {}
+  }
 }
