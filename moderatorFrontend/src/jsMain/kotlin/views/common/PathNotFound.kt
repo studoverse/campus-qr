@@ -5,7 +5,6 @@ import mui.material.Box
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import react.ChildrenBuilder
 import react.Props
 import react.dom.html.ReactHTML.code
 import react.dom.html.ReactHTML.span
@@ -42,8 +41,4 @@ val PathNotFoundFc = FcWithCoroutineScope<PathNotFoundProps> { props, launch ->
       +"\" doesn't seem to exist. Try something else."
     }
   }
-}
-
-fun ChildrenBuilder.pathNotFoundView() {
-  PathNotFoundFc {}
 }

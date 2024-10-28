@@ -6,7 +6,7 @@ import util.Url
 import views.accessManagement.accessManagementExport.ListAccessManagementExport
 import views.accessManagement.accessManagementOverview.AccessManagementListFc
 import views.adminInfo.AdminInfoFc
-import views.common.PathNotFound.pathNotFoundView
+import views.common.PathNotFoundFc
 import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverviewFc
 import views.locations.locationsOverview.ListLocations
 import views.login.LoginMode
@@ -35,6 +35,6 @@ val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope
     Url.ADMIN_INFO -> Suspense { AdminInfoFc {} }
     Url.LOGIN_EMAIL -> Suspense { LoginViewFc { loginMode = LoginMode.EMAIL } }
     Url.BLANK -> +"." // Just show something here, so we don't have a blank page which would be hard for debugging
-    null -> pathNotFoundView()
+    null -> Suspense { PathNotFoundFc {} }
   }
 }

@@ -18,7 +18,7 @@ import webcore.*
 
 external interface ListLocationsProps : Props
 
-//@Lazy
+@Lazy
 val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
   val controller = ListLocationsController.useListLocationsController(launch = launch)
   val appContext = useContext(appContextToInject)!!
