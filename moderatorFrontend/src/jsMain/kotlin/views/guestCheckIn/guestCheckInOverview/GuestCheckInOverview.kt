@@ -6,6 +6,8 @@ import react.*
 import util.Strings
 import util.get
 import views.common.*
+import views.common.ToolbarButton
+import views.common.ToolbarViewConfig
 import views.guestCheckIn.AddGuestCheckInConfig
 import views.guestCheckIn.AddGuestCheckInFc
 import webcore.*
@@ -86,8 +88,8 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
     controller.activeGuestCheckIns == null && !controller.loadingCheckInList -> networkErrorView()
     !controller.loadingCheckInList -> {
       Suspense {
-        GenericErrorView.GenericErrorViewFc {
-          config = GenericErrorView.GenericErrorViewConfig(
+        GenericErrorViewFc {
+          config = GenericErrorViewConfig(
             title = Strings.guest_checkin_not_yet_added_title.get(),
             subtitle = Strings.guest_checkin_not_yet_added_subtitle.get(),
           )

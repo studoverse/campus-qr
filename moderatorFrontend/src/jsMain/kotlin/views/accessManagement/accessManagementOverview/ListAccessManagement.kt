@@ -13,6 +13,8 @@ import views.common.*
 import webcore.*
 import webcore.extensions.toRoute
 import js.lazy.Lazy
+import views.common.ToolbarButton
+import views.common.ToolbarViewConfig
 
 external interface ListAccessManagementProps : Props {
   var locationId: String?
@@ -126,8 +128,8 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
     controller.accessManagementList == null && !controller.loadingAccessManagementList -> networkErrorView()
     !controller.loadingAccessManagementList -> {
       Suspense {
-        GenericErrorView.GenericErrorViewFc {
-          config = GenericErrorView.GenericErrorViewConfig(
+        GenericErrorViewFc {
+          config = GenericErrorViewConfig(
             title = Strings.access_control_not_configured_yet.get(),
             subtitle = Strings.access_control_not_configured_yet_subtitle.get(),
           )

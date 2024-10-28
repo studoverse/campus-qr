@@ -15,37 +15,35 @@ import webcore.FcWithCoroutineScope
 
 external interface PathNotFoundProps : Props {}
 
-object PathNotFound {
-  @Lazy
-  val PathNotFoundFc = FcWithCoroutineScope<PathNotFoundProps> { props, launch ->
-    Box {
+@Lazy
+val PathNotFoundFc = FcWithCoroutineScope<PathNotFoundProps> { props, launch ->
+  Box {
+    sx {
+      margin = Auto.auto
+    }
+    Typography {
       sx {
-        margin = Auto.auto
+        centeredText()
       }
-      Typography {
-        sx {
-          centeredText()
-        }
-        variant = TypographyVariant.h1
-        +"404"
+      variant = TypographyVariant.h1
+      +"404"
+    }
+    Typography {
+      sx {
+        centeredText()
       }
-      Typography {
-        sx {
-          centeredText()
+      variant = TypographyVariant.body1
+      +"Path \""
+      span {
+        code {
+          +location.pathname
         }
-        variant = TypographyVariant.body1
-        +"Path \""
-        span {
-          code {
-            +location.pathname
-          }
-        }
-        +"\" doesn't seem to exist. Try something else."
       }
+      +"\" doesn't seem to exist. Try something else."
     }
   }
+}
 
-  fun ChildrenBuilder.pathNotFoundView() {
-    PathNotFoundFc {}
-  }
+fun ChildrenBuilder.pathNotFoundView() {
+  PathNotFoundFc {}
 }

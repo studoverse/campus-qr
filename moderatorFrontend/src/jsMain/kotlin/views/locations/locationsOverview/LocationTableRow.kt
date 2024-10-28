@@ -1,6 +1,5 @@
 package views.locations.locationsOverview
 
-import app.AppContext
 import app.appContextToInject
 import app.baseUrl
 import com.studo.campusqr.common.payloads.*
@@ -17,7 +16,6 @@ import views.locations.AddLocationConfig
 import web.prompts.confirm
 import web.window.WindowTarget
 import webcore.*
-import webcore.extensions.launch
 import webcore.extensions.toRoute
 
 class LocationTableRowConfig(

@@ -9,36 +9,34 @@ import react.Props
 import js.lazy.Lazy
 import webcore.FcWithCoroutineScope
 
+class GenericErrorViewConfig(
+  val title: String = "",
+  val subtitle: String = "",
+)
+
 external interface GenericErrorViewProps : Props {
-  var config: GenericErrorView.GenericErrorViewConfig
+  var config: GenericErrorViewConfig
 }
 
-object GenericErrorView {
-  class GenericErrorViewConfig(
-    val title: String = "",
-    val subtitle: String = "",
-  )
-
-  @Lazy
-  val GenericErrorViewFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
-    Box {
+//@Lazy
+val GenericErrorViewFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
+  Box {
+    sx {
+      margin = Auto.auto
+    }
+    Typography {
       sx {
-        margin = Auto.auto
+        centeredText()
       }
-      Typography {
-        sx {
-          centeredText()
-        }
-        variant = TypographyVariant.h5
-        +props.config.title
+      variant = TypographyVariant.h5
+      +props.config.title
+    }
+    Typography {
+      sx {
+        centeredText()
       }
-      Typography {
-        sx {
-          centeredText()
-        }
-        variant = TypographyVariant.body1
-        +props.config.subtitle
-      }
+      variant = TypographyVariant.body1
+      +props.config.subtitle
     }
   }
 }

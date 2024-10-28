@@ -16,7 +16,6 @@ import mui.material.Typography
 import mui.system.sx
 import react.Props
 import react.Suspense
-import react.dom.events.MouseEvent
 import react.dom.html.ReactHTML.span
 import react.useContext
 import util.Strings

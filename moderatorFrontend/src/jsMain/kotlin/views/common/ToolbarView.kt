@@ -1,6 +1,5 @@
 package views.common
 
-import app.AppContext
 import app.GlobalCss
 import app.RouteContext
 import app.appContextToInject

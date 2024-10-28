@@ -7,8 +7,8 @@ import util.get
 
 fun ChildrenBuilder.networkErrorView() {
   Suspense {
-    GenericErrorView.GenericErrorViewFc {
-      config = GenericErrorView.GenericErrorViewConfig(
+    GenericErrorViewFc {
+      config = GenericErrorViewConfig(
         title = Strings.network_error.get(),
         subtitle = Strings.network_error_description.get(),
       )

@@ -10,12 +10,15 @@ import react.*
 import util.Strings
 import util.get
 import views.common.*
+import views.common.ToolbarButton
+import views.common.ToolbarViewConfig
+import views.common.ToolbarViewFc
 import web.window.WindowTarget
 import webcore.*
 
 external interface ListLocationsProps : Props
 
-@Lazy
+//@Lazy
 val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
   val controller = ListLocationsController.useListLocationsController(launch = launch)
   val appContext = useContext(appContextToInject)!!
@@ -96,8 +99,8 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
     networkErrorView()
   } else if (!controller.loadingLocationList) {
     Suspense {
-      GenericErrorView.GenericErrorViewFc {
-        config = GenericErrorView.GenericErrorViewConfig(
+      GenericErrorViewFc {
+        config = GenericErrorViewConfig(
           title = Strings.location_no_locations_title.get(),
           subtitle = Strings.location_no_locations_subtitle.get(),
         )
