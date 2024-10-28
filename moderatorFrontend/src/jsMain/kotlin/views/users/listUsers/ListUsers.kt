@@ -17,7 +17,7 @@ external interface ListUsersProps : Props
 
 @Lazy
 val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
-  val listUsersController = ListUsersController.Companion.useListUsersController(
+  val controller = ListUsersController.useListUsersController(
     launch = launch,
   )
 
@@ -30,7 +30,7 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
     ListUsersToolbarView {
       config = ListUsersToolbarViewConfig(
         dialogRef = dialogRef,
-        handleCreateOrAddUserResponse = listUsersController.handleCreateOrAddUserResponse,
+        handleCreateOrAddUserResponse = controller.handleCreateOrAddUserResponse,
       )
     }
   }
@@ -49,9 +49,9 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
     }
   }
 
-  MbLinearProgressFc { show = listUsersController.loadingUserList }
+  MbLinearProgressFc { show = controller.loadingUserList }
 
-  if (listUsersController.userList?.isNotEmpty() == true) {
+  if (controller.userList?.isNotEmpty() == true) {
     Table {
       TableHead {
         TableRow {
@@ -64,21 +64,21 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
       }
       TableBody {
         Suspense {
-          listUsersController.userList.forEach { user ->
+          controller.userList.forEach { user ->
             UserTableRow {
               config = UserTableRowConfig(
                 user = user,
                 dialogRef = dialogRef,
-                onEditFinished = listUsersController.handleCreateOrAddUserResponse,
+                onEditFinished = controller.handleCreateOrAddUserResponse,
               )
             }
           }
         }
       }
     }
-  } else if (listUsersController.userList == null && !listUsersController.loadingUserList) {
+  } else if (controller.userList == null && !controller.loadingUserList) {
     networkErrorView()
-  } else if (!listUsersController.loadingUserList) {
+  } else if (!controller.loadingUserList) {
     throw Exception("At least one user must exist")
   }
 }

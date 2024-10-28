@@ -2,7 +2,6 @@ package views.report
 
 import app.GlobalCss.flex
 import com.studo.campusqr.common.payloads.ReportData
-import js.lazy.Lazy
 import web.cssom.*
 import mui.material.*
 import mui.system.sx
@@ -26,7 +25,7 @@ external interface AddFilterProps : Props {
 
 //@Lazy
 val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
-  val addFilterController = AddFilterController.useAddFilterController(
+  val controller = AddFilterController.useAddFilterController(
     launch = launch,
     config = props.config,
   )
@@ -43,14 +42,14 @@ val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
       width = 100.pct - 70.px
     }
     Autocomplete<AutocompleteProps<String>> {
-      onChange = addFilterController.autocompleteOnChange
-      onInputChange = addFilterController.autocompleteOnInputChange
+      onChange = controller.autocompleteOnChange
+      onInputChange = controller.autocompleteOnInputChange
       disableCloseOnSelect = true
       fullWidth = true
       multiple = true
       openOnFocus = true
-      options = addFilterController.filterOptions.map { it.toString() }.toTypedArray()
-      value = addFilterController.filteredSeats.map { it.toString() }.toTypedArray()
+      options = controller.filterOptions.map { it.toString() }.toTypedArray()
+      value = controller.filteredSeats.map { it.toString() }.toTypedArray()
       getOptionLabel = { it }
       renderInput = { params ->
         TextField.create {
@@ -70,7 +69,7 @@ val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
         marginLeft = Auto.auto
       }
       +Strings.apply.get()
-      onClick = addFilterController.applyButtonOnClick
+      onClick = controller.applyButtonOnClick
     }
   }
 }

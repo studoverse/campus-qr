@@ -24,7 +24,7 @@ external interface AddGuestCheckInProps : Props {
 
 //@Lazy
 val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, launch ->
-  val addGuestCheckInController = AddGuestCheckInController.useAddGuestCheckInController(
+  val controller = AddGuestCheckInController.useAddGuestCheckInController(
     launch = launch,
     props = props,
   )
@@ -41,8 +41,8 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
           variant = ButtonVariant.contained
           color = ButtonColor.primary
           onClick = {
-            if (addGuestCheckInController.validateInput()) {
-              addGuestCheckInController.checkInGuest()
+            if (controller.validateInput()) {
+              controller.checkInGuest()
             }
           }
           +Strings.guest_checkin_add_guest.get()
@@ -51,26 +51,26 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
     }
   }
 
-  MbLinearProgressFc { show = addGuestCheckInController.showProgress }
+  MbLinearProgressFc { show = controller.showProgress }
 
-  if (!addGuestCheckInController.locationFetchInProgress && addGuestCheckInController.locationNameToLocationMap.isEmpty()) {
+  if (!controller.locationFetchInProgress && controller.locationNameToLocationMap.isEmpty()) {
     networkErrorView()
     spacer(36)
-  } else if (addGuestCheckInController.locationFetchInProgress) {
+  } else if (controller.locationFetchInProgress) {
     CenteredProgressFc {}
     spacer(36)
   } else {
     Autocomplete<AutocompleteProps<String>> {
-      value = addGuestCheckInController.selectedLocation?.name
-      onChange = addGuestCheckInController.locationAutoCompleteOnChange
+      value = controller.selectedLocation?.name
+      onChange = controller.locationAutoCompleteOnChange
       openOnFocus = true
-      options = addGuestCheckInController.locationNameToLocationMap.keys.toTypedArray()
+      options = controller.locationNameToLocationMap.keys.toTypedArray()
       getOptionLabel = { it }
       renderInput = { params ->
         TextField.create {
           +params
-          error = addGuestCheckInController.selectedLocationTextFieldError.isNotEmpty()
-          helperText = addGuestCheckInController.selectedLocationTextFieldError.toReactNode()
+          error = controller.selectedLocationTextFieldError.isNotEmpty()
+          helperText = controller.selectedLocationTextFieldError.toReactNode()
           fullWidth = true
           variant = FormControlVariant.outlined
           label = Strings.location_name.get().toReactNode()
@@ -80,30 +80,30 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
     }
     spacer(16)
     TextField {
-      error = addGuestCheckInController.personEmailTextFieldError.isNotEmpty()
-      helperText = addGuestCheckInController.personEmailTextFieldError.toReactNode()
+      error = controller.personEmailTextFieldError.isNotEmpty()
+      helperText = controller.personEmailTextFieldError.toReactNode()
       fullWidth = true
       variant = FormControlVariant.outlined
       label = Strings.email_address.get().toReactNode()
-      value = addGuestCheckInController.personEmailTextFieldValue
-      onChange = addGuestCheckInController.personEmailTextFieldOnChange
+      value = controller.personEmailTextFieldValue
+      onChange = controller.personEmailTextFieldOnChange
     }
-    if (addGuestCheckInController.selectedLocation?.seatCount != null) {
-      val options = (1..addGuestCheckInController.selectedLocation?.seatCount!!).map { it }.toTypedArray()
+    if (controller.selectedLocation?.seatCount != null) {
+      val options = (1..controller.selectedLocation?.seatCount!!).map { it }.toTypedArray()
       spacer(16, key = "checkInSpacer1")
       Autocomplete<AutocompleteProps<Int>> {
-        onChange = addGuestCheckInController.seatInputAutocompleteOnChange
+        onChange = controller.seatInputAutocompleteOnChange
         fullWidth = true
         multiple = false
         openOnFocus = true
         this.options = options
-        value = addGuestCheckInController.seatInputValue
+        value = controller.seatInputValue
         getOptionLabel = { it.toString() }
         renderInput = { params ->
           TextField.create {
             +params
-            error = addGuestCheckInController.seatInputError.isNotEmpty()
-            helperText = addGuestCheckInController.seatInputError.toReactNode()
+            error = controller.seatInputError.isNotEmpty()
+            helperText = controller.seatInputError.toReactNode()
             variant = FormControlVariant.outlined
             label = Strings.report_checkin_seat.get().toReactNode()
           }

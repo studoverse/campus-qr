@@ -26,7 +26,7 @@ external interface ReportProps : Props
 
 @Lazy
 val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
-  val reportController = ReportController.useReportController(
+  val controller = ReportController.useReportController(
     launch = launch,
   )
 
@@ -36,7 +36,7 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
 
   MbDialogFc { ref = dialogRef }
   val now = Date()
-  val showEmailAddress = reportController.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
+  val showEmailAddress = controller.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
   Typography {
     variant = TypographyVariant.h5
@@ -55,13 +55,13 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
         Suspense {
           DatePickerFc {
             config = DatePickerConfig(
-              date = reportController.infectionDate,
+              date = controller.infectionDate,
               label = Strings.report_infection_date.get(),
               helperText = Strings.report_infection_date_tip.get(),
               fullWidth = true,
               variant = FormControlVariant.outlined,
               max = now,
-              onChange = reportController.traceStartDatePickerOnChange,
+              onChange = controller.traceStartDatePickerOnChange,
             )
           }
         }
@@ -71,18 +71,18 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
           onSubmit = { event ->
             event.preventDefault()
             event.stopPropagation()
-            if (reportController.validateInput()) {
-              reportController.traceContacts()
+            if (controller.validateInput()) {
+              controller.traceContacts()
             }
           }
           TextField {
             fullWidth = true
             variant = FormControlVariant.outlined
             label = Strings.report_email.get().toReactNode()
-            value = reportController.emailTextFieldValue
-            error = reportController.emailTextFieldError.isNotEmpty()
-            helperText = (reportController.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()).toReactNode()
-            onChange = reportController.emailTextFieldOnChange
+            value = controller.emailTextFieldValue
+            error = controller.emailTextFieldError.isNotEmpty()
+            helperText = (controller.emailTextFieldError.emptyToNull() ?: Strings.report_email_tip.get()).toReactNode()
+            onChange = controller.emailTextFieldOnChange
           }
         }
       }
@@ -94,8 +94,8 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
           variant = ButtonVariant.contained
           color = ButtonColor.primary
           onClick = {
-            if (reportController.validateInput()) {
-              reportController.traceContacts()
+            if (controller.validateInput()) {
+              controller.traceContacts()
             }
           }
           +Strings.report_search.get()
@@ -104,9 +104,9 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
     }
   }
   when {
-    reportController.reportData != null -> {
-      MbLinearProgressFc { show = reportController.showProgress }
-      val reportData = reportController.reportData!!
+    controller.reportData != null -> {
+      MbLinearProgressFc { show = controller.showProgress }
+      val reportData = controller.reportData!!
       Box {
         sx {
           content()
@@ -144,10 +144,10 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
                     showEmailAddress = showEmailAddress,
                     dialogRef = dialogRef,
                     onApplyFilterChange = { userLocation, filteredSeats ->
-                      reportController.applyFilter(userLocation, filteredSeats)
+                      controller.applyFilter(userLocation, filteredSeats)
                     },
                     onDeleteFilter = { userLocation ->
-                      reportController.deleteFilter(userLocation)
+                      controller.deleteFilter(userLocation)
                     },
                   )
                 }
@@ -182,6 +182,6 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
       }
     }
 
-    reportController.showProgress -> CenteredProgressFc {}
+    controller.showProgress -> CenteredProgressFc {}
   }
 }

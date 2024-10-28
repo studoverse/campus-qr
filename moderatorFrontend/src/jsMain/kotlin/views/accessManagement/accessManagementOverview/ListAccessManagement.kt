@@ -20,7 +20,7 @@ external interface ListAccessManagementProps : Props {
 
 @Lazy
 val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { props, launch ->
-  val accessManagementController = ListAccessManagementController.useListAccessManagementController(
+  val controller = ListAccessManagementController.useListAccessManagementController(
     locationId = props.locationId,
     launch = launch,
   )
@@ -37,7 +37,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
               locationId = props.locationId,
               dialogRef = dialogRef,
               onCreated = {
-                accessManagementController.fetchAccessManagementList()
+                controller.fetchAccessManagementList()
               }
             )
           }
@@ -53,10 +53,10 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
         title = StringBuilder().apply {
           append(Strings.access_control.get())
           append(" - ")
-          if (accessManagementController.clientLocation == null) {
+          if (controller.clientLocation == null) {
             append(Strings.access_control_my.get())
           } else {
-            append(accessManagementController.clientLocation.name)
+            append(controller.clientLocation.name)
           }
         }.toString(),
         buttons = listOf(
@@ -83,10 +83,10 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
     }
   }
 
-  MbLinearProgressFc { show = accessManagementController.loadingAccessManagementList }
+  MbLinearProgressFc { show = controller.loadingAccessManagementList }
 
   when {
-    accessManagementController.accessManagementList?.isNotEmpty() == true -> Table {
+    controller.accessManagementList?.isNotEmpty() == true -> Table {
       TableHead {
         TableRow {
           TableCell { +Strings.location_name.get() }
@@ -98,14 +98,14 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
       }
       TableBody {
         Suspense {
-          accessManagementController.accessManagementList.forEach { accessManagement ->
+          controller.accessManagementList.forEach { accessManagement ->
             AccessManagementTableRowFc {
               config = AccessManagementTableRowConfig(
                 accessManagement = accessManagement,
                 dialogRef = dialogRef,
                 onOperationFinished = { operation, success ->
                   val snackbarText = if (success) {
-                    accessManagementController.fetchAccessManagementList()
+                    controller.fetchAccessManagementList()
                     when (operation) {
                       AccessManagementTableRowOperation.Edit -> Strings.access_control_edited_successfully.get()
                       AccessManagementTableRowOperation.Duplicate -> Strings.access_control_duplicated_successfully.get()
@@ -123,8 +123,8 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
       }
     }
 
-    accessManagementController.accessManagementList == null && !accessManagementController.loadingAccessManagementList -> networkErrorView()
-    !accessManagementController.loadingAccessManagementList -> {
+    controller.accessManagementList == null && !controller.loadingAccessManagementList -> networkErrorView()
+    !controller.loadingAccessManagementList -> {
       Suspense {
         GenericErrorView.GenericErrorViewFc {
           config = GenericErrorView.GenericErrorViewConfig(

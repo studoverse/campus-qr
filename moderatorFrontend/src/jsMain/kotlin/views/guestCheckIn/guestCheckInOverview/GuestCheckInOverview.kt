@@ -14,7 +14,7 @@ external interface GuestCheckinOverviewProps : Props
 
 @Lazy
 val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { props, launch ->
-  val guestCheckInOverviewController = GuestCheckInOverviewController.useGuestCheckInOverviewController(
+  val controller = GuestCheckInOverviewController.useGuestCheckInOverviewController(
     launch = launch
   )
 
@@ -29,7 +29,7 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
             config = AddGuestCheckInConfig(
               dialogRef = dialogRef,
               onGuestCheckedIn = {
-                guestCheckInOverviewController.fetchActiveGuestCheckIns
+                controller.fetchActiveGuestCheckIns
               }
             )
           }
@@ -55,10 +55,10 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
       )
     }
   }
-  MbLinearProgressFc { show = guestCheckInOverviewController.loadingCheckInList }
+  MbLinearProgressFc { show = controller.loadingCheckInList }
 
   when {
-    guestCheckInOverviewController.activeGuestCheckIns?.isNotEmpty() == true -> Table {
+    controller.activeGuestCheckIns?.isNotEmpty() == true -> Table {
       TableHead {
         TableRow {
           TableCell { +Strings.location_name.get() }
@@ -68,13 +68,13 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
         }
       }
       TableBody {
-        guestCheckInOverviewController.activeGuestCheckIns.forEach { activeCheckIn ->
+        controller.activeGuestCheckIns.forEach { activeCheckIn ->
           Suspense {
             GuestCheckInRowFc {
               config = GuestCheckInRowConfig(
                 activeCheckIn = activeCheckIn,
                 onCheckedOut = {
-                  guestCheckInOverviewController.fetchActiveGuestCheckIns()
+                  controller.fetchActiveGuestCheckIns()
                 }
               )
             }
@@ -83,8 +83,8 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
       }
     }
 
-    guestCheckInOverviewController.activeGuestCheckIns == null && !guestCheckInOverviewController.loadingCheckInList -> networkErrorView()
-    !guestCheckInOverviewController.loadingCheckInList -> {
+    controller.activeGuestCheckIns == null && !controller.loadingCheckInList -> networkErrorView()
+    !controller.loadingCheckInList -> {
       Suspense {
         GenericErrorView.GenericErrorViewFc {
           config = GenericErrorView.GenericErrorViewConfig(
