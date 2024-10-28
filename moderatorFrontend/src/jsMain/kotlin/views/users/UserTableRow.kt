@@ -3,7 +3,6 @@ package views.users
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.DeleteUserData
-import js.lazy.Lazy
 import web.cssom.*
 import mui.icons.material.Delete
 import mui.icons.material.Edit
@@ -71,6 +70,7 @@ val UserTableRow = FcWithCoroutineScope<UserTableRowProps> { props, launch ->
         }
         props.config.user.permissions.map { permission ->
           li {
+            key = permission.name
             +permission.localizedString.get()
           }
         }

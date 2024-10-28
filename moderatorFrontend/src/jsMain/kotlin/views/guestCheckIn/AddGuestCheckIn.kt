@@ -1,7 +1,6 @@
 package views.guestCheckIn
 
 import app.GlobalCss
-import js.lazy.Lazy
 import web.cssom.*
 import mui.material.*
 import mui.system.sx
@@ -91,7 +90,7 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
     }
     if (addGuestCheckInController.selectedLocation?.seatCount != null) {
       val options = (1..addGuestCheckInController.selectedLocation?.seatCount!!).map { it }.toTypedArray()
-      spacer(16)
+      spacer(16, key = "checkInSpacer1")
       Autocomplete<AutocompleteProps<Int>> {
         onChange = addGuestCheckInController.seatInputAutocompleteOnChange
         fullWidth = true
@@ -111,7 +110,7 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
         }
       }
     }
-    spacer(32)
+    spacer(32, key = "checkInSpacer2")
     renderSubmitButton()
   }
 }

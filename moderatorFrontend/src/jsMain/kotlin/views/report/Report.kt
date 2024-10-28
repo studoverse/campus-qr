@@ -51,7 +51,7 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
       margin = 16.px
     }
     gridContainer(GridDirection.row) {
-      gridItem(GridSize(xs = 12, sm = 3)) {
+      gridItem(GridSize(xs = 12, sm = 3), key = "reportGridItem1") {
         Suspense {
           DatePickerFc {
             config = DatePickerConfig(
@@ -66,7 +66,7 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
           }
         }
       }
-      gridItem(GridSize(xs = 12, sm = 6)) {
+      gridItem(GridSize(xs = 12, sm = 6), key = "reportGridItem2") {
         form {
           onSubmit = { event ->
             event.preventDefault()
@@ -86,7 +86,7 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
           }
         }
       }
-      gridItem(GridSize(xs = 12, sm = 3)) {
+      gridItem(GridSize(xs = 12, sm = 3), key = "reportGridItem3") {
         Button {
           sx {
             margin = 16.px
