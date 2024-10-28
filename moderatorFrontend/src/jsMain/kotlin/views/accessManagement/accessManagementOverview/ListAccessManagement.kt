@@ -13,8 +13,9 @@ import views.common.*
 import webcore.*
 import webcore.extensions.toRoute
 import js.lazy.Lazy
-import views.common.ToolbarButton
-import views.common.ToolbarViewConfig
+import views.common.ToolbarView.ToolbarButton
+import views.common.ToolbarView.ToolbarViewFc
+import views.common.ToolbarView.ToolbarViewConfig
 
 external interface ListAccessManagementProps : Props {
   var locationId: String?

@@ -8,8 +8,8 @@ import util.Strings
 import util.Url
 import util.get
 import views.common.MbLinearProgressFc
-import views.common.ToolbarViewConfig
-import views.common.ToolbarViewFc
+import views.common.ToolbarView.ToolbarViewConfig
+import views.common.ToolbarView.ToolbarViewFc
 import views.common.networkErrorView
 import webcore.FcWithCoroutineScope
 

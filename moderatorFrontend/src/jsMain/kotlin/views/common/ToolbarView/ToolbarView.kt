@@ -1,7 +1,6 @@
-package views.common
+package views.common.ToolbarView
 
 import app.GlobalCss
-import app.RouteContext
 import app.appContextToInject
 import js.lazy.Lazy
 import web.cssom.*
@@ -10,27 +9,14 @@ import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.*
-import util.Url
 import webcore.FcWithCoroutineScope
 import webcore.extensions.toRoute
-
-class ToolbarButton(
-  val text: String,
-  val variant: ButtonVariant, // outlined|contained
-  val onClick: (routeContext: RouteContext) -> Unit
-)
-
-class ToolbarViewConfig(
-  val title: String,
-  val backButtonUrl: Url? = null,
-  val buttons: List<ToolbarButton> = emptyList()
-)
 
 external interface ToolbarViewProps : Props {
   var config: ToolbarViewConfig
 }
 
-//@Lazy
+@Lazy
 val ToolbarViewFc = FcWithCoroutineScope<ToolbarViewProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 

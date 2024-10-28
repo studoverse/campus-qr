@@ -10,9 +10,9 @@ import react.*
 import util.Strings
 import util.get
 import views.common.*
-import views.common.ToolbarButton
-import views.common.ToolbarViewConfig
-import views.common.ToolbarViewFc
+import views.common.ToolbarView.ToolbarButton
+import views.common.ToolbarView.ToolbarViewConfig
+import views.common.ToolbarView.ToolbarViewFc
 import web.window.WindowTarget
 import webcore.*
 

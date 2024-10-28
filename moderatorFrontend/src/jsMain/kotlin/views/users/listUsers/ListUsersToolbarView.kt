@@ -1,7 +1,6 @@
 package views.users.listUsers
 
 import app.appContextToInject
-import js.lazy.Lazy
 import mui.material.ButtonVariant
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
@@ -13,10 +12,10 @@ import react.dom.html.ReactHTML
 import react.useContext
 import util.Strings
 import util.get
-import views.common.ToolbarButton
-import views.common.ToolbarViewConfig
+import views.common.ToolbarView.ToolbarButton
+import views.common.ToolbarView.ToolbarViewConfig
 import views.common.spacer
-import views.common.ToolbarViewFc
+import views.common.ToolbarView.ToolbarViewFc
 import views.users.AddUserConfig
 import views.users.AddUserFc
 import web.cssom.rgb

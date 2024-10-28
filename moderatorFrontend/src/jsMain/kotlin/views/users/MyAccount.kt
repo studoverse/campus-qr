@@ -8,8 +8,8 @@ import mui.system.sx
 import react.*
 import util.Strings
 import util.get
-import views.common.ToolbarViewConfig
-import views.common.ToolbarViewFc
+import views.common.ToolbarView.ToolbarViewConfig
+import views.common.ToolbarView.ToolbarViewFc
 import webcore.FcWithCoroutineScope
 
 external interface MyAccountProps : Props {}
