@@ -64,6 +64,8 @@ kotlin {
         api(npm("@mui/material", "5.16.6"))
         api(npm("@mui/icons-material", "5.16.6"))
 
+        api(devNpm("webpack-bundle-analyzer", "4.10.2"))
+
         api(npm("js-file-download", "0.4.12"))
       }
     }
