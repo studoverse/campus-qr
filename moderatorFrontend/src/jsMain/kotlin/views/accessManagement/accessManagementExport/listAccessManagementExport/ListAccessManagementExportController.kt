@@ -1,4 +1,4 @@
-package views.accessManagement.accessManagementExport
+package views.accessManagement.accessManagementExport.listAccessManagementExport
 
 import com.studo.campusqr.common.payloads.AccessManagementExportData
 import com.studo.campusqr.common.payloads.ClientLocation
@@ -25,7 +25,7 @@ data class ListAccessManagementExportController(
 
       fun fetchAccessManagementList() = launch {
         loadingPermitList = true
-        val params = props.locationId?.let { "?locationId=$it" } ?: ""
+        val params = props.config.locationId?.let { "?locationId=$it" } ?: ""
         val response = NetworkManager.get<AccessManagementExportData>("$apiBase/access/export$params")
         permitList = response?.permits?.toList()
         clientLocation = response?.clientLocation
@@ -38,7 +38,7 @@ data class ListAccessManagementExportController(
         loadingPermitList = false
       }
 
-      useEffect(props.locationId) {
+      useEffect(props.config.locationId) {
         resetState()
         fetchAccessManagementList()
       }

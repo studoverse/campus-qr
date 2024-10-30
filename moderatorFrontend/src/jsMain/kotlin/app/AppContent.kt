@@ -3,7 +3,9 @@ package app
 import react.*
 import react.Suspense
 import util.Url
-import views.accessManagement.accessManagementExport.ListAccessManagementExport
+import views.accessManagement.accessManagementExport.listAccessManagementExport.ListAccessManagementExport
+import views.accessManagement.accessManagementExport.listAccessManagementExport.ListAccessManagementExportConfig
+import views.accessManagement.accessManagementOverview.AccessManagementListConfig
 import views.accessManagement.accessManagementOverview.AccessManagementListFc
 import views.adminInfo.AdminInfoFc
 import views.common.PathNotFoundFc
@@ -23,10 +25,28 @@ val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope
   val currentAppRoute = appContext!!.routeContext.currentAppRoute
 
   when (currentAppRoute?.url) {
-    Url.ACCESS_MANAGEMENT_LIST -> Suspense { AccessManagementListFc { locationId = null } }
-    Url.ACCESS_MANAGEMENT_LOCATION_LIST -> Suspense { AccessManagementListFc { locationId = currentAppRoute.pathParams["id"] } }
-    Url.ACCESS_MANAGEMENT_LIST_EXPORT -> Suspense { ListAccessManagementExport { locationId = null } }
-    Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> Suspense { ListAccessManagementExport { locationId = currentAppRoute.pathParams["id"] } }
+    Url.ACCESS_MANAGEMENT_LIST -> Suspense { AccessManagementListFc { config = AccessManagementListConfig(locationId = null) } }
+    Url.ACCESS_MANAGEMENT_LOCATION_LIST -> {
+      Suspense {
+        AccessManagementListFc {
+          config = AccessManagementListConfig(locationId = currentAppRoute.pathParams["id"])
+        }
+      }
+    }
+
+    Url.ACCESS_MANAGEMENT_LIST_EXPORT -> Suspense {
+      ListAccessManagementExport {
+        config = ListAccessManagementExportConfig(locationId = null)
+      }
+    }
+
+    Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT -> {
+      Suspense {
+        ListAccessManagementExport {
+          config = ListAccessManagementExportConfig(locationId = currentAppRoute.pathParams["id"])
+        }
+      }
+    }
     Url.GUEST_CHECK_IN -> Suspense { GuestCheckInOverviewFc {} }
     Url.LOCATIONS_LIST -> Suspense { ListLocations {} }
     Url.REPORT -> Suspense { ReportFc {} }

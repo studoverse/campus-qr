@@ -1,4 +1,4 @@
-package views.accessManagement.accessManagementDetails
+package views.accessManagement.accessManagementDetails.permittedPeople
 
 import app.GlobalCss
 import js.lazy.Lazy
@@ -23,28 +23,19 @@ import react.Props
 import react.dom.html.ReactHTML.form
 import util.Strings
 import util.get
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
 import views.common.spacer
 import web.cssom.ClassName
 import web.cssom.pct
 import webcore.FcWithCoroutineScope
-import webcore.TextFieldOnChange
 import webcore.onChange
 import webcore.toReactNode
-
-data class PermittedPeopleConfig(
-  val permittedPeopleList: List<String>,
-  val personEmailTextFieldValue: String,
-  val accessManagementDetailsType: AccessManagementDetailsConfig,
-  val submitPermittedPeopleToState: () -> Unit,
-  val addPermittedPeopleOnChange: TextFieldOnChange,
-  val removePermittedPeopleOnClick: (personIdentification: String) -> Unit,
-)
 
 external interface PermittedPeopleProps : Props {
   var config: PermittedPeopleConfig
 }
 
-//@Lazy
+@Lazy
 val PermittedPeopleFc = FcWithCoroutineScope<PermittedPeopleProps> { props, launch ->
   val controller = PermittedPeopleController.usePermittedPeopleController(
     config = props.config,

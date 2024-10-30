@@ -1,4 +1,4 @@
-package views.accessManagement.accessManagementDetails
+package views.accessManagement.accessManagementDetails.permittedPeople
 
 import webcore.ButtonOnClick
 import webcore.Launch

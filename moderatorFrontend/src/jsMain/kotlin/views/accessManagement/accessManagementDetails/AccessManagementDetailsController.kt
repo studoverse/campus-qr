@@ -351,5 +351,7 @@ data class AccessManagementDetailsController(
         createAccessControlOnClick = ::createAccessControlOnClick,
       )
     }
+
+    class TimeSlotError(val text: String, val timeSlot: ClientDateRange)
   }
 }

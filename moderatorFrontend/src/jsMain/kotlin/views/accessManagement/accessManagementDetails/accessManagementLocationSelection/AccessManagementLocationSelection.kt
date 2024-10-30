@@ -1,6 +1,5 @@
-package views.accessManagement.accessManagementDetails
+package views.accessManagement.accessManagementDetails.accessManagementLocationSelection
 
-import com.studo.campusqr.common.payloads.ClientLocation
 import js.lazy.Lazy
 import js.objects.Object
 import mui.material.Autocomplete
@@ -12,25 +11,15 @@ import react.Props
 import react.create
 import util.Strings
 import util.get
-import webcore.AutocompleteOnChange
 import webcore.FcWithCoroutineScope
 import webcore.toReactNode
-
-data class AccessManagementLocationSelectionConfig(
-  val isAutocompleteDisabled: Boolean,
-  val selectedLocation: ClientLocation?,
-  val selectedLocationTextFieldError: String,
-  val locationNameToLocationMap: Map<String, ClientLocation>,
-  val locationSelectionOnChange: AutocompleteOnChange<String>,
-)
 
 external interface AccessManagementLocationSelectionProps : Props {
   var config: AccessManagementLocationSelectionConfig
 }
 
-//@Lazy
+@Lazy
 val AccessManagementLocationSelectionFc = FcWithCoroutineScope<AccessManagementLocationSelectionProps> { props, launch ->
-
   Autocomplete<AutocompleteProps<String>> {
     disabled = props.config.isAutocompleteDisabled
     value = props.config.selectedLocation?.name
@@ -51,5 +40,4 @@ val AccessManagementLocationSelectionFc = FcWithCoroutineScope<AccessManagementL
       }
     }
   }
-
 }

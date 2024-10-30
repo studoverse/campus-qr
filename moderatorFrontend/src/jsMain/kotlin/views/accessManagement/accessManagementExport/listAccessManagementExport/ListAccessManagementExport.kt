@@ -1,4 +1,4 @@
-package views.accessManagement.accessManagementExport
+package views.accessManagement.accessManagementExport.listAccessManagementExport
 
 import js.lazy.Lazy
 import mui.material.*
@@ -7,6 +7,8 @@ import react.Suspense
 import util.Strings
 import util.Url
 import util.get
+import views.accessManagement.accessManagementExport.accessManagementExportTableRow.AccessManagementExportTableRow
+import views.accessManagement.accessManagementExport.accessManagementExportTableRow.AccessManagementExportTableRowConfig
 import views.common.MbLinearProgressFc
 import views.common.ToolbarView.ToolbarViewConfig
 import views.common.ToolbarView.ToolbarViewFc
@@ -14,7 +16,7 @@ import views.common.networkErrorView
 import webcore.FcWithCoroutineScope
 
 external interface ListAccessManagementExportProps : Props {
-  var locationId: String?
+  var config: ListAccessManagementExportConfig
 }
 
 @Lazy

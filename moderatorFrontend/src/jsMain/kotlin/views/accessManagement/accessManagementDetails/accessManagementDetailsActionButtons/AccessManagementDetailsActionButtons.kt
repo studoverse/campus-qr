@@ -1,4 +1,4 @@
-package views.accessManagement.accessManagementDetails
+package views.accessManagement.accessManagementDetails.accessManagementDetailsActionButtons
 
 import app.GlobalCss
 import js.lazy.Lazy
@@ -8,28 +8,20 @@ import mui.material.ButtonColor
 import mui.material.ButtonVariant
 import mui.system.sx
 import react.Props
-import react.RefObject
 import util.Strings
 import util.get
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
 import web.cssom.ClassName
 import web.cssom.px
 import webcore.FcWithCoroutineScope
-import webcore.MbDialogRef
-
-data class AccessManagementDetailsActionButtonsConfig(
-  val accessManagementDetailsType: AccessManagementDetailsConfig,
-  val dialogRef: RefObject<MbDialogRef>,
-  val createAccessControlOnClick: () -> Unit,
-)
 
 external interface AccessManagementDetailsActionButtonsProps : Props {
   var config: AccessManagementDetailsActionButtonsConfig
 }
 
-//@Lazy
+@Lazy
 val AccessManagementDetailsActionButtonsFc =
   FcWithCoroutineScope<AccessManagementDetailsActionButtonsProps> { props, launch ->
-
     val createButtonText = when (props.config.accessManagementDetailsType) {
       is AccessManagementDetailsConfig.Create -> Strings.access_control_create.get()
       is AccessManagementDetailsConfig.Edit -> Strings.access_control_save.get()

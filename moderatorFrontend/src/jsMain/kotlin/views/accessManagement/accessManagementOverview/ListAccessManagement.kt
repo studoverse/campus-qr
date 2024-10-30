@@ -18,13 +18,13 @@ import views.common.ToolbarView.ToolbarViewFc
 import views.common.ToolbarView.ToolbarViewConfig
 
 external interface ListAccessManagementProps : Props {
-  var locationId: String?
+  var config: AccessManagementListConfig
 }
 
 @Lazy
 val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { props, launch ->
   val controller = ListAccessManagementController.useListAccessManagementController(
-    locationId = props.locationId,
+    locationId = props.config.locationId,
     launch = launch,
   )
   val appContext = useContext(appContextToInject)!!
@@ -37,7 +37,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
         Suspense {
           AccessManagementDetailsFc {
             config = AccessManagementDetailsConfig.Create(
-              locationId = props.locationId,
+              locationId = props.config.locationId,
               dialogRef = dialogRef,
               onCreated = {
                 controller.fetchAccessManagementList()
@@ -67,10 +67,14 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
             text = Strings.access_control_export.get(),
             variant = ButtonVariant.outlined,
             onClick = { routeContext ->
-              if (props.locationId == null) {
+              if (props.config.locationId == null) {
                 routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LIST_EXPORT.toRoute()!!)
               } else {
-                routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(pathParams = mapOf("id" to props.locationId!!))!!)
+                routeContext.pushRoute(
+                  Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(
+                    pathParams = mapOf("id" to props.config.locationId!!)
+                  )!!
+                )
               }
             }
           ),

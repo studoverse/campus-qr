@@ -1,73 +1,35 @@
-package webcore
+package webcore.timePicker
 
 import com.studo.campusqr.common.utils.LocalizedString
 import js.lazy.Lazy
 import web.cssom.*
 import js.objects.jso
 import mui.material.Box
-import mui.material.FormControlVariant
 import mui.material.TextField
 import mui.system.sx
 import react.*
 import react.dom.html.ReactHTML
 import react.dom.html.ReactHTML.option
 import util.get
-import web.dom.document
-import web.html.HTML
+import web.html.InputType
+import webcore.FcWithCoroutineScope
 import webcore.extensions.*
+import webcore.list
+import webcore.max
+import webcore.min
+import webcore.onChange
+import webcore.toReactNode
 import kotlin.js.Date
-
-class TimePickerConfig(
-  var time: Date,
-  var onChange: (date: Date) -> Unit,
-  var disabled: Boolean = false,
-  var error: Boolean = false,
-  var min: Date? = null,
-  var max: Date? = null,
-  var stepMinutes: Int = 1,
-  var fullWidth: Boolean = false,
-  var label: String? = null,
-  var helperText: String? = null,
-  var variant: FormControlVariant = FormControlVariant.outlined,
-)
 
 external interface TimePickerProps : Props {
   var config: TimePickerConfig
 }
 
-private class TimeInputValues(var hour: String, var minute: String)
-
-//@Lazy
+@Lazy
 val TimePickerFc = FcWithCoroutineScope<TimePickerProps> { props, launch ->
-  val timeValue = props.config.time.toInputTypeTimeValueString()
-  var oldBrowsersInputValues: TimeInputValues by useState(TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1]))
+  val controller: TimePickerController = TimePickerController.useTimePickerController(config = props.config, launch = launch)
+
   val stepListId = useMemo(*emptyArray<Any>()) { "timestep-list${hashCode()}" }
-
-  useEffect(props.config.time) {
-    oldBrowsersInputValues = TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1])
-  }
-
-  fun detectInputTimeSupport(): Boolean {
-    val input = document.createElement(HTML.input)
-    input.setAttribute("type", "time")
-    val invalidDateValue = "not-a-time"
-    input.setAttribute("value", invalidDateValue)
-    return input.value != invalidDateValue
-  }
-
-  fun tryParsingInputFields(hourInputValue: String, minuteInputValue: String) {
-    try {
-      val hour = hourInputValue.toInt()
-      val minute = minuteInputValue.toInt()
-      if (hour > 23 || hour < 0 || minute < 0 || minute > 59) {
-        // Don't allow invalid input
-        return
-      }
-      val date = Date().with(hour = hour, minute = minute, second = 0, millisecond = 0)
-      props.config.onChange(date)
-    } catch (e: Exception) {
-    }
-  }
 
   fun ChildrenBuilder.renderWithInputTypeTimeSupport() {
     Box {
@@ -91,15 +53,8 @@ val TimePickerFc = FcWithCoroutineScope<TimePickerProps> { props, launch ->
         variant = props.config.variant
         disabled = props.config.disabled
         error = props.config.error
-        type = web.html.InputType.time
-        onChange = { event ->
-          event.target.value.emptyToNull()?.let { value ->
-            val hourToMinute = value.split(":").map { it.removePrefix("0").toInt() }
-            val hour = hourToMinute[0]
-            val minute = hourToMinute[1]
-            props.config.onChange(props.config.time.with(hour = hour, minute = minute))
-          }
-        }
+        type = InputType.time
+        onChange = controller.newBrowsersTimeTextFieldOnChange
       }
       if (props.config.stepMinutes != 1) { // Create time options list if step is not the default value of 1 minute
         ReactHTML.datalist {
@@ -142,18 +97,15 @@ val TimePickerFc = FcWithCoroutineScope<TimePickerProps> { props, launch ->
           flex = number(1.0)
           paddingTop = 16.px
         }
-        type = web.html.InputType.number
+        type = InputType.number
         placeholder = hourString
         label = hourString.toReactNode()
         inputProps = jso {
           min = 0
           max = 23
         }
-        value = oldBrowsersInputValues.hour
-        this.onChange = { event ->
-          val value: String = event.target.value
-          tryParsingInputFields(value, oldBrowsersInputValues.minute)
-        }
+        value = controller.oldBrowsersInputValues.hour
+        this.onChange = controller.oldBrowsersHourTextFieldOnChange
       }
       TextField {
         fullWidth = props.config.fullWidth
@@ -164,23 +116,20 @@ val TimePickerFc = FcWithCoroutineScope<TimePickerProps> { props, launch ->
           flex = number(1.0)
           paddingTop = 16.px
         }
-        type = web.html.InputType.number
+        type = InputType.number
         placeholder = minuteString
         label = minuteString.toReactNode()
         inputProps = jso {
           min = 0
           max = 59
         }
-        value = oldBrowsersInputValues.minute
-        onChange = { event ->
-          val value: String = event.target.value
-          tryParsingInputFields(oldBrowsersInputValues.hour, value)
-        }
+        value = controller.oldBrowsersInputValues.minute
+        onChange = controller.oldBrowsersMinuteTextFieldOnChange
       }
     }
   }
 
-  if (detectInputTimeSupport()) {
+  if (controller.detectInputTimeSupport()) {
     renderWithInputTypeTimeSupport()
   } else {
     renderWithoutInputTypeTimeSupport()

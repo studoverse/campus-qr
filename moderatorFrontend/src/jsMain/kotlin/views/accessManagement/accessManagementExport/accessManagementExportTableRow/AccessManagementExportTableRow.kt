@@ -1,24 +1,19 @@
-package views.accessManagement.accessManagementExport
+package views.accessManagement.accessManagementExport.accessManagementExportTableRow
 
-import com.studo.campusqr.common.payloads.AccessManagementExportData
 import js.lazy.Lazy
 import mui.material.TableCell
 import mui.material.TableRow
 import react.Props
 import react.dom.html.ReactHTML.strong
-import views.accessManagement.accessManagementOverview.accessManagementRow.format
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowController.Companion.format
 import webcore.FcWithCoroutineScope
 import kotlin.js.Date
-
-class AccessManagementExportTableRowConfig(
-  val permit: AccessManagementExportData.Permit,
-)
 
 external interface AccessManagementExportTableRowProps : Props {
   var config: AccessManagementExportTableRowConfig
 }
 
-//@Lazy
+@Lazy
 val AccessManagementExportTableRow = FcWithCoroutineScope<AccessManagementExportTableRowProps> { props, launch ->
   TableRow {
     hover = true

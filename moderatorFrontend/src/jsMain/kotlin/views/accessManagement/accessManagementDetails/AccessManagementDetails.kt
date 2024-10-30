@@ -1,6 +1,5 @@
 package views.accessManagement.accessManagementDetails
 
-import com.studo.campusqr.common.payloads.*
 import mui.material.*
 import react.*
 import util.Strings
@@ -8,25 +7,20 @@ import util.get
 import views.common.*
 import webcore.*
 import js.lazy.Lazy
-
-sealed class AccessManagementDetailsConfig(val dialogRef: RefObject<MbDialogRef>) {
-  class Create(val locationId: String?, dialogRef: MutableRefObject<MbDialogRef>, val onCreated: () -> Unit) :
-    AccessManagementDetailsConfig(dialogRef)
-
-  class Edit(val accessManagement: ClientAccessManagement, dialogRef: MutableRefObject<MbDialogRef>, val onEdited: (Boolean) -> Unit) :
-    AccessManagementDetailsConfig(dialogRef)
-
-  class Details(val accessManagement: ClientAccessManagement, dialogRef: MutableRefObject<MbDialogRef>) :
-    AccessManagementDetailsConfig(dialogRef)
-}
-
-class TimeSlotError(val text: String, val timeSlot: ClientDateRange)
+import views.accessManagement.accessManagementDetails.accessManagementDetailsActionButtons.AccessManagementDetailsActionButtonsConfig
+import views.accessManagement.accessManagementDetails.accessManagementDetailsActionButtons.AccessManagementDetailsActionButtonsFc
+import views.accessManagement.accessManagementDetails.accessManagementLocationSelection.AccessManagementLocationSelectionConfig
+import views.accessManagement.accessManagementDetails.accessManagementLocationSelection.AccessManagementLocationSelectionFc
+import views.accessManagement.accessManagementDetails.permittedPeople.PermittedPeopleConfig
+import views.accessManagement.accessManagementDetails.permittedPeople.PermittedPeopleFc
+import views.accessManagement.accessManagementDetails.timeSlotPicker.TimeSlotPickerConfig
+import views.accessManagement.accessManagementDetails.timeSlotPicker.TimeSlotPickerFc
 
 external interface AccessManagementDetailsProps : Props {
   var config: AccessManagementDetailsConfig
 }
 
-//@Lazy
+@Lazy
 val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProps> { props, launch ->
   val controller = AccessManagementDetailsController.useAccessManagementDetailsController(config = props.config, launch = launch)
 

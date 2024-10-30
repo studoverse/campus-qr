@@ -1,7 +1,5 @@
 package views.accessManagement.accessManagementOverview.accessManagementRow
 
-import com.studo.campusqr.common.payloads.ClientAccessManagement
-import com.studo.campusqr.common.payloads.ClientDateRange
 import js.lazy.Lazy
 import mui.icons.material.Delete
 import mui.icons.material.Edit
@@ -15,27 +13,17 @@ import util.Strings
 import util.get
 import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
 import views.accessManagement.accessManagementDetails.AccessManagementDetailsFc
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowController.Companion.format
 import web.html.HTMLTableCellElement
 import webcore.*
 import webcore.MaterialMenu
-import webcore.extensions.twoDigitString
 import kotlin.js.Date
-
-class AccessManagementTableRowConfig(
-  val accessManagement: ClientAccessManagement,
-  val dialogRef: MutableRefObject<MbDialogRef>,
-  val onOperationFinished: (operation: AccessManagementTableRowOperation, success: Boolean) -> Unit
-)
-
-enum class AccessManagementTableRowOperation {
-  Edit, Delete, Duplicate
-}
 
 external interface AccessManagementTableRowProps : Props {
   var config: AccessManagementTableRowConfig
 }
 
-//@Lazy
+@Lazy
 val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowProps> { props, launch ->
   val controller = AccessManagementTableRowController.useAccessManagementRowController(
     launch = launch,
@@ -133,31 +121,4 @@ val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowPr
       }
     }
   }
-}
-
-fun ClientDateRange.format(): String {
-  val fromDate = Date(from)
-  val toDate = Date(to)
-
-  return if (fromDate.toDateString() == toDate.toDateString()) {
-    // 10.11. 13:00 - 14:00
-    fromDate.format() + " - " + toDate.format(showDate = false)
-  } else {
-    // 10.11 13:00 - 11.11. 13:00
-    Date(from).format() + " - " + Date(to).format()
-  }
-}
-
-private fun Date.format(showDate: Boolean = true): String {
-  val day = this.getDate().twoDigitString()
-  val month = (this.getMonth() + 1).twoDigitString()
-  val year = this.getFullYear()
-
-  val date = "$day.$month.${if (year != Date().getFullYear()) year else ""}"
-
-  val hour = this.getHours().twoDigitString()
-  val minutes = this.getMinutes().twoDigitString()
-  val time = "$hour:$minutes"
-
-  return if (showDate) "$date $time" else time
 }

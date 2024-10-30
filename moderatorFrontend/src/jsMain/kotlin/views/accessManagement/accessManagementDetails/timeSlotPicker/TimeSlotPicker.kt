@@ -1,8 +1,7 @@
-package views.accessManagement.accessManagementDetails
+package views.accessManagement.accessManagementDetails.timeSlotPicker
 
 import app.GlobalCss
 import app.appContextToInject
-import com.studo.campusqr.common.payloads.ClientDateRange
 import csstype.PropertiesBuilder
 import js.lazy.Lazy
 import mui.icons.material.Add
@@ -20,6 +19,7 @@ import react.dom.html.ReactHTML.span
 import react.useContext
 import util.Strings
 import util.get
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
 import views.common.horizontalSpacer
 import views.common.spacer
 import web.cssom.AlignItems
@@ -30,37 +30,23 @@ import web.cssom.FlexDirection
 import web.cssom.number
 import web.cssom.pct
 import web.cssom.px
-import webcore.ButtonOnClick
-import webcore.DatePickerConfig
-import webcore.DatePickerFc
+import webcore.datePicker.DatePickerConfig
+import webcore.datePicker.DatePickerFc
 import webcore.FcWithCoroutineScope
 import webcore.GridSize
-import webcore.TimePickerConfig
-import webcore.TimePickerFc
+import webcore.timePicker.TimePickerConfig
+import webcore.timePicker.TimePickerFc
 import webcore.extensions.addYears
 import webcore.gridContainer
 import webcore.gridItem
 import webcore.toReactNode
 import kotlin.js.Date
 
-data class TimeSlotPickerConfig(
-  val timeSlots: List<ClientDateRange>,
-  val fromDateTimeSlotErrors: MutableList<TimeSlotError>,
-  val toDateTimeSlotErrors: MutableList<TimeSlotError>,
-  val accessManagementDetailsType: AccessManagementDetailsConfig,
-  val addTimeSlotOnClick: ButtonOnClick,
-  val removeTimeSlotOnClick: (clientDateRange: ClientDateRange) -> Unit,
-  val timeSlotDateFromOnChange: (date: Date, clientDateRange: ClientDateRange, now: Date, inThreeYears: Date) -> Unit,
-  val timeSlotTimeFromOnChange: (date: Date, clientDateRange: ClientDateRange) -> Unit,
-  val timeSlotDateToOnChange: (date: Date, clientDateRange: ClientDateRange, now: Date, inThreeYears: Date) -> Unit,
-  val timeSlotTimeToOnChange: (date: Date, clientDateRange: ClientDateRange) -> Unit,
-)
-
 external interface TimeSlotPickerProps : Props {
   var config: TimeSlotPickerConfig
 }
 
-//@Lazy
+@Lazy
 val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 
