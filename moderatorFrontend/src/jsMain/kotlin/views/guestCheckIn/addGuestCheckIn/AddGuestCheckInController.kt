@@ -1,4 +1,4 @@
-package views.guestCheckIn
+package views.guestCheckIn.addGuestCheckIn
 
 import app.appContextToInject
 import app.baseUrl

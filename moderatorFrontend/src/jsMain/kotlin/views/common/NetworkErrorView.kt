@@ -4,6 +4,8 @@ import react.ChildrenBuilder
 import react.Suspense
 import util.Strings
 import util.get
+import views.common.genericErrorView.GenericErrorViewConfig
+import views.common.genericErrorView.GenericErrorViewFc
 
 fun ChildrenBuilder.networkErrorView() {
   Suspense {

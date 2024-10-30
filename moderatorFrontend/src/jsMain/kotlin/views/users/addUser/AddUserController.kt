@@ -1,4 +1,4 @@
-package views.users
+package views.users.addUser
 
 import app.appContextToInject
 import com.studo.campusqr.common.UserPermission

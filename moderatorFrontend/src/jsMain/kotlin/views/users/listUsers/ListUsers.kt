@@ -9,8 +9,10 @@ import react.*
 import util.Strings
 import util.get
 import views.common.*
-import views.users.UserTableRow
-import views.users.UserTableRowConfig
+import views.users.userTableRow.UserTableRow
+import views.users.userTableRow.UserTableRowConfig
+import views.users.listUsersToolbarView.ListUsersToolbarView
+import views.users.listUsersToolbarView.ListUsersToolbarViewConfig
 import webcore.*
 
 external interface ListUsersProps : Props

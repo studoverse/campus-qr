@@ -1,26 +1,19 @@
-package views.report
+package views.report.reportTableRow
 
-import com.studo.campusqr.common.payloads.ReportData
 import js.lazy.Lazy
 import mui.material.*
 import react.*
 import util.Strings
 import util.get
+import views.report.addFilter.AddFilter
+import views.report.addFilter.AddFilterConfig
 import webcore.*
-
-class ReportTableRowConfig(
-  val userLocation: ReportData.UserLocation,
-  val showEmailAddress: Boolean,
-  val dialogRef: MutableRefObject<MbDialogRef>,
-  val onApplyFilterChange: (userLocation: ReportData.UserLocation, filteredSeats: List<Int>) -> Unit,
-  val onDeleteFilter: (userLocation: ReportData.UserLocation) -> Unit
-)
 
 external interface ReportTableRowProps : Props {
   var config: ReportTableRowConfig
 }
 
-//@Lazy
+@Lazy
 val ReportTableRowFc = FcWithCoroutineScope<ReportTableRowProps> { props, launch ->
   fun renderApplyFilterDialog() {
     props.config.dialogRef.current!!.showDialog(

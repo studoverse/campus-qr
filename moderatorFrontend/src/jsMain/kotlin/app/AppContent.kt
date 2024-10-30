@@ -10,8 +10,9 @@ import views.accessManagement.accessManagementOverview.AccessManagementListFc
 import views.adminInfo.AdminInfoFc
 import views.common.PathNotFoundFc
 import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverviewFc
-import views.locations.locationsOverview.ListLocations
-import views.login.LoginMode
+import views.locations.listLocations.ListLocations
+import views.login.LoginViewConfig
+import views.login.LoginViewConfig.Companion.LoginMode
 import views.login.LoginViewFc
 import views.report.ReportFc
 import views.users.listUsers.ListUsers
@@ -53,7 +54,7 @@ val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope
     Url.USERS -> Suspense { ListUsers {} }
     Url.ACCOUNT_SETTINGS -> Suspense { MyAccountFc {} }
     Url.ADMIN_INFO -> Suspense { AdminInfoFc {} }
-    Url.LOGIN_EMAIL -> Suspense { LoginViewFc { loginMode = LoginMode.EMAIL } }
+    Url.LOGIN_EMAIL -> Suspense { LoginViewFc { config = LoginViewConfig(loginMode = LoginMode.EMAIL) } }
     Url.BLANK -> +"." // Just show something here, so we don't have a blank page which would be hard for debugging
     null -> Suspense { PathNotFoundFc {} }
   }

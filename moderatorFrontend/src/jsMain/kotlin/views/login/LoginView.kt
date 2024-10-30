@@ -18,19 +18,15 @@ import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
 import util.Strings
 import util.get
-import views.login.LoginMode.EMAIL
+import views.login.LoginViewConfig.Companion.LoginMode
 import web.location.location
 import webcore.FcWithCoroutineScope
 
 external interface LoginViewProps : Props {
-  var loginMode: LoginMode
+  var config: LoginViewConfig
 }
 
-enum class LoginMode {
-  EMAIL
-}
-
-//@Lazy
+@Lazy
 val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   useEffectOnce {
@@ -75,8 +71,8 @@ val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, launch ->
     }
     CardContent {
       Box {
-        when (props.loginMode) {
-          EMAIL -> Suspense { MailLoginFc {} }
+        when (props.config.loginMode) {
+          LoginMode.EMAIL -> Suspense { MailLoginFc {} }
         }
       }
     }

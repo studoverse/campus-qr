@@ -9,8 +9,12 @@ import views.common.*
 import views.common.ToolbarView.ToolbarButton
 import views.common.ToolbarView.ToolbarViewFc
 import views.common.ToolbarView.ToolbarViewConfig
-import views.guestCheckIn.AddGuestCheckInConfig
-import views.guestCheckIn.AddGuestCheckInFc
+import views.common.genericErrorView.GenericErrorViewConfig
+import views.common.genericErrorView.GenericErrorViewFc
+import views.guestCheckIn.addGuestCheckIn.AddGuestCheckInConfig
+import views.guestCheckIn.addGuestCheckIn.AddGuestCheckInFc
+import views.guestCheckIn.guestCheckInRow.GuestCheckInRowConfig
+import views.guestCheckIn.guestCheckInRow.GuestCheckInRowFc
 import webcore.*
 
 external interface GuestCheckinOverviewProps : Props

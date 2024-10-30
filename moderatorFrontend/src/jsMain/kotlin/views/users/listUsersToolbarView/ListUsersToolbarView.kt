@@ -1,11 +1,11 @@
-package views.users.listUsers
+package views.users.listUsersToolbarView
 
+import js.lazy.Lazy
 import app.appContextToInject
 import mui.material.ButtonVariant
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import react.MutableRefObject
 import react.Props
 import react.Suspense
 import react.dom.html.ReactHTML
@@ -16,26 +16,20 @@ import views.common.ToolbarView.ToolbarButton
 import views.common.ToolbarView.ToolbarViewConfig
 import views.common.spacer
 import views.common.ToolbarView.ToolbarViewFc
-import views.users.AddUserConfig
-import views.users.AddUserFc
+import views.users.addUser.AddUserConfig
+import views.users.addUser.AddUserFc
 import web.cssom.rgb
 import web.window.WindowTarget
 import web.window.window
 import webcore.DialogConfig
 import webcore.FcWithCoroutineScope
-import webcore.MbDialogRef
 import webcore.DialogButton
-
-class ListUsersToolbarViewConfig(
-  val dialogRef: MutableRefObject<MbDialogRef>,
-  val handleCreateOrAddUserResponse: (String?) -> Unit,
-)
 
 external interface ListUsersToolbarViewProps : Props {
   var config: ListUsersToolbarViewConfig
 }
 
-//@Lazy
+@Lazy
 val ListUsersToolbarView = FcWithCoroutineScope<ListUsersToolbarViewProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!

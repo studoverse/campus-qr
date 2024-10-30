@@ -16,7 +16,9 @@ import views.accessManagement.accessManagementDetails.AccessManagementDetailsFc
 import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowController.Companion.format
 import web.html.HTMLTableCellElement
 import webcore.*
-import webcore.MaterialMenu
+import webcore.materialMenu.MaterialMenu
+import webcore.materialMenu.MaterialMenuConfig
+import webcore.materialMenu.MaterialMenuConfig.Companion.MenuItem
 import kotlin.js.Date
 
 external interface AccessManagementTableRowProps : Props {

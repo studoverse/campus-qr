@@ -1,7 +1,7 @@
-package views.users
+package views.users.userTableRow
 
+import js.lazy.Lazy
 import app.appContextToInject
-import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.DeleteUserData
 import web.cssom.*
 import mui.icons.material.Delete
@@ -17,21 +17,19 @@ import util.Strings
 import util.apiBase
 import util.get
 import util.localizedString
+import views.users.addUser.AddUserConfig
+import views.users.addUser.AddUserFc
 import web.prompts.confirm
 import webcore.*
-import webcore.MaterialMenu
-
-class UserTableRowConfig(
-  val user: ClientUser,
-  val dialogRef: MutableRefObject<MbDialogRef>,
-  val onEditFinished: (response: String?) -> Unit
-)
+import webcore.materialMenu.MaterialMenu
+import webcore.materialMenu.MaterialMenuConfig
+import webcore.materialMenu.MaterialMenuConfig.Companion.MenuItem
 
 external interface UserTableRowProps : Props {
   var config: UserTableRowConfig
 }
 
-//@Lazy
+@Lazy
 val UserTableRow = FcWithCoroutineScope<UserTableRowProps> { props, launch ->
   fun renderEditUserDialog() = props.config.dialogRef.current!!.showDialog(
     DialogConfig(

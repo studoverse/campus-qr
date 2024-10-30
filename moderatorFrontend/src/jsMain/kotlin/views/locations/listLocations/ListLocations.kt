@@ -1,4 +1,4 @@
-package views.locations.locationsOverview
+package views.locations.listLocations
 
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.canEditLocations
@@ -13,6 +13,10 @@ import views.common.*
 import views.common.ToolbarView.ToolbarButton
 import views.common.ToolbarView.ToolbarViewConfig
 import views.common.ToolbarView.ToolbarViewFc
+import views.common.genericErrorView.GenericErrorViewConfig
+import views.common.genericErrorView.GenericErrorViewFc
+import views.locations.locationTableRow.LocationTableRow
+import views.locations.locationTableRow.LocationTableRowConfig
 import web.window.WindowTarget
 import webcore.*
 

@@ -1,7 +1,7 @@
-package views.report
+package views.report.addFilter
 
+import js.lazy.Lazy
 import app.GlobalCss.flex
-import com.studo.campusqr.common.payloads.ReportData
 import web.cssom.*
 import mui.material.*
 import mui.system.sx
@@ -10,20 +10,13 @@ import util.Strings
 import util.get
 import views.common.spacer
 import webcore.FcWithCoroutineScope
-import webcore.MbDialogRef
 import webcore.toReactNode
-
-class AddFilterConfig(
-  val userLocation: ReportData.UserLocation,
-  val dialogRef: MutableRefObject<MbDialogRef>,
-  val onApplyFilterChange: (userLocation: ReportData.UserLocation, filteredSeats: List<Int>) -> Unit,
-)
 
 external interface AddFilterProps : Props {
   var config: AddFilterConfig
 }
 
-//@Lazy
+@Lazy
 val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
   val controller = AddFilterController.useAddFilterController(
     launch = launch,

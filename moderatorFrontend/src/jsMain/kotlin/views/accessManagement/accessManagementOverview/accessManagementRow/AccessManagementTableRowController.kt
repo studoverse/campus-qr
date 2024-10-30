@@ -6,25 +6,24 @@ import util.apiBase
 import util.get
 import web.prompts.confirm
 import webcore.Launch
-import webcore.MenuItemOnClick
 import webcore.NetworkManager
 import webcore.extensions.twoDigitString
 import kotlin.js.Date
 
 data class AccessManagementTableRowController(
-  val duplicateMenuItemOnClick: MenuItemOnClick,
-  val deleteMenuItemOnClick: MenuItemOnClick,
+  val duplicateMenuItemOnClick: () -> Unit,
+  val deleteMenuItemOnClick: () -> Unit,
 ) {
   companion object {
     fun useAccessManagementRowController(launch: Launch, config: AccessManagementTableRowConfig): AccessManagementTableRowController {
-      val duplicateMenuItemOnClick: MenuItemOnClick = {
+      val duplicateMenuItemOnClick: () -> Unit = {
         launch {
           val response = NetworkManager.post<String>("$apiBase/access/${config.accessManagement.id}/duplicate")
           config.onOperationFinished(AccessManagementTableRowOperation.Duplicate, response == "ok")
         }
       }
 
-      val deleteMenuItemOnClick: MenuItemOnClick = {
+      val deleteMenuItemOnClick = {
         if (confirm(Strings.access_control_delete_are_your_sure.get())) {
           launch {
             val response = NetworkManager.post<String>("$apiBase/access/${config.accessManagement.id}/delete")

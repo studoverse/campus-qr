@@ -1,5 +1,6 @@
-package views.guestCheckIn
+package views.guestCheckIn.addGuestCheckIn
 
+import js.lazy.Lazy
 import app.GlobalCss
 import web.cssom.*
 import mui.material.*
@@ -13,16 +14,11 @@ import views.common.networkErrorView
 import views.common.spacer
 import webcore.*
 
-class AddGuestCheckInConfig(
-  val dialogRef: MutableRefObject<MbDialogRef>,
-  val onGuestCheckedIn: () -> Unit,
-)
-
 external interface AddGuestCheckInProps : Props {
   var config: AddGuestCheckInConfig
 }
 
-//@Lazy
+@Lazy
 val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, launch ->
   val controller = AddGuestCheckInController.useAddGuestCheckInController(
     launch = launch,

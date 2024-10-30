@@ -1,4 +1,4 @@
-package views.locations
+package views.locations.addLocation
 
 import com.studo.campusqr.common.LocationAccessType
 import com.studo.campusqr.common.payloads.CreateOrUpdateLocationData

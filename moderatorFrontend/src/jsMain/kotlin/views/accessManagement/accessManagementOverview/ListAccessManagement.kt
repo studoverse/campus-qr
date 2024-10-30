@@ -16,6 +16,8 @@ import js.lazy.Lazy
 import views.common.ToolbarView.ToolbarButton
 import views.common.ToolbarView.ToolbarViewFc
 import views.common.ToolbarView.ToolbarViewConfig
+import views.common.genericErrorView.GenericErrorViewConfig
+import views.common.genericErrorView.GenericErrorViewFc
 
 external interface ListAccessManagementProps : Props {
   var config: AccessManagementListConfig

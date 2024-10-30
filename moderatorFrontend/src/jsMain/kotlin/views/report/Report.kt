@@ -18,6 +18,8 @@ import util.get
 import views.common.CenteredProgressFc
 import views.common.MbLinearProgressFc
 import views.common.spacer
+import views.report.reportTableRow.ReportTableRowConfig
+import views.report.reportTableRow.ReportTableRowFc
 import webcore.*
 import webcore.datePicker.DatePickerConfig
 import webcore.datePicker.DatePickerFc

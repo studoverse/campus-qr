@@ -1,10 +1,9 @@
-package views.users
+package views.users.addUser
 
 import web.cssom.*
 import app.GlobalCss
 import app.appContextToInject
 import com.studo.campusqr.common.UserPermission
-import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.canEditUsers
 import js.lazy.Lazy
 import mui.material.*
@@ -19,16 +18,11 @@ import views.common.spacer
 import web.html.InputType
 import webcore.*
 
-sealed class AddUserConfig(val onFinished: (response: String?) -> Unit) {
-  class Create(onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
-  class Edit(val user: ClientUser, onFinished: (response: String?) -> Unit) : AddUserConfig(onFinished)
-}
-
 external interface AddUserProps : Props {
   var config: AddUserConfig
 }
 
-//@Lazy
+@Lazy
 val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
   var addUserController = AddUserController.useUserController(
     user = (props.config as? AddUserConfig.Edit)?.user,

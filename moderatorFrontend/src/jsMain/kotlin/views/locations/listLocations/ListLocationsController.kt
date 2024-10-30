@@ -1,4 +1,4 @@
-package views.locations.locationsOverview
+package views.locations.listLocations
 
 import app.RouteContext
 import app.appContextToInject
@@ -12,9 +12,9 @@ import react.useState
 import util.Strings
 import util.apiBase
 import util.get
-import views.locations.AddLocation
-import views.locations.AddLocationConfig
-import views.locations.AddLocationProps
+import views.locations.addLocation.AddLocation
+import views.locations.addLocation.AddLocationConfig
+import views.locations.addLocation.AddLocationProps
 import web.window.WindowTarget
 import web.window.window
 import webcore.DialogButton

@@ -10,6 +10,8 @@ import util.Strings
 import util.get
 import views.common.ToolbarView.ToolbarViewConfig
 import views.common.ToolbarView.ToolbarViewFc
+import views.users.addUser.AddUserConfig
+import views.users.addUser.AddUserFc
 import webcore.FcWithCoroutineScope
 
 external interface MyAccountProps : Props {}

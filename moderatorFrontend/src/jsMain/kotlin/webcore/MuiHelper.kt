@@ -14,6 +14,7 @@ import react.dom.events.ChangeEvent
 import react.dom.events.MouseEvent
 import react.dom.events.SyntheticEvent
 import web.cssom.*
+import web.events.Event
 import web.html.HTMLButtonElement
 import web.html.HTMLElement
 import web.html.HTMLInputElement
@@ -147,4 +148,4 @@ typealias AutocompleteOnChange<T> = (SyntheticEvent<*, *>, Any, AutocompleteChan
 typealias AutocompleteOnInputChange = (event: SyntheticEvent<*, *>, value: String, reason: AutocompleteInputChangeReason) -> Unit
 typealias ButtonOnClick = (MouseEvent<HTMLButtonElement, *>) -> Unit
 typealias SelectOnChange = (ChangeEvent<HTMLInputElement>, ReactNode) -> Unit
-typealias MenuItemOnClick = () -> Unit
+typealias MenuOnClose = (Event) -> Unit

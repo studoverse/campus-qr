@@ -1,9 +1,9 @@
-package views.locations.locationsOverview
+package views.locations.locationTableRow
 
+import js.lazy.Lazy
 import app.appContextToInject
 import app.baseUrl
 import com.studo.campusqr.common.payloads.*
-import js.lazy.Lazy
 import web.window.window
 import mui.icons.material.*
 import mui.material.CircularProgress
@@ -11,28 +11,21 @@ import mui.material.TableCell
 import mui.material.TableRow
 import react.*
 import util.*
-import views.locations.AddLocation
-import views.locations.AddLocationConfig
+import views.locations.addLocation.AddLocation
+import views.locations.addLocation.AddLocationConfig
 import web.prompts.confirm
 import web.window.WindowTarget
 import webcore.*
 import webcore.extensions.toRoute
-
-class LocationTableRowConfig(
-  val location: ClientLocation,
-  val onEditFinished: (response: String?) -> Unit,
-  val onDeleteFinished: (response: String?) -> Unit,
-  val userData: UserData,
-  val dialogRef: MutableRefObject<MbDialogRef>,
-) {
-  val clientUser: ClientUser get() = userData.clientUser!!
-}
+import webcore.materialMenu.MaterialMenu
+import webcore.materialMenu.MaterialMenuConfig
+import webcore.materialMenu.MaterialMenuConfig.Companion.MenuItem
 
 external interface LocationTableRowProps : Props {
   var config: LocationTableRowConfig
 }
 
-//@Lazy
+@Lazy
 val LocationTableRow = FcWithCoroutineScope<LocationTableRowProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 

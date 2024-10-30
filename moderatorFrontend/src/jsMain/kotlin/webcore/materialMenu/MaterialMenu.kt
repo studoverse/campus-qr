@@ -1,57 +1,33 @@
-package webcore
+package webcore.materialMenu
 
 import js.lazy.Lazy
 import web.cssom.*
 import mui.icons.material.MoreVert
-import mui.icons.material.SvgIconComponent
 import mui.material.*
 import mui.system.sx
-import web.dom.Element
-import web.events.Event
 import react.Props
 import react.dom.aria.AriaHasPopup
 import react.dom.aria.ariaHasPopup
 import react.dom.aria.ariaLabel
 import react.dom.aria.ariaOwns
-import react.useState
+import webcore.FcWithCoroutineScope
 import webcore.extensions.randomNumberString
 import kotlin.random.Random
-
-class MenuItem(
-  val text: String,
-  val enabled: Boolean = true,
-  val icon: SvgIconComponent? = null,
-  val onClick: () -> Unit
-)
-
-class MaterialMenuConfig(
-  var className: String = "",
-  var fontSize: SvgIconSize? = null,
-  var menuItems: List<MenuItem>,
-)
 
 external interface MaterialMenuProps : Props {
   var config: MaterialMenuConfig
 }
 
-//@Lazy
+@Lazy
 val MaterialMenu = FcWithCoroutineScope<MaterialMenuProps> { props, launch ->
-  var open: Boolean by useState(false)
-  var anchorEl: Element? by useState(null)
+  val controller: MaterialMenuController = MaterialMenuController.useMaterialMenuController(launch = launch)
 
   val ariaId = "name-menu-${Random.randomNumberString()}"
 
   IconButton {
-    if (open) ariaOwns = ariaId
+    if (controller.open) ariaOwns = ariaId
     ariaHasPopup = AriaHasPopup.`true`
-    onClick = { event ->
-      val target = event.currentTarget
-      open = !open
-      anchorEl = target
-
-      event.preventDefault()
-      event.stopPropagation()
-    }
+    onClick = controller.onOpenMenuClick
     ariaLabel = "More"
     MoreVert {
       if (props.config.fontSize != null) {
@@ -60,16 +36,10 @@ val MaterialMenu = FcWithCoroutineScope<MaterialMenuProps> { props, launch ->
     }
   }
   Menu {
-    onClose = { event: Event ->
-      open = false
-      anchorEl = null
-
-      event.preventDefault()
-      event.stopPropagation()
-    }
+    onClose = controller.onMenuClose
     id = ariaId
     this.open = open
-    anchorEl?.let { anchorElement ->
+    controller.anchorEl?.let { anchorElement ->
       this.anchorEl = { anchorElement }
     }
     props.config.menuItems.forEach { item ->
@@ -87,8 +57,7 @@ val MaterialMenu = FcWithCoroutineScope<MaterialMenuProps> { props, launch ->
         }
         disabled = !item.enabled
         onClick = {
-          item.onClick()
-          open = false
+          controller.onItemClick(item)
         }
         +item.text
       }

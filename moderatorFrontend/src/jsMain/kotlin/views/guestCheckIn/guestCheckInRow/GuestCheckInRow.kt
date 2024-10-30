@@ -1,8 +1,7 @@
-package views.guestCheckIn.guestCheckInOverview
+package views.guestCheckIn.guestCheckInRow
 
 import app.appContextToInject
 import com.studo.campusqr.common.extensions.format
-import com.studo.campusqr.common.payloads.ActiveCheckIn
 import com.studo.campusqr.common.payloads.CheckOutData
 import js.lazy.Lazy
 import mui.material.*
@@ -15,16 +14,11 @@ import web.prompts.confirm
 import webcore.FcWithCoroutineScope
 import webcore.NetworkManager
 
-class GuestCheckInRowConfig(
-  val activeCheckIn: ActiveCheckIn,
-  val onCheckedOut: () -> Unit,
-)
-
 external interface GuestCheckInRowProps : Props {
   var config: GuestCheckInRowConfig
 }
 
-//@Lazy
+@Lazy
 val GuestCheckInRowFc = FcWithCoroutineScope<GuestCheckInRowProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 

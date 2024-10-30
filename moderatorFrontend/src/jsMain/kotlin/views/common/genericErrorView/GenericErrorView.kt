@@ -1,4 +1,4 @@
-package views.common
+package views.common.genericErrorView
 
 import web.cssom.*
 import mui.material.Box
@@ -7,18 +7,14 @@ import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.Props
 import js.lazy.Lazy
+import views.common.centeredText
 import webcore.FcWithCoroutineScope
-
-class GenericErrorViewConfig(
-  val title: String = "",
-  val subtitle: String = "",
-)
 
 external interface GenericErrorViewProps : Props {
   var config: GenericErrorViewConfig
 }
 
-//@Lazy
+@Lazy
 val GenericErrorViewFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
   Box {
     sx {

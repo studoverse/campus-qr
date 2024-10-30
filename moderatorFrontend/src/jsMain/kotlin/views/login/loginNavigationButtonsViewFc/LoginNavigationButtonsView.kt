@@ -1,4 +1,4 @@
-package views.login
+package views.login.loginNavigationButtonsViewFc
 
 import app.GlobalCss
 import js.lazy.Lazy
@@ -11,19 +11,11 @@ import web.history.history
 import web.html.ButtonType
 import webcore.FcWithCoroutineScope
 
-class LoginNavigationButtonsViewConfig(
-  var networkRequestInProgress: Boolean,
-  var backEnabled: Boolean,
-  var nextButtonText: String,
-  var nextButtonDisabled: Boolean,
-  var onNextAction: () -> Unit
-)
-
 external interface LoginNavigationButtonsViewProps : Props {
   var config: LoginNavigationButtonsViewConfig
 }
 
-//@Lazy
+@Lazy
 val LoginNavigationButtonsViewFc = FcWithCoroutineScope<LoginNavigationButtonsViewProps> { props, componentScope ->
   Box {
     className = ClassName(GlobalCss.flex)

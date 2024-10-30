@@ -21,6 +21,8 @@ import util.Strings
 import util.apiBase
 import util.get
 import views.common.spacer
+import views.login.loginNavigationButtonsViewFc.LoginNavigationButtonsViewConfig
+import views.login.loginNavigationButtonsViewFc.LoginNavigationButtonsViewFc
 import web.html.HTMLElement
 import web.html.InputType
 import web.location.location

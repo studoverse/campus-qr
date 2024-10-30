@@ -1,4 +1,4 @@
-package views.report
+package views.report.addFilter
 
 import react.useState
 import webcore.AutocompleteOnChange

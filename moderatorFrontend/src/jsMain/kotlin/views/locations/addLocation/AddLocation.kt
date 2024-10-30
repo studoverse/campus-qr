@@ -1,9 +1,8 @@
-package views.locations
+package views.locations.addLocation
 
 import web.cssom.*
 import app.GlobalCss
 import com.studo.campusqr.common.LocationAccessType
-import com.studo.campusqr.common.payloads.ClientLocation
 import js.lazy.Lazy
 import js.objects.jso
 import mui.material.*
@@ -17,19 +16,11 @@ import views.common.spacer
 import web.html.InputType
 import webcore.*
 
-sealed class AddLocationConfig(val dialogRef: MutableRefObject<MbDialogRef>, val onFinished: (response: String?) -> Unit) {
-  class Create(dialogRef: MutableRefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
-    AddLocationConfig(dialogRef = dialogRef, onFinished = onFinished)
-
-  class Edit(val location: ClientLocation, dialogRef: MutableRefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
-    AddLocationConfig(dialogRef = dialogRef, onFinished = onFinished)
-}
-
 external interface AddLocationProps : Props {
   var config: AddLocationConfig
 }
 
-//@Lazy
+@Lazy
 val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
   val controller = AddLocationController.useAddLocationController(config = props.config, launch = launch)
 
