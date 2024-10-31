@@ -1,4 +1,5 @@
 const path = require('path');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 (() => {
   const cssRule = config.module.rules.find(r => "test.css".match(r.test));
@@ -28,5 +29,13 @@ const cssConf = {
 };
 
 config.module.rules.push(cssConf);
+
+if (process.env.NODE_ENV === 'development') {
+  config.plugins.push(new BundleAnalyzerPlugin({
+    analyzerMode: 'static',
+    reportFilename: 'bundle-report.html',
+    openAnalyzer: false,
+  }));
+}
 
 config.stats = "verbose"
