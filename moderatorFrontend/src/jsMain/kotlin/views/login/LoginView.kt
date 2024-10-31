@@ -27,7 +27,7 @@ external interface LoginViewProps : Props {
 }
 
 @Lazy
-val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, launch ->
+val LoginView = FcWithCoroutineScope<LoginViewProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   useEffectOnce {
     if (appContext.userDataContext.userData!!.isAuthenticated) {
@@ -72,7 +72,7 @@ val LoginViewFc = FcWithCoroutineScope<LoginViewProps> { props, launch ->
     CardContent {
       Box {
         when (props.config.loginMode) {
-          LoginMode.EMAIL -> Suspense { MailLoginFc {} }
+          LoginMode.EMAIL -> Suspense { MailLogin {} }
         }
       }
     }

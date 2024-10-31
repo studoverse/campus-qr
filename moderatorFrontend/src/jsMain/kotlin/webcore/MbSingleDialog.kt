@@ -7,7 +7,6 @@ import mui.material.*
 import mui.system.Breakpoint
 import mui.system.sx
 import react.*
-import react.invoke
 import util.get
 
 external interface MbSingleDialogProps<T : MbSingleDialogRef> : PropsWithRef<T> {
@@ -95,7 +94,7 @@ fun okayButton(
 ) = DialogButton(text = text, disabled = disabled, onClick = onClick)
 
 @Deprecated("Use MbDialogFc to handle multiple dialogs on top", ReplaceWith("MbDialogFc"))
-val MbSingleDialogFc = FcRefWithCoroutineScope<MbSingleDialogProps<MbSingleDialogRef>> { props, launch ->
+val MbSingleDialog = FcRefWithCoroutineScope<MbSingleDialogProps<MbSingleDialogRef>> { props, launch ->
   var open: Boolean by useState(props.config != null) // If true, the dialog is shown (Dialog is not displayed but still mounted)
 
   fun ChildrenBuilder.splitText(content: String) {

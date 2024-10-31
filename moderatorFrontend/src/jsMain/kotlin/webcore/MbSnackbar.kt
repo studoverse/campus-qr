@@ -40,10 +40,10 @@ external interface MbSnackbarProps<T : MbSnackbarRef> : PropsWithRef<T>
  * Control the message, type, positions through state variables.
  *
  * The snackbar always closes automatically after [SnackbarProps.autoHideDuration].
- * [MbSnackbarFc.closeSnackbar] is only needed if you use [MbSnackbarConfig.action] or [MbSnackbarConfig.complexMessage] and
+ * [MbSnackbar.closeSnackbar] is only needed if you use [MbSnackbarConfig.action] or [MbSnackbarConfig.complexMessage] and
  * have a custom close action where the snackbar should be closed immediately.
  */
-val MbSnackbarFc = FcRefWithCoroutineScope<MbSnackbarProps<MbSnackbarRef>> { props, launch ->
+val MbSnackbar = FcRefWithCoroutineScope<MbSnackbarProps<MbSnackbarRef>> { props, launch ->
   var config: MbSnackbarConfig? by useState { null }
 
   fun showSnackbar(text: String) {

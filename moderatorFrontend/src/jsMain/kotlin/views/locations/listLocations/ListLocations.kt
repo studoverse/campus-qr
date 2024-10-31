@@ -12,9 +12,9 @@ import util.get
 import views.common.*
 import views.common.ToolbarView.ToolbarButton
 import views.common.ToolbarView.ToolbarViewConfig
-import views.common.ToolbarView.ToolbarViewFc
+import views.common.ToolbarView.ToolbarView
 import views.common.genericErrorView.GenericErrorViewConfig
-import views.common.genericErrorView.GenericErrorViewFc
+import views.common.genericErrorView.GenericErrorView
 import views.locations.locationTableRow.LocationTableRow
 import views.locations.locationTableRow.LocationTableRowConfig
 import web.window.WindowTarget
@@ -27,10 +27,10 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
   val controller = ListLocationsController.useListLocationsController(launch = launch)
   val appContext = useContext(appContextToInject)!!
 
-  MbDialogFc { ref = controller.dialogRef }
+  MbDialog { ref = controller.dialogRef }
   val userData = appContext.userDataContext.userData!!
   Suspense {
-    ToolbarViewFc {
+    ToolbarView {
       config = ToolbarViewConfig(
         title = Strings.locations.get(),
         buttons = listOfNotNull(
@@ -67,7 +67,7 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
     }
   }
 
-  MbLinearProgressFc { show = controller.loadingLocationList }
+  MbLinearProgress { show = controller.loadingLocationList }
 
   if (controller.locationList?.isNotEmpty() == true) {
     Table {
@@ -103,7 +103,7 @@ val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
     networkErrorView()
   } else if (!controller.loadingLocationList) {
     Suspense {
-      GenericErrorViewFc {
+      GenericErrorView {
         config = GenericErrorViewConfig(
           title = Strings.location_no_locations_title.get(),
           subtitle = Strings.location_no_locations_subtitle.get(),

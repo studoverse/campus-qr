@@ -14,7 +14,7 @@ external interface MbLinearProgressProps : Props {
 /**
  * Linear progress that has a fixed height of 8px also when it's not shown.
  */
-val MbLinearProgressFc = FcWithCoroutineScope<MbLinearProgressProps> { props, launch ->
+val MbLinearProgress = FcWithCoroutineScope<MbLinearProgressProps> { props, launch ->
   Box {
     sx {
       height = 8.px

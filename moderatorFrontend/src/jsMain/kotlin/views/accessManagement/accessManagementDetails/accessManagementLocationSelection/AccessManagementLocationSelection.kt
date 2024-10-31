@@ -19,7 +19,7 @@ external interface AccessManagementLocationSelectionProps : Props {
 }
 
 @Lazy
-val AccessManagementLocationSelectionFc = FcWithCoroutineScope<AccessManagementLocationSelectionProps> { props, launch ->
+val AccessManagementLocationSelection = FcWithCoroutineScope<AccessManagementLocationSelectionProps> { props, launch ->
   Autocomplete<AutocompleteProps<String>> {
     disabled = props.config.isAutocompleteDisabled
     value = props.config.selectedLocation?.name

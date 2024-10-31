@@ -6,30 +6,30 @@ import util.Url
 import views.accessManagement.accessManagementExport.listAccessManagementExport.ListAccessManagementExport
 import views.accessManagement.accessManagementExport.listAccessManagementExport.ListAccessManagementExportConfig
 import views.accessManagement.accessManagementOverview.AccessManagementListConfig
-import views.accessManagement.accessManagementOverview.AccessManagementListFc
-import views.adminInfo.AdminInfoFc
-import views.common.PathNotFoundFc
-import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverviewFc
+import views.accessManagement.accessManagementOverview.AccessManagementList
+import views.adminInfo.AdminInfo
+import views.common.PathNotFound
+import views.guestCheckIn.guestCheckInOverview.GuestCheckInOverview
 import views.locations.listLocations.ListLocations
 import views.login.LoginViewConfig
 import views.login.LoginViewConfig.Companion.LoginMode
-import views.login.LoginViewFc
-import views.report.ReportFc
+import views.login.LoginView
+import views.report.Report
 import views.users.listUsers.ListUsers
-import views.users.MyAccountFc
+import views.users.MyAccount
 import webcore.FcWithCoroutineScope
 
 external interface AppContentProps : Props
 
-val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope ->
+val AppContent = FcWithCoroutineScope<AppContentProps> { props, componentScope ->
   val appContext = useContext(appContextToInject)
   val currentAppRoute = appContext!!.routeContext.currentAppRoute
 
   when (currentAppRoute?.url) {
-    Url.ACCESS_MANAGEMENT_LIST -> Suspense { AccessManagementListFc { config = AccessManagementListConfig(locationId = null) } }
+    Url.ACCESS_MANAGEMENT_LIST -> Suspense { AccessManagementList { config = AccessManagementListConfig(locationId = null) } }
     Url.ACCESS_MANAGEMENT_LOCATION_LIST -> {
       Suspense {
-        AccessManagementListFc {
+        AccessManagementList {
           config = AccessManagementListConfig(locationId = currentAppRoute.pathParams["id"])
         }
       }
@@ -48,14 +48,14 @@ val AppContentFc = FcWithCoroutineScope<AppContentProps> { props, componentScope
         }
       }
     }
-    Url.GUEST_CHECK_IN -> Suspense { GuestCheckInOverviewFc {} }
+    Url.GUEST_CHECK_IN -> Suspense { GuestCheckInOverview {} }
     Url.LOCATIONS_LIST -> Suspense { ListLocations {} }
-    Url.REPORT -> Suspense { ReportFc {} }
+    Url.REPORT -> Suspense { Report {} }
     Url.USERS -> Suspense { ListUsers {} }
-    Url.ACCOUNT_SETTINGS -> Suspense { MyAccountFc {} }
-    Url.ADMIN_INFO -> Suspense { AdminInfoFc {} }
-    Url.LOGIN_EMAIL -> Suspense { LoginViewFc { config = LoginViewConfig(loginMode = LoginMode.EMAIL) } }
+    Url.ACCOUNT_SETTINGS -> Suspense { MyAccount {} }
+    Url.ADMIN_INFO -> Suspense { AdminInfo {} }
+    Url.LOGIN_EMAIL -> Suspense { LoginView { config = LoginViewConfig(loginMode = LoginMode.EMAIL) } }
     Url.BLANK -> +"." // Just show something here, so we don't have a blank page which would be hard for debugging
-    null -> Suspense { PathNotFoundFc {} }
+    null -> Suspense { PathNotFound {} }
   }
 }

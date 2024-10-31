@@ -22,7 +22,7 @@ import util.apiBase
 import util.get
 import views.common.spacer
 import views.login.loginNavigationButtonsViewFc.LoginNavigationButtonsViewConfig
-import views.login.loginNavigationButtonsViewFc.LoginNavigationButtonsViewFc
+import views.login.loginNavigationButtonsViewFc.LoginNavigationButtonsView
 import web.html.HTMLElement
 import web.html.InputType
 import web.location.location
@@ -39,7 +39,7 @@ private fun PropertiesBuilder.description() {
 }
 
 @Lazy
-val MailLoginFc = FcWithCoroutineScope<MailLoginProps> { props, componentScope ->
+val MailLogin = FcWithCoroutineScope<MailLoginProps> { props, componentScope ->
   var email: String by useState("")
   var password: String by useState("")
   var networkRequestInProgress: Boolean by useState(false)
@@ -143,7 +143,7 @@ val MailLoginFc = FcWithCoroutineScope<MailLoginProps> { props, componentScope -
       }
       spacer(size = 32, key = "spacer2")
       Suspense {
-        LoginNavigationButtonsViewFc {
+        LoginNavigationButtonsView {
           config = LoginNavigationButtonsViewConfig(
             networkRequestInProgress = networkRequestInProgress,
             backEnabled = false,

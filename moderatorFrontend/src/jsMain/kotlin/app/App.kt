@@ -1,6 +1,6 @@
 package app
 
-import MbSnackbarFc
+import MbSnackbar
 import csstype.*
 import kotlinx.browser.document
 import mui.material.Box
@@ -11,7 +11,7 @@ import web.cssom.*
 import web.location.location
 import webcore.*
 import webcore.shell.AppShellConfig
-import webcore.shell.AppShellFc
+import webcore.shell.AppShell
 
 val baseUrl = location.href.substringBefore("/admin")
 
@@ -37,33 +37,33 @@ object GlobalCss {
   }
 }
 
-val AppFc = FcWithCoroutineScope<AppProps> { props, launch ->
-  val appController = AppController.useAppController(launch = launch)
+val App = FcWithCoroutineScope<AppProps> { props, launch ->
+  val controller = AppController.useAppController(launch = launch)
 
   document.body?.style?.backgroundColor = "white"
 
   val fetchNewUserData = {
-    appController.fetchUserDataAndInit(null)
+    controller.fetchUserDataAndInit(null)
   }
 
   ThemeProvider {
-    this.theme = appController.theme
+    this.theme = controller.theme
     appContextToInject.Provider(
       AppContext(
-        languageContext = LanguageContext(appController.activeLanguage, appController.onLangChange),
-        snackbarRef = appController.snackbarRef,
-        routeContext = RouteContext(appController.currentAppRoute, appController.pushAppRoute),
+        languageContext = LanguageContext(controller.activeLanguage, controller.onLangChange),
+        snackbarRef = controller.snackbarRef,
+        routeContext = RouteContext(controller.currentAppRoute, controller.pushAppRoute),
         themeContext = ThemeContext(theme),
-        userDataContext = UserDataContext(userData = appController.userData, appController.loadingUserData, fetchNewUserData)
+        userDataContext = UserDataContext(userData = controller.userData, controller.loadingUserData, fetchNewUserData)
       )
     ) {
       // Global components
-      MbSnackbarFc { ref = appController.snackbarRef }
-      MbDialogFc { ref = appController.navigationHandlerDialogRef }
+      MbSnackbar { ref = controller.snackbarRef }
+      MbDialog { ref = controller.navigationHandlerDialogRef }
 
       // Render content without side drawer and toolbar, if no shell option is activated via url hash
       if (location.hash.contains("noShell") ||
-        appController.currentAppRoute?.url?.showWithShell != true
+        controller.currentAppRoute?.url?.showWithShell != true
       ) {
         Box {
           sx {
@@ -74,33 +74,33 @@ val AppFc = FcWithCoroutineScope<AppProps> { props, launch ->
             display = Display.flex
             flexDirection = FlexDirection.column
           }
-          appController.renderViewContent(this)
+          controller.renderViewContent(this)
         }
       } else {
-        AppShellFc {
+        AppShell {
           config = AppShellConfig(
             appBarElevation = 0,
-            mobileNavOpen = appController.mobileNavOpen,
-            mobileNavOpenChange = appController.mobileNavOpenChange,
+            mobileNavOpen = controller.mobileNavOpen,
+            mobileNavOpenChange = controller.mobileNavOpenChange,
             smallToolbar = true,
             stickyNavigation = true,
             viewContent = {
-              appController.renderViewContent(this)
+              controller.renderViewContent(this)
             },
             drawerList = {
-              AppDrawerItemsFc {
+              AppDrawerItems {
                 config = AppDrawerItemsConfig(
-                  checkInSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.checkInSideDrawerItems,
-                  moderatorSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.moderatorSideDrawerItems,
-                  adminSideDrawerItems = if (appController.loadingUserData) emptyList() else appController.adminSideDrawerItems,
+                  checkInSideDrawerItems = if (controller.loadingUserData) emptyList() else controller.checkInSideDrawerItems,
+                  moderatorSideDrawerItems = if (controller.loadingUserData) emptyList() else controller.moderatorSideDrawerItems,
+                  adminSideDrawerItems = if (controller.loadingUserData) emptyList() else controller.adminSideDrawerItems,
                   loading = false,
-                  mobileNavOpenChange = appController.mobileNavOpenChange,
+                  mobileNavOpenChange = controller.mobileNavOpenChange,
                 )
               }
             },
             toolbarIcon = null,
             hideDrawer = false,
-            themeColor = appController.theme.palette.primary.main,
+            themeColor = controller.theme.palette.primary.main,
           )
         }
       }

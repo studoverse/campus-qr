@@ -9,9 +9,9 @@ import util.Url
 import util.get
 import views.accessManagement.accessManagementExport.accessManagementExportTableRow.AccessManagementExportTableRow
 import views.accessManagement.accessManagementExport.accessManagementExportTableRow.AccessManagementExportTableRowConfig
-import views.common.MbLinearProgressFc
+import views.common.MbLinearProgress
 import views.common.ToolbarView.ToolbarViewConfig
-import views.common.ToolbarView.ToolbarViewFc
+import views.common.ToolbarView.ToolbarView
 import views.common.networkErrorView
 import webcore.FcWithCoroutineScope
 
@@ -24,7 +24,7 @@ val ListAccessManagementExport = FcWithCoroutineScope<ListAccessManagementExport
   val controller = ListAccessManagementExportController.useListAccessManagementExportController(props = props, launch = launch)
 
   Suspense {
-    ToolbarViewFc {
+    ToolbarView {
       config = ToolbarViewConfig(
         title = StringBuilder().apply {
           append(Strings.access_control_export.get())
@@ -41,7 +41,7 @@ val ListAccessManagementExport = FcWithCoroutineScope<ListAccessManagementExport
     }
   }
 
-  MbLinearProgressFc { show = controller.loadingPermitList }
+  MbLinearProgress { show = controller.loadingPermitList }
 
   if (controller.permitList != null) {
     Table {

@@ -30,7 +30,7 @@ import util.Url
 import util.apiBase
 import util.get
 import util.relativeUrl
-import views.common.CenteredProgressFc
+import views.common.CenteredProgress
 import views.common.networkErrorView
 import web.location.location
 import webcore.Launch
@@ -128,11 +128,11 @@ data class AppController(
         if (loadingUserData || (location.toRoute() != null && currentAppRoute == null)) {
           // Wait for the network request in fetchUserDataAndInit() to complete or wait for currentAppRoute to be set if the route exists.
           // Path not found is handled in renderAppContent()
-          CenteredProgressFc {}
+          CenteredProgress {}
         } else if (userData == null) {
           networkErrorView()
         } else {
-          AppContentFc {}
+          AppContent {}
         }
       }
 

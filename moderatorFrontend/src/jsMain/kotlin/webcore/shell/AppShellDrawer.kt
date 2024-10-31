@@ -41,7 +41,7 @@ object AppShellDrawerStyles {
   }
 }
 
-val AppShellDrawerFc = FcWithCoroutineScope<AppShellDrawerProps> { props, launch ->
+val AppShellDrawer = FcWithCoroutineScope<AppShellDrawerProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 
   fun fixDrawerIssue() {

@@ -27,7 +27,7 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
 
-  MbDialogFc { ref = dialogRef }
+  MbDialog { ref = dialogRef }
   Suspense {
     ListUsersToolbarView {
       config = ListUsersToolbarViewConfig(
@@ -51,7 +51,7 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
     }
   }
 
-  MbLinearProgressFc { show = controller.loadingUserList }
+  MbLinearProgress { show = controller.loadingUserList }
 
   if (controller.userList?.isNotEmpty() == true) {
     Table {

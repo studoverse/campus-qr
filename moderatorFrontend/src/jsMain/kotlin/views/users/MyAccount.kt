@@ -9,19 +9,19 @@ import react.*
 import util.Strings
 import util.get
 import views.common.ToolbarView.ToolbarViewConfig
-import views.common.ToolbarView.ToolbarViewFc
+import views.common.ToolbarView.ToolbarView
 import views.users.addUser.AddUserConfig
-import views.users.addUser.AddUserFc
+import views.users.addUser.AddUser
 import webcore.FcWithCoroutineScope
 
 external interface MyAccountProps : Props {}
 
 @Lazy
-val MyAccountFc = FcWithCoroutineScope<MyAccountProps> { props, launch ->
+val MyAccount = FcWithCoroutineScope<MyAccountProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
   Suspense {
-    ToolbarViewFc {
+    ToolbarView {
       config = ToolbarViewConfig(
         title = Strings.account_settings.get(),
         buttons = emptyList()
@@ -36,7 +36,7 @@ val MyAccountFc = FcWithCoroutineScope<MyAccountProps> { props, launch ->
       marginBottom = 32.px
     }
     Suspense {
-      AddUserFc {
+      AddUser {
         config = AddUserConfig.Edit(
           userData.clientUser!!,
           onFinished = {},

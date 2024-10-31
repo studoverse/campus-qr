@@ -18,7 +18,7 @@ import util.apiBase
 import util.get
 import util.localizedString
 import views.users.addUser.AddUserConfig
-import views.users.addUser.AddUserFc
+import views.users.addUser.AddUser
 import web.prompts.confirm
 import webcore.*
 import webcore.materialMenu.MaterialMenu
@@ -36,7 +36,7 @@ val UserTableRow = FcWithCoroutineScope<UserTableRowProps> { props, launch ->
       title = DialogConfig.Title(text = Strings.user_edit.get()),
       customContent = {
         Suspense {
-          AddUserFc {
+          AddUser {
             config = AddUserConfig.Edit(
               user = props.config.user,
               onFinished = { response ->

@@ -13,7 +13,7 @@ import react.dom.html.ReactHTML.div
 import util.Strings
 import util.get
 import util.localizedString
-import views.common.MbLinearProgressFc
+import views.common.MbLinearProgress
 import views.common.spacer
 import web.html.InputType
 import webcore.*
@@ -23,31 +23,31 @@ external interface AddUserProps : Props {
 }
 
 @Lazy
-val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
-  var addUserController = AddUserController.useUserController(
+val AddUser = FcWithCoroutineScope<AddUserProps> { props, launch ->
+  var controller = AddUserController.useUserController(
     user = (props.config as? AddUserConfig.Edit)?.user,
     onFinished = props.config.onFinished,
     launch = launch,
   )
 
-  MbLinearProgressFc { show = addUserController.userCreationInProgress }
+  MbLinearProgress { show = controller.userCreationInProgress }
 
   val appContext = useContext(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
   TextField {
     key = "userEmailTextField"
-    error = addUserController.userEmailTextFieldError.isNotEmpty()
-    helperText = addUserController.userEmailTextFieldError.toReactNode()
+    error = controller.userEmailTextFieldError.isNotEmpty()
+    helperText = controller.userEmailTextFieldError.toReactNode()
     fullWidth = true
     variant = FormControlVariant.outlined
-    value = addUserController.userEmailTextFieldValue
+    value = controller.userEmailTextFieldValue
     autoComplete = "username"
     label = Strings.email_address.get().toReactNode()
     type = InputType.email
     if (props.config is AddUserConfig.Edit) {
       disabled = true
     }
-    onChange = addUserController.userEmailTextFieldOnChange
+    onChange = controller.userEmailTextFieldOnChange
   }
 
   spacer(16, key = "userEmailSpacer")
@@ -55,8 +55,8 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
   if (!userData.externalAuthProvider) {
     TextField {
       key = "userPasswordTextField"
-      error = addUserController.userPasswordTextFieldError.isNotEmpty()
-      helperText = addUserController.userPasswordTextFieldError.toReactNode()
+      error = controller.userPasswordTextFieldError.isNotEmpty()
+      helperText = controller.userPasswordTextFieldError.toReactNode()
       fullWidth = true
       type = InputType.password
       variant = FormControlVariant.outlined
@@ -66,22 +66,22 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
         label = Strings.login_email_form_new_pw_label.get().toReactNode()
         autoComplete = "new-password"
       }
-      value = addUserController.userPasswordTextFieldValue
-      onChange = addUserController.userPasswordTextFieldOnChange
+      value = controller.userPasswordTextFieldValue
+      onChange = controller.userPasswordTextFieldOnChange
     }
     spacer(16, key = "userPasswordSpacer")
   }
 
   TextField {
     key = "userNameTextField"
-    error = addUserController.userNameTextFieldError.isNotEmpty()
-    helperText = addUserController.userNameTextFieldError.toReactNode()
+    error = controller.userNameTextFieldError.isNotEmpty()
+    helperText = controller.userNameTextFieldError.toReactNode()
     fullWidth = true
     variant = FormControlVariant.outlined
     label = Strings.user_name.get().toReactNode()
-    value = addUserController.userNameTextFieldValue
+    value = controller.userNameTextFieldValue
     autoComplete = "off"
-    onChange = addUserController.userNameTextFieldOnChange
+    onChange = controller.userNameTextFieldOnChange
   }
 
   spacer(16, key = "userNameSpacer")
@@ -106,8 +106,8 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
           FormControlLabel {
             key = userPermission.name
             control = Checkbox.create {
-              checked = userPermission in addUserController.userPermissions
-              onChange = { event, checked -> addUserController.userPermissionsOnChange(userPermission, event, checked) }
+              checked = userPermission in controller.userPermissions
+              onChange = { event, checked -> controller.userPermissionsOnChange(userPermission, event, checked) }
             }
             label = userPermission.localizedString.get().toReactNode()
           }
@@ -131,13 +131,13 @@ val AddUserFc = FcWithCoroutineScope<AddUserProps> { props, launch ->
         onClick = {
           when (props.config) {
             is AddUserConfig.Create -> {
-              if (addUserController.validateNameInput() && addUserController.validatePasswordInput() && addUserController.validateEmailInput()) {
-                addUserController.createNewUser()
+              if (controller.validateNameInput() && controller.validatePasswordInput() && controller.validateEmailInput()) {
+                controller.createNewUser()
               }
             }
 
             is AddUserConfig.Edit -> {
-              addUserController.editUser()
+              controller.editUser()
             }
           }
         }

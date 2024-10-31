@@ -15,7 +15,7 @@ import webcore.FcWithCoroutineScope
 external interface PathNotFoundProps : Props {}
 
 @Lazy
-val PathNotFoundFc = FcWithCoroutineScope<PathNotFoundProps> { props, launch ->
+val PathNotFound = FcWithCoroutineScope<PathNotFoundProps> { props, launch ->
   Box {
     sx {
       margin = Auto.auto

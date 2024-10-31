@@ -12,7 +12,7 @@ import util.Strings
 import util.Url
 import util.get
 import views.common.spacer
-import views.settings.SettingsFc
+import views.settings.Settings
 import web.cssom.*
 import web.window.WindowTarget
 import webcore.FcWithCoroutineScope
@@ -37,7 +37,7 @@ external interface AppDrawerItemsProps : Props {
   var config: AppDrawerItemsConfig
 }
 
-val AppDrawerItemsFc = FcWithCoroutineScope<AppDrawerItemsProps> { props, launch ->
+val AppDrawerItems = FcWithCoroutineScope<AppDrawerItemsProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 
   val userData = appContext.userDataContext.userData
@@ -183,6 +183,6 @@ val AppDrawerItemsFc = FcWithCoroutineScope<AppDrawerItemsProps> { props, launch
       flex = number(1.0)
     }
   }
-  SettingsFc {}
+  Settings {}
   spacer(16)
 }

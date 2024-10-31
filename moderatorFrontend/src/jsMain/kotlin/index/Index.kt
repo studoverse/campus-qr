@@ -1,6 +1,6 @@
 package index
 
-import app.AppFc
+import app.App
 import react.create
 import react.dom.client.createRoot
 import web.dom.document
@@ -17,5 +17,5 @@ fun main() {
     document.body.appendChild(htmlDivElement)
   }
   val root = createRoot(container)
-  root.render(AppFc.create())
+  root.render(App.create())
 }

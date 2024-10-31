@@ -42,7 +42,7 @@ external interface MbDialogProps<T : MbDialogRef> : PropsWithRef<T>
  * This allows to have a base dialog and corresponding info/error dialogs "on top".
  * UX: Ideally, only 1 dialog is present at the users context. Stacking multiple dialogs on top of each other creates easily confusing experiences.
  */
-val MbDialogFc = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, launch ->
+val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, launch ->
   var (configs, setConfigs) = useState(mutableListOf<DialogConfig>())
 
   fun showDialog(dialogConfig: DialogConfig) {
@@ -127,7 +127,7 @@ val MbDialogFc = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, la
 
   configs.forEach { config ->
     @Suppress("DEPRECATION") // Only here inside the forEach we want to render each single dialog individually
-    MbSingleDialogFc {
+    MbSingleDialog {
       this.config = config
       hidden = config != configs.last() // Hide all dialogs but the most recent one, so they don't unmount and can be shown again
     }

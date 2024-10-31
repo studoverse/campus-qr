@@ -7,20 +7,20 @@ import util.Strings
 import util.get
 import views.common.*
 import views.common.ToolbarView.ToolbarButton
-import views.common.ToolbarView.ToolbarViewFc
+import views.common.ToolbarView.ToolbarView
 import views.common.ToolbarView.ToolbarViewConfig
 import views.common.genericErrorView.GenericErrorViewConfig
-import views.common.genericErrorView.GenericErrorViewFc
+import views.common.genericErrorView.GenericErrorView
 import views.guestCheckIn.addGuestCheckIn.AddGuestCheckInConfig
-import views.guestCheckIn.addGuestCheckIn.AddGuestCheckInFc
+import views.guestCheckIn.addGuestCheckIn.AddGuestCheckIn
 import views.guestCheckIn.guestCheckInRow.GuestCheckInRowConfig
-import views.guestCheckIn.guestCheckInRow.GuestCheckInRowFc
+import views.guestCheckIn.guestCheckInRow.GuestCheckInRow
 import webcore.*
 
 external interface GuestCheckinOverviewProps : Props
 
 @Lazy
-val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { props, launch ->
+val GuestCheckInOverview = FcWithCoroutineScope<GuestCheckinOverviewProps> { props, launch ->
   val controller = GuestCheckInOverviewController.useGuestCheckInOverviewController(
     launch = launch
   )
@@ -32,7 +32,7 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
       title = DialogConfig.Title(Strings.guest_checkin_add_guest.get()),
       customContent = {
         Suspense {
-          AddGuestCheckInFc {
+          AddGuestCheckIn {
             config = AddGuestCheckInConfig(
               dialogRef = dialogRef,
               onGuestCheckedIn = {
@@ -45,9 +45,9 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
     )
   )
 
-  MbDialogFc { ref = dialogRef }
+  MbDialog { ref = dialogRef }
   Suspense {
-    ToolbarViewFc {
+    ToolbarView {
       config = ToolbarViewConfig(
         title = Strings.guest_checkin.get(),
         buttons = listOf(
@@ -62,7 +62,7 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
       )
     }
   }
-  MbLinearProgressFc { show = controller.loadingCheckInList }
+  MbLinearProgress { show = controller.loadingCheckInList }
 
   when {
     controller.activeGuestCheckIns?.isNotEmpty() == true -> Table {
@@ -77,7 +77,7 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
       TableBody {
         controller.activeGuestCheckIns.forEach { activeCheckIn ->
           Suspense {
-            GuestCheckInRowFc {
+            GuestCheckInRow {
               config = GuestCheckInRowConfig(
                 activeCheckIn = activeCheckIn,
                 onCheckedOut = {
@@ -93,7 +93,7 @@ val GuestCheckInOverviewFc = FcWithCoroutineScope<GuestCheckinOverviewProps> { p
     controller.activeGuestCheckIns == null && !controller.loadingCheckInList -> networkErrorView()
     !controller.loadingCheckInList -> {
       Suspense {
-        GenericErrorViewFc {
+        GenericErrorView {
           config = GenericErrorViewConfig(
             title = Strings.guest_checkin_not_yet_added_title.get(),
             subtitle = Strings.guest_checkin_not_yet_added_subtitle.get(),

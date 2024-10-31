@@ -12,7 +12,7 @@ import react.dom.html.ReactHTML.strong
 import util.Strings
 import util.get
 import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
-import views.accessManagement.accessManagementDetails.AccessManagementDetailsFc
+import views.accessManagement.accessManagementDetails.AccessManagementDetails
 import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowController.Companion.format
 import web.html.HTMLTableCellElement
 import webcore.*
@@ -26,7 +26,7 @@ external interface AccessManagementTableRowProps : Props {
 }
 
 @Lazy
-val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowProps> { props, launch ->
+val AccessManagementTableRow = FcWithCoroutineScope<AccessManagementTableRowProps> { props, launch ->
   val controller = AccessManagementTableRowController.useAccessManagementRowController(
     launch = launch,
     config = props.config
@@ -38,7 +38,7 @@ val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowPr
         title = DialogConfig.Title(text = Strings.access_control.get()),
         customContent = {
           Suspense {
-            AccessManagementDetailsFc {
+            AccessManagementDetails {
               config = AccessManagementDetailsConfig.Details(
                 accessManagement = props.config.accessManagement,
                 dialogRef = props.config.dialogRef,
@@ -56,7 +56,7 @@ val AccessManagementTableRowFc = FcWithCoroutineScope<AccessManagementTableRowPr
         title = DialogConfig.Title(text = Strings.location_edit.get()),
         customContent = {
           Suspense {
-            AccessManagementDetailsFc {
+            AccessManagementDetails {
               config = AccessManagementDetailsConfig.Edit(
                 accessManagement = props.config.accessManagement,
                 dialogRef = props.config.dialogRef,

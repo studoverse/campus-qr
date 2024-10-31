@@ -22,7 +22,7 @@ external interface DatePickerProps : Props {
 }
 
 @Lazy
-val DatePickerFc = FcWithCoroutineScope<DatePickerProps> { props, launch ->
+val DatePicker = FcWithCoroutineScope<DatePickerProps> { props, launch ->
   val controller: DatePickerController = DatePickerController.useDatePickerController(config = props.config, launch = launch)
 
   fun ChildrenBuilder.renderWithInputTypeDateSupport() {

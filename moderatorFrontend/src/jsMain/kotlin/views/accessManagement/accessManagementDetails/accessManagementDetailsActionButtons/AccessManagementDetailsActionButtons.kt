@@ -20,7 +20,7 @@ external interface AccessManagementDetailsActionButtonsProps : Props {
 }
 
 @Lazy
-val AccessManagementDetailsActionButtonsFc =
+val AccessManagementDetailsActionButtons =
   FcWithCoroutineScope<AccessManagementDetailsActionButtonsProps> { props, launch ->
     val createButtonText = when (props.config.accessManagementDetailsType) {
       is AccessManagementDetailsConfig.Create -> Strings.access_control_create.get()

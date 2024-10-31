@@ -16,7 +16,7 @@ external interface LoginNavigationButtonsViewProps : Props {
 }
 
 @Lazy
-val LoginNavigationButtonsViewFc = FcWithCoroutineScope<LoginNavigationButtonsViewProps> { props, componentScope ->
+val LoginNavigationButtonsView = FcWithCoroutineScope<LoginNavigationButtonsViewProps> { props, componentScope ->
   Box {
     className = ClassName(GlobalCss.flex)
     if (props.config.backEnabled) {

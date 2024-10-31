@@ -8,8 +8,8 @@ import mui.system.sx
 import react.*
 import util.Strings
 import util.get
-import views.common.CenteredProgressFc
-import views.common.MbLinearProgressFc
+import views.common.CenteredProgress
+import views.common.MbLinearProgress
 import views.common.networkErrorView
 import views.common.spacer
 import webcore.*
@@ -19,7 +19,7 @@ external interface AddGuestCheckInProps : Props {
 }
 
 @Lazy
-val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, launch ->
+val AddGuestCheckIn = FcWithCoroutineScope<AddGuestCheckInProps> { props, launch ->
   val controller = AddGuestCheckInController.useAddGuestCheckInController(
     launch = launch,
     props = props,
@@ -47,13 +47,13 @@ val AddGuestCheckInFc = FcWithCoroutineScope<AddGuestCheckInProps> { props, laun
     }
   }
 
-  MbLinearProgressFc { show = controller.showProgress }
+  MbLinearProgress { show = controller.showProgress }
 
   if (!controller.locationFetchInProgress && controller.locationNameToLocationMap.isEmpty()) {
     networkErrorView()
     spacer(36)
   } else if (controller.locationFetchInProgress) {
-    CenteredProgressFc {}
+    CenteredProgress {}
     spacer(36)
   } else {
     Autocomplete<AutocompleteProps<String>> {

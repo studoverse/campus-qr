@@ -21,7 +21,7 @@ import webcore.verticalMargin
 external interface AdminInfoProps : Props
 
 @Lazy
-val AdminInfoFc = FcWithCoroutineScope<AdminInfoProps> { props, launch ->
+val AdminInfo = FcWithCoroutineScope<AdminInfoProps> { props, launch ->
 
   fun PropertiesBuilder.subheader() {
     marginTop = 8.px

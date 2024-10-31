@@ -5,26 +5,26 @@ import mui.material.*
 import react.*
 import util.*
 import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
-import views.accessManagement.accessManagementDetails.AccessManagementDetailsFc
+import views.accessManagement.accessManagementDetails.AccessManagementDetails
 import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowConfig
-import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowFc
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRow
 import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowOperation
 import views.common.*
 import webcore.*
 import webcore.extensions.toRoute
 import js.lazy.Lazy
 import views.common.ToolbarView.ToolbarButton
-import views.common.ToolbarView.ToolbarViewFc
+import views.common.ToolbarView.ToolbarView
 import views.common.ToolbarView.ToolbarViewConfig
 import views.common.genericErrorView.GenericErrorViewConfig
-import views.common.genericErrorView.GenericErrorViewFc
+import views.common.genericErrorView.GenericErrorView
 
 external interface ListAccessManagementProps : Props {
   var config: AccessManagementListConfig
 }
 
 @Lazy
-val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { props, launch ->
+val AccessManagementList = FcWithCoroutineScope<ListAccessManagementProps> { props, launch ->
   val controller = ListAccessManagementController.useListAccessManagementController(
     locationId = props.config.locationId,
     launch = launch,
@@ -37,7 +37,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
       title = DialogConfig.Title(text = Strings.access_control_create.get()),
       customContent = {
         Suspense {
-          AccessManagementDetailsFc {
+          AccessManagementDetails {
             config = AccessManagementDetailsConfig.Create(
               locationId = props.config.locationId,
               dialogRef = dialogRef,
@@ -51,9 +51,9 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
     )
   )
 
-  MbDialogFc { ref = dialogRef }
+  MbDialog { ref = dialogRef }
   Suspense {
-    ToolbarViewFc {
+    ToolbarView {
       config = ToolbarViewConfig(
         title = StringBuilder().apply {
           append(Strings.access_control.get())
@@ -92,7 +92,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
     }
   }
 
-  MbLinearProgressFc { show = controller.loadingAccessManagementList }
+  MbLinearProgress { show = controller.loadingAccessManagementList }
 
   when {
     controller.accessManagementList?.isNotEmpty() == true -> Table {
@@ -108,7 +108,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
       TableBody {
         Suspense {
           controller.accessManagementList.forEach { accessManagement ->
-            AccessManagementTableRowFc {
+            AccessManagementTableRow {
               config = AccessManagementTableRowConfig(
                 accessManagement = accessManagement,
                 dialogRef = dialogRef,
@@ -135,7 +135,7 @@ val AccessManagementListFc = FcWithCoroutineScope<ListAccessManagementProps> { p
     controller.accessManagementList == null && !controller.loadingAccessManagementList -> networkErrorView()
     !controller.loadingAccessManagementList -> {
       Suspense {
-        GenericErrorViewFc {
+        GenericErrorView {
           config = GenericErrorViewConfig(
             title = Strings.access_control_not_configured_yet.get(),
             subtitle = Strings.access_control_not_configured_yet_subtitle.get(),

@@ -25,11 +25,11 @@ external interface AppShellProps : Props {
   var config: AppShellConfig
 }
 
-val AppShellFc = FcWithCoroutineScope<AppShellProps> { props, launch ->
+val AppShell = FcWithCoroutineScope<AppShellProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 
   val theme = appContext.theme
-  AppShellDrawerFc {
+  AppShellDrawer {
     config = AppShellDrawerConfig(
       props.config.mobileNavOpen,
       props.config.mobileNavOpenChange,

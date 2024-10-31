@@ -15,9 +15,9 @@ import util.get
 import views.common.ToolbarView.ToolbarButton
 import views.common.ToolbarView.ToolbarViewConfig
 import views.common.spacer
-import views.common.ToolbarView.ToolbarViewFc
+import views.common.ToolbarView.ToolbarView
 import views.users.addUser.AddUserConfig
-import views.users.addUser.AddUserFc
+import views.users.addUser.AddUser
 import web.cssom.rgb
 import web.window.WindowTarget
 import web.window.window
@@ -65,7 +65,7 @@ val ListUsersToolbarView = FcWithCoroutineScope<ListUsersToolbarViewProps> { pro
       title = DialogConfig.Title(text = Strings.user_add.get()),
       customContent = {
         Suspense {
-          AddUserFc {
+          AddUser {
             config = AddUserConfig.Create(onFinished = { response ->
               props.config.handleCreateOrAddUserResponse(response)
               props.config.dialogRef.current!!.closeDialog()
@@ -77,7 +77,7 @@ val ListUsersToolbarView = FcWithCoroutineScope<ListUsersToolbarViewProps> { pro
   )
 
   Suspense {
-    ToolbarViewFc {
+    ToolbarView {
       config = ToolbarViewConfig(
         title = Strings.user_management.get(),
         buttons = listOfNotNull(

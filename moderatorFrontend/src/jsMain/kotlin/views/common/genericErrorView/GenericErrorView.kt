@@ -15,7 +15,7 @@ external interface GenericErrorViewProps : Props {
 }
 
 @Lazy
-val GenericErrorViewFc = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
+val GenericErrorView = FcWithCoroutineScope<GenericErrorViewProps> { props, launch ->
   Box {
     sx {
       margin = Auto.auto

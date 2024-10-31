@@ -14,7 +14,7 @@ external interface ReportTableRowProps : Props {
 }
 
 @Lazy
-val ReportTableRowFc = FcWithCoroutineScope<ReportTableRowProps> { props, launch ->
+val ReportTableRow = FcWithCoroutineScope<ReportTableRowProps> { props, launch ->
   fun renderApplyFilterDialog() {
     props.config.dialogRef.current!!.showDialog(
       DialogConfig(

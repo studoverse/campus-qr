@@ -11,7 +11,7 @@ import react.*
 import util.Strings
 import util.get
 import util.localizedString
-import views.common.MbLinearProgressFc
+import views.common.MbLinearProgress
 import views.common.spacer
 import web.html.InputType
 import webcore.*
@@ -24,7 +24,7 @@ external interface AddLocationProps : Props {
 val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
   val controller = AddLocationController.useAddLocationController(config = props.config, launch = launch)
 
-  MbLinearProgressFc { show = controller.locationCreationInProgress }
+  MbLinearProgress { show = controller.locationCreationInProgress }
 
   TextField {
     error = controller.locationTextFieldError.isNotEmpty()

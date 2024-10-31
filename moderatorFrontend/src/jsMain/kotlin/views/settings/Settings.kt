@@ -14,8 +14,8 @@ import webcore.verticalMargin
 
 external interface SettingsProps : Props
 
-val SettingsFc = FcWithCoroutineScope<SettingsProps> { props, launch ->
-  LanguageSwitchFc {}
+val Settings = FcWithCoroutineScope<SettingsProps> { props, launch ->
+  LanguageSwitch {}
   verticalMargin(16)
   Button {
     sx {

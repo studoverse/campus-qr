@@ -17,7 +17,7 @@ external interface ToolbarViewProps : Props {
 }
 
 @Lazy
-val ToolbarViewFc = FcWithCoroutineScope<ToolbarViewProps> { props, launch ->
+val ToolbarView = FcWithCoroutineScope<ToolbarViewProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 
   val routeContext = appContext.routeContext

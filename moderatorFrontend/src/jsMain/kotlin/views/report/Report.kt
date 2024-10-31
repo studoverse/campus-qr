@@ -15,21 +15,21 @@ import react.dom.html.ReactHTML.form
 import util.Strings
 import util.fileDownload
 import util.get
-import views.common.CenteredProgressFc
-import views.common.MbLinearProgressFc
+import views.common.CenteredProgress
+import views.common.MbLinearProgress
 import views.common.spacer
 import views.report.reportTableRow.ReportTableRowConfig
-import views.report.reportTableRow.ReportTableRowFc
+import views.report.reportTableRow.ReportTableRow
 import webcore.*
 import webcore.datePicker.DatePickerConfig
-import webcore.datePicker.DatePickerFc
+import webcore.datePicker.DatePicker
 import webcore.NavigationHandler.dialogRef
 import kotlin.js.Date
 
 external interface ReportProps : Props
 
 @Lazy
-val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
+val Report = FcWithCoroutineScope<ReportProps> { props, launch ->
   val controller = ReportController.useReportController(
     launch = launch,
   )
@@ -38,7 +38,7 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
     margin = 16.px
   }
 
-  MbDialogFc { ref = dialogRef }
+  MbDialog { ref = dialogRef }
   val now = Date()
   val showEmailAddress = controller.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
@@ -57,7 +57,7 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
     gridContainer(GridDirection.row) {
       gridItem(GridSize(xs = 12, sm = 3), key = "reportGridItem1") {
         Suspense {
-          DatePickerFc {
+          DatePicker {
             config = DatePickerConfig(
               date = controller.infectionDate,
               label = Strings.report_infection_date.get(),
@@ -109,7 +109,7 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
   }
   when {
     controller.reportData != null -> {
-      MbLinearProgressFc { show = controller.showProgress }
+      MbLinearProgress { show = controller.showProgress }
       val reportData = controller.reportData!!
       Box {
         sx {
@@ -142,7 +142,7 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
           TableBody {
             Suspense {
               reportData.reportedUserLocations.forEach { userLocation ->
-                ReportTableRowFc {
+                ReportTableRow {
                   config = ReportTableRowConfig(
                     userLocation = userLocation,
                     showEmailAddress = showEmailAddress,
@@ -186,6 +186,6 @@ val ReportFc = FcWithCoroutineScope<ReportProps> { props, launch ->
       }
     }
 
-    controller.showProgress -> CenteredProgressFc {}
+    controller.showProgress -> CenteredProgress {}
   }
 }

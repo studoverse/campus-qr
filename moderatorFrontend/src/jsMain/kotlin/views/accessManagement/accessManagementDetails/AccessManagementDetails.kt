@@ -8,20 +8,20 @@ import views.common.*
 import webcore.*
 import js.lazy.Lazy
 import views.accessManagement.accessManagementDetails.accessManagementDetailsActionButtons.AccessManagementDetailsActionButtonsConfig
-import views.accessManagement.accessManagementDetails.accessManagementDetailsActionButtons.AccessManagementDetailsActionButtonsFc
+import views.accessManagement.accessManagementDetails.accessManagementDetailsActionButtons.AccessManagementDetailsActionButtons
 import views.accessManagement.accessManagementDetails.accessManagementLocationSelection.AccessManagementLocationSelectionConfig
-import views.accessManagement.accessManagementDetails.accessManagementLocationSelection.AccessManagementLocationSelectionFc
+import views.accessManagement.accessManagementDetails.accessManagementLocationSelection.AccessManagementLocationSelection
 import views.accessManagement.accessManagementDetails.permittedPeople.PermittedPeopleConfig
-import views.accessManagement.accessManagementDetails.permittedPeople.PermittedPeopleFc
+import views.accessManagement.accessManagementDetails.permittedPeople.PermittedPeople
 import views.accessManagement.accessManagementDetails.timeSlotPicker.TimeSlotPickerConfig
-import views.accessManagement.accessManagementDetails.timeSlotPicker.TimeSlotPickerFc
+import views.accessManagement.accessManagementDetails.timeSlotPicker.TimeSlotPicker
 
 external interface AccessManagementDetailsProps : Props {
   var config: AccessManagementDetailsConfig
 }
 
 @Lazy
-val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProps> { props, launch ->
+val AccessManagementDetails = FcWithCoroutineScope<AccessManagementDetailsProps> { props, launch ->
   val controller = AccessManagementDetailsController.useAccessManagementDetailsController(config = props.config, launch = launch)
 
   fun ChildrenBuilder.renderNoteTextField() {
@@ -48,7 +48,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
 
   fun ChildrenBuilder.renderDetailsContent() {
     Suspense {
-      AccessManagementLocationSelectionFc {
+      AccessManagementLocationSelection {
         this.config = AccessManagementLocationSelectionConfig(
           isAutocompleteDisabled = props.config is AccessManagementDetailsConfig.Details,
           selectedLocation = controller.selectedLocation,
@@ -64,7 +64,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
     renderReasonTextField()
     spacer(24, key = "renderDetailsContentSpacer3")
     Suspense {
-      TimeSlotPickerFc {
+      TimeSlotPicker {
         this.config = TimeSlotPickerConfig(
           timeSlots = controller.timeSlots,
           fromDateTimeSlotErrors = controller.fromDateTimeSlotErrors,
@@ -80,7 +80,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
       }
     }
     Suspense {
-      PermittedPeopleFc {
+      PermittedPeople {
         this.config = PermittedPeopleConfig(
           permittedPeopleList = controller.permittedPeopleList,
           personEmailTextFieldValue = controller.personEmailTextFieldValue,
@@ -93,7 +93,7 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
     }
     spacer(32, key = "renderDetailsContentSpacer4")
     Suspense {
-      AccessManagementDetailsActionButtonsFc {
+      AccessManagementDetailsActionButtons {
         this.config = AccessManagementDetailsActionButtonsConfig(
           accessManagementDetailsType = props.config,
           dialogRef = props.config.dialogRef,
@@ -107,13 +107,13 @@ val AccessManagementDetailsFc = FcWithCoroutineScope<AccessManagementDetailsProp
     }
   }
 
-  MbLinearProgressFc { show = controller.showProgress }
+  MbLinearProgress { show = controller.showProgress }
 
   if (!controller.locationFetchInProgress && controller.locationNameToLocationMap.isEmpty()) {
     networkErrorView()
     spacer(36)
   } else if (controller.locationFetchInProgress) {
-    CenteredProgressFc {}
+    CenteredProgress {}
     spacer(36)
   } else {
     renderDetailsContent()

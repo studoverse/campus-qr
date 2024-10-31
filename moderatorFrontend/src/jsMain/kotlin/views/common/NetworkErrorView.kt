@@ -5,11 +5,11 @@ import react.Suspense
 import util.Strings
 import util.get
 import views.common.genericErrorView.GenericErrorViewConfig
-import views.common.genericErrorView.GenericErrorViewFc
+import views.common.genericErrorView.GenericErrorView
 
 fun ChildrenBuilder.networkErrorView() {
   Suspense {
-    GenericErrorViewFc {
+    GenericErrorView {
       config = GenericErrorViewConfig(
         title = Strings.network_error.get(),
         subtitle = Strings.network_error_description.get(),

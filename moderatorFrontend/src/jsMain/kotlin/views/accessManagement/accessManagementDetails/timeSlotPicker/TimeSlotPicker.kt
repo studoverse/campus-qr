@@ -31,11 +31,11 @@ import web.cssom.number
 import web.cssom.pct
 import web.cssom.px
 import webcore.datePicker.DatePickerConfig
-import webcore.datePicker.DatePickerFc
+import webcore.datePicker.DatePicker
 import webcore.FcWithCoroutineScope
 import webcore.GridSize
 import webcore.timePicker.TimePickerConfig
-import webcore.timePicker.TimePickerFc
+import webcore.timePicker.TimePicker
 import webcore.extensions.addYears
 import webcore.gridContainer
 import webcore.gridItem
@@ -47,7 +47,7 @@ external interface TimeSlotPickerProps : Props {
 }
 
 @Lazy
-val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch ->
+val TimeSlotPicker = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch ->
   val appContext = useContext(appContextToInject)!!
 
   fun PropertiesBuilder.timeSlotRow() {
@@ -94,7 +94,7 @@ val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch
               timeSlotColumn()
             }
             Suspense {
-              DatePickerFc {
+              DatePicker {
                 config = DatePickerConfig(
                   disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
                   date = Date(clientDateRange.from),
@@ -121,7 +121,7 @@ val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch
               timeSlotColumn()
             }
             Suspense {
-              TimePickerFc {
+              TimePicker {
                 config = TimePickerConfig(
                   disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
                   time = Date(clientDateRange.from),
@@ -149,7 +149,7 @@ val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch
               timeSlotColumn()
             }
             Suspense {
-              DatePickerFc {
+              DatePicker {
                 config = DatePickerConfig(
                   disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
                   date = Date(clientDateRange.to),
@@ -176,7 +176,7 @@ val TimeSlotPickerFc = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch
               timeSlotColumn()
             }
             Suspense {
-              TimePickerFc {
+              TimePicker {
                 config = TimePickerConfig(
                   disabled = props.config.accessManagementDetailsType is AccessManagementDetailsConfig.Details,
                   time = Date(clientDateRange.to),

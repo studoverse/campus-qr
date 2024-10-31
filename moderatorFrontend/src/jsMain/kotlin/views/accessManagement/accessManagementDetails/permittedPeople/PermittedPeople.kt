@@ -36,7 +36,7 @@ external interface PermittedPeopleProps : Props {
 }
 
 @Lazy
-val PermittedPeopleFc = FcWithCoroutineScope<PermittedPeopleProps> { props, launch ->
+val PermittedPeople = FcWithCoroutineScope<PermittedPeopleProps> { props, launch ->
   val controller = PermittedPeopleController.usePermittedPeopleController(
     config = props.config,
     launch = launch,

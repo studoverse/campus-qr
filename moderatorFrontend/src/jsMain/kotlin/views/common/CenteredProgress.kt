@@ -9,7 +9,7 @@ import webcore.FcWithCoroutineScope
 
 external interface CenteredProgressProps : Props
 
-val CenteredProgressFc = FcWithCoroutineScope<CenteredProgressProps> { props, launch ->
+val CenteredProgress = FcWithCoroutineScope<CenteredProgressProps> { props, launch ->
   Box {
     sx {
       display = Display.flex
