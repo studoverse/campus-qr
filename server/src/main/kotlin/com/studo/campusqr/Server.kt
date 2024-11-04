@@ -159,7 +159,7 @@ private fun Application.ktorServerModule() {
       get("listActiveGuestCheckIns") { call.getAuthenticatedCall()?.listGuestActiveCheckIns() }
     }
     route("admin") {
-      get("campusqr-admin.js") { call.returnModeratorJs() }
+      get("/js/{jsFileName...}") { call.returnModeratorJs() }
       get("/{...}") { call.returnModeratorIndexHtml() }
     }
     staticResources(remotePath = "/static", basePackage = null)
