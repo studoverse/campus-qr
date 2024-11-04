@@ -11,7 +11,7 @@ external fun importAllCss() // Import the JS module
 
 fun main() {
   // Load all CSS files into the head as style tags.
-  //importAllCss() // TODO: @mh Comment in again after fixing the "importCss.js not found" in production.
+  importAllCss()
 
   val container = document.createElement(HTML.div).also { htmlDivElement ->
     document.body.appendChild(htmlDivElement)

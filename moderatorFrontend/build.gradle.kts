@@ -106,9 +106,23 @@ tasks {
     into("../server/build/resources/main/moderatorFrontend/")
   }
 
+  register<Copy>("copyResourcesToPreProcessedResources") {
+    dependsOn("jsBrowserProductionWebpack") // Build production version
+    from("build/processedResources/js/main/importCss.js")
+    into("../server/src/main/resources/moderatorFrontend/")
+  }
+
+  register<Copy>("copyResourcesToPostProcessedResources") {
+    dependsOn("jsBrowserProductionWebpack") // Build production version
+    from("build/processedResources/js/main/importCss.js")
+    into("../server/build/resources/main/moderatorFrontend/")
+  }
+
   register("copyProductionBuildToAllResources") {
     dependsOn("copyProductionBuildToPostProcessedResources")
     dependsOn("copyProductionBuildToPreProcessedResources")
+    dependsOn("copyResourcesToPreProcessedResources")
+    dependsOn("copyResourcesToPostProcessedResources")
   }
 }
 
