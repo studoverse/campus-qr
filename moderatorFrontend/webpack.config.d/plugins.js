@@ -33,7 +33,7 @@ config.module.rules.push(cssConf);
 if (process.env.NODE_ENV === 'development') {
   config.plugins.push(new BundleAnalyzerPlugin({
     analyzerMode: 'static',
-    reportFilename: 'bundle-report.html',
+    reportFilename: 'bundle-report.html', // Located in campus-qr/build/js/packages/CampusQR-moderatorFrontend/dist/bundle-report.html
     openAnalyzer: false,
   }));
 }

@@ -1,5 +1,6 @@
 package app
 
+import MbSnackbarRef
 import com.studo.campusqr.common.UserPermission
 import com.studo.campusqr.common.extensions.emptyToNull
 import com.studo.campusqr.common.payloads.UserData

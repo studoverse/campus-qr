@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
   kotlin("multiplatform")
-  id("io.github.turansky.seskar") version "3.41.0"
+  id("io.github.turansky.seskar") version "3.50.1" //"3.51.0"
 }
 
 val ktor_version: String = "2.3.12" // https://github.com/ktorio/ktor/releases
@@ -96,13 +96,13 @@ tasks {
 
   register<Copy>("copyProductionBuildToPreProcessedResources") {
     dependsOn("jsBrowserProductionWebpack") // Build production version
-    from("build/compileSync/js/main/productionExecutable/kotlin")
+    from("build/kotlin-webpack/js/productionExecutable")
     into("../server/src/main/resources/moderatorFrontend/")
   }
 
   register<Copy>("copyProductionBuildToPostProcessedResources") {
     dependsOn("jsBrowserProductionWebpack") // Build production version
-    from("build/compileSync/js/main/productionExecutable/kotlin")
+    from("build/kotlin-webpack/js/productionExecutable")
     into("../server/build/resources/main/moderatorFrontend/")
   }
 
@@ -119,8 +119,8 @@ tasks {
   }
 
   register("copyProductionBuildToAllResources") {
-    dependsOn("copyProductionBuildToPostProcessedResources")
     dependsOn("copyProductionBuildToPreProcessedResources")
+    dependsOn("copyProductionBuildToPostProcessedResources")
     dependsOn("copyResourcesToPreProcessedResources")
     dependsOn("copyResourcesToPostProcessedResources")
   }
