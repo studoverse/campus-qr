@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
   kotlin("multiplatform")
-  id("io.github.turansky.seskar") version "3.50.1" //"3.51.0"
+  id("io.github.turansky.seskar") version "3.50.1"
 }
 
 val ktor_version: String = "2.3.12" // https://github.com/ktorio/ktor/releases
