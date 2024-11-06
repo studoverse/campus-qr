@@ -4,10 +4,6 @@
 import react.Props
 import webcore.FcWithCoroutineScope
 
-class ${NAME}Config(
-  
-)
-
 external interface ${NAME}Props : Props {
   var config: ${NAME}Config
 }
