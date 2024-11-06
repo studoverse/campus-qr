@@ -22,14 +22,14 @@ val PathNotFound = FcWithCoroutineScope<PathNotFoundProps> { props, launch ->
     }
     Typography {
       sx {
-        centeredText()
+        with(CommonStyles) { centeredText() }
       }
       variant = TypographyVariant.h1
       +"404"
     }
     Typography {
       sx {
-        centeredText()
+        with(CommonStyles) { centeredText() }
       }
       variant = TypographyVariant.body1
       +"Path \""

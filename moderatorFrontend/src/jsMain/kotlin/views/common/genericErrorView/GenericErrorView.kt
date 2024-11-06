@@ -7,7 +7,7 @@ import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.Props
 import js.lazy.Lazy
-import views.common.centeredText
+import views.common.CommonStyles
 import webcore.FcWithCoroutineScope
 
 external interface GenericErrorViewProps : Props {
@@ -22,14 +22,14 @@ val GenericErrorView = FcWithCoroutineScope<GenericErrorViewProps> { props, laun
     }
     Typography {
       sx {
-        centeredText()
+        with(CommonStyles) { centeredText() }
       }
       variant = TypographyVariant.h5
       +props.config.title
     }
     Typography {
       sx {
-        centeredText()
+        with(CommonStyles) { centeredText() }
       }
       variant = TypographyVariant.body1
       +props.config.subtitle
