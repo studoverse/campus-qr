@@ -1,5 +1,5 @@
 @file:JsModule("@mui/material/locale")
-@file:Suppress("NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE")
+//@file:Suppress("NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE")
 
 package webcore
 

@@ -26,7 +26,7 @@ import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import java.net.URL
+import java.net.URI
 import java.time.Duration
 
 object Server
@@ -91,7 +91,7 @@ private fun Application.ktorServerModule() {
   }
 
   install(CORS) {
-    allowHost(URL(baseUrl).host, schemes = listOf("https", "http"))
+    allowHost(URI.create(baseUrl).toURL().host, schemes = listOf("https", "http"))
     if (localDebug) {
       allowHost("localhost:8072")
     }

@@ -59,7 +59,7 @@ val MbSnackbar = FcRefWithCoroutineScope<MbSnackbarProps<MbSnackbarRef>> { props
   }
 
   // Use the useImperativeHandle hook to expose the methods via the ref.
-  useImperativeHandle(ref = props.ref, dependencies = *arrayOf(config)) {
+  useImperativeHandle(ref = props.ref, config) {
     object : MbSnackbarRef {
       override fun showSnackbarText(text: String) {
         showSnackbar(text)

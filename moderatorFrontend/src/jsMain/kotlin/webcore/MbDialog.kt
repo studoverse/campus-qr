@@ -99,7 +99,7 @@ val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, laun
   }
 
   // Use the useImperativeHandle hook to expose the methods via the ref.
-  useImperativeHandle(ref = props.ref, dependencies = *arrayOf(configs)) {
+  useImperativeHandle(ref = props.ref, configs) {
     object : MbDialogRef {
       override fun showDialog(dialogConfig: DialogConfig) {
         showDialog(dialogConfig)

@@ -38,7 +38,7 @@ val MaterialMenu = FcWithCoroutineScope<MaterialMenuProps> { props, launch ->
   Menu {
     onClose = controller.onMenuClose
     id = ariaId
-    this.open = open
+    this.open = controller.open
     controller.anchorEl?.let { anchorElement ->
       this.anchorEl = { anchorElement }
     }
