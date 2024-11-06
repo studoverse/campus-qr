@@ -89,7 +89,8 @@ The following environment variables need to be configured:
 ### Moderation Frontend Development: Installing Templates
 
 For a smooth development experience, file and live templates exist.
-One for creating a React function component, one for creating the corresponding controller containing the frontend business logic.
+One for creating a React function component,
+one for creating the config of the component and one for creating the corresponding controller containing the frontend business logic.
 To copy the custom file templates and live templates to your local IntelliJ configuration:
 
 - Execute the Run Configuration `InstallTemplates` directly from IntelliJ.
