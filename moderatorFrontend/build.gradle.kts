@@ -55,7 +55,6 @@ kotlin {
         api(kotlinWrappers.mui.material)
         api(kotlinWrappers.mui.iconsMaterial)
         api(kotlinWrappers.mui.lab)
-        api(kotlinWrappers.jsExtensions)
 
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
         api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")

@@ -10,7 +10,7 @@ repositories {
   maven("https://jitpack.io")
 }
 
-val ktor_version: String = "2.3.2"
+val ktor_version: String = "2.3.12"
 
 dependencies {
   implementation(project(":common"))

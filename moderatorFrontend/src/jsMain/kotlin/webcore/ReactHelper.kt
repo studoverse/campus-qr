@@ -1,7 +1,6 @@
 package webcore
 
 import js.objects.jso
-import kotlinext.js.assign
 import kotlinx.coroutines.Job
 import react.*
 
