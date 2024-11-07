@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="InstallTemplates" type="KotlinStandaloneScriptRunConfigurationType">
+    <module name="CampusQR.server.main" />
+    <shortenClasspath name="NONE" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="filePath" value="$PROJECT_DIR$/.idea/InstallTemplates.kts" />
+    <method v="2" />
+  </configuration>
+</component>

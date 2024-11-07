@@ -4,37 +4,23 @@ import web.cssom.*
 import mui.material.Box
 import mui.material.LinearProgress
 import mui.system.sx
-import react.ChildrenBuilder
 import react.Props
-import react.State
-import react.react
-import webcore.RComponent
+import webcore.FcWithCoroutineScope
 
 external interface MbLinearProgressProps : Props {
   var show: Boolean
 }
 
-external interface MbLinearProgressState : State
-
 /**
  * Linear progress that has a fixed height of 8px also when it's not shown.
  */
-private class MbLinearProgress : RComponent<MbLinearProgressProps, MbLinearProgressState>() {
-
-  override fun ChildrenBuilder.render() {
-    Box {
-      sx {
-        height = 8.px
-      }
-      if (props.show) {
-        LinearProgress {}
-      }
+val MbLinearProgress = FcWithCoroutineScope<MbLinearProgressProps> { props, launch ->
+  Box {
+    sx {
+      height = 8.px
     }
-  }
-}
-
-fun ChildrenBuilder.renderMbLinearProgress(show: Boolean) {
-  MbLinearProgress::class.react {
-    this.show = show
+    if (props.show) {
+      LinearProgress {}
+    }
   }
 }

@@ -5,7 +5,7 @@ config.devServer.port = 8072;
 // Add url paths here which needs to be proxied to the backend
 config.devServer.proxy = [
   {
-    context: ['!/moderatorFrontend.js'],
+    context: ['!/*.js'], // Proxy all but the JS files that are needed in the frontend.
     target: 'http://127.0.0.1:8070',
   }
 ];

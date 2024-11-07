@@ -7,9 +7,18 @@ import mui.material.ButtonVariant
 import react.*
 import util.get
 
-external interface MbDialogState : State {
-  var configs: MutableList<DialogConfig>
+external interface MbDialogRef {
+  fun showDialog(dialogConfig: DialogConfig)
+  fun closeDialog()
+  fun showDeleteDialog(
+    title: String?,
+    text: String?,
+    deleteButtonText: String,
+    onDelete: () -> Unit,
+  )
 }
+
+external interface MbDialogProps<T : MbDialogRef> : PropsWithRef<T>
 
 /**
  * Dialog component for handling all dialogs of a page.
@@ -33,40 +42,32 @@ external interface MbDialogState : State {
  * This allows to have a base dialog and corresponding info/error dialogs "on top".
  * UX: Ideally, only 1 dialog is present at the users context. Stacking multiple dialogs on top of each other creates easily confusing experiences.
  */
-class MbDialog : RComponent<PropsWithRef<MbDialog>, MbDialogState>() {
-  override fun MbDialogState.init() {
-    configs = mutableListOf()
-  }
-
-  override fun ChildrenBuilder.render() {
-    state.configs.forEach { config ->
-      @Suppress("DEPRECATION") // Only here inside the forEach we want to render each single dialog individually
-      mbSingleDialog(
-        config = config,
-        hidden = config != state.configs.last(), // Hide all dialogs but the most recent one, so they don't unmount and can be shown again
-      )
-    }
-  }
+val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, launch ->
+  var (configs, setConfigs) = useState(mutableListOf<DialogConfig>())
 
   fun showDialog(dialogConfig: DialogConfig) {
-    setState {
-      this.configs.add(
-        dialogConfig.copy(
-          onClose = {
-            dialogConfig.onClose?.invoke()
-            setState {
-              this.configs.removeLastOrNull() ?: console.error("closeDialog was called although no dialog is open.")
+    setConfigs { oldConfigs ->
+      (oldConfigs + dialogConfig.copy(
+        onClose = {
+          dialogConfig.onClose?.invoke() // Invoke user defined onClose function
+          // Due to function closures, we need to use the setter function to get the current state.
+          setConfigs { previousConfigs ->
+            if (previousConfigs.isNotEmpty()) {
+              (previousConfigs - previousConfigs.last()).toMutableList()
+            } else {
+              console.error("closeDialog was called although no dialog is open.")
+              previousConfigs
             }
-          },
-        ),
-      )
+          }
+        },
+      )).toMutableList()
     }
   }
 
   // Closes the latest dialog
   fun closeDialog() {
     // onClose itself cannot be null here since it is always set in showDialog().
-    state.configs.lastOrNull()?.onClose?.invoke() ?: console.error("closeDialog was called although no dialog is open.")
+    configs.lastOrNull()?.onClose?.invoke() ?: console.error("closeDialog was called although no dialog is open.")
   }
 
   fun showDeleteDialog(
@@ -96,10 +97,39 @@ class MbDialog : RComponent<PropsWithRef<MbDialog>, MbDialogState>() {
       )
     )
   }
-}
 
-fun ChildrenBuilder.mbDialog(ref: Ref<MbDialog>) {
-  MbDialog::class.react {
-    this.ref = ref
+  // Use the useImperativeHandle hook to expose the methods via the ref.
+  useImperativeHandle(ref = props.ref, configs) {
+    object : MbDialogRef {
+      override fun showDialog(dialogConfig: DialogConfig) {
+        showDialog(dialogConfig)
+      }
+
+      override fun closeDialog() {
+        closeDialog()
+      }
+
+      override fun showDeleteDialog(
+        title: String?,
+        text: String?,
+        deleteButtonText: String,
+        onDelete: () -> Unit,
+      ) {
+        showDeleteDialog(
+          title = title,
+          text = text,
+          deleteButtonText = deleteButtonText,
+          onDelete = onDelete,
+        )
+      }
+    }
+  }
+
+  configs.forEach { config ->
+    @Suppress("DEPRECATION") // Only here inside the forEach we want to render each single dialog individually
+    MbSingleDialog {
+      this.config = config
+      hidden = config != configs.last() // Hide all dialogs but the most recent one, so they don't unmount and can be shown again
+    }
   }
 }

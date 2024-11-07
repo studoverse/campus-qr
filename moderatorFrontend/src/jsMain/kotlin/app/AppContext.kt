@@ -1,7 +1,7 @@
 package app
 
-import MbSnackbar
 import MbSnackbarConfig
+import MbSnackbarRef
 import com.studo.campusqr.common.payloads.UserData
 import mui.material.styles.Theme
 import react.RefObject
@@ -29,7 +29,7 @@ data class UserDataContext(
 
 data class AppContext(
   val languageContext: LanguageContext,
-  private val snackbarRef: RefObject<MbSnackbar>,
+  private val snackbarRef: RefObject<MbSnackbarRef>,
   val routeContext: RouteContext,
   val themeContext: ThemeContext,
   val userDataContext: UserDataContext,
@@ -38,7 +38,7 @@ data class AppContext(
   val theme: Theme get() = themeContext.theme
 
   // Use showSnackbar(string) for simple snackbars that only show a simple information text.
-  fun showSnackbar(text: String) = snackbarRef.current!!.showSnackbar(text)
+  fun showSnackbarText(text: String) = snackbarRef.current!!.showSnackbarText(text)
 
   // Use showSnackbar(MbSnackbarConfig) for advanced snackbars
   fun showSnackbar(config: MbSnackbarConfig) = snackbarRef.current!!.showSnackbar(config)

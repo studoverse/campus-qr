@@ -9,6 +9,9 @@
 !.idea/codeStyles/*
 !.idea/fileTemplates/
 !.idea/fileTemplates/*
+!.idea/liveTemplates/
+!.idea/liveTemplates/*
+!.idea/InstallTemplates.kts
 !.idea/codeStyleSettings.xml
 !.idea/icon.png
 out
@@ -73,3 +76,4 @@ atlassian-ide-plugin.xml
 hs_err_pid*
 
 /server/src/main/resources/moderatorFrontend/
+/server/src/main/resources/importCss.js

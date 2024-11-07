@@ -1,13 +1,17 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
   kotlin("multiplatform")
+  id("io.github.turansky.seskar") version "3.50.1"
 }
 
-val ktor_version: String = "2.3.2"
-val kotlinx_html_version: String = "0.11.0"
-val kotlinx_serialization_version: String = "1.6.2"
-val kotlinx_coroutines_version: String = "1.7.3"
+val ktor_version: String = "2.3.12" // https://github.com/ktorio/ktor/releases
+val kotlinx_html_version: String = "0.11.0" // https://github.com/Kotlin/kotlinx.html/releases
+val kotlinx_serialization_version: String = "1.7.3" // https://github.com/Kotlin/kotlinx.serialization/releases
+val kotlinx_coroutines_version: String = "1.9.0" // https://github.com/Kotlin/kotlinx.coroutines/releases
 
 repositories {
   mavenCentral()
@@ -15,8 +19,13 @@ repositories {
 
 kotlin {
   js(IR) {
-    useCommonJs()
     browser {
+      commonWebpackConfig(body = Action {
+        cssSupport {
+          enabled.set(true)
+        }
+      })
+
       testTask(Action {
         useKarma {
           useChrome() // Chrome must be installed (otherwise js tests can not be executed), it's also possible to use other browsers (e.g. useFirefox)
@@ -25,6 +34,9 @@ kotlin {
           }
         }
       })
+    }
+    compilerOptions {
+      target = "es2015"
     }
     binaries.executable()
   }
@@ -37,13 +49,13 @@ kotlin {
 
         api("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version")
 
-        api(libs.wrappers.react)
-        api(libs.wrappers.react.dom)
-        api(libs.wrappers.emotion)
-        api(libs.wrappers.extensions)
-        api(libs.wrappers.mui.material)
-        api(libs.wrappers.mui.icons.material)
-        api(libs.wrappers.mui.lab)
+        api(kotlinWrappers.react)
+        api(kotlinWrappers.reactDom)
+        api(kotlinWrappers.emotion)
+        api(kotlinWrappers.mui.material)
+        api(kotlinWrappers.mui.iconsMaterial)
+        api(kotlinWrappers.mui.lab)
+        api(kotlinWrappers.jsExtensions)
 
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
         api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
@@ -65,6 +77,8 @@ kotlin {
         api(npm("@mui/icons-material", "5.16.6"))
 
         api(npm("js-file-download", "0.4.12"))
+
+        api(devNpm("webpack-bundle-analyzer", "4.10.2"))
       }
     }
     val jsTest by getting {
@@ -92,9 +106,23 @@ tasks {
     into("../server/build/resources/main/moderatorFrontend/")
   }
 
+  register<Copy>("copyResourcesToPreProcessedResources") {
+    dependsOn("jsBrowserProductionWebpack") // Build production version
+    from("build/processedResources/js/main/importCss.js")
+    into("../server/src/main/resources/moderatorFrontend/")
+  }
+
+  register<Copy>("copyResourcesToPostProcessedResources") {
+    dependsOn("jsBrowserProductionWebpack") // Build production version
+    from("build/processedResources/js/main/importCss.js")
+    into("../server/build/resources/main/moderatorFrontend/")
+  }
+
   register("copyProductionBuildToAllResources") {
-    dependsOn("copyProductionBuildToPostProcessedResources")
     dependsOn("copyProductionBuildToPreProcessedResources")
+    dependsOn("copyProductionBuildToPostProcessedResources")
+    dependsOn("copyResourcesToPreProcessedResources")
+    dependsOn("copyResourcesToPostProcessedResources")
   }
 }
 

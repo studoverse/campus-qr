@@ -1,17 +1,19 @@
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
-import js.objects.jso
 import webcore.extensions.toRoute
 import web.window.window
 import mui.icons.material.Edit
 import mui.material.ButtonColor
 import mui.material.ButtonVariant
+import react.MutableRefObject
+import react.useEffect
+import react.useEffectWithCleanup
+import react.useMemo
 import web.html.HTMLAnchorElement
 import web.dom.Node
 import web.uievents.MouseEvent
 import web.url.URL
-import react.RefObject
 import util.AppRoute
 import util.MbUrl
 import util.get
@@ -21,6 +23,7 @@ import web.history.PopStateEvent
 import web.history.history
 import web.location.location
 import web.scroll.ScrollBehavior
+import web.scroll.ScrollToOptions
 import web.url.URLSearchParams
 import web.window.BeforeUnloadEvent
 import web.window.WindowTarget
@@ -32,7 +35,8 @@ import kotlin.js.Date
 // By implementing this interface the component's instance can be used for adding/removing
 // from the `navigateAwayListeners` list since this hash stays the same.
 interface NavigateAwayObservable {
-  fun shouldNavigateAway(): Boolean
+  // Use a var to store the lambda that can be updated
+  var shouldNavigateAway: () -> Boolean
 }
 
 /**
@@ -45,7 +49,7 @@ object NavigationHandler {
 
   // Global NavigationHandler dialog. Use only in this object.
   // This dialog can pop up above all other dialogs.
-  lateinit var dialogRef: RefObject<MbDialog>
+  lateinit var dialogRef: MutableRefObject<MbDialogRef>
     private set
 
   // Necessary to handle the different causing events in `shouldNavigate()`
@@ -77,7 +81,7 @@ object NavigationHandler {
    */
   fun initApp(
     allUrls: List<MbUrl>,
-    dialogRef: RefObject<MbDialog>,
+    dialogRef: MutableRefObject<MbDialogRef>,
     handleHistoryChange: (newRoute: AppRoute?) -> Unit,
     getCurrentAppRoute: () -> AppRoute?,
   ) {
@@ -111,7 +115,7 @@ object NavigationHandler {
     handleHistoryChange: (newRoute: AppRoute?) -> Unit,
     getCurrentAppRoute: () -> AppRoute?,
   ) {
-    window.addEventListener(BeforeUnloadEvent.beforeUnload(), { event ->
+    window.addEventListener(BeforeUnloadEvent.BEFORE_UNLOAD, { event ->
       if (navigateAwayListeners.any { !it.shouldNavigateAway() }) {
         // Confirmation dialog is only shown when preventDefault is called
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
@@ -120,7 +124,7 @@ object NavigationHandler {
       }
     })
 
-    window.addEventListener(PopStateEvent.popState(), {
+    window.addEventListener(PopStateEvent.POP_STATE, {
       if (currentHistoryState == (history.state as Double?)) {
         // This popstate event is triggered by history.go() in the "stay on page" button callback.
         // We do not want to do anything in this case. Everything history related is already handled in the shouldNavigate() callbacks.
@@ -160,7 +164,7 @@ object NavigationHandler {
       }
     })
 
-    window.addEventListener(MouseEvent.click(), { event ->
+    window.addEventListener(MouseEvent.CLICK, { event ->
       val target = event.target
       if (target != null && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
         // Only handle click for anchor elements
@@ -194,11 +198,11 @@ object NavigationHandler {
     // Otherwise, scroll position from previous route is kept sometimes.
     // We're not 100% sure when it is / isn't reset.
     window.scrollTo(
-      options = jso {
-        top = 0.0
-        left = 0.0
-        behavior = ScrollBehavior.instant
-      }
+      options = ScrollToOptions(
+        top = 0.0,
+        left = 0.0,
+        behavior = ScrollBehavior.instant,
+      )
     )
   }
 
@@ -313,5 +317,27 @@ object NavigationHandler {
     "Leave page",
     "Seite verlassen"
   )
+
+  fun useShouldNavigateAway(shouldNavigateAway: () -> Boolean) {
+    val navigable = useMemo(*emptyArray<Any>()) {
+      object : NavigateAwayObservable {
+        override var shouldNavigateAway: () -> Boolean = shouldNavigateAway
+      }
+    }
+
+    useEffect {
+      // Update shouldNavigateAway with up-to-date state variables.
+      // This is run on every render for DX simplicity.
+      navigable.shouldNavigateAway = shouldNavigateAway
+    }
+
+    useEffectWithCleanup(navigable) {
+      navigateAwayListeners.add(navigable)
+
+      onCleanup {
+        navigateAwayListeners.remove(navigable)
+      }
+    }
+  }
 
 }

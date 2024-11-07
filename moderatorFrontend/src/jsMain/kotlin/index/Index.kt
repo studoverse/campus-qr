@@ -1,25 +1,21 @@
 package index
 
-import app.app
-import kotlinext.js.requireAll
-import kotlinext.js.require
-import react.Fragment
+import app.App
 import react.create
 import react.dom.client.createRoot
 import web.dom.document
 import web.html.HTML
 
+@JsModule("../../importCss.js")
+external fun importAllCss() // Import the JS module
+
 fun main() {
-  requireAll<String>(require.context("../../../../../moderatorFrontend/src/jsMain/kotlin", true, js("/\\.css$/")))
-  requireAll<String>(require.context("normalize.css", true, js("/\\.css$/")))
+  // Load all CSS files into the head as style tags.
+  importAllCss()
 
   val container = document.createElement(HTML.div).also { htmlDivElement ->
     document.body.appendChild(htmlDivElement)
   }
   val root = createRoot(container)
-  root.render(
-    children = Fragment.create {
-      app()
-    }
-  )
+  root.render(App.create())
 }

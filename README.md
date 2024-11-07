@@ -86,6 +86,22 @@ The following environment variables need to be configured:
 * `MONGO_URI` (default: `mongodb://localhost:27017/campus-qr)`: Database URI to store further configuration, locations, check-ins and
   moderation users. Make sure that the database is either not accessible from another host or provide authentication parameters in the URI.
 
+### Moderation Frontend Development: Installing Templates
+
+For a smooth development experience, file and live templates exist.
+One for creating a React function component,
+one for creating the config of the component and one for creating the corresponding controller containing the frontend business logic.
+To copy the custom file templates and live templates to your local IntelliJ configuration available for use in all projects:
+
+- Execute the Run Configuration `InstallTemplates` directly from IntelliJ.
+- Alternatively, run the following command from the project root:
+  ```bash
+  kotlinc -script .idea/InstallTemplates.kts
+  ```
+
+This script will copy the file templates and live templates from `.idea/fileTemplates` and `.idea/liveTemplates` to your local IntelliJ
+configuration.
+
 ## Development compilation
 
 Start the backend application by the IntelliJ run configuration **Server** or alternatively with `./gradlew server:run`. After having the

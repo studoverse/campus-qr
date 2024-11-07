@@ -1,104 +1,67 @@
 package views.accessManagement.accessManagementOverview
 
-import app.AppContext
 import app.appContextToInject
-import com.studo.campusqr.common.payloads.AccessManagementData
-import com.studo.campusqr.common.payloads.ClientAccessManagement
-import com.studo.campusqr.common.payloads.ClientLocation
 import mui.material.*
 import react.*
 import util.*
-import views.accessManagement.AccessManagementDetailsConfig
-import views.accessManagement.AddLocation
+import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
+import views.accessManagement.accessManagementDetails.AccessManagementDetails
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowConfig
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRow
+import views.accessManagement.accessManagementOverview.accessManagementRow.AccessManagementTableRowOperation
 import views.common.*
 import webcore.*
-import webcore.extensions.launch
 import webcore.extensions.toRoute
+import js.lazy.Lazy
+import views.common.ToolbarView.ToolbarButton
+import views.common.ToolbarView.ToolbarView
+import views.common.ToolbarView.ToolbarViewConfig
+import views.common.genericErrorView.GenericErrorViewConfig
+import views.common.genericErrorView.GenericErrorView
 
 external interface ListAccessManagementProps : Props {
-  var locationId: String?
+  var config: AccessManagementListConfig
 }
 
-external interface ListAccessManagementState : State {
-  var accessManagementList: List<ClientAccessManagement>?
-  var clientLocation: ClientLocation?
-  var showAccessManagementImportDialog: Boolean
-  var loadingAccessManagementList: Boolean
-}
+@Lazy
+val AccessManagementList = FcWithCoroutineScope<ListAccessManagementProps> { props, launch ->
+  val controller = ListAccessManagementController.useListAccessManagementController(
+    locationId = props.config.locationId,
+    launch = launch,
+  )
+  val appContext = useContext(appContextToInject)!!
+  val dialogRef = useRef<MbDialogRef>()
 
-private class ListAccessManagement : RComponent<ListAccessManagementProps, ListAccessManagementState>() {
-
-  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
-  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(ListAccessManagement::class) {
-    init {
-      this.contextType = appContextToInject
-    }
-  }
-
-  private val appContext get() = this.asDynamic().context as AppContext
-
-  private val dialogRef = createRef<MbDialog>()
-
-  override fun ListAccessManagementState.init() {
-    accessManagementList = null
-    clientLocation = null
-    showAccessManagementImportDialog = false
-    loadingAccessManagementList = false
-  }
-
-  private fun fetchAccessManagementList() = launch {
-    setState { loadingAccessManagementList = true }
-    val params = props.locationId?.let { "?locationId=$it" } ?: ""
-    val response = NetworkManager.get<AccessManagementData>("$apiBase/access/list$params")
-    setState {
-      accessManagementList = response?.accessManagement?.toList()
-      clientLocation = response?.clientLocation
-      loadingAccessManagementList = false
-    }
-  }
-
-  override fun componentDidUpdate(
-    prevProps: ListAccessManagementProps, prevState: ListAccessManagementState,
-    snapshot: Any
-  ) {
-    if (prevProps.locationId != props.locationId) {
-      setState {
-        init()
-      }
-      fetchAccessManagementList()
-    }
-  }
-
-  override fun componentDidMount() {
-    fetchAccessManagementList()
-  }
-
-  private fun renderAddAccessManagementDialog() = dialogRef.current!!.showDialog(
-    DialogConfig(
+  fun renderAddAccessManagementDialog() = dialogRef.current!!.showDialog(
+    dialogConfig = DialogConfig(
       title = DialogConfig.Title(text = Strings.access_control_create.get()),
-      customContent = DialogConfig.CustomContent(AddLocation::class) {
-        config = AccessManagementDetailsConfig.Create(
-          locationId = props.locationId,
-          dialogRef = dialogRef,
-          onCreated = {
-            fetchAccessManagementList()
+      customContent = {
+        Suspense {
+          AccessManagementDetails {
+            config = AccessManagementDetailsConfig.Create(
+              locationId = props.config.locationId,
+              dialogRef = dialogRef,
+              onCreated = {
+                controller.fetchAccessManagementList()
+              }
+            )
           }
-        )
+        }
       },
     )
   )
 
-  override fun ChildrenBuilder.render() {
-    mbDialog(ref = dialogRef)
-    renderToolbarView(
+  MbDialog { ref = dialogRef }
+  Suspense {
+    ToolbarView {
       config = ToolbarViewConfig(
         title = StringBuilder().apply {
           append(Strings.access_control.get())
           append(" - ")
-          if (state.clientLocation == null) {
+          if (controller.clientLocation == null) {
             append(Strings.access_control_my.get())
           } else {
-            append(state.clientLocation!!.name)
+            append(controller.clientLocation.name)
           }
         }.toString(),
         buttons = listOf(
@@ -106,10 +69,14 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
             text = Strings.access_control_export.get(),
             variant = ButtonVariant.outlined,
             onClick = { routeContext ->
-              if (props.locationId == null) {
+              if (props.config.locationId == null) {
                 routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LIST_EXPORT.toRoute()!!)
               } else {
-                routeContext.pushRoute(Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(pathParams = mapOf("id" to props.locationId!!))!!)
+                routeContext.pushRoute(
+                  Url.ACCESS_MANAGEMENT_LOCATION_LIST_EXPORT.toRoute(
+                    pathParams = mapOf("id" to props.config.locationId!!)
+                  )!!
+                )
               }
             }
           ),
@@ -122,30 +89,32 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
           )
         )
       )
-    )
+    }
+  }
 
-    renderMbLinearProgress(show = state.loadingAccessManagementList)
+  MbLinearProgress { show = controller.loadingAccessManagementList }
 
-    when {
-      state.accessManagementList?.isNotEmpty() == true -> Table {
-        TableHead {
-          TableRow {
-            TableCell { +Strings.location_name.get() }
-            TableCell { +Strings.access_control_time_slots.get() }
-            TableCell { +Strings.access_control_permitted_people.get() }
-            TableCell { +Strings.access_control_note.get() }
-            TableCell { +Strings.actions.get() }
-          }
+  when {
+    controller.accessManagementList?.isNotEmpty() == true -> Table {
+      TableHead {
+        TableRow {
+          TableCell { +Strings.location_name.get() }
+          TableCell { +Strings.access_control_time_slots.get() }
+          TableCell { +Strings.access_control_permitted_people.get() }
+          TableCell { +Strings.access_control_note.get() }
+          TableCell { +Strings.actions.get() }
         }
-        TableBody {
-          state.accessManagementList!!.forEach { accessManagement ->
-            renderAccessManagementRow(
+      }
+      TableBody {
+        Suspense {
+          controller.accessManagementList.forEach { accessManagement ->
+            AccessManagementTableRow {
               config = AccessManagementTableRowConfig(
                 accessManagement = accessManagement,
                 dialogRef = dialogRef,
                 onOperationFinished = { operation, success ->
                   val snackbarText = if (success) {
-                    fetchAccessManagementList()
+                    controller.fetchAccessManagementList()
                     when (operation) {
                       AccessManagementTableRowOperation.Edit -> Strings.access_control_edited_successfully.get()
                       AccessManagementTableRowOperation.Duplicate -> Strings.access_control_duplicated_successfully.get()
@@ -154,24 +123,25 @@ private class ListAccessManagement : RComponent<ListAccessManagementProps, ListA
                   } else {
                     Strings.error_try_again.get()
                   }
-                  appContext.showSnackbar(snackbarText)
+                  appContext.showSnackbarText(snackbarText)
                 }
               )
-            )
+            }
           }
         }
       }
-      state.accessManagementList == null && !state.loadingAccessManagementList -> networkErrorView()
-      !state.loadingAccessManagementList -> genericErrorView(
-        title = Strings.access_control_not_configured_yet.get(),
-        subtitle = Strings.access_control_not_configured_yet_subtitle.get()
-      )
     }
-  }
-}
 
-fun ChildrenBuilder.renderAccessManagementList(locationId: String?) {
-  ListAccessManagement::class.react {
-    this.locationId = locationId
+    controller.accessManagementList == null && !controller.loadingAccessManagementList -> networkErrorView()
+    !controller.loadingAccessManagementList -> {
+      Suspense {
+        GenericErrorView {
+          config = GenericErrorViewConfig(
+            title = Strings.access_control_not_configured_yet.get(),
+            subtitle = Strings.access_control_not_configured_yet_subtitle.get(),
+          )
+        }
+      }
+    }
   }
 }

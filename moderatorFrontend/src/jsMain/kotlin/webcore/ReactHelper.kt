@@ -1,7 +1,8 @@
 package webcore
 
-import kotlinext.js.assign
 import js.objects.jso
+import kotlinext.js.assign
+import kotlinx.coroutines.Job
 import react.*
 
 abstract class RComponent<P : Props, S : State> : Component<P, S> {
@@ -26,3 +27,5 @@ abstract class RComponent<P : Props, S : State> : Component<P, S> {
 fun <S : State> Component<*, S>.setState(buildState: S.() -> Unit) {
   setState({ assign(it, buildState) })
 }
+
+typealias Launch = (suspend () -> Unit) -> Job

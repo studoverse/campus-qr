@@ -24,16 +24,20 @@ suspend fun ApplicationCall.returnModeratorIndexHtml() {
   }
 }
 
-suspend fun ApplicationCall.returnModeratorJs() =
-  respondBytes(moderatorUiJs!!, contentType = ContentType.Text.JavaScript)
-
 // Keep the whole JS in memory to reduce disk IO
-private val moderatorUiJs: ByteArray? = run {
-  val js = getResourceAsStream("/moderatorFrontend/campusqr-admin.js")
+suspend fun ApplicationCall.returnModeratorJs() {
+  val js = getResourceAsStream("/moderatorFrontend/${this.parameters.getAll("jsFileName")!!.joinToString("/")}")
     ?.bufferedReader()
     ?.use { it.readText() }
 
-  js?.toByteArray() // Save as byte array here, so ktor doesn't need any further transformation to stream to client.
+  if (js == null) {
+    respond(HttpStatusCode.NotFound)
+  } else {
+    respondBytes(
+      bytes = js.toByteArray(), // Save as byte array here, so ktor doesn't need any further transformation to stream to client.
+      contentType = ContentType.Text.JavaScript
+    )
+  }
 }
 
 private fun ApplicationCall.addLanguageCookieIfNeeded(language: String) {
@@ -84,9 +88,10 @@ private fun HTML.moderatorIndex(call: ApplicationCall, csrfToken: String) {
       id = "root"
     }
     script {
+      type = "module"
       src = when {
         localDebug -> "/moderatorFrontend.js"
-        else -> "/admin/campusqr-admin.js"
+        else -> "/admin/js/campusqr-admin.js"
       }
     }
   }

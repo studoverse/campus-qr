@@ -1,78 +1,53 @@
 package views.guestCheckIn.guestCheckInOverview
 
-import app.AppContext
-import app.appContextToInject
-import com.studo.campusqr.common.payloads.ActiveCheckIn
+import js.lazy.Lazy
 import mui.material.*
 import react.*
 import util.Strings
-import util.apiBase
 import util.get
 import views.common.*
-import views.guestCheckIn.AddGuestCheckIn
-import views.guestCheckIn.AddGuestCheckInConfig
+import views.common.ToolbarView.ToolbarButton
+import views.common.ToolbarView.ToolbarView
+import views.common.ToolbarView.ToolbarViewConfig
+import views.common.genericErrorView.GenericErrorViewConfig
+import views.common.genericErrorView.GenericErrorView
+import views.guestCheckIn.addGuestCheckIn.AddGuestCheckInConfig
+import views.guestCheckIn.addGuestCheckIn.AddGuestCheckIn
+import views.guestCheckIn.guestCheckInRow.GuestCheckInRowConfig
+import views.guestCheckIn.guestCheckInRow.GuestCheckInRow
 import webcore.*
-import webcore.extensions.launch
 
 external interface GuestCheckinOverviewProps : Props
 
-external interface GuestCheckInOverviewState : State {
-  var activeGuestCheckIns: List<ActiveCheckIn>?
-  var loadingCheckInList: Boolean
-}
+@Lazy
+val GuestCheckInOverview = FcWithCoroutineScope<GuestCheckinOverviewProps> { props, launch ->
+  val controller = GuestCheckInOverviewController.useGuestCheckInOverviewController(
+    launch = launch
+  )
 
-private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, GuestCheckInOverviewState>() {
+  val dialogRef = useRef<MbDialogRef>()
 
-  // Inject AppContext, so that we can use it in the whole class, see https://reactjs.org/docs/context.html#classcontexttype
-  companion object : RStatics<dynamic, dynamic, dynamic, dynamic>(GuestCheckInOverview::class) {
-    init {
-      this.contextType = appContextToInject
-    }
-  }
-
-  private val appContext get() = this.asDynamic().context as AppContext
-
-  private val dialogRef = createRef<MbDialog>()
-
-  override fun GuestCheckInOverviewState.init() {
-    activeGuestCheckIns = emptyList()
-    loadingCheckInList = false
-  }
-
-  private fun fetchActiveGuestCheckIns() = launch {
-    setState { loadingCheckInList }
-    val response = NetworkManager.get<Array<ActiveCheckIn>>("$apiBase/report/listActiveGuestCheckIns")
-    setState {
-      if (response != null) {
-        activeGuestCheckIns = response.toList()
-      } else {
-        appContext.showSnackbar(Strings.error_try_again.get())
-      }
-      loadingCheckInList = false
-    }
-  }
-
-  override fun componentDidMount() {
-    fetchActiveGuestCheckIns()
-  }
-
-  private fun renderAddGuestCheckInDialog() = dialogRef.current!!.showDialog(
-    DialogConfig(
+  fun renderAddGuestCheckInDialog() = dialogRef.current!!.showDialog(
+    dialogConfig = DialogConfig(
       title = DialogConfig.Title(Strings.guest_checkin_add_guest.get()),
-      customContent = DialogConfig.CustomContent(AddGuestCheckIn::class) {
-        config = AddGuestCheckInConfig(
-          dialogRef = dialogRef,
-          onGuestCheckedIn = {
-            fetchActiveGuestCheckIns()
-          },
-        )
+      customContent = {
+        Suspense {
+          AddGuestCheckIn {
+            config = AddGuestCheckInConfig(
+              dialogRef = dialogRef,
+              onGuestCheckedIn = {
+                controller.fetchActiveGuestCheckIns
+              }
+            )
+          }
+        }
       },
     )
   )
 
-  override fun ChildrenBuilder.render() {
-    mbDialog(ref = dialogRef)
-    renderToolbarView(
+  MbDialog { ref = dialogRef }
+  Suspense {
+    ToolbarView {
       config = ToolbarViewConfig(
         title = Strings.guest_checkin.get(),
         buttons = listOf(
@@ -85,41 +60,46 @@ private class GuestCheckInOverview : RComponent<GuestCheckinOverviewProps, Guest
           )
         )
       )
-    )
-    renderMbLinearProgress(show = state.loadingCheckInList)
+    }
+  }
+  MbLinearProgress { show = controller.loadingCheckInList }
 
-    when {
-      state.activeGuestCheckIns?.isNotEmpty() == true -> Table {
-        TableHead {
-          TableRow {
-            TableCell { +Strings.location_name.get() }
-            TableCell { +Strings.email_address.get() }
-            TableCell { +Strings.report_checkin_seat.get() }
-            TableCell { }
-          }
+  when {
+    controller.activeGuestCheckIns?.isNotEmpty() == true -> Table {
+      TableHead {
+        TableRow {
+          TableCell { +Strings.location_name.get() }
+          TableCell { +Strings.email_address.get() }
+          TableCell { +Strings.report_checkin_seat.get() }
+          TableCell { }
         }
-        TableBody {
-          state.activeGuestCheckIns!!.forEach { activeCheckIn ->
-            renderGuestCheckInRow(
+      }
+      TableBody {
+        controller.activeGuestCheckIns.forEach { activeCheckIn ->
+          Suspense {
+            GuestCheckInRow {
               config = GuestCheckInRowConfig(
-                activeCheckIn,
+                activeCheckIn = activeCheckIn,
                 onCheckedOut = {
-                  fetchActiveGuestCheckIns()
-                },
+                  controller.fetchActiveGuestCheckIns()
+                }
               )
-            )
+            }
           }
         }
       }
-      state.activeGuestCheckIns == null && !state.loadingCheckInList -> networkErrorView()
-      !state.loadingCheckInList -> genericErrorView(
-        title = Strings.guest_checkin_not_yet_added_title.get(),
-        subtitle = Strings.guest_checkin_not_yet_added_subtitle.get()
-      )
+    }
+
+    controller.activeGuestCheckIns == null && !controller.loadingCheckInList -> networkErrorView()
+    !controller.loadingCheckInList -> {
+      Suspense {
+        GenericErrorView {
+          config = GenericErrorViewConfig(
+            title = Strings.guest_checkin_not_yet_added_title.get(),
+            subtitle = Strings.guest_checkin_not_yet_added_subtitle.get(),
+          )
+        }
+      }
     }
   }
-}
-
-fun ChildrenBuilder.renderGuestCheckInOverview() {
-  GuestCheckInOverview::class.react {}
 }

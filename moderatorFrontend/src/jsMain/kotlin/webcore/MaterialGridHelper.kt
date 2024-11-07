@@ -18,9 +18,11 @@ fun ChildrenBuilder.gridContainer(
   spacing: Int = 1,
   alignItems: AlignItems = AlignItems.baseline,
   containerStyle: String? = null,
+  key: String = "gridContainer1",
   items: ChildrenBuilder.() -> Unit
 ) {
   Grid {
+    this.key = key // Use static key to prevent component from being created from scratch after every render.
     sx {
       this.alignItems = alignItems
       alignContent = columnGravity
@@ -48,9 +50,11 @@ fun ChildrenBuilder.gridContainer(
 fun ChildrenBuilder.gridItem(
   size: GridSize = GridSize(xs = false),
   className: String? = null,
+  key: String = "gridItem1",
   item: ChildrenBuilder.() -> Unit
 ) {
   Grid {
+    this.key = key // Use static key to prevent component from being created from scratch after every render.
     className?.let { this.className = ClassName(it) }
     this.item = true
     size.xs?.let { xs = it }
