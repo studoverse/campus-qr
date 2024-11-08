@@ -23,8 +23,8 @@ const cssConf = {
     }
   ],
   include: [
-    path.resolve(__dirname, 'src'), // Include the source directory
-    path.resolve(__dirname, 'build/js/node_modules/normalize.css'), // Adjust to include normalize.css in the build path
+    path.resolve(__dirname, '../src'), // Include the source directory
+    path.resolve(__dirname, '../build/js/node_modules/normalize.css'), // Adjust to include normalize.css in the build path
   ]
 };
 
