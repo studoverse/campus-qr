@@ -7,9 +7,11 @@ import com.studo.campusqr.utils.getCsrfToken
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.response.*
 import io.ktor.util.date.*
 import kotlinx.html.*
+import java.io.InputStream
 
 /**
  * This file contains everything we need to serve the moderation frontend.
@@ -24,19 +26,35 @@ suspend fun ApplicationCall.returnModeratorIndexHtml() {
   }
 }
 
+private fun getCampusQrResource(uri: String): String {
+  // Reject paths with `..` to prevent moving up directories.
+  if (uri.contains("..")) {
+    throw IllegalArgumentException("Invalid resource path: '$uri'. Access to parent directories is not allowed.")
+  }
+
+  return getCampusQrResourceAsStream(uri)
+    .bufferedReader()
+    .use { it.readText() }
+}
+
+private fun getCampusQrResourceAsStream(uri: String): InputStream {
+  // Reject paths with `..` to prevent moving up directories.
+  if (uri.contains("..")) {
+    throw IllegalArgumentException("Invalid resource path: '$uri'. Access to parent directories is not allowed.")
+  }
+
+  return getResourceAsStream("/moderatorFrontend/$uri")
+    ?: throw NotFoundException(
+      "Can't find resource $uri${if (localDebug) " .You need to bundle this for local use!" else ""}"
+    )
+}
+
 // Keep the whole JS in memory to reduce disk IO
 suspend fun ApplicationCall.returnModeratorJs() {
-  val js = getResourceAsStream("/moderatorFrontend/${this.parameters.getAll("jsFileName")!!.joinToString("/")}")
-    ?.bufferedReader()
-    ?.use { it.readText() }
+  val js = getCampusQrResourceAsStream(parameters.getAll("jsFileName")!!.joinToString("/"))
 
-  if (js == null) {
-    respond(HttpStatusCode.NotFound)
-  } else {
-    respondBytes(
-      bytes = js.toByteArray(), // Save as byte array here, so ktor doesn't need any further transformation to stream to client.
-      contentType = ContentType.Text.JavaScript
-    )
+  respondOutputStream(ContentType.Text.JavaScript) {
+    js.copyTo(this)
   }
 }
 
