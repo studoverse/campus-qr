@@ -9,6 +9,7 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.response.*
+import io.ktor.server.util.normalizePathComponents
 import io.ktor.util.date.*
 import kotlinx.html.*
 import java.io.InputStream
@@ -27,35 +28,28 @@ suspend fun ApplicationCall.returnModeratorIndexHtml() {
 }
 
 private fun getCampusQrResource(uri: String): String {
-  // Reject paths with `..` to prevent moving up directories.
-  if (uri.contains("..")) {
-    throw IllegalArgumentException("Invalid resource path: '$uri'. Access to parent directories is not allowed.")
-  }
-
   return getCampusQrResourceAsStream(uri)
     .bufferedReader()
     .use { it.readText() }
 }
 
 private fun getCampusQrResourceAsStream(uri: String): InputStream {
-  // Reject paths with `..` to prevent moving up directories.
-  if (uri.contains("..")) {
-    throw IllegalArgumentException("Invalid resource path: '$uri'. Access to parent directories is not allowed.")
-  }
-
   return getResourceAsStream("/moderatorFrontend/$uri")
     ?: throw NotFoundException(
       "Can't find resource $uri${if (localDebug) " .You need to bundle this for local use!" else ""}"
     )
 }
 
-// Keep the whole JS in memory to reduce disk IO
-suspend fun ApplicationCall.returnModeratorJs() {
-  val js = getCampusQrResourceAsStream(parameters.getAll("jsFileName")!!.joinToString("/"))
-
+private suspend fun ApplicationCall.respondStream() {
+  val path = parameters.getAll("jsFileName")!!.normalizePathComponents().joinToString("/")
+  val js = getCampusQrResourceAsStream(path)
   respondOutputStream(ContentType.Text.JavaScript) {
     js.copyTo(this)
   }
+}
+
+suspend fun ApplicationCall.returnModeratorJs() {
+  respondStream()
 }
 
 private fun ApplicationCall.addLanguageCookieIfNeeded(language: String) {
