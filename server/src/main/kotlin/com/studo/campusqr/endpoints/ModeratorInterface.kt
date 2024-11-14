@@ -9,9 +9,10 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.response.*
-import io.ktor.server.util.normalizePathComponents
+import io.ktor.util.combineSafe
 import io.ktor.util.date.*
 import kotlinx.html.*
+import java.io.File
 import java.io.InputStream
 
 /**
@@ -34,17 +35,19 @@ private fun getCampusQrResource(uri: String): String {
 }
 
 private fun getCampusQrResourceAsStream(uri: String): InputStream {
-  return getResourceAsStream("/moderatorFrontend/$uri")
+  val dir = File("/moderatorFrontend/")
+  return getResourceAsStream(dir.combineSafe(uri).path)
     ?: throw NotFoundException(
       "Can't find resource $uri${if (localDebug) " .You need to bundle this for local use!" else ""}"
     )
 }
 
 private suspend fun ApplicationCall.respondStream() {
-  val path = parameters.getAll("jsFileName")!!.normalizePathComponents().joinToString("/")
-  val js = getCampusQrResourceAsStream(path)
-  respondOutputStream(ContentType.Text.JavaScript) {
-    js.copyTo(this)
+  val relativePath = parameters.getAll("jsFileName")!!.joinToString("/")
+  getCampusQrResourceAsStream(relativePath).use {
+    respondOutputStream(ContentType.Text.JavaScript) {
+      it.copyTo(this)
+    }
   }
 }
 
