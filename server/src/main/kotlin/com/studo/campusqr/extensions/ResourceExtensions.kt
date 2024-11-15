@@ -10,7 +10,7 @@ fun getDirectoryContentPath(path: String): List<String>? {
   val resource = Server::class.java.getResource(path) ?: return null
   return if (resource.protocol == "file") {
     // Development: List files in the directory
-    File(resource.toURI()).listFiles()?.map { it.name }
+    File(resource.toURI()).listFiles()?.filter { it.isFile }?.map { it.name }
   } else if (resource.protocol == "jar") {
     // Production: List files inside the JAR
     val jarFilePath = resource.path
