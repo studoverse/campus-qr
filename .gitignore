@@ -76,4 +76,3 @@ atlassian-ide-plugin.xml
 hs_err_pid*
 
 /server/src/main/resources/moderatorFrontend/
-/server/src/main/resources/importCss.js
