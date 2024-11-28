@@ -16,6 +16,7 @@ const cssConf = {
       loader: 'css-loader', // Convert CSS to JS module by resolving import/require (es-modules/commonjs)
       options: {
         importLoaders: 1,
+        sourceMap: true, // Enable source maps for CSS
         modules: {
           auto: (resourcePath) => resourcePath.endsWith('.module.css'),
         },
@@ -29,6 +30,8 @@ const cssConf = {
 };
 
 config.module.rules.push(cssConf);
+
+config.devtool = 'source-map';
 
 if (process.env.NODE_ENV === 'development') {
   config.plugins.push(new BundleAnalyzerPlugin({

@@ -68,6 +68,7 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
         Suspense {
           controller.userList.forEach { user ->
             UserTableRow {
+              key = user.id
               config = UserTableRowConfig(
                 user = user,
                 dialogRef = dialogRef,

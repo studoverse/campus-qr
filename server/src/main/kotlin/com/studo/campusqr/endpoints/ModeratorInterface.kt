@@ -1,5 +1,7 @@
 package com.studo.campusqr.endpoints
 
+import com.studo.campusqr.extensions.filterValuesNotNull
+import com.studo.campusqr.extensions.getDirectoryContentPath
 import com.studo.campusqr.extensions.getResourceAsStream
 import com.studo.campusqr.extensions.language
 import com.studo.campusqr.localDebug
@@ -7,6 +9,7 @@ import com.studo.campusqr.utils.getCsrfToken
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.response.*
 import io.ktor.util.date.*
 import kotlinx.html.*
@@ -14,6 +17,10 @@ import kotlinx.html.*
 /**
  * This file contains everything we need to serve the moderation frontend.
  */
+
+@Target(AnnotationTarget.PROPERTY)
+@RequiresOptIn("Use getCachedResource to access resources.")
+annotation class InternalResourceUsage
 
 suspend fun ApplicationCall.returnModeratorIndexHtml() {
   response.headers.append("Cache-Control", "no-cache") // Don't cache because of CSRF token
@@ -24,20 +31,37 @@ suspend fun ApplicationCall.returnModeratorIndexHtml() {
   }
 }
 
-// Keep the whole JS in memory to reduce disk IO
-suspend fun ApplicationCall.returnModeratorJs() {
-  val js = getResourceAsStream("/moderatorFrontend/${this.parameters.getAll("jsFileName")!!.joinToString("/")}")
-    ?.bufferedReader()
-    ?.use { it.readText() }
-
-  if (js == null) {
-    respond(HttpStatusCode.NotFound)
-  } else {
-    respondBytes(
-      bytes = js.toByteArray(), // Save as byte array here, so ktor doesn't need any further transformation to stream to client.
-      contentType = ContentType.Text.JavaScript
-    )
+@InternalResourceUsage
+private val projectResources: Map<String, ByteArray> by lazy {
+  fun getCampusQrResource(uri: String): ByteArray? {
+    return getResourceAsStream(uri)
+      ?.bufferedReader()
+      ?.use { it.readText() } // Changes only on re-deployment
+      ?.toByteArray()
   }
+
+  getDirectoryContentPath("/moderatorFrontend")!!
+    .filter { it.endsWith(".js") || it.endsWith(".js.map") }
+    .associate { path ->
+      path.removePrefix("/moderatorFrontend/") to getCampusQrResource(path)
+    }.filterValuesNotNull()
+}
+
+@OptIn(InternalResourceUsage::class)
+private fun getCachedResource(uri: String): ByteArray {
+  return projectResources[uri] ?: throw NotFoundException("Resource not found: $uri")
+}
+
+private suspend fun ApplicationCall.respondResource() {
+  val relativePath = parameters.getAll("jsFileName")!!.joinToString("/")
+  respondBytes(
+    bytes = getCachedResource(relativePath),
+    contentType = ContentType.Text.JavaScript
+  )
+}
+
+suspend fun ApplicationCall.returnModeratorJs() {
+  respondResource()
 }
 
 private fun ApplicationCall.addLanguageCookieIfNeeded(language: String) {
