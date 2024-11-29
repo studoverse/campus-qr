@@ -11,5 +11,5 @@ external interface ${NAME}Props : Props {
 
 @Lazy
 val ${NAME} = FcWithCoroutineScope<${NAME}Props> { props, launch ->
-  val controller = ${NAME}Controller.use${NAME}Controller(launch = launch)
+  val controller = ${NAME}Controller.use(launch = launch)
 }
