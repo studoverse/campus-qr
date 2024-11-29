@@ -11,7 +11,7 @@
       <option name="KOTLIN_TOPLEVEL" value="true" />
     </context>
   </template>
-  <template name="reactconfig" value="class $COMPONENT_NAME$Config(&#10;  &#10;)" description="React functional component config template" toReformat="false" toShortenFQNames="true">
+  <template name="reactconfig" value="class $COMPONENT_NAME$(&#10;  &#10;)" description="React functional component config template" toReformat="false" toShortenFQNames="true">
     <variable name="COMPONENT_NAME" expression="inputString()" defaultValue="" alwaysStopAt="true" />
   </template>
 </templateSet>
