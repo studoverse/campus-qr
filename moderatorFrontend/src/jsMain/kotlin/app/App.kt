@@ -38,7 +38,7 @@ object GlobalCss {
 }
 
 val App = FcWithCoroutineScope<AppProps> { props, launch ->
-  val controller = AppController.useAppController(launch = launch)
+  val controller = AppController.use(launch = launch)
 
   document.body?.style?.backgroundColor = "white"
 

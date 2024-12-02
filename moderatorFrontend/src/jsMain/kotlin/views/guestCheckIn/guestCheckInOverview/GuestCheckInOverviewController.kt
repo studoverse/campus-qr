@@ -20,7 +20,7 @@ data class GuestCheckInOverviewController(
   val fetchActiveGuestCheckIns: () -> Job,
 ) {
   companion object {
-    fun useGuestCheckInOverviewController(launch: Launch): GuestCheckInOverviewController {
+    fun use(launch: Launch): GuestCheckInOverviewController {
       val appContext = useContext(appContextToInject)!!
 
       var activeGuestCheckIns: List<ActiveCheckIn>? by useState<List<ActiveCheckIn>?>(null)

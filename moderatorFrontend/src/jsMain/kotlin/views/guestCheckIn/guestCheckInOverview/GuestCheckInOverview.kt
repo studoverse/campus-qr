@@ -21,7 +21,7 @@ external interface GuestCheckinOverviewProps : Props
 
 @Lazy
 val GuestCheckInOverview = FcWithCoroutineScope<GuestCheckinOverviewProps> { props, launch ->
-  val controller = GuestCheckInOverviewController.useGuestCheckInOverviewController(
+  val controller = GuestCheckInOverviewController.use(
     launch = launch
   )
 

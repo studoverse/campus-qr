@@ -20,7 +20,7 @@ data class ListAccessManagementController(
   val fetchAccessManagementList: () -> Job,
 ) {
   companion object {
-    fun useListAccessManagementController(locationId: String?, launch: Launch): ListAccessManagementController {
+    fun use(locationId: String?, launch: Launch): ListAccessManagementController {
       var accessManagementList: List<ClientAccessManagement>? by useState<List<ClientAccessManagement>?>(null)
       var clientLocation: ClientLocation? by useState(null)
       var showAccessManagementImportDialog: Boolean by useState(false)

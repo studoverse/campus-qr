@@ -21,7 +21,7 @@ external interface ListAccessManagementExportProps : Props {
 
 @Lazy
 val ListAccessManagementExport = FcWithCoroutineScope<ListAccessManagementExportProps> { props, launch ->
-  val controller = ListAccessManagementExportController.useListAccessManagementExportController(props = props, launch = launch)
+  val controller = ListAccessManagementExportController.use(props = props, launch = launch)
 
   Suspense {
     ToolbarView {

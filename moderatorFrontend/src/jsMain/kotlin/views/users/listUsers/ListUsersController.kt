@@ -17,7 +17,7 @@ data class ListUsersController(
   val handleCreateOrAddUserResponse: (response: String?) -> Unit,
 ) {
   companion object {
-    fun useListUsersController(
+    fun use(
       launch: Launch
     ): ListUsersController {
       var userList by useState<List<ClientUser>?>(null)

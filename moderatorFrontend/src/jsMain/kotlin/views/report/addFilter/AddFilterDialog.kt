@@ -18,7 +18,7 @@ external interface AddFilterProps : Props {
 
 @Lazy
 val AddFilter = FcWithCoroutineScope<AddFilterProps> { props, launch ->
-  val controller = AddFilterController.useAddFilterController(
+  val controller = AddFilterController.use(
     launch = launch,
     config = props.config,
   )

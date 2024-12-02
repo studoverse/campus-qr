@@ -24,7 +24,7 @@ external interface ListLocationsProps : Props
 
 @Lazy
 val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
-  val controller = ListLocationsController.useListLocationsController(launch = launch)
+  val controller = ListLocationsController.use(launch = launch)
   val appContext = useContext(appContextToInject)!!
 
   MbDialog { ref = controller.dialogRef }

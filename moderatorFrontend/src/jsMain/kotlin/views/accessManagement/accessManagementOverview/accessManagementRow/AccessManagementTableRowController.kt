@@ -15,7 +15,7 @@ data class AccessManagementTableRowController(
   val deleteMenuItemOnClick: () -> Unit,
 ) {
   companion object {
-    fun useAccessManagementRowController(launch: Launch, config: AccessManagementTableRowConfig): AccessManagementTableRowController {
+    fun use(launch: Launch, config: AccessManagementTableRowConfig): AccessManagementTableRowController {
       val duplicateMenuItemOnClick: () -> Unit = {
         launch {
           val response = NetworkManager.post<String>("$apiBase/access/${config.accessManagement.id}/duplicate")
