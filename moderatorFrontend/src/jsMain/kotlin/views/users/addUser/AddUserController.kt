@@ -41,7 +41,7 @@ data class AddUserController(
   val userPermissionsOnChange: (userPermission: UserPermission, event: ChangeEvent<HTMLInputElement>, checked: Boolean) -> Unit,
 ) {
   companion object {
-    fun useUserController(
+    fun use(
       user: ClientUser?,
       onFinished: (response: String?) -> Unit,
       launch: Launch

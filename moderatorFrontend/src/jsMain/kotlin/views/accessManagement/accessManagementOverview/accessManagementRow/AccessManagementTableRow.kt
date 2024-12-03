@@ -27,7 +27,7 @@ external interface AccessManagementTableRowProps : Props {
 
 @Lazy
 val AccessManagementTableRow = FcWithCoroutineScope<AccessManagementTableRowProps> { props, launch ->
-  val controller = AccessManagementTableRowController.useAccessManagementRowController(
+  val controller = AccessManagementTableRowController.use(
     launch = launch,
     config = props.config
   )

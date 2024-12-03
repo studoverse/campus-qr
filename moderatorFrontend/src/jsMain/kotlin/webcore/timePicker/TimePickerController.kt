@@ -19,7 +19,7 @@ data class TimePickerController(
   val newBrowsersTimeTextFieldOnChange: TextFieldOnChange,
 ) {
   companion object {
-    fun useTimePickerController(config: TimePickerConfig, launch: Launch): TimePickerController {
+    fun use(config: TimePickerConfig, launch: Launch): TimePickerController {
       val timeValue = config.time.toInputTypeTimeValueString()
       var oldBrowsersInputValues: TimeInputValues by useState(TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1]))
 

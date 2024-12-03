@@ -7,7 +7,7 @@ data class ${NAME}(
   
 ) {
   companion object {
-    fun use${NAME}(launch: Launch): ${NAME} {
+    fun use(launch: Launch): ${NAME} {
       
       return ${NAME}(
         

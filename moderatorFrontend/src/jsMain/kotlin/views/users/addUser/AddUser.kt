@@ -24,7 +24,7 @@ external interface AddUserProps : Props {
 
 @Lazy
 val AddUser = FcWithCoroutineScope<AddUserProps> { props, launch ->
-  var controller = AddUserController.useUserController(
+  var controller = AddUserController.use(
     user = (props.config as? AddUserConfig.Edit)?.user,
     onFinished = props.config.onFinished,
     launch = launch,

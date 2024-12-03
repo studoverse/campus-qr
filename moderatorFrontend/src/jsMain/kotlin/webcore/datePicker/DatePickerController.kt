@@ -22,7 +22,7 @@ data class DatePickerController(
   val newBrowsersDateTextFieldOnChange: TextFieldOnChange,
 ) {
   companion object {
-    fun useDatePickerController(config: DatePickerConfig, launch: Launch): DatePickerController {
+    fun use(config: DatePickerConfig, launch: Launch): DatePickerController {
       val year = config.date.getFullYear()
       val month = config.date.getMonth() + 1
       val day = config.date.getDate()

@@ -20,7 +20,7 @@ external interface AddGuestCheckInProps : Props {
 
 @Lazy
 val AddGuestCheckIn = FcWithCoroutineScope<AddGuestCheckInProps> { props, launch ->
-  val controller = AddGuestCheckInController.useAddGuestCheckInController(
+  val controller = AddGuestCheckInController.use(
     launch = launch,
     props = props,
   )

@@ -51,7 +51,7 @@ data class AccessManagementDetailsController(
   val createAccessControlOnClick: (config: AccessManagementDetailsConfig) -> Unit,
 ) {
   companion object {
-    fun useAccessManagementDetailsController(config: AccessManagementDetailsConfig, launch: Launch): AccessManagementDetailsController {
+    fun use(config: AccessManagementDetailsConfig, launch: Launch): AccessManagementDetailsController {
       var locationFetchInProgress: Boolean by useState(false)
       var showProgress: Boolean by useState(false)
       var locationNameToLocationMap: Map<String, ClientLocation> by useState(emptyMap())

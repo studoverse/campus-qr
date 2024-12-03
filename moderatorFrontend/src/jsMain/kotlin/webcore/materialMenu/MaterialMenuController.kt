@@ -14,7 +14,7 @@ data class MaterialMenuController(
   val onItemClick: (item: MaterialMenuConfig.Companion.MenuItem) -> Unit,
 ) {
   companion object {
-    fun useMaterialMenuController(launch: Launch): MaterialMenuController {
+    fun use(launch: Launch): MaterialMenuController {
       var open: Boolean by useState(false)
       var anchorEl: Element? by useState(null)
 

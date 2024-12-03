@@ -6,7 +6,6 @@ import com.studo.campusqr.common.payloads.EditSeatFilter
 import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
 import kotlinx.coroutines.Job
-import react.dom.events.ChangeEvent
 import react.useContext
 import react.useState
 import util.Strings
@@ -34,7 +33,7 @@ data class ReportController(
   val emailTextFieldOnChange: TextFieldOnChange,
 ) {
   companion object {
-    fun useReportController(launch: Launch): ReportController {
+    fun use(launch: Launch): ReportController {
       val appContext = useContext(appContextToInject)!!
 
       var emailTextFieldValue: String by useState("")

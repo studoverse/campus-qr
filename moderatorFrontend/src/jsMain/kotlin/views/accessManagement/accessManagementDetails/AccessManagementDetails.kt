@@ -22,7 +22,7 @@ external interface AccessManagementDetailsProps : Props {
 
 @Lazy
 val AccessManagementDetails = FcWithCoroutineScope<AccessManagementDetailsProps> { props, launch ->
-  val controller = AccessManagementDetailsController.useAccessManagementDetailsController(config = props.config, launch = launch)
+  val controller = AccessManagementDetailsController.use(config = props.config, launch = launch)
 
   fun ChildrenBuilder.renderNoteTextField() {
     TextField {

@@ -27,7 +27,7 @@ external interface TimePickerProps : Props {
 
 @Lazy
 val TimePicker = FcWithCoroutineScope<TimePickerProps> { props, launch ->
-  val controller: TimePickerController = TimePickerController.useTimePickerController(config = props.config, launch = launch)
+  val controller: TimePickerController = TimePickerController.use(config = props.config, launch = launch)
 
   val stepListId = useMemo(*emptyArray<Any>()) { "timestep-list${hashCode()}" }
 

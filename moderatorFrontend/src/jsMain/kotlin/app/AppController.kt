@@ -63,7 +63,7 @@ data class AppController(
   val renderViewContent: ChildrenBuilder.() -> Unit,
 ) {
   companion object {
-    fun useAppController(launch: Launch): AppController {
+    fun use(launch: Launch): AppController {
       var userData: UserData? by useState(null)
       var userDataRef = useRef(userData) // Needed to avoid function closure issues in handleHistoryChange
       var loadingUserData: Boolean by useState(true)

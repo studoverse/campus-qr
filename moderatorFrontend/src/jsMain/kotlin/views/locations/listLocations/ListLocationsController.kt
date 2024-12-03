@@ -33,7 +33,7 @@ data class ListLocationsController(
   val locationTableRowOnDeleteFinished: (String?) -> Unit,
 ) {
   companion object {
-    fun useListLocationsController(launch: Launch): ListLocationsController {
+    fun use(launch: Launch): ListLocationsController {
       var locationList: List<ClientLocation>? by useState(null)
       var loadingLocationList: Boolean by useState(false)
 

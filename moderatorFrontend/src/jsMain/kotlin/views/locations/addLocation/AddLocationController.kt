@@ -27,7 +27,7 @@ data class AddLocationController(
   val createOrEditLocationIfInputValid: ButtonOnClick,
 ) {
   companion object {
-    fun useAddLocationController(config: AddLocationConfig, launch: Launch): AddLocationController {
+    fun use(config: AddLocationConfig, launch: Launch): AddLocationController {
       var locationCreationInProgress: Boolean by useState(false)
       var locationTextFieldValue: String by useState((config as? AddLocationConfig.Edit)?.location?.name ?: "")
       var locationTextFieldError: String by useState("")

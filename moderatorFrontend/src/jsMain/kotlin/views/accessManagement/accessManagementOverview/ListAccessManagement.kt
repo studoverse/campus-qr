@@ -25,7 +25,7 @@ external interface ListAccessManagementProps : Props {
 
 @Lazy
 val AccessManagementList = FcWithCoroutineScope<ListAccessManagementProps> { props, launch ->
-  val controller = ListAccessManagementController.useListAccessManagementController(
+  val controller = ListAccessManagementController.use(
     locationId = props.config.locationId,
     launch = launch,
   )

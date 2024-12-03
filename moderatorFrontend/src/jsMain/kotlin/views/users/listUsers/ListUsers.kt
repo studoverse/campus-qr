@@ -19,7 +19,7 @@ external interface ListUsersProps : Props
 
 @Lazy
 val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
-  val controller = ListUsersController.useListUsersController(
+  val controller = ListUsersController.use(
     launch = launch,
   )
 

@@ -22,7 +22,7 @@ external interface AddLocationProps : Props {
 
 @Lazy
 val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
-  val controller = AddLocationController.useAddLocationController(config = props.config, launch = launch)
+  val controller = AddLocationController.use(config = props.config, launch = launch)
 
   MbLinearProgress { show = controller.locationCreationInProgress }
 

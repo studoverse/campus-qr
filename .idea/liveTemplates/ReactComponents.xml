@@ -1,17 +1,17 @@
 <templateSet group="ReactComponents">
-  <template name="reactcomponent" value="import js.lazy.Lazy&#10;&#10;external interface $COMPONENT_NAME$Props : Props {&#10;  var config: $COMPONENT_NAME$Config&#10;}&#10;&#10;@Lazy&#10;val $COMPONENT_NAME$ = FcWithCoroutineScope&lt;$COMPONENT_NAME$Props&gt; { props, launch -&gt;&#10;  val controller = $COMPONENT_NAME$Controller.use$COMPONENT_NAME$Controller(launch = launch)&#10;}" description="React functional component template" toReformat="false" toShortenFQNames="true">
+  <template name="reactcomponent" value="import js.lazy.Lazy&#10;&#10;external interface $COMPONENT_NAME$Props : Props {&#10;  var config: $COMPONENT_NAME$Config&#10;}&#10;&#10;@Lazy&#10;val $COMPONENT_NAME$ = FcWithCoroutineScope&lt;$COMPONENT_NAME$Props&gt; { props, launch -&gt;&#10;  val controller = $COMPONENT_NAME$Controller.use(launch = launch)&#10;}" description="React functional component template" toReformat="false" toShortenFQNames="true">
     <variable name="COMPONENT_NAME" expression="inputString()" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="KOTLIN_TOPLEVEL" value="true" />
     </context>
   </template>
-  <template name="reactcontroller" value="data class $COMPONENT_NAME$(&#10;  &#10;) {&#10;  companion object {&#10;    fun use$COMPONENT_NAME$(launch: Launch): $COMPONENT_NAME$ {&#10;      &#10;      return $COMPONENT_NAME$(&#10;        &#10;      )&#10;    }&#10;  }&#10;}" description="React functional component controller hook template" toReformat="false" toShortenFQNames="true">
+  <template name="reactcontroller" value="data class $COMPONENT_NAME$(&#10;  &#10;) {&#10;  companion object {&#10;    fun use(launch: Launch): $COMPONENT_NAME$ {&#10;      &#10;      return $COMPONENT_NAME$(&#10;        &#10;      )&#10;    }&#10;  }&#10;}" description="React functional component controller hook template" toReformat="false" toShortenFQNames="true">
     <variable name="COMPONENT_NAME" expression="inputString()" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="KOTLIN_TOPLEVEL" value="true" />
     </context>
   </template>
-  <template name="reactconfig" value="class $COMPONENT_NAME$Config(&#10;  &#10;)" description="React functional component config template" toReformat="false" toShortenFQNames="true">
+  <template name="reactconfig" value="class $COMPONENT_NAME$(&#10;  &#10;)" description="React functional component config template" toReformat="false" toShortenFQNames="true">
     <variable name="COMPONENT_NAME" expression="inputString()" defaultValue="" alwaysStopAt="true" />
   </template>
 </templateSet>

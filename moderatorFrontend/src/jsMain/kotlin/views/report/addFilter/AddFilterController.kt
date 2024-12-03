@@ -14,7 +14,7 @@ data class AddFilterController(
   val applyButtonOnClick: ButtonOnClick,
 ) {
   companion object {
-    fun useAddFilterController(launch: Launch, config: AddFilterConfig): AddFilterController {
+    fun use(launch: Launch, config: AddFilterConfig): AddFilterController {
       var filterOptions: List<Int> by useState(
         config.userLocation.locationSeatCount?.let { seatCount ->
           (1..seatCount).map { it }.filter { it != config.userLocation.seat }

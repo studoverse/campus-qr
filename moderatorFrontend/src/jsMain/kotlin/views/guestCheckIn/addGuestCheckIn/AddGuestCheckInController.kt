@@ -38,7 +38,7 @@ data class AddGuestCheckInController(
   val seatInputAutocompleteOnChange: AutocompleteOnChange<Int>,
 ) {
   companion object {
-    fun useAddGuestCheckInController(launch: Launch, props: AddGuestCheckInProps): AddGuestCheckInController {
+    fun use(launch: Launch, props: AddGuestCheckInProps): AddGuestCheckInController {
       val appContext = useContext(appContextToInject)!!
       var locationFetchInProgress: Boolean by useState(false)
       var showProgress: Boolean by useState(false)

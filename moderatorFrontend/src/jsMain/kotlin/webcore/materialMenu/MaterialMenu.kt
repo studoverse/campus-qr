@@ -20,7 +20,7 @@ external interface MaterialMenuProps : Props {
 
 @Lazy
 val MaterialMenu = FcWithCoroutineScope<MaterialMenuProps> { props, launch ->
-  val controller: MaterialMenuController = MaterialMenuController.useMaterialMenuController(launch = launch)
+  val controller: MaterialMenuController = MaterialMenuController.use(launch = launch)
 
   val ariaId = "name-menu-${Random.randomNumberString()}"
 

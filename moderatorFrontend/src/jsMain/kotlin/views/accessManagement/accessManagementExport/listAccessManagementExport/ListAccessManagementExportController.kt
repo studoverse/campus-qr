@@ -17,7 +17,7 @@ data class ListAccessManagementExportController(
   val fetchAccessManagementList: () -> Job
 ) {
   companion object {
-    fun useListAccessManagementExportController(props: ListAccessManagementExportProps, launch: Launch):
+    fun use(props: ListAccessManagementExportProps, launch: Launch):
         ListAccessManagementExportController {
       var permitList: List<AccessManagementExportData.Permit>? by useState(null)
       var clientLocation: ClientLocation? by useState(null)

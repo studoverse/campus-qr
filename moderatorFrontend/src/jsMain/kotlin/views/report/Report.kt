@@ -30,7 +30,7 @@ external interface ReportProps : Props
 
 @Lazy
 val Report = FcWithCoroutineScope<ReportProps> { props, launch ->
-  val controller = ReportController.useReportController(
+  val controller = ReportController.use(
     launch = launch,
   )
 
