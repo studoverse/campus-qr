@@ -15,7 +15,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
-import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
@@ -26,6 +26,7 @@ import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.Duration
 
@@ -37,6 +38,12 @@ val localDebug: Boolean = System.getenv("DEBUG") == "true"
 lateinit var authProvider: AuthProvider
 
 suspend fun main() {
+  // TODO: @mh To test if the updated setLogLevel function works as expected.
+  /*setLogLevel("com.example", Level.DEBUG)
+  val logger = LoggerFactory.getLogger("com.example")
+  logger.info("This is an INFO message")
+  logger.debug("This is a DEBUG message")*/
+
   initialDatabaseSetup()
 
   authProvider = getAuthProvider()

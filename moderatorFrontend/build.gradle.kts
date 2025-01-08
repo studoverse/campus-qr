@@ -8,9 +8,9 @@ plugins {
   id("io.github.turansky.seskar") version "3.50.1"
 }
 
-val ktor_version: String = "2.3.12" // https://github.com/ktorio/ktor/releases
+val ktor_version: String = "3.0.3" // https://github.com/ktorio/ktor/releases
 val kotlinx_html_version: String = "0.11.0" // https://github.com/Kotlin/kotlinx.html/releases
-val kotlinx_serialization_version: String = "1.7.3" // https://github.com/Kotlin/kotlinx.serialization/releases
+val kotlinx_serialization_version: String = "1.8.0" // https://github.com/Kotlin/kotlinx.serialization/releases
 val kotlinx_coroutines_version: String = "1.9.0" // https://github.com/Kotlin/kotlinx.coroutines/releases
 
 repositories {
