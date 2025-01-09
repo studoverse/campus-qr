@@ -38,11 +38,11 @@ val localDebug: Boolean = System.getenv("DEBUG") == "true"
 lateinit var authProvider: AuthProvider
 
 suspend fun main() {
-  // TODO: @mh To test if the updated setLogLevel function works as expected.
-  /*setLogLevel("com.example", Level.DEBUG)
+  // TODO: @mh Remove after testing updated logging dependencies.
+  setLogLevel("com.example", Level.DEBUG)
   val logger = LoggerFactory.getLogger("com.example")
-  logger.info("This is an INFO message")
-  logger.debug("This is a DEBUG message")*/
+  logger.info("This is an example INFO message")
+  logger.debug("This is an example DEBUG message")
 
   initialDatabaseSetup()
 
@@ -56,10 +56,9 @@ suspend fun main() {
   embeddedServer(
     Netty,
     port = System.getenv("PORT")?.toIntOrNull() ?: 8070,
-    host = System.getenv("HOST") ?: "0.0.0.0"
-  ) {
-    ktorServerModule()
-  }.start(wait = true)
+    host = System.getenv("HOST") ?: "0.0.0.0",
+    module = Application::ktorServerModule,
+  ).start(wait = true)
 }
 
 private fun Application.ktorServerModule() {

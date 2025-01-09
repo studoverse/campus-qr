@@ -39,11 +39,11 @@ dependencies {
   implementation("com.fasterxml.jackson.core:jackson-core:2.15.2")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
 
-  implementation("ch.qos.logback:logback-classic:1.2.11")
-  //implementation("ch.qos.logback:logback-classic:1.5.16") // TODO: @mh I need katerbase write access to also update logback there.
+  implementation("ch.qos.logback:logback-classic:1.5.16")
 
   implementation("commons-codec:commons-codec:1.16.0")
-  implementation("com.github.studoverse:katerbase:6d198f71575680f46b2b95f93762aa38cfc6b1b8")
+  // TODO: @mh Change back to the real katerbase repository before the PR is merged.
+  implementation("com.github.hofi99:katerbase:4980dd1dd1a8cf493985581bb53b9e1517b5f6f4")
 }
 
 application {
