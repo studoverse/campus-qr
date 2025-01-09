@@ -38,12 +38,6 @@ val localDebug: Boolean = System.getenv("DEBUG") == "true"
 lateinit var authProvider: AuthProvider
 
 suspend fun main() {
-  // TODO: @mh Remove after testing updated logging dependencies.
-  setLogLevel("com.example", Level.DEBUG)
-  val logger = LoggerFactory.getLogger("com.example")
-  logger.info("This is an example INFO message")
-  logger.debug("This is an example DEBUG message")
-
   initialDatabaseSetup()
 
   authProvider = getAuthProvider()
