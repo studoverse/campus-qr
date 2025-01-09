@@ -42,8 +42,7 @@ dependencies {
   implementation("ch.qos.logback:logback-classic:1.5.16")
 
   implementation("commons-codec:commons-codec:1.16.0")
-  // TODO: @mh Change back to the real katerbase repository before the PR is merged.
-  implementation("com.github.hofi99:katerbase:4980dd1dd1a8cf493985581bb53b9e1517b5f6f4")
+  implementation("com.github.studoverse:katerbase:47df75f83c6116c6b85f0f25a7dc3098a452afa5")
 }
 
 application {
