@@ -15,7 +15,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
-import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
@@ -26,6 +26,7 @@ import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.Duration
 
@@ -49,10 +50,9 @@ suspend fun main() {
   embeddedServer(
     Netty,
     port = System.getenv("PORT")?.toIntOrNull() ?: 8070,
-    host = System.getenv("HOST") ?: "0.0.0.0"
-  ) {
-    ktorServerModule()
-  }.start(wait = true)
+    host = System.getenv("HOST") ?: "0.0.0.0",
+    module = Application::ktorServerModule,
+  ).start(wait = true)
 }
 
 private fun Application.ktorServerModule() {

@@ -12,12 +12,14 @@ import com.studo.campusqr.extensions.respondForbidden
 import com.studo.campusqr.extensions.runOnDb
 import io.ktor.server.application.*
 import io.ktor.server.sessions.*
+import kotlinx.serialization.Serializable
 import java.util.*
 
 /**
  * This file contains all helper functions and classes for session handling and authentication.
  */
 
+@Serializable
 data class Session(val token: String)
 
 suspend fun ApplicationCall.getAuthenticatedCall(): AuthenticatedApplicationCall? {

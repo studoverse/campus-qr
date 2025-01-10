@@ -1,5 +1,6 @@
 plugins {
   kotlin("jvm")
+  kotlin("plugin.serialization")
   java
   application
   id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -10,7 +11,7 @@ repositories {
   maven("https://jitpack.io")
 }
 
-val ktor_version: String = "2.3.12"
+val ktor_version: String = "3.0.3"
 
 dependencies {
   implementation(project(":common"))
@@ -26,7 +27,7 @@ dependencies {
   implementation("io.ktor:ktor-server-cors:$ktor_version")
   implementation("io.ktor:ktor-server-call-logging:$ktor_version")
   implementation("io.ktor:ktor-server-default-headers:$ktor_version")
-  implementation("io.ktor:ktor-server-locations:$ktor_version")
+  implementation("io.ktor:ktor-server-resources:$ktor_version")
   implementation("io.ktor:ktor-server-netty:$ktor_version")
   implementation("io.ktor:ktor-server-servlet:$ktor_version")
   implementation("io.ktor:ktor-server-metrics:$ktor_version")
@@ -38,10 +39,10 @@ dependencies {
   implementation("com.fasterxml.jackson.core:jackson-core:2.15.2")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
 
-  implementation("ch.qos.logback:logback-classic:1.2.11")
+  implementation("ch.qos.logback:logback-classic:1.5.16")
 
   implementation("commons-codec:commons-codec:1.16.0")
-  implementation("com.github.studoverse:katerbase:6d198f71575680f46b2b95f93762aa38cfc6b1b8")
+  implementation("com.github.studoverse:katerbase:3a04a4956ad131cc997ba9e623070da60527ca2f")
 }
 
 application {
