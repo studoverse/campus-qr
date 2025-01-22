@@ -49,8 +49,7 @@ object NavigationHandler {
 
   // Global NavigationHandler dialog. Use only in this object.
   // This dialog can pop up above all other dialogs.
-  lateinit var dialogRef: MutableRefObject<MbDialogRef>
-    private set
+  private lateinit var dialogRef: MutableRefObject<MbDialogRef>
 
   // Necessary to handle the different causing events in `shouldNavigate()`
   enum class NavigationEvent {
