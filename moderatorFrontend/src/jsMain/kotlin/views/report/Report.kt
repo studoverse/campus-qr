@@ -23,7 +23,6 @@ import views.report.reportTableRow.ReportTableRow
 import webcore.*
 import webcore.datePicker.DatePickerConfig
 import webcore.datePicker.DatePicker
-import webcore.NavigationHandler.dialogRef
 import kotlin.js.Date
 
 external interface ReportProps : Props
@@ -38,7 +37,7 @@ val Report = FcWithCoroutineScope<ReportProps> { props, launch ->
     margin = 16.px
   }
 
-  MbDialog { ref = dialogRef }
+  MbDialog { ref = controller.dialogRef }
   val now = Date()
   val showEmailAddress = controller.emailTextFieldValue.split(*emailSeparators).filter { it.isNotEmpty() }.count() > 1
 
@@ -126,7 +125,7 @@ val Report = FcWithCoroutineScope<ReportProps> { props, launch ->
             )
         }
 
-        spacer(32)
+        spacer(32, key = "titleToTableSpacer")
 
         Table {
           TableHead {
@@ -146,7 +145,7 @@ val Report = FcWithCoroutineScope<ReportProps> { props, launch ->
                   config = ReportTableRowConfig(
                     userLocation = userLocation,
                     showEmailAddress = showEmailAddress,
-                    dialogRef = dialogRef,
+                    dialogRef = controller.dialogRef,
                     onApplyFilterChange = { userLocation, filteredSeats ->
                       controller.applyFilter(userLocation, filteredSeats)
                     },
@@ -160,7 +159,7 @@ val Report = FcWithCoroutineScope<ReportProps> { props, launch ->
           }
         }
 
-        spacer(32)
+        spacer(32, key = "tableToExportSpacer")
         if (reportData.impactedUsersCount > 0) {
           Button {
             size = Size.small
@@ -170,7 +169,7 @@ val Report = FcWithCoroutineScope<ReportProps> { props, launch ->
             }
             +Strings.report_export_via_csv.get()
           }
-          spacer()
+          spacer(key = "buttonsGapSpacer")
         }
 
         if (reportData.reportedUserLocations.isNotEmpty()) {

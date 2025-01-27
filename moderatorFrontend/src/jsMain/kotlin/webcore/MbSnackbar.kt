@@ -89,7 +89,7 @@ val MbSnackbar = FcRefWithCoroutineScope<MbSnackbarProps<MbSnackbarRef>> { props
       autoHideDuration =
         3000 + currentConfig.message.count() * 50 + (if (action == null) 0 else 1000) // By experimentation this value feels good.
       onClose = { _, _ ->
-        //config = null
+        config = null
       }
       SnackbarContent {
         sx {

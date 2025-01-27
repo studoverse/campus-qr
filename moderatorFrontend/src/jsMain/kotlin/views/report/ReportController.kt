@@ -6,12 +6,15 @@ import com.studo.campusqr.common.payloads.EditSeatFilter
 import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
 import kotlinx.coroutines.Job
+import react.MutableRefObject
 import react.useContext
+import react.useRef
 import react.useState
 import util.Strings
 import util.apiBase
 import util.get
 import webcore.Launch
+import webcore.MbDialogRef
 import webcore.NetworkManager
 import webcore.TextFieldOnChange
 import webcore.extensions.addDays
@@ -20,6 +23,7 @@ import webcore.extensions.format
 import kotlin.js.Date
 
 data class ReportController(
+  val dialogRef: MutableRefObject<MbDialogRef>,
   val emailTextFieldValue: String,
   val emailTextFieldError: String,
   val reportData: ReportData?,
@@ -35,6 +39,7 @@ data class ReportController(
   companion object {
     fun use(launch: Launch): ReportController {
       val appContext = useContext(appContextToInject)!!
+      val dialogRef = useRef<MbDialogRef>()
 
       var emailTextFieldValue: String by useState("")
       var emailTextFieldError: String by useState("")
@@ -117,6 +122,7 @@ data class ReportController(
       }
 
       return ReportController(
+        dialogRef = dialogRef,
         emailTextFieldValue = emailTextFieldValue,
         emailTextFieldError = emailTextFieldError,
         reportData = reportData,
