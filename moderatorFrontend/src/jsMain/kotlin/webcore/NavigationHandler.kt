@@ -317,7 +317,7 @@ object NavigationHandler {
     "Seite verlassen"
   )
 
-  fun useShouldNavigateAway(shouldNavigateAway: () -> Boolean) {
+  fun useShouldNavigateAway(shouldNavigateAway: () -> Boolean): () -> Unit {
     val navigable = useMemo(*emptyArray<Any>()) {
       object : NavigateAwayObservable {
         override var shouldNavigateAway: () -> Boolean = shouldNavigateAway
@@ -337,6 +337,12 @@ object NavigationHandler {
         navigateAwayListeners.remove(navigable)
       }
     }
-  }
 
+    // Expose a way to remove the listener without the component needing to unmount.
+    fun removeNavigableListener() {
+      navigateAwayListeners.remove(navigable)
+    }
+
+    return ::removeNavigableListener
+  }
 }
