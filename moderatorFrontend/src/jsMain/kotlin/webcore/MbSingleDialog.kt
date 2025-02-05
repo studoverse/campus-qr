@@ -1,3 +1,5 @@
+@file:OptIn(InternalOnClose::class)
+
 package webcore
 
 import web.cssom.*
@@ -8,11 +10,22 @@ import mui.system.Breakpoint
 import mui.system.sx
 import react.*
 import util.get
+import kotlin.js.Promise
 
 external interface MbSingleDialogProps<T : MbSingleDialogRef> : PropsWithRef<T> {
   var config: DialogConfig?
   var hidden: Boolean
 }
+
+/**
+ * Fulfils once the dialog is removed.
+ *
+ * Use case: Opening a new dialog after this dialog is closed.
+ * Prevents race condition of adding and removing dialogs from the stack which happens asynchronously through React state updates.
+ *
+ * Do **not** use for stacking dialogs that "belong together" where closing the dialog should display the previous dialog again.
+ */
+typealias OnCloseFinished = Promise<Unit>
 
 external interface MbSingleDialogRef {
   fun closeDialog()
@@ -33,6 +46,10 @@ data class WidthConfig(
    */
   val maxWidth: Breakpoint? = Breakpoint.sm,
 )
+
+@Target(AnnotationTarget.PROPERTY)
+@RequiresOptIn("This is needed for internal behaviour. Do NOT use this outside of MbDialog.kt", RequiresOptIn.Level.ERROR)
+annotation class InternalOnClose
 
 data class DialogConfig(
   val title: Title? = null,
@@ -56,6 +73,9 @@ data class DialogConfig(
   val isCancelable: Boolean = true,
   val widthConfig: WidthConfig = WidthConfig(),
 ) {
+  @InternalOnClose
+  var onCloseInternal: (() -> OnCloseFinished)? = null
+
   init {
     require(title != null || text != null || customContent != null) { "DialogConfig: At least title or text or customContent must be set" }
   }
@@ -198,9 +218,16 @@ val MbSingleDialog = FcRefWithCoroutineScope<MbSingleDialogProps<MbSingleDialogR
               +button.text
               onClick = {
                 // Close dialog on click
-                config.onClose?.invoke()
-                // onClick can possibly open another dialog, so it must be called after onClose removed this dialog.
-                button.onClick?.invoke()
+                if (config.onCloseInternal != null) {
+                  config.onCloseInternal!!().then {
+                    // onClick can possibly open another dialog, so it must be called after onClose removed this dialog.
+                    button.onClick?.invoke()
+                  }
+                } else {
+                  // When MbSingleDialog is used directly without MbDialog,
+                  // onClose doesn't need the promise since there are no other dialogs.
+                  button.onClick?.invoke()
+                }
                 open = false
               }
             }
