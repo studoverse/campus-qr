@@ -1,3 +1,5 @@
+@file:OptIn(InternalOnClose::class)
+
 package webcore
 
 import com.studo.campusqr.common.utils.LocalizedString
@@ -9,7 +11,7 @@ import util.get
 
 external interface MbDialogRef {
   fun showDialog(dialogConfig: DialogConfig)
-  fun closeDialog()
+  fun closeDialog(): OnCloseFinished?
   fun showDeleteDialog(
     title: String?,
     text: String?,
@@ -44,30 +46,48 @@ external interface MbDialogProps<T : MbDialogRef> : PropsWithRef<T>
  */
 val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, launch ->
   var (configs, setConfigs) = useState(mutableListOf<DialogConfig>())
+  // Opening a new dialog requires that the current dialog is closed before, otherwise the new dialog is closed instantly.
+  // To achieve that, the onClose promise (for DialogButton::onClick in MbSingleDialog) is fulfilled after the state update of "configs",
+  // which can then trigger the button onClick. Also, the user defined onClose function is executed after the "configs" state update.
+  var onCloseUpdateDoneRef = useRef<(Unit) -> Unit>()
 
   fun showDialog(dialogConfig: DialogConfig) {
     setConfigs { oldConfigs ->
-      (oldConfigs + dialogConfig.copy(
-        onClose = {
-          dialogConfig.onClose?.invoke() // Invoke user defined onClose function
-          // Due to function closures, we need to use the setter function to get the current state.
-          setConfigs { previousConfigs ->
-            if (previousConfigs.isNotEmpty()) {
-              (previousConfigs - previousConfigs.last()).toMutableList()
-            } else {
-              console.error("closeDialog was called although no dialog is open.")
-              previousConfigs
-            }
+      dialogConfig.onCloseInternal = {
+        val promise = OnCloseFinished(executor = { fulfilled, rejected ->
+          onCloseUpdateDoneRef.current = {
+            dialogConfig.onClose?.invoke() // Invoke user defined onClose function
+            fulfilled(Unit)
           }
-        },
-      )).toMutableList()
+        })
+        // Due to function closures, we need to use the setter function to get the current state.
+        setConfigs { previousConfigs ->
+          if (previousConfigs.isNotEmpty()) {
+            (previousConfigs - previousConfigs.last()).toMutableList()
+          } else {
+            console.error("closeDialog was called although no dialog is open.")
+            previousConfigs
+          }
+        }
+        promise
+      }
+      (oldConfigs + dialogConfig).toMutableList()
     }
   }
 
   // Closes the latest dialog
-  fun closeDialog() {
+  fun closeDialog(): OnCloseFinished? {
     // onClose itself cannot be null here since it is always set in showDialog().
-    configs.lastOrNull()?.onClose?.invoke() ?: console.error("closeDialog was called although no dialog is open.")
+    when (val promise = configs.lastOrNull()?.onCloseInternal?.invoke()) {
+      null -> {
+        console.error("closeDialog was called although no dialog is open.")
+        return null
+      }
+
+      else -> {
+        return promise
+      }
+    }
   }
 
   fun showDeleteDialog(
@@ -105,8 +125,8 @@ val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, laun
         showDialog(dialogConfig)
       }
 
-      override fun closeDialog() {
-        closeDialog()
+      override fun closeDialog(): OnCloseFinished? {
+        return closeDialog()
       }
 
       override fun showDeleteDialog(
@@ -125,10 +145,20 @@ val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, laun
     }
   }
 
+  useEffect(configs) {
+    if (onCloseUpdateDoneRef.current != null) {
+      onCloseUpdateDoneRef.current!!.invoke(Unit)
+      onCloseUpdateDoneRef.current = null // Reset
+    }
+  }
+
   configs.forEach { config ->
     @Suppress("DEPRECATION") // Only here inside the forEach we want to render each single dialog individually
     MbSingleDialog {
-      this.config = config
+      this.config = config.copy( // Copy so that onClose of the original config stays the same.
+        // onClose is already called in the useEffect above, so we don't want to call it inside the MbSingleDialog another time.
+        onClose = null
+      )
       hidden = config != configs.last() // Hide all dialogs but the most recent one, so they don't unmount and can be shown again
     }
   }
