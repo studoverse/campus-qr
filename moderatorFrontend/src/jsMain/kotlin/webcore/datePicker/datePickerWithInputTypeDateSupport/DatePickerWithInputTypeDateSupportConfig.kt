@@ -1,9 +1,10 @@
-package webcore.datePicker
+package webcore.datePicker.datePickerWithInputTypeDateSupport
 
 import mui.material.FormControlVariant
+import webcore.TextFieldOnChange
 import kotlin.js.Date
 
-class DatePickerConfig(
+class DatePickerWithInputTypeDateSupportConfig(
   val date: Date,
   val onChange: (date: Date, isValid: Boolean) -> Unit,
   val min: Date? = null,
@@ -14,6 +15,7 @@ class DatePickerConfig(
   val error: Boolean = false,
   val fullWidth: Boolean = false,
   val variant: FormControlVariant = FormControlVariant.standard,
-) {
-  class DateInputValues(var year: String, var month: String, var day: String)
-}
+  val dateTimeInputValue: String,
+  val fieldError: Boolean,
+  val newBrowsersDateTextFieldOnChange: TextFieldOnChange,
+)

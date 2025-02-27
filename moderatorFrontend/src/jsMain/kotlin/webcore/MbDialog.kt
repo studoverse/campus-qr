@@ -45,7 +45,7 @@ external interface MbDialogProps<T : MbDialogRef> : PropsWithRef<T>
  * UX: Ideally, only 1 dialog is present at the users context. Stacking multiple dialogs on top of each other creates easily confusing experiences.
  */
 val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, launch ->
-  var (configs, setConfigs) = useState(mutableListOf<DialogConfig>())
+  var (configs, setConfigs) = useState(listOf<DialogConfig>())
   // Opening a new dialog requires that the current dialog is closed before, otherwise the new dialog is closed instantly.
   // To achieve that, the onClose promise (for DialogButton::onClick in MbSingleDialog) is fulfilled after the state update of "configs",
   // which can then trigger the button onClick. Also, the user defined onClose function is executed after the "configs" state update.
@@ -63,7 +63,7 @@ val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, laun
         // Due to function closures, we need to use the setter function to get the current state.
         setConfigs { previousConfigs ->
           if (previousConfigs.isNotEmpty()) {
-            (previousConfigs - previousConfigs.last()).toMutableList()
+            previousConfigs - previousConfigs.last()
           } else {
             console.error("closeDialog was called although no dialog is open.")
             previousConfigs
