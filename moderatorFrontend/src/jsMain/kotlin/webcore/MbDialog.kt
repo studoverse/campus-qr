@@ -63,7 +63,7 @@ val MbDialog = FcRefWithCoroutineScope<MbDialogProps<MbDialogRef>> { props, laun
         // Due to function closures, we need to use the setter function to get the current state.
         setConfigs { previousConfigs ->
           if (previousConfigs.isNotEmpty()) {
-            previousConfigs - previousConfigs.last()
+            (previousConfigs - previousConfigs.last()).toMutableList()
           } else {
             console.error("closeDialog was called although no dialog is open.")
             previousConfigs
