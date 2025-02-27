@@ -15,4 +15,8 @@ class TimePickerConfig(
   var label: String? = null,
   var helperText: String? = null,
   var variant: FormControlVariant = FormControlVariant.outlined,
-)
+) {
+  companion object {
+    class TimeInputValues(var hour: String, var minute: String)
+  }
+}
