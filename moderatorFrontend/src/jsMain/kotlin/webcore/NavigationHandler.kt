@@ -30,6 +30,8 @@ import web.window.WindowTarget
 import webcore.extensions.findParent
 import kotlin.js.Date
 
+typealias RemoveNavigableListener = () -> Unit
+
 // The `shouldNavigateAway()` lambda cannot be put in the `navigateAwayListeners` directly
 // because the lambda's hashCode changes between add/remove.
 // By implementing this interface the component's instance can be used for adding/removing
@@ -317,7 +319,7 @@ object NavigationHandler {
     "Seite verlassen"
   )
 
-  fun useShouldNavigateAway(shouldNavigateAway: () -> Boolean) {
+  fun useShouldNavigateAway(shouldNavigateAway: () -> Boolean): RemoveNavigableListener {
     val navigable = useMemo(*emptyArray<Any>()) {
       object : NavigateAwayObservable {
         override var shouldNavigateAway: () -> Boolean = shouldNavigateAway
@@ -337,6 +339,12 @@ object NavigationHandler {
         navigateAwayListeners.remove(navigable)
       }
     }
-  }
 
+    // Expose a way to remove the listener without the component needing to unmount.
+    fun removeNavigableListener() {
+      navigateAwayListeners.remove(navigable)
+    }
+
+    return ::removeNavigableListener
+  }
 }
