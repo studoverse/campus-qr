@@ -1,19 +1,18 @@
-package webcore.datePicker
+package webcore.timePicker.timePickerWithInputTypeTimeSupport
 
 import mui.material.FormControlVariant
 import kotlin.js.Date
 
-class DatePickerConfig(
-  val date: Date,
-  val onChange: (date: Date, isValid: Boolean) -> Unit,
+class TimePickerWithInputTypeTimeSupportConfig(
+  val time: Date,
+  val onChange: (date: Date) -> Unit,
   val min: Date? = null,
   val max: Date? = null,
-  val label: String? = null,
-  val helperText: String? = null,
+  val stepMinutes: Int = 1,
   val disabled: Boolean = false,
   val error: Boolean = false,
   val fullWidth: Boolean = false,
+  val label: String? = null,
+  val helperText: String? = null,
   val variant: FormControlVariant = FormControlVariant.standard,
-) {
-  class DateInputValues(var year: String, var month: String, var day: String)
-}
+)

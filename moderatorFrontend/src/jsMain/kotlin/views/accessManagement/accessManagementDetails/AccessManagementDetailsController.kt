@@ -30,8 +30,8 @@ data class AccessManagementDetailsController(
   val accessControlNoteTextFieldValue: String,
   val accessControlReasonTextFieldValue: String,
   val timeSlots: List<ClientDateRange>,
-  val fromDateTimeSlotErrors: MutableList<TimeSlotError>,
-  val toDateTimeSlotErrors: MutableList<TimeSlotError>,
+  val fromDateTimeSlotErrors: List<TimeSlotError>,
+  val toDateTimeSlotErrors: List<TimeSlotError>,
   val personEmailTextFieldValue: String,
   val permittedPeopleList: List<String>,
   val showProgress: Boolean,
@@ -65,8 +65,8 @@ data class AccessManagementDetailsController(
       var permittedPeopleList: List<String> by useState(emptyList())
       var timeSlots: List<ClientDateRange> by useState(emptyList())
 
-      var fromDateTimeSlotErrors: MutableList<TimeSlotError> by useState(mutableListOf())
-      var toDateTimeSlotErrors: MutableList<TimeSlotError> by useState(mutableListOf())
+      var fromDateTimeSlotErrors: List<TimeSlotError> by useState(mutableListOf())
+      var toDateTimeSlotErrors: List<TimeSlotError> by useState(mutableListOf())
 
       val appContext = useContext(appContextToInject)!!
 
@@ -83,8 +83,8 @@ data class AccessManagementDetailsController(
         personEmailTextFieldValue = ""
         permittedPeopleList = accessManagement?.allowedEmails?.toList() ?: emptyList()
 
-        fromDateTimeSlotErrors = mutableListOf()
-        toDateTimeSlotErrors = mutableListOf()
+        fromDateTimeSlotErrors = listOf()
+        toDateTimeSlotErrors = listOf()
 
         val fromDate = Date().addHours(1).with(minute = 0)
         timeSlots = accessManagement?.dateRanges?.toList() ?: listOf(
@@ -176,7 +176,10 @@ data class AccessManagementDetailsController(
         timeSlots.forEach { timeSlot ->
           // End time cannot be before start time
           if (timeSlot.to < timeSlot.from) {
-            toDateTimeSlotErrors.add(TimeSlotError(text = Strings.access_control_end_date_before_start_date.get(), timeSlot = timeSlot))
+            toDateTimeSlotErrors = toDateTimeSlotErrors + TimeSlotError(
+              text = Strings.access_control_end_date_before_start_date.get(),
+              timeSlot = timeSlot,
+            )
             return false
           }
         }
@@ -185,7 +188,7 @@ data class AccessManagementDetailsController(
       }
 
       fun submitPermittedPeopleToState() {
-        permittedPeopleList += getPermittedEmailsFromTextField()
+        permittedPeopleList = permittedPeopleList + getPermittedEmailsFromTextField()
         personEmailTextFieldValue = ""
       }
 
@@ -301,8 +304,8 @@ data class AccessManagementDetailsController(
 
       fun createAccessControlOnClick(config: AccessManagementDetailsConfig) {
         // Reset errors from previous submit attempt
-        fromDateTimeSlotErrors.clear()
-        toDateTimeSlotErrors.clear()
+        fromDateTimeSlotErrors = listOf()
+        toDateTimeSlotErrors = listOf()
 
         if (validateInput()) {
           when (config) {

@@ -8,8 +8,8 @@ import kotlin.js.Date
 
 data class TimeSlotPickerConfig(
   val timeSlots: List<ClientDateRange>,
-  val fromDateTimeSlotErrors: MutableList<TimeSlotError>,
-  val toDateTimeSlotErrors: MutableList<TimeSlotError>,
+  val fromDateTimeSlotErrors: List<TimeSlotError>,
+  val toDateTimeSlotErrors: List<TimeSlotError>,
   val accessManagementDetailsType: AccessManagementDetailsConfig,
   val addTimeSlotOnClick: ButtonOnClick,
   val removeTimeSlotOnClick: (clientDateRange: ClientDateRange) -> Unit,

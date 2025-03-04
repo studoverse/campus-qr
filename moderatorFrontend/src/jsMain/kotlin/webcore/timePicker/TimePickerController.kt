@@ -1,30 +1,31 @@
-package webcore.timePicker
+package com.moshbit.backend.core.ui.timePicker
 
 import react.useEffect
+import react.useMemo
 import react.useState
 import web.dom.document
-import web.html.HTML
-import webcore.Launch
-import webcore.TextFieldOnChange
-import webcore.extensions.emptyToNull
-import webcore.extensions.toInputTypeTimeValueString
+import web.html.HTMLInputElement
+import webcore.timePicker.TimePickerConfig
 import webcore.extensions.with
+import webcore.Launch
+import webcore.extensions.toInputTypeTimeValueString
+import webcore.timePicker.TimePickerProps
 import kotlin.js.Date
 
 data class TimePickerController(
-  val oldBrowsersInputValues: TimeInputValues,
+  val oldBrowsersInputValues: TimePickerConfig.Companion.TimeInputValues,
+  val tryParsingInputFields: (hourInputValue: String, minuteInputValue: String) -> Unit,
   val detectInputTimeSupport: () -> Boolean,
-  val oldBrowsersHourTextFieldOnChange: TextFieldOnChange,
-  val oldBrowsersMinuteTextFieldOnChange: TextFieldOnChange,
-  val newBrowsersTimeTextFieldOnChange: TextFieldOnChange,
 ) {
   companion object {
-    fun use(config: TimePickerConfig, launch: Launch): TimePickerController {
-      val timeValue = config.time.toInputTypeTimeValueString()
-      var oldBrowsersInputValues: TimeInputValues by useState(TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1]))
+    fun use(launch: Launch, props: TimePickerProps): TimePickerController {
+      val timeValue = useMemo(props.config.time) { props.config.time.toInputTypeTimeValueString() }
+      var oldBrowsersInputValues: TimePickerConfig.Companion.TimeInputValues by useState(
+        TimePickerConfig.Companion.TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1])
+      )
 
       fun detectInputTimeSupport(): Boolean {
-        val input = document.createElement(HTML.input)
+        val input = document.createElement("input") as HTMLInputElement
         input.setAttribute("type", "time")
         val invalidDateValue = "not-a-time"
         input.setAttribute("value", invalidDateValue)
@@ -40,43 +41,20 @@ data class TimePickerController(
             return
           }
           val date = Date().with(hour = hour, minute = minute, second = 0, millisecond = 0)
-          config.onChange(date)
+          props.config.onChange(date)
         } catch (e: Exception) {
         }
       }
 
-      val oldBrowsersHourTextFieldOnChange: TextFieldOnChange = { event ->
-        val value: String = event.target.value
-        tryParsingInputFields(value, oldBrowsersInputValues.minute)
-      }
-
-      val oldBrowsersMinuteTextFieldOnChange: TextFieldOnChange = { event ->
-        val value: String = event.target.value
-        tryParsingInputFields(oldBrowsersInputValues.hour, value)
-      }
-
-      val newBrowsersTimeTextFieldOnChange: TextFieldOnChange = { event ->
-        event.target.value.emptyToNull()?.let { value ->
-          val hourToMinute = value.split(":").map { it.removePrefix("0").toInt() }
-          val hour = hourToMinute[0]
-          val minute = hourToMinute[1]
-          config.onChange(config.time.with(hour = hour, minute = minute))
-        }
-      }
-
-      useEffect(config.time) {
-        oldBrowsersInputValues = TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1])
+      useEffect(props.config.time) {
+        oldBrowsersInputValues = TimePickerConfig.Companion.TimeInputValues(timeValue.split(":")[0], timeValue.split(":")[1])
       }
 
       return TimePickerController(
         oldBrowsersInputValues = oldBrowsersInputValues,
         detectInputTimeSupport = ::detectInputTimeSupport,
-        oldBrowsersHourTextFieldOnChange = oldBrowsersHourTextFieldOnChange,
-        oldBrowsersMinuteTextFieldOnChange = oldBrowsersMinuteTextFieldOnChange,
-        newBrowsersTimeTextFieldOnChange = newBrowsersTimeTextFieldOnChange,
+        tryParsingInputFields = ::tryParsingInputFields
       )
     }
-
-    class TimeInputValues(var hour: String, var minute: String)
   }
 }
