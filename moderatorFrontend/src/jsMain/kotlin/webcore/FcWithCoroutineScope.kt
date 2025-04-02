@@ -27,8 +27,9 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
  * Provide coroutine scope within functional components to allow cancellations.
  */
 @Suppress("FunctionName") fun <P : Props> FcWithCoroutineScope(
+  displayName: String? = null,
   block: ChildrenBuilder.(props: P, launch: Launch) -> Unit,
-) = FC<P> { props ->
+) = FC<P>(displayName ?: "No displayName defined") { props ->
   val scope = useMemo(*emptyArray<Any>()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
   // TODO for future: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367

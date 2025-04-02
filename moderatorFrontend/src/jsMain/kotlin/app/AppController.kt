@@ -59,13 +59,14 @@ data class AppController(
   val moderatorSideDrawerItems: List<SideDrawerItem>,
   val adminSideDrawerItems: List<SideDrawerItem>,
   val pushAppRoute: (AppRoute) -> Unit,
-  val fetchUserDataAndInit: (block: ((UserData) -> Unit)?) -> Unit,
+  val fetchUserDataAndInit: () -> Unit,
   val renderViewContent: ChildrenBuilder.() -> Unit,
 ) {
   companion object {
     fun use(launch: Launch): AppController {
       var userData: UserData? by useState(null)
       var userDataRef = useRef(userData) // Needed to avoid function closure issues in handleHistoryChange
+      var isInitialRouteSet: Boolean by useState(false)
       var loadingUserData: Boolean by useState(true)
       var currentAppRoute: AppRoute? by useState(null)
       var currentAppRouteRef = useRef(currentAppRoute) // Needed to avoid function closure issues in getCurrentAppRoute
@@ -112,14 +113,13 @@ data class AppController(
         MbLocalizedStringConfig.selectedLanguage = newLang
       }
 
-      fun fetchUserDataAndInit(block: ((UserData) -> Unit)? = null) = launch {
+      fun fetchUserDataAndInit() = launch {
         val fetchedUserData = NetworkManager.get<UserData>("$apiBase/user/data")
 
         if (fetchedUserData != null) {
           userData = fetchedUserData
           loadingUserData = false
 
-          block?.invoke(fetchedUserData)
         } else {
           loadingUserData = false
         }
@@ -149,19 +149,26 @@ data class AppController(
           getCurrentAppRoute = { currentAppRouteRef.current },
         )
 
-        fetchUserDataAndInit { updatedUserData ->
+        fetchUserDataAndInit()
+      }
+
+      useEffect(userData) {
+        // Always keep ref up to date.
+        userDataRef.current = userData
+
+        if (!isInitialRouteSet && userData != null) {
           // Do not use currentAppRoute here, because it's not set yet.
           // currentAppRoute will be set in this function through pushAppRoute/handleHistoryChange.
           val currentRoute = location.toRoute()
 
           when {
-            isNotAuthenticatedButRequiresAuth(currentRoute, currentUserData = updatedUserData) -> {
+            isNotAuthenticatedButRequiresAuth(currentRoute, currentUserData = userData!!) -> {
               // The user is not logged in so push him to login page
               pushAppRoute(Url.LOGIN_EMAIL.toRoute(queryParams = calculateRedirectQueryParams())!!)
             }
 
             location.pathname.removeSuffix("/") == "/admin" -> {
-              val clientUser = updatedUserData.clientUser!!
+              val clientUser = userData!!.clientUser!!
               when {
                 UserPermission.EDIT_OWN_ACCESS in clientUser.permissions -> pushAppRoute(Url.ACCESS_MANAGEMENT_LIST.toRoute()!!)
                 UserPermission.EDIT_LOCATIONS in clientUser.permissions -> pushAppRoute(Url.LOCATIONS_LIST.toRoute()!!)
@@ -172,15 +179,12 @@ data class AppController(
 
             else -> {
               // User linked directly to a sub-page
-              handleHistoryChange(currentUserData = updatedUserData)
+              handleHistoryChange(currentUserData = userData!!)
             }
           }
-        }
-      }
 
-      useEffect(userData) {
-        // Always keep ref up to date.
-        userDataRef.current = userData
+          isInitialRouteSet = true
+        }
       }
 
       useEffect(currentAppRoute) {
