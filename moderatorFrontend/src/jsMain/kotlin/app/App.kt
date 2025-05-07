@@ -43,7 +43,7 @@ val App = FcWithCoroutineScope<AppProps> { props, launch ->
   document.body?.style?.backgroundColor = "white"
 
   val fetchNewUserData = {
-    controller.fetchUserDataAndInit(null)
+    controller.fetchUserDataAndInit()
   }
 
   ThemeProvider {
