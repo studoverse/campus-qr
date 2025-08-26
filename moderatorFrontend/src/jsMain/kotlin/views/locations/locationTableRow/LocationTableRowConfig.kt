@@ -3,7 +3,7 @@ package views.locations.locationTableRow
 import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.ClientUser
 import com.studo.campusqr.common.payloads.UserData
-import react.MutableRefObject
+import react.RefObject
 import webcore.MbDialogRef
 
 class LocationTableRowConfig(
@@ -11,7 +11,7 @@ class LocationTableRowConfig(
   val onEditFinished: (response: String?) -> Unit,
   val onDeleteFinished: (response: String?) -> Unit,
   val userData: UserData,
-  val dialogRef: MutableRefObject<MbDialogRef>,
+  val dialogRef: RefObject<MbDialogRef>,
 ) {
   val clientUser: ClientUser get() = userData.clientUser!!
 }

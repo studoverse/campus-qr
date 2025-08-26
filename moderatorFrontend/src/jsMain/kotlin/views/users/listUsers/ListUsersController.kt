@@ -2,7 +2,6 @@ package views.users.listUsers
 
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientUser
-import react.useContext
 import react.useEffectOnce
 import react.useState
 import util.Strings
@@ -23,7 +22,7 @@ data class ListUsersController(
       var userList by useState<List<ClientUser>?>(null)
       var loadingUserList by useState(false)
 
-      val appContext = useContext(appContextToInject)!!
+      val appContext = react.use(appContextToInject)!!
 
       fun fetchUserList() = launch {
         loadingUserList = true

@@ -1,7 +1,7 @@
 package webcore
 
 import csstype.PropertiesBuilder
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.base.AutocompleteChangeDetails
 import mui.base.AutocompleteChangeReason
 import mui.base.AutocompleteInputChangeReason
@@ -107,7 +107,7 @@ inline var TextFieldProps.InputProps: InputProps
 fun String.toReactNode() = ReactNode(source = this)
 
 fun buildElements(handler: ChildrenBuilder.() -> Unit) {
-  createElement(Fragment, jso {}, Fragment.create {
+  createElement(Fragment, unsafeJso {}, Fragment.create {
     handler()
   })
 }

@@ -26,7 +26,7 @@ external interface AppShellProps : Props {
 }
 
 val AppShell = FcWithCoroutineScope<AppShellProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
 
   val theme = appContext.theme
   AppShellDrawer {

@@ -3,7 +3,6 @@ package views.guestCheckIn.guestCheckInOverview
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ActiveCheckIn
 import kotlinx.coroutines.Job
-import react.useContext
 import react.useEffectOnce
 import react.useState
 import util.Strings
@@ -21,7 +20,7 @@ data class GuestCheckInOverviewController(
 ) {
   companion object {
     fun use(launch: Launch): GuestCheckInOverviewController {
-      val appContext = useContext(appContextToInject)!!
+      val appContext = react.use(appContextToInject)!!
 
       var activeGuestCheckIns: List<ActiveCheckIn>? by useState<List<ActiveCheckIn>?>(null)
       var loadingCheckInList: Boolean by useState(false)

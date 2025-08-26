@@ -9,7 +9,7 @@ import mui.system.sx
 import react.Props
 import react.Suspense
 import react.dom.html.ReactHTML
-import react.useContext
+import react.use
 import util.Strings
 import util.get
 import views.common.ToolbarView.ToolbarButton
@@ -20,6 +20,7 @@ import views.users.addUser.AddUserConfig
 import views.users.addUser.AddUser
 import web.cssom.rgb
 import web.window.WindowTarget
+import web.window._blank
 import web.window.window
 import webcore.DialogConfig
 import webcore.FcWithCoroutineScope
@@ -31,7 +32,7 @@ external interface ListUsersToolbarViewProps : Props {
 
 @Lazy
 val ListUsersToolbarView = FcWithCoroutineScope<ListUsersToolbarViewProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
 
   fun renderSsoInfoButtonDialog() {

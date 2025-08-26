@@ -5,7 +5,6 @@ import app.baseUrl
 import com.studo.campusqr.common.payloads.CheckInData
 import com.studo.campusqr.common.payloads.ClientLocation
 import kotlinx.coroutines.Job
-import react.useContext
 import react.useEffectOnce
 import react.useState
 import util.Strings
@@ -39,7 +38,7 @@ data class AddGuestCheckInController(
 ) {
   companion object {
     fun use(launch: Launch, props: AddGuestCheckInProps): AddGuestCheckInController {
-      val appContext = useContext(appContextToInject)!!
+      val appContext = react.use(appContextToInject)!!
       var locationFetchInProgress: Boolean by useState(false)
       var showProgress: Boolean by useState(false)
       var locationNameToLocationMap: Map<String, ClientLocation> by useState<Map<String, ClientLocation>>(emptyMap())

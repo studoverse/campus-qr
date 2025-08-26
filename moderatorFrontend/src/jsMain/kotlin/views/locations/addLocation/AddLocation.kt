@@ -4,7 +4,7 @@ import web.cssom.*
 import app.GlobalCss
 import com.studo.campusqr.common.LocationAccessType
 import js.lazy.Lazy
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.material.*
 import mui.system.sx
 import react.*
@@ -14,6 +14,7 @@ import util.localizedString
 import views.common.MbLinearProgress
 import views.common.spacer
 import web.html.InputType
+import web.html.number
 import webcore.*
 
 external interface AddLocationProps : Props {
@@ -33,7 +34,7 @@ val AddLocation = FcWithCoroutineScope<AddLocationProps> { props, launch ->
     variant = FormControlVariant.outlined
     label = Strings.location_name.get().toReactNode()
     value = controller.locationTextFieldValue
-    inputProps = jso {
+    inputProps = unsafeJso {
       maxLength = 40 // Make sure names stay printable
     }
     onChange = controller.locationNameOnChange

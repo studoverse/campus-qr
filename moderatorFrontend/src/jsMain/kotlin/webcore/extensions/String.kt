@@ -1,7 +1,9 @@
 package webcore.extensions
 
 import js.array.asList
+import js.errors.toThrowable
 import mui.material.paperClasses
+import web.cssom.ClassName
 import web.dom.document
 import web.html.HTMLTextAreaElement
 import web.navigator.navigator
@@ -43,7 +45,7 @@ fun String.copyToClipboard(onSuccess: (() -> Unit)? = null, onFail: ((throwable:
         onSuccess?.invoke()
       },
       onRejected = { throwable ->
-        onFail?.invoke(throwable)
+        onFail?.invoke(throwable.toThrowable())
       },
     )
   } else {
@@ -64,10 +66,10 @@ fun String.copyToClipboard(onSuccess: (() -> Unit)? = null, onFail: ((throwable:
     // If we are showing a modal component (Dialog, Drawer, Menu, Popover),
     // we need to insert the textarea within the Focus Trap of the modal, or else focusing it will not work.
     val focusableElement = document
-      .getElementsByClassName("MuiModal-root")
+      .getElementsByClassName(ClassName("MuiModal-root"))
       .asList()
       .singleOrNull { it.ariaHidden != true.toString() } // Try to find active modal, which doesn't have ariaHidden set
-      ?.getElementsByClassName(paperClasses.root.toString())?.get(0) // Paper is present in all components that use a Modal
+      ?.getElementsByClassName(paperClasses.root)?.get(0) // Paper is present in all components that use a Modal
       ?: document.body // Default case when we are not showing a modal component
     focusableElement.appendChild(textArea)
     textArea.focus()

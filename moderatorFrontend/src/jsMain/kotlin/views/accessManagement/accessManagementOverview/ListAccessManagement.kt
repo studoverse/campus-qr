@@ -29,7 +29,7 @@ val AccessManagementList = FcWithCoroutineScope<ListAccessManagementProps> { pro
     locationId = props.config.locationId,
     launch = launch,
   )
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
   val dialogRef = useRef<MbDialogRef>()
 
   fun renderAddAccessManagementDialog() = dialogRef.current!!.showDialog(

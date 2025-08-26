@@ -7,9 +7,7 @@ import mui.material.*
 import mui.system.sx
 import react.Props
 import react.dom.aria.AriaHasPopup
-import react.dom.aria.ariaHasPopup
-import react.dom.aria.ariaLabel
-import react.dom.aria.ariaOwns
+import web.dom.ElementId
 import webcore.FcWithCoroutineScope
 import webcore.extensions.randomNumberString
 import kotlin.random.Random
@@ -37,7 +35,7 @@ val MaterialMenu = FcWithCoroutineScope<MaterialMenuProps> { props, launch ->
   }
   Menu {
     onClose = controller.onMenuClose
-    id = ariaId
+    id = ElementId(ariaId)
     this.open = controller.open
     controller.anchorEl?.let { anchorElement ->
       this.anchorEl = { anchorElement }

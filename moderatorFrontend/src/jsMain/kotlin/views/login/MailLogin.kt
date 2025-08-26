@@ -25,6 +25,7 @@ import views.login.loginNavigationButtonsViewFc.LoginNavigationButtonsViewConfig
 import views.login.loginNavigationButtonsViewFc.LoginNavigationButtonsView
 import web.html.HTMLElement
 import web.html.InputType
+import web.html.password
 import web.location.location
 import web.url.URL
 import webcore.*

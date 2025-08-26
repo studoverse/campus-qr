@@ -9,6 +9,7 @@ import util.Strings
 import util.get
 import web.history.history
 import web.html.ButtonType
+import web.html.submit
 import webcore.FcWithCoroutineScope
 
 external interface LoginNavigationButtonsViewProps : Props {

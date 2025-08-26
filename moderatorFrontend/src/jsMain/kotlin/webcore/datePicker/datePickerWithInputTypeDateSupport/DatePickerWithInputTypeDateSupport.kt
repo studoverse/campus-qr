@@ -1,11 +1,12 @@
 package webcore.datePicker.datePickerWithInputTypeDateSupport
 
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.material.TextField
 import mui.system.sx
 import react.Props
 import web.cssom.WhiteSpace
 import web.html.InputType
+import web.html.date
 import webcore.FcWithCoroutineScope
 import webcore.extensions.toInputTypeDateValueString
 import webcore.toReactNode
@@ -22,7 +23,7 @@ val DatePickerWithInputTypeDateSupport = FcWithCoroutineScope<DatePickerWithInpu
     variant = props.config.variant
     type = InputType.date
     value = props.config.dateTimeInputValue
-    inputProps = jso {
+    inputProps = unsafeJso {
       props.config.min?.let { minProp ->
         min = minProp.toInputTypeDateValueString()
       }
@@ -31,7 +32,7 @@ val DatePickerWithInputTypeDateSupport = FcWithCoroutineScope<DatePickerWithInpu
       }
     }
     if (props.config.helperText != null) {
-      FormHelperTextProps = jso {
+      FormHelperTextProps = unsafeJso {
         sx {
           whiteSpace = WhiteSpace.preLine // Handle \n
         }

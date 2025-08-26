@@ -18,6 +18,7 @@ import views.common.genericErrorView.GenericErrorView
 import views.locations.locationTableRow.LocationTableRow
 import views.locations.locationTableRow.LocationTableRowConfig
 import web.window.WindowTarget
+import web.window._blank
 import webcore.*
 
 external interface ListLocationsProps : Props
@@ -25,7 +26,7 @@ external interface ListLocationsProps : Props
 @Lazy
 val ListLocations = FcWithCoroutineScope<ListLocationsProps> { props, launch ->
   val controller = ListLocationsController.use(launch = launch)
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
 
   MbDialog { ref = controller.dialogRef }
   val userData = appContext.userDataContext.userData!!

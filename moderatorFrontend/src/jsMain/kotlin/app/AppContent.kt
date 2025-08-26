@@ -22,7 +22,7 @@ import webcore.FcWithCoroutineScope
 external interface AppContentProps : Props
 
 val AppContent = FcWithCoroutineScope<AppContentProps> { props, componentScope ->
-  val appContext = useContext(appContextToInject)
+  val appContext = use(appContextToInject)
   val currentAppRoute = appContext!!.routeContext.currentAppRoute
 
   when (currentAppRoute?.url) {

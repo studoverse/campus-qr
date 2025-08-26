@@ -24,7 +24,7 @@ val ListUsers = FcWithCoroutineScope<ListUsersProps> { props, launch ->
   )
 
   val dialogRef = useRef<MbDialogRef>()
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
 
   MbDialog { ref = dialogRef }

@@ -10,7 +10,6 @@ import com.studo.campusqr.common.payloads.EditUserData
 import com.studo.campusqr.common.payloads.NewUserData
 import kotlinx.coroutines.Job
 import react.dom.events.ChangeEvent
-import react.useContext
 import react.useState
 import util.Strings
 import util.apiBase
@@ -56,7 +55,7 @@ data class AddUserController(
       var userPermissions by useState(user?.permissions ?: setOf(UserPermission.EDIT_OWN_ACCESS))
 
       fun createNewUser() = launch {
-        val appContext = useContext(appContextToInject)!!
+        val appContext = react.use(appContextToInject)!!
 
         userCreationInProgress = true
         val response = NetworkManager.post<String>(
@@ -80,7 +79,7 @@ data class AddUserController(
       }
 
       fun editUser() = launch {
-        val appContext = useContext(appContextToInject)!!
+        val appContext = react.use(appContextToInject)!!
 
         userCreationInProgress = true
         val response = NetworkManager.post<String>(

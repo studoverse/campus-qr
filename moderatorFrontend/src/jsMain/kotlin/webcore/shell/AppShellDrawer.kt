@@ -4,12 +4,13 @@ import app.appContextToInject
 import csstype.PropertiesBuilder
 import web.cssom.*
 import web.window.window
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.material.*
 import mui.system.Breakpoint
 import mui.system.sx
 import react.*
 import web.events.Event
+import web.events.RESIZE
 import web.events.addEventListener
 import web.events.removeEventListener
 import web.timers.setTimeout
@@ -42,7 +43,7 @@ object AppShellDrawerStyles {
 }
 
 val AppShellDrawer = FcWithCoroutineScope<AppShellDrawerProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
 
   fun fixDrawerIssue() {
     if (window.innerWidth >= appContext.theme.breakpoints.values[Breakpoint.md]!!.toInt() && props.config.mobileNavOpen) {
@@ -132,7 +133,7 @@ val AppShellDrawer = FcWithCoroutineScope<AppShellDrawerProps> { props, launch -
       open = props.config.mobileNavOpen
       variant = DrawerVariant.temporary
       onClose = { _, _ -> props.config.mobileNavOpenChange(false) }
-      ModalProps = jso {
+      ModalProps = unsafeJso {
         keepMounted = true // Better open performance on mobile
       }
       sx {
@@ -143,7 +144,7 @@ val AppShellDrawer = FcWithCoroutineScope<AppShellDrawerProps> { props, launch -
           drawerStyle(drawerWidth = AppShellDrawerStyles.drawerWidth)
         }
       }
-      SlideProps = jso {
+      SlideProps = unsafeJso {
         // `in` = true
         direction = SlideDirection.right
         appear = true

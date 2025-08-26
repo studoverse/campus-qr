@@ -16,6 +16,8 @@ import util.localizedString
 import views.common.MbLinearProgress
 import views.common.spacer
 import web.html.InputType
+import web.html.email
+import web.html.password
 import webcore.*
 
 external interface AddUserProps : Props {
@@ -32,7 +34,7 @@ val AddUser = FcWithCoroutineScope<AddUserProps> { props, launch ->
 
   MbLinearProgress { show = controller.userCreationInProgress }
 
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
   TextField {
     key = "userEmailTextField"

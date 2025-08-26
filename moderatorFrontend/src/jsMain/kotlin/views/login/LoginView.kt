@@ -28,7 +28,7 @@ external interface LoginViewProps : Props {
 
 @Lazy
 val LoginView = FcWithCoroutineScope<LoginViewProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
   useEffectOnce {
     if (appContext.userDataContext.userData!!.isAuthenticated) {
       // User is authenticated so redirect to main page

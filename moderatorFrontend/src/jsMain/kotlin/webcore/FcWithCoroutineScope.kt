@@ -54,7 +54,7 @@ abstract class RComponentWithCoroutineScope<P : Props, S : State> : RComponent<P
 
 @Suppress("FunctionName") fun <P : PropsWithRef<*>> FcRefWithCoroutineScope(
   block: ChildrenBuilder.(props: P, launch: Launch) -> Unit,
-) = ForwardRef<P> { props ->
+) = FC<P> { props ->
   val scope = useMemo(*emptyArray<Any>()) { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
   // TODO for future: @mh Use context parameters for this once released: https://github.com/Kotlin/KEEP/issues/367

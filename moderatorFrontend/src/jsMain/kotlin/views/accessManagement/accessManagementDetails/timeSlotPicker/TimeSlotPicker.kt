@@ -16,7 +16,6 @@ import mui.system.sx
 import react.Props
 import react.Suspense
 import react.dom.html.ReactHTML.span
-import react.useContext
 import util.Strings
 import util.get
 import views.accessManagement.accessManagementDetails.AccessManagementDetailsConfig
@@ -48,7 +47,7 @@ external interface TimeSlotPickerProps : Props {
 
 @Lazy
 val TimeSlotPicker = FcWithCoroutineScope<TimeSlotPickerProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = react.use(appContextToInject)!!
 
   fun PropertiesBuilder.timeSlotRow() {
     display = Display.flex

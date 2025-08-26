@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   kotlin("multiplatform")
@@ -16,8 +17,9 @@ kotlin {
     languageVersion.set(JavaLanguageVersion.of("21")) // Auto-download JDK for developers
   }
   jvm {
-    compilations.all {
-      kotlinOptions.jvmTarget = "21"
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_21)
     }
   }
   js(IR) {

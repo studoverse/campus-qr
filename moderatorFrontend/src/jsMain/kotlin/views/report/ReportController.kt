@@ -6,8 +6,7 @@ import com.studo.campusqr.common.payloads.EditSeatFilter
 import com.studo.campusqr.common.payloads.GetContactTracingReport
 import com.studo.campusqr.common.payloads.ReportData
 import kotlinx.coroutines.Job
-import react.MutableRefObject
-import react.useContext
+import react.RefObject
 import react.useRef
 import react.useState
 import util.Strings
@@ -23,7 +22,7 @@ import webcore.extensions.format
 import kotlin.js.Date
 
 data class ReportController(
-  val dialogRef: MutableRefObject<MbDialogRef>,
+  val dialogRef: RefObject<MbDialogRef>,
   val emailTextFieldValue: String,
   val emailTextFieldError: String,
   val reportData: ReportData?,
@@ -38,7 +37,7 @@ data class ReportController(
 ) {
   companion object {
     fun use(launch: Launch): ReportController {
-      val appContext = useContext(appContextToInject)!!
+      val appContext = react.use(appContextToInject)!!
       val dialogRef = useRef<MbDialogRef>()
 
       var emailTextFieldValue: String by useState("")

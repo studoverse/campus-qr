@@ -1,13 +1,13 @@
 package views.locations.addLocation
 
 import com.studo.campusqr.common.payloads.ClientLocation
-import react.MutableRefObject
+import react.RefObject
 import webcore.MbDialogRef
 
-sealed class AddLocationConfig(val dialogRef: MutableRefObject<MbDialogRef>, val onFinished: (response: String?) -> Unit) {
-  class Create(dialogRef: MutableRefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
+sealed class AddLocationConfig(val dialogRef: RefObject<MbDialogRef>, val onFinished: (response: String?) -> Unit) {
+  class Create(dialogRef: RefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
     AddLocationConfig(dialogRef = dialogRef, onFinished = onFinished)
 
-  class Edit(val location: ClientLocation, dialogRef: MutableRefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
+  class Edit(val location: ClientLocation, dialogRef: RefObject<MbDialogRef>, onFinished: (response: String?) -> Unit) :
     AddLocationConfig(dialogRef = dialogRef, onFinished = onFinished)
 }

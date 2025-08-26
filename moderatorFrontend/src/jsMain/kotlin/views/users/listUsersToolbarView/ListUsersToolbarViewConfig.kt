@@ -1,9 +1,9 @@
 package views.users.listUsersToolbarView
 
-import react.MutableRefObject
+import react.RefObject
 import webcore.MbDialogRef
 
 class ListUsersToolbarViewConfig(
-  val dialogRef: MutableRefObject<MbDialogRef>,
+  val dialogRef: RefObject<MbDialogRef>,
   val handleCreateOrAddUserResponse: (String?) -> Unit,
 )

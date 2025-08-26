@@ -15,6 +15,7 @@ import views.locations.addLocation.AddLocation
 import views.locations.addLocation.AddLocationConfig
 import web.prompts.confirm
 import web.window.WindowTarget
+import web.window._blank
 import webcore.*
 import webcore.extensions.toRoute
 import webcore.materialMenu.MaterialMenu
@@ -27,7 +28,7 @@ external interface LocationTableRowProps : Props {
 
 @Lazy
 val LocationTableRow = FcWithCoroutineScope<LocationTableRowProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
 
   var showProgress: Boolean = false
 

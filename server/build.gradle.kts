@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   kotlin("jvm")
   kotlin("plugin.serialization")
@@ -51,10 +53,10 @@ application {
 
 tasks {
   compileKotlin {
-    kotlinOptions.jvmTarget = "21"
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
   }
   compileTestKotlin {
-    kotlinOptions.jvmTarget = "21"
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
   }
 
   getByName<JavaExec>("run") {

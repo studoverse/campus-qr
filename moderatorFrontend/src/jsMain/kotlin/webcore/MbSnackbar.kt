@@ -1,5 +1,5 @@
 import csstype.*
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.icons.material.*
 import mui.material.*
 import mui.system.sx
@@ -78,7 +78,7 @@ val MbSnackbar = FcRefWithCoroutineScope<MbSnackbarProps<MbSnackbarRef>> { props
   val currentConfig = config
   if (currentConfig != null) {
     Snackbar {
-      anchorOrigin = jso {
+      anchorOrigin = unsafeJso {
         vertical = currentConfig.position.vertical
         horizontal = currentConfig.position.horizontal
       }

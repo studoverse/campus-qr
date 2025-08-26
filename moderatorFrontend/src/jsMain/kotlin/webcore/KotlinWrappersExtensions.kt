@@ -1,7 +1,7 @@
 package webcore
 
 import js.objects.Object
-import js.objects.jso
+import js.objects.unsafeJso
 import kotlin.apply
 import kotlin.collections.forEach
 import kotlin.js.RegExp
@@ -9,7 +9,7 @@ import kotlin.js.asDynamic
 
 /** Copied from deprecated kotlin-extensions of kotlin-wrappers. */
 
-fun <T : Any> clone(obj: T) = Object.Companion.assign(jso(), obj)
+fun <T : Any> clone(obj: T) = Object.Companion.assign(unsafeJso(), obj)
 inline fun <T : Any> assign(obj: T, builder: T.() -> Unit) = clone(obj).apply(builder)
 
 fun <T> requireAll(context: Context<T>) = context.keys().forEach(context::invoke)

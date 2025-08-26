@@ -18,7 +18,7 @@ external interface MyAccountProps : Props {}
 
 @Lazy
 val MyAccount = FcWithCoroutineScope<MyAccountProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
   Suspense {
     ToolbarView {

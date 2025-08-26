@@ -20,7 +20,7 @@ external interface GuestCheckInRowProps : Props {
 
 @Lazy
 val GuestCheckInRow = FcWithCoroutineScope<GuestCheckInRowProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
 
   TableRow {
     TableCell {

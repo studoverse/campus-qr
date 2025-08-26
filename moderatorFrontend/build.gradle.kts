@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
   kotlin("multiplatform")
-  id("io.github.turansky.seskar") version "3.50.1"
+  id("io.github.turansky.seskar") version "4.14.0"
 }
 
 val ktor_version: String = "3.0.3" // https://github.com/ktorio/ktor/releases
@@ -51,7 +51,8 @@ kotlin {
 
         api(kotlinWrappers.react)
         api(kotlinWrappers.reactDom)
-        api(kotlinWrappers.emotion)
+        api(kotlinWrappers.emotion.react)
+        api(kotlinWrappers.emotion.styled)
         api(kotlinWrappers.mui.material)
         api(kotlinWrappers.mui.iconsMaterial)
         api(kotlinWrappers.mui.lab)
@@ -70,8 +71,8 @@ kotlin {
         api(devNpm("css-loader", "6.8.1"))
 
         // Use versions that are specified in the kotlin-wrappers: https://github.com/JetBrains/kotlin-wrappers/blob/master/gradle.properties
-        api(npm("react", "18.3.1"))
-        api(npm("react-dom", "18.3.1"))
+        api(npm("react", "19.1.1"))
+        api(npm("react-dom", "19.1.1"))
         api(npm("@mui/material", "5.16.6"))
         api(npm("@mui/icons-material", "5.16.6"))
 

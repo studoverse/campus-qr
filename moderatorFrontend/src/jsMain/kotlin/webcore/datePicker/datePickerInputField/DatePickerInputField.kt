@@ -1,7 +1,7 @@
 package webcore.datePicker.datePickerInputField
 
 import webcore.datePicker.DatePickerUtils.textFieldLabelStyle
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.material.TextField
 import mui.material.textFieldClasses
 import mui.system.sx
@@ -9,6 +9,7 @@ import react.Props
 import web.cssom.Flex
 import web.cssom.number
 import web.html.InputType
+import web.html.number
 import webcore.FcWithCoroutineScope
 import webcore.onChange
 import webcore.min
@@ -35,7 +36,7 @@ val DatePickerInputField = FcWithCoroutineScope<DatePickerInputFieldProps> { pro
     this.onChange = props.config.onChange
     this.placeholder = props.config.placeholder
     this.label = props.config.label.toReactNode()
-    inputProps = jso {
+    inputProps = unsafeJso {
       min = 1
       max = 31
     }

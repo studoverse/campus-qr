@@ -9,7 +9,7 @@ import com.studo.campusqr.common.payloads.canEditLocations
 import com.studo.campusqr.common.payloads.canEditUsers
 import com.studo.campusqr.common.payloads.canViewCheckIns
 import com.studo.campusqr.common.payloads.isAuthenticated
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.icons.material.BlurCircular
 import mui.icons.material.ContactMail
 import mui.icons.material.Info
@@ -19,7 +19,7 @@ import mui.icons.material.People
 import mui.material.styles.Theme
 import mui.material.styles.createTheme
 import react.ChildrenBuilder
-import react.MutableRefObject
+import react.RefObject
 import react.useEffect
 import react.useEffectOnce
 import react.useMemo
@@ -53,8 +53,8 @@ data class AppController(
   val activeLanguage: MbLocalizedStringConfig.SupportedLanguage,
   val onLangChange: (newLang: MbLocalizedStringConfig.SupportedLanguage) -> Unit,
   val theme: Theme,
-  val snackbarRef: MutableRefObject<MbSnackbarRef>,
-  val navigationHandlerDialogRef: MutableRefObject<MbDialogRef>,
+  val snackbarRef: RefObject<MbSnackbarRef>,
+  val navigationHandlerDialogRef: RefObject<MbDialogRef>,
   val checkInSideDrawerItems: List<SideDrawerItem>,
   val moderatorSideDrawerItems: List<SideDrawerItem>,
   val adminSideDrawerItems: List<SideDrawerItem>,
@@ -290,75 +290,75 @@ data class AppController(
 private fun useGetTheme(locale: Localization): Theme {
   return useMemo(*arrayOf(locale)) {
     createTheme(
-      options = jso {
-        typography = jso {
+      options = unsafeJso {
+        typography = unsafeJso {
           useNextVariants = true
         }
-        palette = jso {
-          primary = jso {
+        palette = unsafeJso {
+          primary = unsafeJso {
             main = ColorPalette.primaryColor
             contrastText = "#fff"
           }
 
-          secondary = jso {
+          secondary = unsafeJso {
             main = ColorPalette.secondaryColor
           }
 
-          success = jso {
+          success = unsafeJso {
             main = "#41d856"
             contrastText = "#fff"
           }
 
         }
 
-        components = jso {
+        components = unsafeJso {
           val autoCompleteOff = "off" // Prevent lastpass from adding the icon for autofill
-          this["MuiTooltip"] = jso {
-            styleOverrides = jso {
-              tooltip = jso {
+          this["MuiTooltip"] = unsafeJso {
+            styleOverrides = unsafeJso {
+              tooltip = unsafeJso {
                 backgroundColor = "#616161" // Default tooltip color but without alpha to improve readability
                 fontSize = "0.875rem" // Default body font size to improve readability
               }
             }
           }
 
-          this["MuiAutocomplete"] = jso {
-            defaultProps = jso {
+          this["MuiAutocomplete"] = unsafeJso {
+            defaultProps = unsafeJso {
               disablePortal = true // Without this, the absolute position of the dropdown element is sometimes ~400px too high
             }
           }
-          this["MuiTextField"] = jso {
-            defaultProps = jso {
+          this["MuiTextField"] = unsafeJso {
+            defaultProps = unsafeJso {
               autoComplete = autoCompleteOff
             }
           }
-          this["MuiInputBase"] = jso {
-            defaultProps = jso {
+          this["MuiInputBase"] = unsafeJso {
+            defaultProps = unsafeJso {
               autoComplete = autoCompleteOff
             }
           }
-          this["MuiInput"] = jso {
-            defaultProps = jso {
+          this["MuiInput"] = unsafeJso {
+            defaultProps = unsafeJso {
               autoComplete = autoCompleteOff
             }
           }
-          this["MuiOutlinedInput"] = jso {
-            defaultProps = jso {
+          this["MuiOutlinedInput"] = unsafeJso {
+            defaultProps = unsafeJso {
               autoComplete = autoCompleteOff
             }
           }
-          this["MuiFilledInput"] = jso {
-            defaultProps = jso {
+          this["MuiFilledInput"] = unsafeJso {
+            defaultProps = unsafeJso {
               autoComplete = autoCompleteOff
             }
           }
-          this["MuiSelect"] = jso {
-            defaultProps = jso {
+          this["MuiSelect"] = unsafeJso {
+            defaultProps = unsafeJso {
               autoComplete = autoCompleteOff
             }
           }
-          this["MuiNativeSelect"] = jso {
-            defaultProps = jso {
+          this["MuiNativeSelect"] = unsafeJso {
+            defaultProps = unsafeJso {
               autoComplete = autoCompleteOff
             }
           }

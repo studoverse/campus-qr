@@ -15,6 +15,7 @@ import views.common.spacer
 import views.settings.Settings
 import web.cssom.*
 import web.window.WindowTarget
+import web.window._blank
 import webcore.FcWithCoroutineScope
 import webcore.LogoBadge
 import webcore.LogoBadgeConfig
@@ -38,7 +39,7 @@ external interface AppDrawerItemsProps : Props {
 }
 
 val AppDrawerItems = FcWithCoroutineScope<AppDrawerItemsProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
 
   val userData = appContext.userDataContext.userData
   LogoBadge {

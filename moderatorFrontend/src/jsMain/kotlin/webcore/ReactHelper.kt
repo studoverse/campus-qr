@@ -1,16 +1,16 @@
 package webcore
 
-import js.objects.jso
+import js.objects.unsafeJso
 import kotlinx.coroutines.Job
 import react.*
 
 abstract class RComponent<P : Props, S : State> : Component<P, S> {
   constructor() : super() {
-    state = jso { init() }
+    state = unsafeJso { init() }
   }
 
   constructor(props: P) : super(props) {
-    state = jso { init(props) }
+    state = unsafeJso { init(props) }
   }
 
   open fun S.init() {}

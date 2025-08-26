@@ -2,7 +2,7 @@ package webcore.timePicker.timePickerWithoutInputTypeTimeSupport
 
 import com.studo.campusqr.common.utils.LocalizedString
 import js.lazy.Lazy
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.material.BaseTextFieldProps
 import mui.material.Box
 import mui.material.TextField
@@ -18,6 +18,7 @@ import webcore.onChange
 import webcore.min
 import webcore.max
 import util.get
+import web.html.number
 import webcore.toReactNode
 
 external interface TimePickerWithoutInputTypeTimeSupportProps : Props {
@@ -59,7 +60,7 @@ val TimePickerWithoutInputTypeTimeSupport = FcWithCoroutineScope<TimePickerWitho
       })
       placeholder = hourString
       label = hourString.toReactNode()
-      inputProps = jso {
+      inputProps = unsafeJso {
         min = 0
         max = 23
       }
@@ -72,7 +73,7 @@ val TimePickerWithoutInputTypeTimeSupport = FcWithCoroutineScope<TimePickerWitho
       })
       placeholder = minuteString
       label = minuteString.toReactNode()
-      inputProps = jso {
+      inputProps = unsafeJso {
         min = 0
         max = 59
       }

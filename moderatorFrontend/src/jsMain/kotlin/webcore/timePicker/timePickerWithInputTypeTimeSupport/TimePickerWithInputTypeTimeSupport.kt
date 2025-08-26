@@ -1,7 +1,7 @@
 package webcore.timePicker.timePickerWithInputTypeTimeSupport
 
 import js.lazy.Lazy
-import js.objects.jso
+import js.objects.unsafeJso
 import mui.material.Box
 import mui.material.TextField
 import mui.system.sx
@@ -9,7 +9,9 @@ import react.Props
 import react.dom.html.ReactHTML
 import web.cssom.WhiteSpace
 import web.cssom.pct
+import web.dom.ElementId
 import web.html.InputType
+import web.html.time
 import kotlin.js.Date
 import webcore.FcWithCoroutineScope
 import webcore.extensions.toInputTypeTimeValueString
@@ -37,7 +39,7 @@ val TimePickerWithInputTypeTimeSupport = FcWithCoroutineScope<TimePickerWithInpu
     TextField {
       variant = props.config.variant
       value = props.config.time.toInputTypeTimeValueString()
-      inputProps = jso {
+      inputProps = unsafeJso {
         props.config.min?.let { minProp ->
           min = minProp.toInputTypeTimeValueString()
         }
@@ -47,7 +49,7 @@ val TimePickerWithInputTypeTimeSupport = FcWithCoroutineScope<TimePickerWithInpu
         list = stepListId
       }
       if (props.config.helperText != null) {
-        FormHelperTextProps = jso {
+        FormHelperTextProps = unsafeJso {
           sx {
             whiteSpace = WhiteSpace.preLine // Handle \n
           }
@@ -70,7 +72,7 @@ val TimePickerWithInputTypeTimeSupport = FcWithCoroutineScope<TimePickerWithInpu
     }
     if (props.config.stepMinutes != 1) { // Create time options list if step is not the default value of 1 minute
       ReactHTML.datalist {
-        id = stepListId
+        id = ElementId(stepListId)
         // Control variable to fill options list
         var timestampIterControl = Date().startOfTheDay().getTime()
         val endOfDay = Date(timestampIterControl).endOfTheDay().getTime()

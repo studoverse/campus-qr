@@ -7,7 +7,6 @@ import com.studo.campusqr.common.payloads.ClientDateRange
 import com.studo.campusqr.common.payloads.ClientLocation
 import com.studo.campusqr.common.payloads.EditAccess
 import com.studo.campusqr.common.payloads.NewAccess
-import react.useContext
 import react.useEffectOnce
 import react.useState
 import util.Strings
@@ -68,7 +67,7 @@ data class AccessManagementDetailsController(
       var fromDateTimeSlotErrors: List<TimeSlotError> by useState(mutableListOf())
       var toDateTimeSlotErrors: List<TimeSlotError> by useState(mutableListOf())
 
-      val appContext = useContext(appContextToInject)!!
+      val appContext = react.use(appContextToInject)!!
 
       fun initFields(accessManagement: ClientAccessManagement?) {
         locationFetchInProgress = false

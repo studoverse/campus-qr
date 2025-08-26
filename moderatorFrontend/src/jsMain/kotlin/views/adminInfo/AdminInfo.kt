@@ -15,6 +15,7 @@ import util.Strings
 import util.get
 import views.common.spacer
 import web.window.WindowTarget
+import web.window._blank
 import webcore.FcWithCoroutineScope
 import webcore.verticalMargin
 

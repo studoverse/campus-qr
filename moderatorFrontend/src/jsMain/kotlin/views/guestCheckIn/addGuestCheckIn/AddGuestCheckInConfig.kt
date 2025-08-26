@@ -1,9 +1,9 @@
 package views.guestCheckIn.addGuestCheckIn
 
-import react.MutableRefObject
+import react.RefObject
 import webcore.MbDialogRef
 
 class AddGuestCheckInConfig(
-  val dialogRef: MutableRefObject<MbDialogRef>,
+  val dialogRef: RefObject<MbDialogRef>,
   val onGuestCheckedIn: () -> Unit,
 )

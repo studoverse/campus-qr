@@ -3,9 +3,8 @@ package views.locations.listLocations
 import app.RouteContext
 import app.appContextToInject
 import com.studo.campusqr.common.payloads.ClientLocation
-import react.MutableRefObject
+import react.RefObject
 import react.Suspense
-import react.useContext
 import react.useEffectOnce
 import react.useRef
 import react.useState
@@ -16,6 +15,7 @@ import views.locations.addLocation.AddLocation
 import views.locations.addLocation.AddLocationConfig
 import views.locations.addLocation.AddLocationProps
 import web.window.WindowTarget
+import web.window._blank
 import web.window.window
 import webcore.DialogButton
 import webcore.DialogConfig
@@ -26,7 +26,7 @@ import webcore.NetworkManager
 data class ListLocationsController(
   val locationList: List<ClientLocation>?,
   val loadingLocationList: Boolean,
-  val dialogRef: MutableRefObject<MbDialogRef>,
+  val dialogRef: RefObject<MbDialogRef>,
   val locationImportOnClick: (RouteContext) -> Unit,
   val locationCreateOnClick: (RouteContext) -> Unit,
   val locationTableRowOnEditFinished: (String?) -> Unit,
@@ -38,7 +38,7 @@ data class ListLocationsController(
       var loadingLocationList: Boolean by useState(false)
 
       val dialogRef = useRef<MbDialogRef>()
-      val appContext = useContext(appContextToInject)!!
+      val appContext = react.use(appContextToInject)!!
 
       fun fetchLocationList() = launch {
         loadingLocationList = true

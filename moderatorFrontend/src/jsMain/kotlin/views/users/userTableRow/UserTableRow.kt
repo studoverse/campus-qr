@@ -50,7 +50,7 @@ val UserTableRow = FcWithCoroutineScope<UserTableRowProps> { props, launch ->
     )
   )
 
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
   val userData = appContext.userDataContext.userData!!
   TableRow {
     TableCell {

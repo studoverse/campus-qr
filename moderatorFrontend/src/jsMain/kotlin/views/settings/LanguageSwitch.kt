@@ -13,7 +13,7 @@ import webcore.FcWithCoroutineScope
 external interface LanguageSwitchProps : Props
 
 val LanguageSwitch = FcWithCoroutineScope<LanguageSwitchProps> { props, launch ->
-  val appContext = useContext(appContextToInject)!!
+  val appContext = use(appContextToInject)!!
   val languageContext = appContext.languageContext
 
   val activeLanguage = languageContext.activeLanguage

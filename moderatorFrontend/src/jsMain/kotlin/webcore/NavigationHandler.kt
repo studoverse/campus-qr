@@ -6,27 +6,32 @@ import web.window.window
 import mui.icons.material.Edit
 import mui.material.ButtonColor
 import mui.material.ButtonVariant
-import react.MutableRefObject
+import react.RefObject
 import react.useEffect
 import react.useEffectWithCleanup
 import react.useMemo
 import web.html.HTMLAnchorElement
 import web.dom.Node
-import web.uievents.MouseEvent
 import web.url.URL
 import util.AppRoute
 import util.MbUrl
 import util.get
 import util.relativeUrl
 import web.events.addEventListener
+import web.history.POP_STATE
 import web.history.PopStateEvent
 import web.history.history
 import web.location.location
+import web.pointer.CLICK
+import web.pointer.PointerEvent
 import web.scroll.ScrollBehavior
 import web.scroll.ScrollToOptions
+import web.scroll.instant
 import web.url.URLSearchParams
+import web.window.BEFORE_UNLOAD
 import web.window.BeforeUnloadEvent
 import web.window.WindowTarget
+import web.window._blank
 import webcore.extensions.findParent
 import kotlin.js.Date
 
@@ -51,7 +56,7 @@ object NavigationHandler {
 
   // Global NavigationHandler dialog. Use only in this object.
   // This dialog can pop up above all other dialogs.
-  private lateinit var dialogRef: MutableRefObject<MbDialogRef>
+  private lateinit var dialogRef: RefObject<MbDialogRef>
 
   // Necessary to handle the different causing events in `shouldNavigate()`
   enum class NavigationEvent {
@@ -82,7 +87,7 @@ object NavigationHandler {
    */
   fun initApp(
     allUrls: List<MbUrl>,
-    dialogRef: MutableRefObject<MbDialogRef>,
+    dialogRef: RefObject<MbDialogRef>,
     handleHistoryChange: (newRoute: AppRoute?) -> Unit,
     getCurrentAppRoute: () -> AppRoute?,
   ) {
@@ -165,7 +170,7 @@ object NavigationHandler {
       }
     })
 
-    window.addEventListener(MouseEvent.CLICK, { event ->
+    window.addEventListener(PointerEvent.CLICK, { event ->
       val target = event.target
       if (target != null && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
         // Only handle click for anchor elements
