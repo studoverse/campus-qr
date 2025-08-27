@@ -73,8 +73,8 @@ kotlin {
         // Use versions that are specified in the kotlin-wrappers: https://github.com/JetBrains/kotlin-wrappers/blob/master/gradle.properties
         api(npm("react", "19.1.1"))
         api(npm("react-dom", "19.1.1"))
-        api(npm("@mui/material", "5.16.6"))
-        api(npm("@mui/icons-material", "5.16.6"))
+        api(npm("@mui/material", "5.18.0"))
+        api(npm("@mui/icons-material", "5.18.0"))
 
         api(npm("js-file-download", "0.4.12"))
 
