@@ -1,3 +1,14 @@
+> [!WARNING] 
+> **This project is no longer actively maintained.**
+
+## Evolved into Digital Attendance List
+
+Campus QR started as a COVID-19 contact-tracing tool and grew into something larger than we originally anticipated, a full attendance and access management system for universities. Rather than maintain a standalone open source project, we have incorporated and significantly extended this functionality into **[Digital Attendance List (DAL)](https://studo.com)**, part of a platform for higher education.
+
+If you are evaluating this repository for an attendance or access management use case, we recommend looking at DAL instead. You can find more information and access a demo at **[demo.studoflow.com](https://demo.studoflow.com/)**.
+
+For self-hosting Campus QR specifically: the code remains available as-is. No further updates, security patches, or support are provided.
+
 # Campus QR
 Due to the current situation around the COVID-19 pandemic, Studo developed an open source system for contact tracing at universities.
 When entering a lecture hall or seminar room, students and teachers can scan a QR code attached to the door or in the entrance area.
